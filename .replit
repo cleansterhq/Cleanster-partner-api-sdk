@@ -1,4 +1,4 @@
-modules = ["nodejs-24", "java-graalvm22.3", "python-3.11", "ruby-3.2", "go-1.21", "php-8.1"]
+modules = ["nodejs-24", "java-graalvm22.3", "python-3.11", "ruby-3.2", "go-1.21", "php-8.1", "dotnet-8.0"]
 
 [deployment]
 router = "application"
