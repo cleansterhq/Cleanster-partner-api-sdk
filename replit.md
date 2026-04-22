@@ -96,3 +96,18 @@ See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and pa
 - Packaging: `setup.py`, `pyproject.toml`, `LICENSE`, `CHANGELOG.md`, `.gitignore`
 - Detailed README with per-endpoint examples and model tables
 - Install: `pip install cleanster`
+
+### C# SDK (`csharp-sdk/`)
+
+- .NET 8.0 library targeting `net8.0`; zero external runtime dependencies (only `System.Net.Http` + `System.Text.Json`)
+- Same 8 API service classes as all other SDKs: `BookingsApi` (17 methods), `UsersApi` (3), `PropertiesApi` (14), `ChecklistsApi` (5), `OtherApi` (7), `BlacklistApi` (3), `PaymentMethodsApi` (6), `WebhooksApi` (4)
+- `sealed record` model types with `[JsonPropertyName]` and `init`-only properties: `Booking`, `User`, `Property`, `Checklist`, `ChecklistItem`, `PaymentMethod`
+- Generic `ApiResponse<T>` sealed record wrapper: `(int Status, string Message, T Data)`
+- `CleansterClient.Sandbox(key)` / `.Production(key)` static factories; `SetAccessToken(token)` / `GetAccessToken()`
+- `ICleansterHttpClient` public interface — inject `Mock<ICleansterHttpClient>` for unit tests; `[InternalsVisibleTo("Cleanster.Tests")]` exposes internal API constructors to the test assembly
+- Exception hierarchy: `CleansterException` (base) → `AuthException` (401) / `ApiException` (4xx/5xx), both with `StatusCode` + `ResponseBody`
+- All API methods async (`Task<ApiResponse<T>>`); every method accepts optional `CancellationToken`
+- `JsonHelper` (internal): `ParseSingle<T>`, `ParseList<T>`, `ParseRaw` shared across all API classes
+- 107 xUnit 2.7 + Moq 4.20 tests — all passing; `MockBehavior.Strict` ensures exact path/verb/body verification; zero real HTTP calls
+- Packaging: `Cleanster.sln`, `Cleanster.csproj`, `Cleanster.Tests.csproj`, `LICENSE`, `CHANGELOG.md`, `.gitignore`
+- Detailed README: dual-auth step-by-step, all API methods with C# named-argument examples, full model property tables, exception hierarchy, DI/ASP.NET Core patterns, design decision rationale, test coverage breakdown
