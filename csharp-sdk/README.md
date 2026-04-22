@@ -235,7 +235,7 @@ CleansterClient client = ...;
 | `PayExpensesAsync(bookingId, paymentMethodId)` | POST | `/v1/bookings/{id}/expenses` | `JsonElement` |
 | `GetBookingInspectionAsync(bookingId)` | GET | `/v1/bookings/{id}/inspection` | `JsonElement` |
 | `GetBookingInspectionDetailsAsync(bookingId)` | GET | `/v1/bookings/{id}/inspection/details` | `JsonElement` |
-| `AssignChecklistToBookingAsync(bookingId, checklistId)` | POST | `/v1/bookings/{id}/checklist/{checklistId}` | `JsonElement` |
+| `AssignChecklistToBookingAsync(bookingId, checklistId)` | PUT | `/v1/bookings/{id}/checklist/{checklistId}` | `JsonElement` |
 | `SubmitFeedbackAsync(bookingId, rating, comment?)` | POST | `/v1/bookings/{id}/feedback` | `JsonElement` |
 | `AddTipAsync(bookingId, amount, paymentMethodId)` | POST | `/v1/bookings/{id}/tip` | `JsonElement` |
 | `GetChatAsync(bookingId)` | GET | `/v1/bookings/{id}/chat` | `JsonElement` |
@@ -374,6 +374,7 @@ await client.Properties.AssignChecklistToPropertyAsync(
 | `CreateChecklistAsync(name, items)` | POST | `/v1/checklist` | `Checklist` |
 | `UpdateChecklistAsync(checklistId, name, items)` | PUT | `/v1/checklist/{id}` | `Checklist` |
 | `DeleteChecklistAsync(checklistId)` | DELETE | `/v1/checklist/{id}` | `JsonElement` |
+| `UploadChecklistImageAsync(imageBytes, mimeType)` | POST | `/v1/checklist/upload-image` | `JsonElement` |
 
 **Examples:**
 
@@ -460,7 +461,7 @@ await client.Blacklist.RemoveFromBlacklistAsync(cleanerId: 7);
 
 | Method | HTTP | Endpoint | Returns |
 |--------|------|----------|---------|
-| `GetSetupIntentDetailsAsync()` | GET | `/v1/payment-methods/setup-intent` | `JsonElement` |
+| `GetSetupIntentDetailsAsync()` | GET | `/v1/payment-methods/setup-intent-details` | `JsonElement` |
 | `GetPaypalClientTokenAsync()` | GET | `/v1/payment-methods/paypal-client-token` | `JsonElement` |
 | `AddPaymentMethodAsync(paymentMethodId)` | POST | `/v1/payment-methods` | `JsonElement` |
 | `GetPaymentMethodsAsync()` | GET | `/v1/payment-methods` | `List<PaymentMethod>` |

@@ -15,7 +15,7 @@ public sealed class PaymentMethodsApi
     /// </summary>
     public async Task<ApiResponse<JsonElement>> GetSetupIntentDetailsAsync(CancellationToken ct = default)
     {
-        var root = await _http.GetAsync("/v1/payment-methods/setup-intent", ct: ct);
+        var root = await _http.GetAsync("/v1/payment-methods/setup-intent-details", ct: ct);
         return JsonHelper.ParseRaw(root);
     }
 

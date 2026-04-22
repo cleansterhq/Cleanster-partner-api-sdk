@@ -477,7 +477,7 @@ client.bookings().deleteMessage(17142, "msg-abc-123");
 | `payExpenses(id, req)` | POST | `/v1/bookings/{id}/expenses` |
 | `getBookingInspection(id)` | GET | `/v1/bookings/{id}/inspection` |
 | `getBookingInspectionDetails(id)` | GET | `/v1/bookings/{id}/inspection/details` |
-| `assignChecklistToBooking(id, cid)` | POST | `/v1/bookings/{id}/checklist/{cid}` |
+| `assignChecklistToBooking(id, cid)` | PUT | `/v1/bookings/{id}/checklist/{cid}` |
 | `submitFeedback(id, req)` | POST | `/v1/bookings/{id}/feedback` |
 | `addTip(id, req)` | POST | `/v1/bookings/{id}/tip` |
 | `getChat(id)` | GET | `/v1/bookings/{id}/chat` |
@@ -740,6 +740,7 @@ client.checklists().deleteChecklist(105);
 | `createChecklist(req)` | POST | `/v1/checklist` |
 | `updateChecklist(id, req)` | PUT | `/v1/checklist/{id}` |
 | `deleteChecklist(id)` | DELETE | `/v1/checklist/{id}` |
+| `uploadImage(bytes, mime)` | POST | `/v1/checklist/upload-image` |
 
 ---
 
@@ -898,7 +899,7 @@ client.paymentMethods().deletePaymentMethod(193);
 
 | Method | HTTP | Endpoint |
 |--------|------|----------|
-| `getSetupIntentDetails()` | GET | `/v1/payment-methods/setup-intent` |
+| `getSetupIntentDetails()` | GET | `/v1/payment-methods/setup-intent-details` |
 | `getPaypalClientToken()` | GET | `/v1/payment-methods/paypal-client-token` |
 | `addPaymentMethod(req)` | POST | `/v1/payment-methods` |
 | `getPaymentMethods()` | GET | `/v1/payment-methods` |

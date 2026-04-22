@@ -292,7 +292,7 @@ RSpec.describe Cleanster do
 
     describe "#assign_checklist_to_booking" do
       it "POSTs to correct URL" do
-        allow(http).to receive(:post).with("/v1/bookings/16926/checklist/105")
+        allow(http).to receive(:put).with("/v1/bookings/16926/checklist/105")
                                      .and_return(ok_response)
         api.assign_checklist_to_booking(16926, 105)
       end
@@ -713,7 +713,7 @@ RSpec.describe Cleanster do
 
     describe "#get_setup_intent_details" do
       it "GETs /v1/payment-methods/setup-intent" do
-        allow(http).to receive(:get).with("/v1/payment-methods/setup-intent").and_return(ok_response)
+        allow(http).to receive(:get).with("/v1/payment-methods/setup-intent-details").and_return(ok_response)
         api.get_setup_intent_details
       end
     end

@@ -514,7 +514,7 @@ $client->bookings()->deleteMessage(17142, 'msg-abc-123');
 | `payExpenses(int, int)` | POST | `/v1/bookings/{id}/expenses` |
 | `getBookingInspection(int)` | GET | `/v1/bookings/{id}/inspection` |
 | `getBookingInspectionDetails(int)` | GET | `/v1/bookings/{id}/inspection/details` |
-| `assignChecklistToBooking(int, int)` | POST | `/v1/bookings/{id}/checklist/{cid}` |
+| `assignChecklistToBooking(int, int)` | PUT | `/v1/bookings/{id}/checklist/{cid}` |
 | `submitFeedback(int, int, ?string)` | POST | `/v1/bookings/{id}/feedback` |
 | `addTip(int, float, int)` | POST | `/v1/bookings/{id}/tip` |
 | `getChat(int)` | GET | `/v1/bookings/{id}/chat` |
@@ -778,6 +778,7 @@ $client->checklists()->deleteChecklist(105);
 | `createChecklist(string, array)` | POST | `/v1/checklist` |
 | `updateChecklist(int, string, array)` | PUT | `/v1/checklist/{id}` |
 | `deleteChecklist(int)` | DELETE | `/v1/checklist/{id}` |
+| `uploadImage(string $imageData, string $mimeType)` | POST | `/v1/checklist/upload-image` |
 
 ---
 
@@ -937,7 +938,7 @@ $client->paymentMethods()->deletePaymentMethod(193);
 
 | Method | HTTP | Endpoint |
 |--------|------|----------|
-| `getSetupIntentDetails()` | GET | `/v1/payment-methods/setup-intent` |
+| `getSetupIntentDetails()` | GET | `/v1/payment-methods/setup-intent-details` |
 | `getPaypalClientToken()` | GET | `/v1/payment-methods/paypal-client-token` |
 | `addPaymentMethod(string)` | POST | `/v1/payment-methods` |
 | `getPaymentMethods()` | GET | `/v1/payment-methods` |

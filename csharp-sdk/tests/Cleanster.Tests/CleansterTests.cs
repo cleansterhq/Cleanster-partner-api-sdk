@@ -363,7 +363,7 @@ public class CleansterTests
     public async Task Bookings_AssignChecklistToBooking()
     {
         var http = MockHttp();
-        http.Setup(h => h.PostAsync("/v1/bookings/16926/checklist/105", null, It.IsAny<CancellationToken>()))
+        http.Setup(h => h.PutAsync("/v1/bookings/16926/checklist/105", null, It.IsAny<CancellationToken>()))
             .ReturnsAsync(MakeResponse("{}"));
         await new BookingsApi(http.Object).AssignChecklistToBookingAsync(16926, 105);
         http.VerifyAll();
@@ -873,7 +873,7 @@ public class CleansterTests
     public async Task PaymentMethods_GetSetupIntentDetails()
     {
         var http = MockHttp();
-        http.Setup(h => h.GetAsync("/v1/payment-methods/setup-intent", null, It.IsAny<CancellationToken>()))
+        http.Setup(h => h.GetAsync("/v1/payment-methods/setup-intent-details", null, It.IsAny<CancellationToken>()))
             .ReturnsAsync(MakeResponse("{}"));
         await new PaymentMethodsApi(http.Object).GetSetupIntentDetailsAsync();
         http.VerifyAll();

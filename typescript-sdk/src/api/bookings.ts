@@ -124,7 +124,7 @@ export class BookingsApi {
    * @param checklistId  The checklist ID.
    */
   assignChecklistToBooking(bookingId: number, checklistId: number): Promise<ApiResponse<unknown>> {
-    return this.http.post(`/v1/bookings/${bookingId}/checklist/${checklistId}`);
+    return this.http.put(`/v1/bookings/${bookingId}/checklist/${checklistId}`);
   }
 
   /**

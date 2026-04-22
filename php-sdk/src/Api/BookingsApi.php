@@ -165,7 +165,7 @@ final class BookingsApi
      */
     public function assignChecklistToBooking(int $bookingId, int $checklistId): ApiResponse
     {
-        $raw = $this->http->post("/v1/bookings/{$bookingId}/checklist/{$checklistId}");
+        $raw = $this->http->put("/v1/bookings/{$bookingId}/checklist/{$checklistId}");
         return $this->wrapRaw($raw);
     }
 

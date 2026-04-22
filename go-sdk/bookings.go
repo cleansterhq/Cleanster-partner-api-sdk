@@ -122,7 +122,7 @@ func (s *BookingsService) GetBookingInspectionDetails(ctx context.Context, booki
 // AssignChecklistToBooking attaches a checklist to a specific booking,
 // overriding the property's default checklist for this appointment only.
 func (s *BookingsService) AssignChecklistToBooking(ctx context.Context, bookingID, checklistID int) (APIResponse[map[string]interface{}], error) {
-	raw, err := s.http.post(ctx, fmt.Sprintf("/v1/bookings/%d/checklist/%d", bookingID, checklistID), nil)
+	raw, err := s.http.put(ctx, fmt.Sprintf("/v1/bookings/%d/checklist/%d", bookingID, checklistID), nil)
 	if err != nil {
 		return APIResponse[map[string]interface{}]{}, err
 	}

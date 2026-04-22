@@ -149,7 +149,7 @@ public sealed class BookingsApi
     public async Task<ApiResponse<JsonElement>> AssignChecklistToBookingAsync(
         int bookingId, int checklistId, CancellationToken ct = default)
     {
-        var root = await _http.PostAsync($"/v1/bookings/{bookingId}/checklist/{checklistId}", ct: ct);
+        var root = await _http.PutAsync($"/v1/bookings/{bookingId}/checklist/{checklistId}", ct: ct);
         return JsonHelper.ParseRaw(root);
     }
 

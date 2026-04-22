@@ -463,7 +463,7 @@ client.bookings.delete_message(17142, "msg-abc-123")
 | `pay_expenses(id, payment_method_id:)` | POST | `/v1/bookings/{id}/expenses` |
 | `get_booking_inspection(id)` | GET | `/v1/bookings/{id}/inspection` |
 | `get_booking_inspection_details(id)` | GET | `/v1/bookings/{id}/inspection/details` |
-| `assign_checklist_to_booking(id, cid)` | POST | `/v1/bookings/{id}/checklist/{cid}` |
+| `assign_checklist_to_booking(id, cid)` | PUT | `/v1/bookings/{id}/checklist/{cid}` |
 | `submit_feedback(id, rating:, comment:)` | POST | `/v1/bookings/{id}/feedback` |
 | `add_tip(id, amount:, payment_method_id:)` | POST | `/v1/bookings/{id}/tip` |
 | `get_chat(id)` | GET | `/v1/bookings/{id}/chat` |
@@ -716,6 +716,7 @@ client.checklists.delete_checklist(105)
 | `create_checklist(name:, items:)` | POST | `/v1/checklist` |
 | `update_checklist(id, name:, items:)` | PUT | `/v1/checklist/{id}` |
 | `delete_checklist(id)` | DELETE | `/v1/checklist/{id}` |
+| `upload_image(image_data, mime_type)` | POST | `/v1/checklist/upload-image` |
 
 ---
 
@@ -873,7 +874,7 @@ client.payment_methods.delete_payment_method(193)
 
 | Method | HTTP | Endpoint |
 |--------|------|----------|
-| `get_setup_intent_details` | GET | `/v1/payment-methods/setup-intent` |
+| `get_setup_intent_details` | GET | `/v1/payment-methods/setup-intent-details` |
 | `get_paypal_client_token` | GET | `/v1/payment-methods/paypal-client-token` |
 | `add_payment_method(request)` | POST | `/v1/payment-methods` |
 | `get_payment_methods` | GET | `/v1/payment-methods` |

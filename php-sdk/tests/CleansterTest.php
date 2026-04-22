@@ -382,7 +382,7 @@ class CleansterTest extends TestCase
     {
         $http = $this->mockHttp();
         $http->expects($this->once())
-             ->method('post')
+             ->method('put')
              ->with('/v1/bookings/16926/checklist/105')
              ->willReturn($this->ok([]));
 
@@ -926,7 +926,7 @@ class CleansterTest extends TestCase
         $http = $this->mockHttp();
         $http->expects($this->once())
              ->method('get')
-             ->with('/v1/payment-methods/setup-intent')
+             ->with('/v1/payment-methods/setup-intent-details')
              ->willReturn($this->ok([]));
 
         (new PaymentMethodsApi($http))->getSetupIntentDetails();

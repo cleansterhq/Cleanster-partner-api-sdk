@@ -318,7 +318,7 @@ class TestBookingsApi(unittest.TestCase):
 
         api.assign_checklist_to_booking(16926, 105)
 
-        http.post.assert_called_once_with("/v1/bookings/16926/checklist/105")
+        http.put.assert_called_once_with("/v1/bookings/16926/checklist/105")
 
     def test_submit_feedback(self):
         http = make_http()
@@ -792,7 +792,7 @@ class TestPaymentMethodsApi(unittest.TestCase):
 
         api.get_setup_intent_details()
 
-        http.get.assert_called_once_with("/v1/payment-methods/setup-intent")
+        http.get.assert_called_once_with("/v1/payment-methods/setup-intent-details")
 
     def test_get_paypal_client_token(self):
         http = make_http()

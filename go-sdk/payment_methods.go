@@ -13,7 +13,7 @@ type PaymentMethodsService struct {
 // GetSetupIntentDetails returns Stripe SetupIntent details for client-side card collection.
 // Use the returned clientSecret with Stripe.js on the client side.
 func (s *PaymentMethodsService) GetSetupIntentDetails(ctx context.Context) (APIResponse[map[string]interface{}], error) {
-	raw, err := s.http.get(ctx, "/v1/payment-methods/setup-intent", nil)
+	raw, err := s.http.get(ctx, "/v1/payment-methods/setup-intent-details", nil)
 	if err != nil {
 		return APIResponse[map[string]interface{}]{}, err
 	}

@@ -186,7 +186,7 @@ class BookingsApi:
         Returns:
             ApiResponse.
         """
-        raw = self._http.post(
+        raw = self._http.put(
             f"/v1/bookings/{booking_id}/checklist/{checklist_id}"
         )
         return ApiResponse.from_dict(raw)

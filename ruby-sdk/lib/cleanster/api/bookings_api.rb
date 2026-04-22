@@ -114,7 +114,7 @@ module Cleanster
       # @param checklist_id [Integer]
       # @return [Models::ApiResponse]
       def assign_checklist_to_booking(booking_id, checklist_id)
-        raw = @http.post("/v1/bookings/#{booking_id}/checklist/#{checklist_id}")
+        raw = @http.put("/v1/bookings/#{booking_id}/checklist/#{checklist_id}")
         Models::ApiResponse.from_hash(raw)
       end
 

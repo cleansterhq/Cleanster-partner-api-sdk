@@ -568,7 +568,7 @@ _, err = client.Bookings.DeleteMessage(ctx, 17142, "msg-abc-123")
 | `PayExpenses(ctx, id, req)` | POST | `/v1/bookings/{id}/expenses` |
 | `GetBookingInspection(ctx, id)` | GET | `/v1/bookings/{id}/inspection` |
 | `GetBookingInspectionDetails(ctx, id)` | GET | `/v1/bookings/{id}/inspection/details` |
-| `AssignChecklistToBooking(ctx, id, cid)` | POST | `/v1/bookings/{id}/checklist/{cid}` |
+| `AssignChecklistToBooking(ctx, id, cid)` | PUT | `/v1/bookings/{id}/checklist/{cid}` |
 | `SubmitFeedback(ctx, id, req)` | POST | `/v1/bookings/{id}/feedback` |
 | `AddTip(ctx, id, req)` | POST | `/v1/bookings/{id}/tip` |
 | `GetChat(ctx, id)` | GET | `/v1/bookings/{id}/chat` |
@@ -828,6 +828,7 @@ _, err = client.Checklists.DeleteChecklist(ctx, 105)
 | `CreateChecklist(ctx, req)` | POST | `/v1/checklist` |
 | `UpdateChecklist(ctx, id, req)` | PUT | `/v1/checklist/{id}` |
 | `DeleteChecklist(ctx, id)` | DELETE | `/v1/checklist/{id}` |
+| `UploadChecklistImage(ctx, data, mime)` | POST | `/v1/checklist/upload-image` |
 
 ---
 
@@ -985,7 +986,7 @@ _, err = client.PaymentMethods.DeletePaymentMethod(ctx, 193)
 
 | Method | HTTP | Endpoint |
 |--------|------|----------|
-| `GetSetupIntentDetails(ctx)` | GET | `/v1/payment-methods/setup-intent` |
+| `GetSetupIntentDetails(ctx)` | GET | `/v1/payment-methods/setup-intent-details` |
 | `GetPaypalClientToken(ctx)` | GET | `/v1/payment-methods/paypal-client-token` |
 | `AddPaymentMethod(ctx, req)` | POST | `/v1/payment-methods` |
 | `GetPaymentMethods(ctx)` | GET | `/v1/payment-methods` |

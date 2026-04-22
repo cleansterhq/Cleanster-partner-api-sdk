@@ -423,7 +423,7 @@ func TestBookings_GetBookingInspectionDetails(t *testing.T) {
 
 func TestBookings_AssignChecklistToBooking(t *testing.T) {
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/v1/bookings/16926/checklist/105" || r.Method != http.MethodPost {
+		if r.URL.Path != "/v1/bookings/16926/checklist/105" || r.Method != http.MethodPut {
 			t.Errorf("wrong method/path: %s %s", r.Method, r.URL.Path)
 		}
 		writeJSON(w, okResponse(map[string]interface{}{}))
@@ -1109,7 +1109,7 @@ func TestBlacklist_RemoveFromBlacklist(t *testing.T) {
 
 func TestPaymentMethods_GetSetupIntentDetails(t *testing.T) {
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/v1/payment-methods/setup-intent" {
+		if r.URL.Path != "/v1/payment-methods/setup-intent-details" {
 			t.Errorf("wrong path: %s", r.URL.Path)
 		}
 		writeJSON(w, okResponse(map[string]interface{}{}))

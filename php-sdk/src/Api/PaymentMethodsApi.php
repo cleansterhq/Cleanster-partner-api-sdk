@@ -21,7 +21,7 @@ final class PaymentMethodsApi
      */
     public function getSetupIntentDetails(): ApiResponse
     {
-        $raw = $this->http->get('/v1/payment-methods/setup-intent');
+        $raw = $this->http->get('/v1/payment-methods/setup-intent-details');
         return new ApiResponse($raw['status'] ?? 200, $raw['message'] ?? 'OK', $raw['data'] ?? []);
     }
 

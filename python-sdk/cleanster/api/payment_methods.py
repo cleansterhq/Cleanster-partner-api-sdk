@@ -23,7 +23,7 @@ class PaymentMethodsApi:
         Returns:
             ApiResponse with data containing the Stripe setup intent.
         """
-        raw = self._http.get("/v1/payment-methods/setup-intent")
+        raw = self._http.get("/v1/payment-methods/setup-intent-details")
         return ApiResponse.from_dict(raw)
 
     def get_paypal_client_token(self) -> ApiResponse:

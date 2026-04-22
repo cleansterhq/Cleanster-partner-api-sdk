@@ -9,7 +9,7 @@ module Cleanster
       # Get Stripe SetupIntent details for collecting card information client-side.
       # @return [Models::ApiResponse]
       def get_setup_intent_details
-        raw = @http.get("/v1/payment-methods/setup-intent")
+        raw = @http.get("/v1/payment-methods/setup-intent-details")
         Models::ApiResponse.from_hash(raw)
       end
 

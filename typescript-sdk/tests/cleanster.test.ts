@@ -293,7 +293,7 @@ describe("BookingsApi", () => {
 
     await api.assignChecklistToBooking(16926, 105);
 
-    expect(http.post).toHaveBeenCalledWith("/v1/bookings/16926/checklist/105");
+    expect(http.put).toHaveBeenCalledWith("/v1/bookings/16926/checklist/105");
   });
 
   test("submitFeedback() sends rating and comment", async () => {
@@ -716,7 +716,7 @@ describe("PaymentMethodsApi", () => {
 
     await api.getSetupIntentDetails();
 
-    expect(http.get).toHaveBeenCalledWith("/v1/payment-methods/setup-intent");
+    expect(http.get).toHaveBeenCalledWith("/v1/payment-methods/setup-intent-details");
   });
 
   test("getPaypalClientToken() calls correct URL", async () => {

@@ -14,7 +14,7 @@ export class PaymentMethodsApi {
    * Use the returned clientSecret with Stripe.js or the Stripe mobile SDK.
    */
   getSetupIntentDetails(): Promise<ApiResponse<unknown>> {
-    return this.http.get("/v1/payment-methods/setup-intent");
+    return this.http.get("/v1/payment-methods/setup-intent-details");
   }
 
   /**
