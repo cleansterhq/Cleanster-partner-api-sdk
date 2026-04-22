@@ -37,6 +37,17 @@ See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and pa
 - Build: `mvn package` → 3 JARs
 - Detailed README with per-endpoint examples and model tables
 
+### TypeScript SDK (`typescript-sdk/`)
+
+- TypeScript 5.x, Node.js 18+ (uses native `fetch` — zero HTTP dependencies)
+- Same 8 API namespaces as Java/Python SDKs
+- Fully typed: `ApiResponse<T>` generic, typed interfaces for every request/response
+- Exception classes with correct `instanceof` support
+- 85 Jest (ts-jest) unit tests — all passing
+- Published to npm as `cleanster`; `npm run build` compiles to `dist/` with `.d.ts` files
+- Packaging: `package.json`, `tsconfig.json`, `jest.config.js`, `LICENSE`, `CHANGELOG.md`, `.gitignore`
+- Detailed README with per-endpoint TypeScript examples and full type reference table
+
 ### Python SDK (`python-sdk/`)
 
 - Python 3.8+ package named `cleanster`

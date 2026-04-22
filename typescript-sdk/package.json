@@ -1,0 +1,58 @@
+{
+  "name": "cleanster",
+  "version": "1.0.0",
+  "description": "Official TypeScript SDK for the Cleanster Partner API",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src --ext .ts",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run typecheck && npm test && npm run build"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "cleanster",
+    "cleaning",
+    "api",
+    "sdk",
+    "partner",
+    "booking",
+    "typescript"
+  ],
+  "author": "Cleanster <partner@cleanster.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/cleanster/cleanster-typescript-sdk",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cleanster/cleanster-typescript-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/cleanster/cleanster-typescript-sdk/issues"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.0.0",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.3.0"
+  }
+}
