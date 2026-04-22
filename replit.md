@@ -37,6 +37,19 @@ See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and pa
 - Build: `mvn package` → 3 JARs
 - Detailed README with per-endpoint examples and model tables
 
+### Go SDK (`go-sdk/`)
+
+- Go 1.21+, zero external runtime dependencies — uses only `net/http`, `encoding/json`, `sync`, `context`
+- Same 8 API namespaces as all other SDKs (Bookings/Users/Properties/Checklists/Other/Blacklist/PaymentMethods/Webhooks)
+- Generic `APIResponse[T any]` — fully typed `.Data` field, no interface casting required
+- Typed model structs: `Booking`, `User`, `Property`, `Checklist`, `ChecklistItem`, `PaymentMethod`; pointer types for nullable fields (`*int`, `*string`)
+- All methods accept `context.Context` as first parameter
+- Thread-safe `SetAccessToken`/`GetAccessToken` via `sync.RWMutex`
+- Exception hierarchy: `CleansterError` → `AuthError` (401) / `APIError` (4xx/5xx) — all `errors.As`-compatible
+- 92 tests using `net/http/httptest` — all passing; no network access required
+- Packaging: `go.mod` (module `github.com/cleanster/cleanster-go-sdk`, Go 1.21), `LICENSE`, `CHANGELOG.md`, `.gitignore`
+- Detailed README with context-aware Go code examples, model field tables, error handling patterns, and full API summary tables
+
 ### Ruby SDK (`ruby-sdk/`)
 
 - Ruby 2.7+, zero runtime gem dependencies — uses built-in `Net::HTTP` and `json`
