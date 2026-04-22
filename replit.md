@@ -37,6 +37,18 @@ See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and pa
 - Build: `mvn package` → 3 JARs
 - Detailed README with per-endpoint examples and model tables
 
+### Ruby SDK (`ruby-sdk/`)
+
+- Ruby 2.7+, zero runtime gem dependencies — uses built-in `Net::HTTP` and `json`
+- Same 8 API namespaces as Java/Python/TypeScript SDKs
+- Idiomatic Ruby: snake_case methods, keyword arguments, model objects (not raw hashes)
+- `ApiResponse` wrapper with `#status`, `#message`, `#data`; model classes for Booking, User, Property, Checklist, ChecklistItem, PaymentMethod
+- Exception hierarchy: `CleansterError` → `AuthError` (401) / `ApiError` (4xx/5xx)
+- 119 RSpec unit tests — all passing; no network access required
+- Published to RubyGems as `cleanster`; `gem build cleanster.gemspec` produces the gem
+- Packaging: `cleanster.gemspec`, `Gemfile`, `Rakefile`, `.rspec`, `LICENSE`, `CHANGELOG.md`, `.gitignore`
+- Detailed README with per-endpoint Ruby keyword-argument examples and full model attribute tables
+
 ### TypeScript SDK (`typescript-sdk/`)
 
 - TypeScript 5.x, Node.js 18+ (uses native `fetch` — zero HTTP dependencies)
