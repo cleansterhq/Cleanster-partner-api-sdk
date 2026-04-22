@@ -25,3 +25,24 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - `pnpm --filter @workspace/api-server run dev` — run API server locally
 
 See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details.
+
+## SDK Projects
+
+### Java SDK (`java-sdk/`)
+
+- Full Maven project targeting Java 11+
+- 8 API classes: Bookings, Users, Properties, Checklists, Other, Blacklist, PaymentMethods, Webhooks
+- OkHttp + Jackson transport; typed exception hierarchy
+- 74 unit tests (JUnit 5 + Mockito) — all passing
+- Build: `mvn package` → 3 JARs
+- Detailed README with per-endpoint examples and model tables
+
+### Python SDK (`python-sdk/`)
+
+- Python 3.8+ package named `cleanster`
+- Same 8 API namespaces as Java SDK
+- `requests`-based HTTP transport; typed exception hierarchy
+- 99 unit tests (unittest + unittest.mock) — all passing
+- Packaging: `setup.py`, `pyproject.toml`, `LICENSE`, `CHANGELOG.md`, `.gitignore`
+- Detailed README with per-endpoint examples and model tables
+- Install: `pip install cleanster`
