@@ -37,6 +37,20 @@ See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and pa
 - Build: `mvn package` → 3 JARs
 - Detailed README with per-endpoint examples and model tables
 
+### PHP SDK (`php-sdk/`)
+
+- PHP 8.1+, zero runtime dependencies — uses only built-in `ext-curl` and `ext-json`
+- Same 8 API namespaces as all other SDKs (Bookings/Users/Properties/Checklists/Other/Blacklist/PaymentMethods/Webhooks)
+- PHP 8.1 `readonly` properties on all model classes: `Booking`, `User`, `Property`, `Checklist`, `ChecklistItem`, `PaymentMethod`
+- `ApiResponse` wrapper: `$status`, `$message`, `$data` readonly properties on every call
+- Injectable `HttpClient` constructor parameter — enables PHPUnit mocking without real HTTP
+- `CleansterClient::sandbox($key)` / `::production($key)` factory methods
+- `$client->bookings()`, `->users()`, `->properties()`, `->checklists()`, `->other()`, `->blacklist()`, `->paymentMethods()`, `->webhooks()` accessors
+- Exception hierarchy: `CleansterException` → `AuthException` (401, `$statusCode` + `$responseBody`) / `ApiException` (4xx/5xx)
+- 106 PHPUnit 10 tests — all passing; uses `createMock(HttpClient::class)`; no real network access
+- Packaging: `composer.json` (PSR-4, PHP 8.1+), `phpunit.xml`, `LICENSE`, `CHANGELOG.md`, `.gitignore`
+- Detailed README with named-argument PHP code examples, model property tables, exception handling, test coverage breakdown, design decision rationale
+
 ### Go SDK (`go-sdk/`)
 
 - Go 1.21+, zero external runtime dependencies — uses only `net/http`, `encoding/json`, `sync`, `context`
