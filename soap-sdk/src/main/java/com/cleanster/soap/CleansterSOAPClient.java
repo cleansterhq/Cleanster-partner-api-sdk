@@ -14,10 +14,10 @@ import java.util.Map;
  *
  * <h2>API Sections</h2>
  * <ul>
- *   <li>Bookings — 14 operations (list, create, cancel, reschedule, assign, inspect, chat, tip, feedback...)</li>
- *   <li>Properties — 11 operations (CRUD, iCal, cleaners, checklist assignment...)</li>
+ *   <li>Bookings — 17 operations (list, create, cancel, reschedule, assign, inspect, chat, tip, feedback...)</li>
+ *   <li>Properties — 14 operations (CRUD, iCal, cleaners, checklist assignment...)</li>
  *   <li>Cleaners — 2 operations (list, get)</li>
- *   <li>Checklists — 5 operations (CRUD + upload)</li>
+ *   <li>Checklists — 6 operations (CRUD + upload)</li>
  *   <li>Other — 7 operations (services, plans, cost estimate, recommended hours, extras, cleaners, coupons)</li>
  *   <li>Users — 3 operations (create, access token, verify JWT)</li>
  *   <li>Blacklist — 3 operations (list, add, remove)</li>

@@ -13,7 +13,7 @@ A Java SOAP SDK for the Cleanster Partner API. Provides a WSDL-defined, document
 | SOAP Style | Document / Literal (SOAP 1.1) |
 | Auth | Bearer Token (API Key) |
 | Tests | 118 (JUnit 5 + Mockito) |
-| Total Operations | 56 |
+| Total Operations | 62 |
 | WSDL | `wsdl/cleanster.wsdl` |
 | XSD Schema | `wsdl/cleanster-types.xsd` |
 
@@ -296,7 +296,7 @@ soap-sdk/
 │   └── SendMessage.xml
 └── src/
     ├── main/java/com/cleanster/soap/
-    │   ├── CleansterSOAPClient.java     ← Main entry point (56 operations)
+    │   ├── CleansterSOAPClient.java     ← Main entry point (62 operations)
     │   ├── SOAPTransport.java           ← HTTP transport (REST bridge)
     │   ├── SOAPClientException.java     ← Runtime exception
     │   ├── BookingService.java          ← 17 booking operations
@@ -446,7 +446,7 @@ This SDK acts as a **SOAP-to-REST bridge**:
 
 ```
 Your code  →  CleansterSOAPClient  →  SOAPTransport  →  Cleanster REST API
-(SOAP API)     (56 operations)        (HTTP layer)        (JSON responses)
+(SOAP API)     (62 operations)        (HTTP layer)        (JSON responses)
 ```
 
 The `SOAPTransport` handles all HTTP communication, translating SOAP-style operation calls into the appropriate REST endpoints. Models are deserialized from JSON using Jackson and presented through the SOAP-compatible Java API defined in the WSDL.

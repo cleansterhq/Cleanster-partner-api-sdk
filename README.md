@@ -595,7 +595,7 @@ CleansterXmlClient client = CleansterXmlClient.production("your-access-key");
 
 ### SOAP
 
-The SOAP SDK exposes all 56 Cleanster Partner API operations through a document/literal SOAP 1.1 interface backed by a WSDL and XSD schema. Ideal for enterprise systems that require SOAP-based integration. Internally it bridges to the Cleanster REST API via `SOAPTransport`.
+The SOAP SDK exposes all 62 Cleanster Partner API operations through a document/literal SOAP 1.1 interface backed by a WSDL and XSD schema. Ideal for enterprise systems that require SOAP-based integration. Internally it bridges to the Cleanster REST API via `SOAPTransport`.
 
 **Maven:**
 ```xml
@@ -2465,11 +2465,11 @@ Cleanster-partner-api-sdk/
 │
 ├── soap-sdk/                 Java 11+ SOAP 1.1 (document/literal) bridge over REST
 │   ├── wsdl/
-│   │   ├── cleanster.wsdl    Full WSDL — 56 operations across 9 services
+│   │   ├── cleanster.wsdl    Full WSDL — 62 operations across 9 services
 │   │   └── cleanster-types.xsd  XML Schema for all types
 │   ├── examples/             Ready-to-use SOAP envelope XML files
 │   ├── src/main/java/com/cleanster/soap/
-│   │   ├── CleansterSOAPClient.java  Main facade (56 operations)
+│   │   ├── CleansterSOAPClient.java  Main facade (62 operations)
 │   │   ├── SOAPTransport.java        HTTP/REST bridge
 │   │   ├── BookingService.java       17 booking operations
 │   │   ├── PropertyService.java      14 property operations
