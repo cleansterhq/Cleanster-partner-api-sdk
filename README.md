@@ -2,76 +2,86 @@
 
 <p align="center">
   <strong>Multi-language SDKs for the Cleanster Partner API</strong><br>
-  Integrate cleaning service automation into your platform in minutes.
+  Integrate professional cleaning service automation into your platform.
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/API-Cleanster%20Partner-brightgreen" alt="Cleanster Partner API">
   <img src="https://img.shields.io/badge/SDKs-7%20Languages-blue" alt="7 Languages">
-  <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
   <img src="https://img.shields.io/badge/Endpoints-53-orange" alt="53 Endpoints">
+  <img src="https://img.shields.io/badge/Tests-692%20passing-success" alt="692 Tests Passing">
+  <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
 </p>
+
+---
+
+## Table of Contents
+
+- [Available SDKs](#available-sdks)
+- [What the API Does](#what-the-api-does)
+- [Environments](#environments)
+- [Authentication](#authentication)
+- [Installation & Quick Start](#installation--quick-start)
+  - [Java](#java)
+  - [Python](#python)
+  - [TypeScript / Node.js](#typescript--nodejs)
+  - [Ruby](#ruby)
+  - [Go](#go)
+  - [PHP](#php)
+  - [C# / .NET](#c--net)
+- [Standard Response Format](#standard-response-format)
+- [Error Handling](#error-handling)
+- [All 53 Endpoints](#all-53-endpoints)
+  - [Users](#users-api)
+  - [Properties](#properties-api)
+  - [Bookings](#bookings-api)
+  - [Checklists](#checklists-api)
+  - [Payment Methods](#payment-methods-api)
+  - [Webhooks](#webhooks-api)
+  - [Blacklist](#blacklist-api)
+  - [Reference Data](#reference-data-api)
+- [Integration Workflow](#integration-workflow)
+- [Webhook Events](#webhook-events)
+- [Test Coupon Codes](#test-coupon-codes)
+- [Repository Structure](#repository-structure)
+- [Support](#support)
 
 ---
 
 ## Available SDKs
 
-| Language | Folder | Tests | Min Version | Package |
+| Language | Folder | Tests Passing | Min Version | Package Manager |
 |---|---|---|---|---|
-| [Java](#java) | [`java-sdk/`](./java-sdk) | 74 passing | Java 11+ | Maven / Gradle |
-| [Python](#python) | [`python-sdk/`](./python-sdk) | 99 passing | Python 3.8+ | pip |
-| [TypeScript / Node.js](#typescript) | [`typescript-sdk/`](./typescript-sdk) | 85 passing | Node.js 18+ | npm |
-| [Ruby](#ruby) | [`ruby-sdk/`](./ruby-sdk) | 119 passing | Ruby 2.7+ | gem |
-| [Go](#go) | [`go-sdk/`](./go-sdk) | 92 passing | Go 1.21+ | go get |
-| [PHP](#php) | [`php-sdk/`](./php-sdk) | 106 passing | PHP 8.1+ | Composer |
-| [C# / .NET](#c--net) | [`csharp-sdk/`](./csharp-sdk) | 107 passing | .NET 8.0+ | NuGet |
+| [Java](#java) | [`java-sdk/`](./java-sdk) | 74 | Java 11+ | Maven / Gradle |
+| [Python](#python) | [`python-sdk/`](./python-sdk) | 99 | Python 3.8+ | pip |
+| [TypeScript / Node.js](#typescript--nodejs) | [`typescript-sdk/`](./typescript-sdk) | 85 | Node.js 18+ | npm |
+| [Ruby](#ruby) | [`ruby-sdk/`](./ruby-sdk) | 119 | Ruby 2.7+ | gem |
+| [Go](#go) | [`go-sdk/`](./go-sdk) | 92 | Go 1.21+ | go get |
+| [PHP](#php) | [`php-sdk/`](./php-sdk) | 106 | PHP 8.1+ | Composer |
+| [C# / .NET](#c--net) | [`csharp-sdk/`](./csharp-sdk) | 107 | .NET 8.0+ | NuGet |
+
+**692 tests passing across all SDKs.**
 
 ---
 
-## Overview
+## What the API Does
 
-The Cleanster Partner API gives your platform full control over cleaning service operations:
+The Cleanster Partner API is a white-label backend for cleaning service platforms. It lets you embed fully-managed cleaning operations — booking scheduling, cleaner dispatch, payment processing, chat, inspections, and webhooks — into your own product without building any of that infrastructure yourself.
 
-- **Bookings** — create, reschedule, cancel, adjust hours, assign cleaners
-- **Properties** — manage locations, iCal calendar sync, preferred cleaner lists
-- **Users** — create accounts and manage per-user authentication tokens
-- **Checklists** — build reusable task lists and assign them to bookings
-- **Payments** — attach Stripe and PayPal payment methods
-- **Webhooks** — subscribe to real-time booking lifecycle events
-- **Blacklist** — block specific cleaners from your properties
-- **Reference Data** — services, plans, cleaning extras, cost estimates, available cleaners
+**Core capabilities:**
 
----
-
-## API Endpoints
-
-53 endpoints across 8 groups:
-
-| Group | Endpoints |
+| Capability | Description |
 |---|---|
-| Bookings | 17 |
-| Properties | 14 |
-| Other / Reference Data | 7 |
-| Payment Methods | 6 |
-| Checklists | 6 |
-| Webhooks | 4 |
-| Blacklist | 3 |
-| Users | 3 |
-
-Full documentation: [Cleanster Partner API on Postman](https://documenter.getpostman.com/view/26172658/2sAYdoF7ep)
-
----
-
-## Authentication
-
-Every request requires two HTTP headers:
-
-| Header | Description |
-|---|---|
-| `access-key` | Your static partner key — issued by Cleanster |
-| `token` | A per-user long-lived JWT — fetched via `GET /v1/user/access-token/{userId}` |
-
-Contact [partner@cleanster.com](mailto:partner@cleanster.com) to get your access key.
+| **User management** | Create end-user accounts and issue authenticated API tokens |
+| **Property management** | Register cleaning locations, sync iCal calendars, manage property-level cleaners |
+| **Booking lifecycle** | Schedule, reschedule, cancel, assign cleaners, adjust hours |
+| **Post-booking actions** | Pay expenses, add tips, submit feedback, view inspection reports |
+| **In-booking chat** | Send and delete messages during the service window |
+| **Checklists** | Create reusable task lists and attach them per-booking or per-property |
+| **Payment methods** | Attach Stripe cards and PayPal accounts to user profiles |
+| **Webhooks** | Receive real-time events for every stage of a booking |
+| **Blacklist** | Prevent specific cleaners from being assigned to your properties |
+| **Reference data** | Fetch service types, plans, pricing, extras, available cleaners |
 
 ---
 
@@ -82,14 +92,41 @@ Contact [partner@cleanster.com](mailto:partner@cleanster.com) to get your access
 | **Sandbox** | `https://partner-sandbox-dot-official-tidyio-project.ue.r.appspot.com/public` |
 | **Production** | `https://partner-dot-official-tidyio-project.ue.r.appspot.com/public` |
 
-All SDKs default to the **sandbox** environment. Switch to production when going live.
+All SDKs target **sandbox** by default. You explicitly select production at client construction time.
+
+**Sandbox behaviour:**
+- All bookings and users are isolated from production data
+- Payments are simulated — no real charges
+- Use the [test coupon codes](#test-coupon-codes) to validate discount logic
+- Webhooks fire in real time against sandbox events
 
 ---
 
-## Quick Install
+## Authentication
+
+Every request to the API requires **two** HTTP headers:
+
+| Header | Type | Description |
+|---|---|---|
+| `access-key` | Static string | Your partner key — issued by Cleanster, never changes |
+| `token` | JWT string | A per-user bearer token — fetched per user via the Users API |
+
+**Flow:**
+1. Cleanster issues you a single `access-key` for your platform.
+2. When a user signs up in your platform, call `POST /v1/user/account` to create their Cleanster account.
+3. Call `GET /v1/user/access-token/{userId}` to get a long-lived JWT for that user.
+4. Store the JWT securely in your backend. Pass it as the `token` header on all subsequent calls made on behalf of that user.
+5. The JWT can be validated at any time with `POST /v1/user/verify-jwt`.
+
+Contact [partner@cleanster.com](mailto:partner@cleanster.com) to obtain your `access-key`.
+
+---
+
+## Installation & Quick Start
 
 ### Java
 
+**Maven:**
 ```xml
 <dependency>
   <groupId>com.cleanster</groupId>
@@ -98,9 +135,38 @@ All SDKs default to the **sandbox** environment. Switch to production when going
 </dependency>
 ```
 
+**Gradle:**
+```groovy
+implementation 'com.cleanster:cleanster-sdk:1.0.0'
+```
+
+**Sandbox client:**
 ```java
-CleansterClient client = new CleansterClient("your-access-key", "user-token");
-ApiResponse<Booking> booking = client.bookings().createBooking(req);
+import com.cleanster.sdk.CleansterClient;
+import com.cleanster.sdk.model.*;
+
+CleansterClient client = CleansterClient.sandbox("your-access-key");
+client.setToken("user-jwt-token"); // set per-user token
+
+// Create a booking
+CreateBookingRequest req = new CreateBookingRequest();
+req.setDate("2025-09-15");
+req.setTime("10:00");
+req.setPropertyId(1004);
+req.setPlanId(2);
+req.setHours(3.0);
+req.setRoomCount(2);
+req.setBathroomCount(1);
+req.setExtraSupplies(false);
+req.setPaymentMethodId(55);
+
+ApiResponse<Booking> resp = client.bookings().createBooking(req);
+System.out.println("Booking ID: " + resp.getData().getId());
+```
+
+**Production client:**
+```java
+CleansterClient client = CleansterClient.production("your-access-key");
 ```
 
 [Full Java documentation →](./java-sdk/README.md)
@@ -113,26 +179,70 @@ ApiResponse<Booking> booking = client.bookings().createBooking(req);
 pip install cleanster
 ```
 
+**Sandbox client:**
 ```python
 from cleanster import CleansterClient
-client = CleansterClient(access_key="your-access-key", token="user-token")
-booking = client.bookings.create_booking(property_id=1004, date="2025-09-01", ...)
+
+client = CleansterClient.sandbox(access_key="your-access-key")
+client.token = "user-jwt-token"  # set per-user token
+
+# Create a booking
+response = client.bookings.create_booking({
+    "date": "2025-09-15",
+    "time": "10:00",
+    "propertyId": 1004,
+    "planId": 2,
+    "hours": 3.0,
+    "roomCount": 2,
+    "bathroomCount": 1,
+    "extraSupplies": False,
+    "paymentMethodId": 55,
+})
+print(f"Booking ID: {response.data['id']}")
+```
+
+**Production client:**
+```python
+client = CleansterClient.production(access_key="your-access-key")
 ```
 
 [Full Python documentation →](./python-sdk/README.md)
 
 ---
 
-### TypeScript
+### TypeScript / Node.js
 
 ```bash
 npm install cleanster
+# or
+yarn add cleanster
 ```
 
+**Sandbox client:**
 ```typescript
 import { CleansterClient } from 'cleanster';
-const client = new CleansterClient({ accessKey: 'your-access-key', token: 'user-token' });
-const booking = await client.bookings.createBooking({ propertyId: 1004, date: '2025-09-01', ... });
+
+const client = CleansterClient.sandbox({ accessKey: 'your-access-key' });
+client.setToken('user-jwt-token');  // set per-user token
+
+// Create a booking
+const response = await client.bookings.createBooking({
+  date: '2025-09-15',
+  time: '10:00',
+  propertyId: 1004,
+  planId: 2,
+  hours: 3.0,
+  roomCount: 2,
+  bathroomCount: 1,
+  extraSupplies: false,
+  paymentMethodId: 55,
+});
+console.log('Booking ID:', response.data.id);
+```
+
+**Production client:**
+```typescript
+const client = CleansterClient.production({ accessKey: 'your-access-key' });
 ```
 
 [Full TypeScript documentation →](./typescript-sdk/README.md)
@@ -141,13 +251,40 @@ const booking = await client.bookings.createBooking({ propertyId: 1004, date: '2
 
 ### Ruby
 
+**Gemfile:**
 ```ruby
 gem 'cleanster'
 ```
 
+```bash
+bundle install
+```
+
+**Sandbox client:**
 ```ruby
-client = Cleanster::Client.new(access_key: 'your-access-key', token: 'user-token')
-booking = client.bookings.create_booking(property_id: 1004, date: '2025-09-01', ...)
+require 'cleanster'
+
+client = Cleanster::Client.sandbox(access_key: 'your-access-key')
+client.token = 'user-jwt-token'  # set per-user token
+
+# Create a booking
+response = client.bookings.create_booking(
+  date: '2025-09-15',
+  time: '10:00',
+  property_id: 1004,
+  plan_id: 2,
+  hours: 3.0,
+  room_count: 2,
+  bathroom_count: 1,
+  extra_supplies: false,
+  payment_method_id: 55
+)
+puts "Booking ID: #{response.data['id']}"
+```
+
+**Production client:**
+```ruby
+client = Cleanster::Client.production(access_key: 'your-access-key')
 ```
 
 [Full Ruby documentation →](./ruby-sdk/README.md)
@@ -160,9 +297,44 @@ booking = client.bookings.create_booking(property_id: 1004, date: '2025-09-01', 
 go get github.com/cleanster/cleanster-go-sdk
 ```
 
+**Sandbox client:**
 ```go
-client := cleanster.NewClient("your-access-key", "user-token")
-resp, err := client.Bookings.CreateBooking(ctx, cleanster.CreateBookingRequest{...})
+package main
+
+import (
+    "context"
+    "fmt"
+    cleanster "github.com/cleanster/cleanster-go-sdk"
+)
+
+func main() {
+    client := cleanster.NewSandboxClient("your-access-key")
+    client.SetToken("user-jwt-token")  // set per-user token
+
+    ctx := context.Background()
+
+    // Create a booking
+    resp, err := client.Bookings.CreateBooking(ctx, cleanster.CreateBookingRequest{
+        Date:            "2025-09-15",
+        Time:            "10:00",
+        PropertyID:      1004,
+        PlanID:          2,
+        Hours:           3.0,
+        RoomCount:       2,
+        BathroomCount:   1,
+        ExtraSupplies:   false,
+        PaymentMethodID: 55,
+    })
+    if err != nil {
+        panic(err)
+    }
+    fmt.Println("Booking ID:", resp.Data.ID)
+}
+```
+
+**Production client:**
+```go
+client := cleanster.NewProductionClient("your-access-key")
 ```
 
 [Full Go documentation →](./go-sdk/README.md)
@@ -175,9 +347,34 @@ resp, err := client.Bookings.CreateBooking(ctx, cleanster.CreateBookingRequest{.
 composer require cleanster/cleanster-php-sdk
 ```
 
+**Sandbox client:**
 ```php
-$client = new CleansterClient('your-access-key', 'user-token');
-$booking = $client->bookings()->createBooking([...]);
+<?php
+require 'vendor/autoload.php';
+
+use Cleanster\CleansterClient;
+
+$client = CleansterClient::sandbox('your-access-key');
+$client->setToken('user-jwt-token');  // set per-user token
+
+// Create a booking
+$response = $client->bookings()->createBooking([
+    'date'            => '2025-09-15',
+    'time'            => '10:00',
+    'propertyId'      => 1004,
+    'planId'          => 2,
+    'hours'           => 3.0,
+    'roomCount'       => 2,
+    'bathroomCount'   => 1,
+    'extraSupplies'   => false,
+    'paymentMethodId' => 55,
+]);
+echo "Booking ID: " . $response->data->id;
+```
+
+**Production client:**
+```php
+$client = CleansterClient::production('your-access-key');
 ```
 
 [Full PHP documentation →](./php-sdk/README.md)
@@ -190,24 +387,1536 @@ $booking = $client->bookings()->createBooking([...]);
 dotnet add package Cleanster
 ```
 
+**Sandbox client:**
 ```csharp
-var client = new CleansterClient("your-access-key", "user-token");
-var booking = await client.Bookings.CreateBookingAsync(new CreateBookingRequest { ... });
+using Cleanster;
+
+var client = CleansterClient.Sandbox("your-access-key");
+client.SetToken("user-jwt-token");  // set per-user token
+
+// Create a booking
+var response = await client.Bookings.CreateBookingAsync(
+    date:            "2025-09-15",
+    time:            "10:00",
+    propertyId:      1004,
+    planId:          2,
+    hours:           3.0,
+    roomCount:       2,
+    bathroomCount:   1,
+    extraSupplies:   false,
+    paymentMethodId: 55
+);
+Console.WriteLine($"Booking ID: {response.Data?.GetProperty("id")}");
+```
+
+**Production client:**
+```csharp
+var client = CleansterClient.Production("your-access-key");
 ```
 
 [Full C# documentation →](./csharp-sdk/README.md)
 
 ---
 
-## Test Coupon Codes (Sandbox)
+## Standard Response Format
 
-| Code | Discount |
+Every API response — success or failure — uses the same envelope:
+
+```json
+{
+  "status":  200,
+  "message": "OK",
+  "data":    { ... }
+}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `status` | integer | HTTP-style status code (200, 400, 401, 403, 404, 500) |
+| `message` | string | Human-readable status description |
+| `data` | object or array | The response payload; `null` on errors |
+
+In all SDKs, this is surfaced as an `ApiResponse<T>` / `APIResponse[T]` object. Access `.data` for the payload, `.status` for the code, and `.message` for the text.
+
+---
+
+## Error Handling
+
+| HTTP Status | Meaning | Common Causes |
+|---|---|---|
+| `400 Bad Request` | Invalid input | Missing required fields, wrong data types, business rule violation |
+| `401 Unauthorized` | Auth failure | Missing or invalid `access-key` or `token` |
+| `403 Forbidden` | Permission denied | Token is valid but the resource doesn't belong to this user |
+| `404 Not Found` | Resource missing | Wrong booking ID, property ID, etc. |
+| `500 Internal Server Error` | Server error | Unexpected server-side failure |
+
+**Java:**
+```java
+try {
+    ApiResponse<Booking> resp = client.bookings().getBookingDetails(99999);
+} catch (ApiException e) {
+    System.err.println("Status: " + e.getStatusCode());
+    System.err.println("Message: " + e.getMessage());
+} catch (AuthException e) {
+    System.err.println("Authentication failed: " + e.getMessage());
+}
+```
+
+**Python:**
+```python
+from cleanster.exceptions import ApiException, AuthException
+
+try:
+    resp = client.bookings.get_booking_details(99999)
+except AuthException as e:
+    print(f"Auth error: {e}")
+except ApiException as e:
+    print(f"API error {e.status_code}: {e.message}")
+```
+
+**TypeScript:**
+```typescript
+import { ApiException, AuthException } from 'cleanster';
+
+try {
+  const resp = await client.bookings.getBookingDetails(99999);
+} catch (err) {
+  if (err instanceof AuthException) {
+    console.error('Auth failed:', err.message);
+  } else if (err instanceof ApiException) {
+    console.error(`API error ${err.statusCode}:`, err.message);
+  }
+}
+```
+
+**Go:**
+```go
+resp, err := client.Bookings.GetBookingDetails(ctx, 99999)
+if err != nil {
+    var apiErr *cleanster.CleansterError
+    if errors.As(err, &apiErr) {
+        fmt.Println("Status:", apiErr.StatusCode, "Message:", apiErr.Message)
+    }
+}
+```
+
+**C#:**
+```csharp
+try {
+    var resp = await client.Bookings.GetBookingDetailsAsync(99999);
+} catch (ApiException ex) {
+    Console.WriteLine($"Error {ex.StatusCode}: {ex.Message}");
+} catch (AuthException ex) {
+    Console.WriteLine($"Auth failed: {ex.Message}");
+}
+```
+
+---
+
+## All 53 Endpoints
+
+---
+
+### Users API
+
+Manage end-user accounts and issue authentication tokens.
+
+---
+
+#### `POST /v1/user/account` — Create User
+
+Create a new user account on behalf of one of your customers.
+
+**Request body:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `email` | string | yes | User's email address |
+| `firstName` | string | yes | First name |
+| `lastName` | string | yes | Last name |
+| `phone` | string | no | Phone number (E.164 format recommended) |
+
+**Response `data`:**
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | integer | Cleanster user ID — save this |
+| `email` | string | Email address |
+| `firstName` | string | First name |
+| `lastName` | string | Last name |
+| `phone` | string | Phone number |
+
+**Examples:**
+
+```java
+// Java
+CreateUserRequest req = new CreateUserRequest();
+req.setEmail("alice@example.com");
+req.setFirstName("Alice");
+req.setLastName("Smith");
+req.setPhone("+14155551234");
+ApiResponse<User> resp = client.users().createUser(req);
+int userId = resp.getData().getId(); // store this
+```
+
+```python
+# Python
+resp = client.users.create_user(
+    email="alice@example.com",
+    first_name="Alice",
+    last_name="Smith",
+    phone="+14155551234"
+)
+user_id = resp.data["id"]
+```
+
+```typescript
+// TypeScript
+const resp = await client.users.createUser({
+  email: 'alice@example.com',
+  firstName: 'Alice',
+  lastName: 'Smith',
+  phone: '+14155551234',
+});
+const userId = resp.data.id;
+```
+
+```go
+// Go
+resp, err := client.Users.CreateUser(ctx, cleanster.CreateUserRequest{
+    Email:     "alice@example.com",
+    FirstName: "Alice",
+    LastName:  "Smith",
+    Phone:     "+14155551234",
+})
+userID := resp.Data.ID
+```
+
+```csharp
+// C#
+var resp = await client.Users.CreateUserAsync(
+    email: "alice@example.com",
+    firstName: "Alice",
+    lastName: "Smith",
+    phone: "+14155551234"
+);
+```
+
+---
+
+#### `GET /v1/user/access-token/{userId}` — Fetch User Token
+
+Retrieve the long-lived JWT for a specific user. Store it securely and pass it as the `token` header on all calls made on behalf of this user.
+
+**Path parameter:** `userId` — integer user ID from Create User.
+
+**Response `data`:**
+
+| Field | Type | Description |
+|---|---|---|
+| `token` | string | Long-lived JWT for this user |
+
+**Examples:**
+
+```java
+ApiResponse<User> resp = client.users().fetchAccessToken(12345);
+String jwt = resp.getData().getToken();
+client.setToken(jwt);
+```
+
+```python
+resp = client.users.fetch_access_token(12345)
+client.token = resp.data["token"]
+```
+
+```typescript
+const resp = await client.users.fetchAccessToken(12345);
+client.setToken(resp.data.token);
+```
+
+```go
+resp, err := client.Users.FetchAccessToken(ctx, 12345)
+client.SetToken(resp.Data["token"].(string))
+```
+
+```csharp
+var resp = await client.Users.FetchAccessTokenAsync(12345);
+client.SetToken(resp.Data.GetProperty("token").GetString()!);
+```
+
+---
+
+#### `POST /v1/user/verify-jwt` — Verify JWT
+
+Check whether a JWT is valid and has not expired.
+
+**Request body:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `token` | string | yes | The JWT to validate |
+
+**Examples:**
+
+```python
+resp = client.users.verify_jwt("eyJhbGciOi...")
+print(resp.message)  # "OK" if valid
+```
+
+```typescript
+const resp = await client.users.verifyJwt({ token: 'eyJhbGciOi...' });
+```
+
+---
+
+### Properties API
+
+Manage the physical locations where cleaning services are delivered.
+
+---
+
+#### `GET /v1/properties` — List Properties
+
+**Query parameters:**
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `serviceId` | integer | no | Filter by service type. Omit to return all. |
+
+**Response `data`:** Array of property objects.
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | integer | Property ID |
+| `name` | string | Display name |
+| `address` | string | Street address |
+| `city` | string | City |
+| `country` | string | Country |
+| `roomCount` | integer | Number of rooms |
+| `bathroomCount` | integer | Number of bathrooms |
+| `serviceId` | integer | Associated service type |
+| `isEnabled` | boolean | Whether the property is active |
+
+**Examples:**
+
+```java
+ApiResponse<Object> resp = client.properties().listProperties(null);
+// Filter by service:
+ApiResponse<Object> filtered = client.properties().listProperties(1);
+```
+
+```python
+resp = client.properties.list_properties()
+resp = client.properties.list_properties(service_id=1)
+```
+
+```typescript
+const resp = await client.properties.listProperties();
+const filtered = await client.properties.listProperties(1);
+```
+
+---
+
+#### `POST /v1/properties` — Add Property
+
+**Request body:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `name` | string | yes | Display name |
+| `address` | string | yes | Street address |
+| `city` | string | yes | City |
+| `country` | string | yes | Country code or name |
+| `roomCount` | integer | yes | Number of rooms |
+| `bathroomCount` | integer | yes | Number of bathrooms |
+| `serviceId` | integer | yes | Service type ID (from `GET /v1/services`) |
+| `state` | string | no | State / province |
+| `zip` | string | no | Postal / ZIP code |
+| `timezone` | string | no | IANA timezone (e.g. `America/New_York`) |
+| `note` | string | no | Internal note visible to assigned cleaners |
+| `latitude` | number | no | GPS latitude |
+| `longitude` | number | no | GPS longitude |
+
+**Examples:**
+
+```java
+CreatePropertyRequest req = new CreatePropertyRequest();
+req.setName("Downtown Loft");
+req.setAddress("123 Main St");
+req.setCity("Atlanta");
+req.setCountry("US");
+req.setState("GA");
+req.setZip("30301");
+req.setRoomCount(2);
+req.setBathroomCount(1);
+req.setServiceId(1);
+req.setTimezone("America/New_York");
+ApiResponse<Property> resp = client.properties().addProperty(req);
+int propId = resp.getData().getId();
+```
+
+```python
+resp = client.properties.add_property({
+    "name": "Downtown Loft",
+    "address": "123 Main St",
+    "city": "Atlanta",
+    "country": "US",
+    "state": "GA",
+    "zip": "30301",
+    "roomCount": 2,
+    "bathroomCount": 1,
+    "serviceId": 1,
+    "timezone": "America/New_York",
+})
+property_id = resp.data["id"]
+```
+
+```typescript
+const resp = await client.properties.addProperty({
+  name: 'Downtown Loft',
+  address: '123 Main St',
+  city: 'Atlanta',
+  country: 'US',
+  roomCount: 2,
+  bathroomCount: 1,
+  serviceId: 1,
+});
+```
+
+```go
+lat := 33.749
+lon := -84.388
+resp, err := client.Properties.AddProperty(ctx, cleanster.CreatePropertyRequest{
+    Name:          "Downtown Loft",
+    Address:       "123 Main St",
+    City:          "Atlanta",
+    Country:       "US",
+    State:         "GA",
+    Zip:           "30301",
+    RoomCount:     2,
+    BathroomCount: 1,
+    ServiceID:     1,
+    Timezone:      "America/New_York",
+    Latitude:      &lat,
+    Longitude:     &lon,
+})
+```
+
+```csharp
+var resp = await client.Properties.AddPropertyAsync(
+    name: "Downtown Loft",
+    address: "123 Main St",
+    city: "Atlanta",
+    country: "US",
+    roomCount: 2,
+    bathroomCount: 1,
+    serviceId: 1,
+    state: "GA",
+    zip: "30301",
+    timezone: "America/New_York"
+);
+```
+
+---
+
+#### `GET /v1/properties/{propertyId}` — Get Property
+#### `PUT /v1/properties/{propertyId}` — Update Property
+#### `DELETE /v1/properties/{propertyId}` — Delete Property
+
+Update and delete use the same fields as Add Property. Delete is permanent.
+
+```python
+# Get
+resp = client.properties.get_property(1004)
+
+# Update
+resp = client.properties.update_property(1004, {
+    "name": "Uptown Suite",
+    "address": "456 Peach St",
+    "city": "Atlanta",
+    "country": "US",
+    "roomCount": 3,
+    "bathroomCount": 2,
+    "serviceId": 1,
+})
+
+# Delete
+resp = client.properties.delete_property(1004)
+```
+
+---
+
+#### `PUT /v1/properties/{propertyId}/additional-information` — Update Additional Information
+
+Update freeform supplemental fields on a property.
+
+```typescript
+await client.properties.updateAdditionalInformation(1004, {
+  parkingInstructions: 'Use the visitor lot on the left.',
+  accessCode: '1234#',
+});
+```
+
+---
+
+#### `POST /v1/properties/{propertyId}/enable-disable` — Toggle Property
+
+Enable or disable a property. Disabled properties cannot receive new bookings.
+
+**Request body:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `enabled` | boolean | yes | `true` to enable, `false` to disable |
+
+```java
+client.properties().enableOrDisableProperty(1004, new EnableDisableRequest(false));
+```
+
+```python
+client.properties.enable_or_disable_property(1004, enabled=False)
+```
+
+---
+
+#### `GET /v1/properties/{propertyId}/cleaners` — List Property Cleaners
+
+Returns the pool of cleaners associated with this property.
+
+#### `POST /v1/properties/{propertyId}/cleaners` — Add Cleaner to Property
+
+Add a cleaner to a property's preferred pool.
+
+**Request body:** `{ "cleanerId": 789 }`
+
+#### `DELETE /v1/properties/{propertyId}/cleaners/{cleanerId}` — Remove Cleaner from Property
+
+```python
+# List
+resp = client.properties.get_property_cleaners(1004)
+
+# Add
+resp = client.properties.add_cleaner_to_property(1004, cleaner_id=789)
+
+# Remove
+resp = client.properties.remove_cleaner_from_property(1004, cleaner_id=789)
+```
+
+---
+
+#### `PUT /v1/properties/{propertyId}/ical` — Set iCal Link
+
+Sync a property's booking calendar with an external iCal feed (e.g. Airbnb, VRBO).
+
+**Request body:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `icalLink` | string | yes | Full HTTPS URL of the iCal feed |
+
+#### `GET /v1/properties/{propertyId}/ical` — Get iCal Link
+#### `DELETE /v1/properties/{propertyId}/ical` — Remove iCal Link
+
+```python
+# Set
+client.properties.set_ical_link(1004, ical_link="https://www.airbnb.com/calendar/ical/abc123.ics")
+
+# Get
+resp = client.properties.get_ical_link(1004)
+
+# Remove
+client.properties.delete_ical_link(1004, ical_link="https://www.airbnb.com/...")
+```
+
+---
+
+#### `PUT /v1/properties/{propertyId}/checklist/{checklistId}` — Set Default Checklist
+
+Assign a checklist as the default for all future bookings on this property.
+
+**Query parameter:** `updateUpcomingBookings` — boolean. Set to `true` to also update already-scheduled (not yet completed) bookings.
+
+```java
+client.properties().setDefaultChecklist(1004, 77, true);
+```
+
+```python
+client.properties.set_default_checklist(1004, checklist_id=77, update_upcoming_bookings=True)
+```
+
+```typescript
+await client.properties.setDefaultChecklist(1004, 77, true);
+```
+
+---
+
+### Bookings API
+
+Manage the full lifecycle of cleaning appointments.
+
+---
+
+#### `GET /v1/bookings` — List Bookings
+
+**Query parameters:**
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `pageNo` | integer | no | Page number, 1-based. Defaults to 1. |
+| `status` | string | no | Filter: `OPEN`, `CLEANER_ASSIGNED`, `COMPLETED`, `CANCELLED`, `REMOVED` |
+
+**Response `data`:** Array of booking objects.
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | integer | Booking ID |
+| `status` | string | Current status |
+| `date` | string | Service date (`YYYY-MM-DD`) |
+| `time` | string | Start time (`HH:mm`) |
+| `hours` | number | Duration in hours |
+| `cost` | number | Total cost in account currency |
+| `propertyId` | integer | Associated property |
+| `cleanerId` | integer or null | Assigned cleaner's user ID |
+| `planId` | integer | Plan used for this booking |
+| `roomCount` | integer | Rooms cleaned |
+| `bathroomCount` | integer | Bathrooms cleaned |
+| `extraSupplies` | boolean | Whether supplies are included |
+| `paymentMethodId` | integer | Payment method charged |
+
+**Examples:**
+
+```java
+ApiResponse<Object> all   = client.bookings().getBookings(1, null);
+ApiResponse<Object> open  = client.bookings().getBookings(1, "OPEN");
+ApiResponse<Object> done  = client.bookings().getBookings(1, "COMPLETED");
+```
+
+```python
+all_bookings  = client.bookings.get_bookings()
+open_bookings = client.bookings.get_bookings(status="OPEN")
+page2         = client.bookings.get_bookings(page_no=2, status="COMPLETED")
+```
+
+```typescript
+const all   = await client.bookings.getBookings();
+const open  = await client.bookings.getBookings(1, 'OPEN');
+const done  = await client.bookings.getBookings(1, 'COMPLETED');
+```
+
+```go
+all,  err := client.Bookings.GetBookings(ctx, cleanster.GetBookingsParams{})
+open, err := client.Bookings.GetBookings(ctx, cleanster.GetBookingsParams{Status: "OPEN"})
+pageNo := 2
+p2,   err := client.Bookings.GetBookings(ctx, cleanster.GetBookingsParams{PageNo: &pageNo})
+```
+
+```csharp
+var all  = await client.Bookings.GetBookingsAsync();
+var open = await client.Bookings.GetBookingsAsync(status: "OPEN");
+var p2   = await client.Bookings.GetBookingsAsync(pageNo: 2, status: "COMPLETED");
+```
+
+---
+
+#### `POST /v1/bookings/create` — Create Booking
+
+Schedule a new cleaning appointment.
+
+**Request body:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `date` | string | yes | Service date in `YYYY-MM-DD` format |
+| `time` | string | yes | Start time in `HH:mm` 24-hour format |
+| `propertyId` | integer | yes | ID of the property to clean |
+| `planId` | integer | yes | Cleaning plan ID (from `GET /v1/plans`) |
+| `hours` | number | yes | Duration (from `GET /v1/recommended-hours`) |
+| `roomCount` | integer | yes | Number of rooms |
+| `bathroomCount` | integer | yes | Number of bathrooms |
+| `extraSupplies` | boolean | yes | `true` to add cleaning supplies |
+| `paymentMethodId` | integer | yes | Saved payment method ID |
+| `couponCode` | string | no | Discount coupon code |
+| `extras` | integer[] | no | Array of extra service IDs (from `GET /v1/cleaning-extras`) |
+
+**Examples:**
+
+```java
+CreateBookingRequest req = new CreateBookingRequest();
+req.setDate("2025-09-15");
+req.setTime("09:00");
+req.setPropertyId(1004);
+req.setPlanId(2);
+req.setHours(3.0);
+req.setRoomCount(2);
+req.setBathroomCount(1);
+req.setExtraSupplies(false);
+req.setPaymentMethodId(55);
+req.setCouponCode("20POFF");
+req.setExtras(List.of(3, 7));   // oven cleaning + inside fridge
+ApiResponse<Booking> resp = client.bookings().createBooking(req);
+```
+
+```python
+resp = client.bookings.create_booking({
+    "date": "2025-09-15",
+    "time": "09:00",
+    "propertyId": 1004,
+    "planId": 2,
+    "hours": 3.0,
+    "roomCount": 2,
+    "bathroomCount": 1,
+    "extraSupplies": False,
+    "paymentMethodId": 55,
+    "couponCode": "20POFF",
+    "extras": [3, 7],
+})
+booking_id = resp.data["id"]
+```
+
+```typescript
+const resp = await client.bookings.createBooking({
+  date: '2025-09-15',
+  time: '09:00',
+  propertyId: 1004,
+  planId: 2,
+  hours: 3.0,
+  roomCount: 2,
+  bathroomCount: 1,
+  extraSupplies: false,
+  paymentMethodId: 55,
+  couponCode: '20POFF',
+  extras: [3, 7],
+});
+```
+
+```ruby
+resp = client.bookings.create_booking(
+  date: '2025-09-15',
+  time: '09:00',
+  property_id: 1004,
+  plan_id: 2,
+  hours: 3.0,
+  room_count: 2,
+  bathroom_count: 1,
+  extra_supplies: false,
+  payment_method_id: 55,
+  coupon_code: '20POFF'
+)
+```
+
+---
+
+#### `GET /v1/bookings/{bookingId}` — Get Booking Details
+
+Returns the full booking object. Same fields as listed in [List Bookings](#get-v1bookings--list-bookings).
+
+```python
+resp = client.bookings.get_booking_details(16459)
+print(resp.data["status"])  # "CLEANER_ASSIGNED"
+```
+
+---
+
+#### `POST /v1/bookings/{bookingId}/cancel` — Cancel Booking
+
+**Request body:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `reason` | string | no | Cancellation reason (shown to cleaner) |
+
+```java
+CancelBookingRequest req = new CancelBookingRequest();
+req.setReason("Customer rescheduled");
+client.bookings().cancelBooking(16459, req);
+```
+
+```python
+client.bookings.cancel_booking(16459, reason="Customer rescheduled")
+```
+
+---
+
+#### `POST /v1/bookings/{bookingId}/reschedule` — Reschedule Booking
+
+Move the booking to a new date and time.
+
+**Request body:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `date` | string | yes | New date (`YYYY-MM-DD`) |
+| `time` | string | yes | New start time (`HH:mm`) |
+
+```typescript
+await client.bookings.rescheduleBooking(16459, {
+  date: '2025-09-20',
+  time: '14:00',
+});
+```
+
+```go
+_, err = client.Bookings.RescheduleBooking(ctx, 16459, cleanster.RescheduleBookingRequest{
+    Date: "2025-09-20",
+    Time: "14:00",
+})
+```
+
+---
+
+#### `POST /v1/bookings/{bookingId}/cleaner` — Assign Cleaner
+
+Manually assign a specific cleaner to a booking. The cleaner must be in the property's cleaner pool.
+
+**Request body:** `{ "cleanerId": 789 }`
+
+#### `DELETE /v1/bookings/{bookingId}/cleaner` — Remove Assigned Cleaner
+
+Unassign the current cleaner; the booking returns to `OPEN` status.
+
+```python
+# Assign
+client.bookings.assign_cleaner(16459, cleaner_id=789)
+
+# Unassign
+client.bookings.remove_assigned_cleaner(16459)
+```
+
+---
+
+#### `POST /v1/bookings/{bookingId}/hours` — Adjust Hours
+
+Change the duration of a booking.
+
+**Request body:** `{ "hours": 4.5 }`
+
+```csharp
+await client.Bookings.AdjustHoursAsync(16459, hours: 4.5);
+```
+
+---
+
+#### `POST /v1/bookings/{bookingId}/expenses` — Pay Expenses
+
+Pay outstanding balance-on-completion charges. Can be called before the booking completes and up to 72 hours after.
+
+**Request body:** `{ "paymentMethodId": 55 }`
+
+```java
+PayExpensesRequest req = new PayExpensesRequest();
+req.setPaymentMethodId(55);
+client.bookings().payExpenses(16459, req);
+```
+
+---
+
+#### `GET /v1/bookings/{bookingId}/inspection` — Get Inspection Report
+#### `GET /v1/bookings/{bookingId}/inspection/details` — Get Detailed Inspection
+
+Retrieve photos, notes, and scores from the post-booking inspection.
+
+```python
+report  = client.bookings.get_booking_inspection(16459)
+details = client.bookings.get_booking_inspection_details(16459)
+```
+
+---
+
+#### `PUT /v1/bookings/{bookingId}/checklist/{checklistId}` — Assign Checklist to Booking
+
+Override the property's default checklist for this specific booking only.
+
+```typescript
+await client.bookings.assignChecklistToBooking(16459, 77);
+```
+
+```go
+_, err = client.Bookings.AssignChecklistToBooking(ctx, 16459, 77)
+```
+
+---
+
+#### `POST /v1/bookings/{bookingId}/feedback` — Submit Feedback
+
+Submit a star rating and optional written comment after a booking completes.
+
+**Request body:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `rating` | integer | yes | Star rating, 1–5 |
+| `comment` | string | no | Written feedback |
+
+```python
+client.bookings.submit_feedback(16459, rating=5, comment="Spotless — great job!")
+```
+
+```csharp
+await client.Bookings.SubmitFeedbackAsync(16459, rating: 5, comment: "Spotless!");
+```
+
+---
+
+#### `POST /v1/bookings/{bookingId}/tip` — Add Tip
+
+Add a gratuity for the cleaner. Must be called within 72 hours of booking completion.
+
+**Request body:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `amount` | number | yes | Tip amount in account currency |
+| `paymentMethodId` | integer | yes | Payment method to charge |
+
+```typescript
+await client.bookings.addTip(16459, {
+  amount: 10.00,
+  paymentMethodId: 55,
+});
+```
+
+---
+
+#### `GET /v1/bookings/{bookingId}/chat` — Get Chat Messages
+
+Retrieve the chat thread for a booking. Chat is available within ±24 hours of the booking start time. For bookings in an indefinitely-hanging state, there is no time restriction.
+
+**Response `data`:** Array of message objects.
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | string | Message ID |
+| `message` | string | Message text |
+| `sentBy` | string | `PARTNER`, `CLEANER`, or `SYSTEM` |
+| `sentAt` | string | ISO 8601 timestamp |
+| `isDeleted` | boolean | Whether this message has been deleted |
+
+#### `POST /v1/bookings/{bookingId}/chat` — Send Chat Message
+
+**Request body:** `{ "message": "Your cleaner is on the way!" }`
+
+#### `DELETE /v1/bookings/{bookingId}/chat/{messageId}` — Delete Chat Message
+
+```java
+// Get
+ApiResponse<Object> chat = client.bookings().getChat(17142);
+
+// Send
+SendMessageRequest msg = new SendMessageRequest();
+msg.setMessage("Your cleaner is 10 minutes away.");
+client.bookings().sendMessage(17142, msg);
+
+// Delete
+client.bookings().deleteMessage(17142, "msg-abc-123");
+```
+
+```python
+# Get
+chat = client.bookings.get_chat(17142)
+
+# Send
+client.bookings.send_message(17142, message="Your cleaner is 10 minutes away.")
+
+# Delete
+client.bookings.delete_message(17142, "msg-abc-123")
+```
+
+---
+
+### Checklists API
+
+Create and manage reusable cleaning task lists that can be assigned per-property or per-booking.
+
+---
+
+#### `GET /v1/checklist` — List Checklists
+
+Returns all checklists in the partner account.
+
+#### `GET /v1/checklist/{checklistId}` — Get Checklist
+
+**Response `data`:**
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | integer | Checklist ID |
+| `name` | string | Checklist name |
+| `items` | array | List of `ChecklistItem` objects |
+
+**`ChecklistItem` fields:**
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | integer | Item ID |
+| `description` | string | Task description shown to cleaner |
+| `isCompleted` | boolean | Whether the cleaner marked it done |
+| `imageUrl` | string or null | Photo proof URL (if uploaded by cleaner) |
+
+---
+
+#### `POST /v1/checklist` — Create Checklist
+
+**Request body:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `name` | string | yes | Checklist name |
+| `items` | string[] | yes | Array of task description strings |
+
+**Examples:**
+
+```java
+CreateChecklistRequest req = new CreateChecklistRequest();
+req.setName("Standard Deep Clean");
+req.setItems(List.of(
+    "Vacuum all carpets",
+    "Mop hard floors",
+    "Wipe down all surfaces",
+    "Clean oven interior",
+    "Scrub bathrooms"
+));
+ApiResponse<Checklist> resp = client.checklists().createChecklist(req);
+int checklistId = resp.getData().getId();
+```
+
+```python
+resp = client.checklists.create_checklist(
+    name="Standard Deep Clean",
+    items=[
+        "Vacuum all carpets",
+        "Mop hard floors",
+        "Wipe down all surfaces",
+        "Clean oven interior",
+        "Scrub bathrooms",
+    ]
+)
+checklist_id = resp.data["id"]
+```
+
+```typescript
+const resp = await client.checklists.createChecklist({
+  name: 'Standard Deep Clean',
+  items: [
+    'Vacuum all carpets',
+    'Mop hard floors',
+    'Wipe down all surfaces',
+    'Clean oven interior',
+    'Scrub bathrooms',
+  ],
+});
+```
+
+```go
+resp, err := client.Checklists.CreateChecklist(ctx, cleanster.CreateChecklistRequest{
+    Name:  "Standard Deep Clean",
+    Items: []string{"Vacuum all carpets", "Mop hard floors"},
+})
+```
+
+```ruby
+resp = client.checklists.create_checklist(
+  name: 'Standard Deep Clean',
+  items: ['Vacuum all carpets', 'Mop hard floors', 'Scrub bathrooms']
+)
+```
+
+---
+
+#### `PUT /v1/checklist/{checklistId}` — Update Checklist
+
+Same body as Create Checklist. Replaces the entire checklist.
+
+#### `DELETE /v1/checklist/{checklistId}` — Delete Checklist
+
+```python
+# Update
+client.checklists.update_checklist(77, name="Deep Clean v2", items=["Vacuum", "Mop", "Polish"])
+
+# Delete
+client.checklists.delete_checklist(77)
+```
+
+---
+
+### Payment Methods API
+
+Manage Stripe card and PayPal payment methods for a user. Payment methods are attached to the user whose `token` is set on the client.
+
+---
+
+#### `GET /v1/payment-methods/setup-intent-details` — Get Stripe Setup Intent
+
+Returns the Stripe client secret needed to tokenize a card in your frontend using Stripe.js.
+
+**Response `data`:**
+
+| Field | Type | Description |
+|---|---|---|
+| `clientSecret` | string | Stripe Setup Intent client secret |
+
+**Flow:**
+1. Call this endpoint from your server.
+2. Pass the `clientSecret` to your frontend.
+3. Use `stripe.confirmCardSetup(clientSecret, ...)` in Stripe.js.
+4. On success, Stripe.js returns a `paymentMethod.id` string (e.g. `pm_xxxxx`).
+5. Pass that string to `POST /v1/payment-methods`.
+
+```typescript
+// Server-side: get the secret
+const { data } = await client.paymentMethods.getSetupIntentDetails();
+const clientSecret = data.clientSecret;
+
+// After Stripe.js confirms card setup on the frontend:
+await client.paymentMethods.addPaymentMethod('pm_xxxxx');
+```
+
+```python
+resp = client.payment_methods.get_setup_intent_details()
+client_secret = resp.data["clientSecret"]
+
+# After Stripe.js returns the payment method ID:
+client.payment_methods.add_payment_method({"paymentMethodId": "pm_xxxxx"})
+```
+
+---
+
+#### `GET /v1/payment-methods/paypal-client-token` — Get PayPal Client Token
+
+Returns a one-time token for the Braintree/PayPal JS SDK to authorize PayPal Vault.
+
+**Response `data`:**
+
+| Field | Type | Description |
+|---|---|---|
+| `clientToken` | string | PayPal Braintree client token |
+
+---
+
+#### `POST /v1/payment-methods` — Save Payment Method
+
+Save a tokenized payment method to the user's profile.
+
+**Request body:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `paymentMethodId` | string | yes | Stripe `pm_xxx` token or PayPal nonce from client SDK |
+
+```java
+AddPaymentMethodRequest req = new AddPaymentMethodRequest();
+req.setPaymentMethodId("pm_1OjvDE2eZvKYlo2C3hzIwdpz");
+client.paymentMethods().addPaymentMethod(req);
+```
+
+```go
+resp, err := client.PaymentMethods.AddPaymentMethod(ctx, cleanster.AddPaymentMethodRequest{
+    PaymentMethodID: "pm_1OjvDE2eZvKYlo2C3hzIwdpz",
+})
+```
+
+---
+
+#### `GET /v1/payment-methods` — List Payment Methods
+
+Returns all saved payment methods for the current user.
+
+**Response `data`:** Array of payment method objects.
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | integer | Internal payment method ID (used for booking and tipping) |
+| `type` | string | `card` or `paypal` |
+| `lastFour` | string | Last 4 digits (cards only) |
+| `brand` | string | `visa`, `mastercard`, `amex`, etc. |
+| `isDefault` | boolean | Whether this is the default method |
+
+---
+
+#### `PUT /v1/payment-methods/{paymentMethodId}/default` — Set Default Payment Method
+
+Mark a payment method as the default for this user.
+
+#### `DELETE /v1/payment-methods/{paymentMethodId}` — Delete Payment Method
+
+```python
+# List
+methods = client.payment_methods.get_payment_methods()
+
+# Set default
+client.payment_methods.set_default_payment_method(55)
+
+# Delete
+client.payment_methods.delete_payment_method(55)
+```
+
+```csharp
+// List
+var methods = await client.PaymentMethods.GetPaymentMethodsAsync();
+
+// Set default
+await client.PaymentMethods.SetDefaultPaymentMethodAsync(55);
+
+// Delete
+await client.PaymentMethods.DeletePaymentMethodAsync(55);
+```
+
+---
+
+### Webhooks API
+
+Subscribe to real-time events for booking lifecycle changes. When a subscribed event fires, Cleanster sends an HTTP POST to your endpoint with a JSON payload.
+
+---
+
+#### `GET /v1/webhooks` — List Webhooks
+
+Returns all registered webhook endpoints.
+
+#### `POST /v1/webhooks` — Create Webhook
+
+**Request body:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `url` | string | yes | HTTPS URL to receive the POST |
+| `event` | string | yes | Event name to subscribe to (see [Webhook Events](#webhook-events)) |
+
+#### `PUT /v1/webhooks/{webhookId}` — Update Webhook
+
+Same body as Create Webhook.
+
+#### `DELETE /v1/webhooks/{webhookId}` — Delete Webhook
+
+**Examples:**
+
+```java
+CreateWebhookRequest req = new CreateWebhookRequest();
+req.setUrl("https://api.yourplatform.com/hooks/cleanster");
+req.setEvent("booking.completed");
+client.webhooks().createWebhook(req);
+```
+
+```python
+client.webhooks.create_webhook({
+    "url": "https://api.yourplatform.com/hooks/cleanster",
+    "event": "booking.completed"
+})
+```
+
+```typescript
+await client.webhooks.createWebhook({
+  url: 'https://api.yourplatform.com/hooks/cleanster',
+  event: 'booking.completed',
+});
+```
+
+```go
+resp, err := client.Webhooks.CreateWebhook(ctx, cleanster.CreateWebhookRequest{
+    URL:   "https://api.yourplatform.com/hooks/cleanster",
+    Event: "booking.completed",
+})
+```
+
+```csharp
+await client.Webhooks.CreateWebhookAsync(
+    url:       "https://api.yourplatform.com/hooks/cleanster",
+    eventType: "booking.completed"
+);
+```
+
+---
+
+### Blacklist API
+
+Prevent specific cleaners from being assigned to any of your bookings. Blacklisted cleaners are skipped during both manual and automatic assignment.
+
+---
+
+#### `GET /v1/blacklist/cleaner` — List Blacklisted Cleaners
+#### `POST /v1/blacklist/cleaner` — Add to Blacklist
+
+**Request body:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `cleanerId` | integer | yes | The cleaner's user ID |
+| `reason` | string | no | Internal reason for blacklisting |
+
+#### `DELETE /v1/blacklist/cleaner` — Remove from Blacklist
+
+**Request body:** `{ "cleanerId": 789 }`
+
+**Examples:**
+
+```java
+// Add
+BlacklistRequest req = new BlacklistRequest();
+req.setCleanerId(789);
+req.setReason("Repeated late arrivals");
+client.blacklist().addToBlacklist(req);
+
+// Remove
+BlacklistRequest removeReq = new BlacklistRequest();
+removeReq.setCleanerId(789);
+client.blacklist().removeFromBlacklist(removeReq);
+```
+
+```python
+# Add
+client.blacklist.add_to_blacklist(cleaner_id=789, reason="Repeated late arrivals")
+
+# List
+resp = client.blacklist.list_blacklisted_cleaners()
+
+# Remove
+client.blacklist.remove_from_blacklist(cleaner_id=789)
+```
+
+```typescript
+await client.blacklist.addToBlacklist({ cleanerId: 789, reason: 'Repeated late arrivals' });
+await client.blacklist.removeFromBlacklist({ cleanerId: 789 });
+```
+
+---
+
+### Reference Data API
+
+Fetch the lookup data required to build booking flows — service types, plans, pricing estimates, cleaning extras, and available cleaners.
+
+---
+
+#### `GET /v1/services` — Get Service Types
+
+Returns all cleaning service types available on your partner account (e.g., Residential, Airbnb, Office).
+
+```python
+services = client.other.get_services()
+# Each item: { "id": 1, "name": "Residential" }
+```
+
+---
+
+#### `GET /v1/plans` — Get Plans
+
+Returns available booking plans (e.g., Regular, Deep Clean, Move-In/Out) for a given property.
+
+**Query parameter:** `propertyId` — integer, required.
+
+```typescript
+const plans = await client.other.getPlans(1004);
+// Each plan: { "id": 2, "name": "Regular Clean", "pricePerHour": 35 }
+```
+
+---
+
+#### `GET /v1/recommended-hours` — Get Recommended Hours
+
+Get the system-recommended number of cleaning hours based on property size. Use this value as the `hours` field when creating a booking.
+
+**Query parameters:**
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `propertyId` | integer | yes | Property ID |
+| `roomCount` | integer | yes | Number of rooms |
+| `bathroomCount` | integer | yes | Number of bathrooms |
+
+```java
+ApiResponse<Object> resp = client.other().getRecommendedHours(1004, 1, 2);
+// resp.getData() -> { "hours": 3.0 }
+```
+
+```python
+resp = client.other.get_recommended_hours(
+    property_id=1004, room_count=2, bathroom_count=1
+)
+recommended_hours = resp.data["hours"]
+```
+
+```go
+resp, err := client.Other.GetRecommendedHours(ctx, 1004, 1, 2)
+```
+
+---
+
+#### `POST /v1/cost-estimate` — Get Cost Estimate
+
+Calculate the total price for a potential booking before creating it.
+
+**Request body:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `propertyId` | integer | yes | Property ID |
+| `planId` | integer | yes | Plan ID |
+| `hours` | number | yes | Duration in hours |
+| `couponCode` | string | no | Discount coupon to apply |
+| `extras` | integer[] | no | Extra service IDs |
+
+**Response `data`:**
+
+| Field | Type | Description |
+|---|---|---|
+| `total` | number | Total price in account currency |
+| `discount` | number | Discount applied (0 if no coupon) |
+| `subtotal` | number | Price before discount |
+
+```python
+resp = client.other.get_cost_estimate({
+    "propertyId": 1004,
+    "planId": 2,
+    "hours": 3.0,
+    "couponCode": "20POFF",
+    "extras": [3],
+})
+print(f"Total: ${resp.data['total']}")
+```
+
+```typescript
+const estimate = await client.other.getCostEstimate({
+  propertyId: 1004,
+  planId: 2,
+  hours: 3.0,
+  couponCode: '20POFF',
+});
+console.log('Total:', estimate.data.total);
+```
+
+---
+
+#### `GET /v1/cleaning-extras/{serviceId}` — Get Cleaning Extras
+
+Returns available add-on services for a given service type (e.g., inside oven, inside fridge, laundry).
+
+```java
+ApiResponse<Object> extras = client.other().getCleaningExtras(1);
+// Each extra: { "id": 3, "name": "Oven Cleaning", "price": 25 }
+```
+
+---
+
+#### `POST /v1/available-cleaners` — Get Available Cleaners
+
+Find cleaners available for a specific property, date, and time slot. Use the results to offer manual cleaner selection to your users.
+
+**Request body:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `propertyId` | integer | yes | Property ID |
+| `date` | string | yes | Desired date (`YYYY-MM-DD`) |
+| `time` | string | yes | Desired start time (`HH:mm`) |
+
+```python
+resp = client.other.get_available_cleaners({
+    "propertyId": 1004,
+    "date": "2025-09-15",
+    "time": "09:00",
+})
+for cleaner in resp.data:
+    print(cleaner["id"], cleaner["firstName"], cleaner["lastName"])
+```
+
+```typescript
+const resp = await client.other.getAvailableCleaners({
+  propertyId: 1004,
+  date: '2025-09-15',
+  time: '09:00',
+});
+```
+
+---
+
+#### `GET /v1/coupons` — Get Coupon Codes
+
+Returns all valid coupon codes available for use at booking creation.
+
+```python
+resp = client.other.get_coupons()
+for coupon in resp.data:
+    print(coupon["code"], coupon["discount"])
+```
+
+---
+
+## Integration Workflow
+
+Here is the recommended end-to-end flow for a new user booking their first cleaning:
+
+```
+1. [Your backend] POST /v1/user/account          → create Cleanster user → save userId
+2. [Your backend] GET  /v1/user/access-token/{userId}  → save JWT token
+3. [Your backend] GET  /v1/services               → show service type picker
+4. [Your backend] POST /v1/properties             → create property for user
+5. [Your backend] GET  /v1/payment-methods/setup-intent-details → get Stripe client secret
+6. [Your frontend] Stripe.js confirmCardSetup()   → tokenize card → get pm_xxx
+7. [Your backend] POST /v1/payment-methods        → save tokenized card
+8. [Your backend] GET  /v1/plans?propertyId=X     → show plan picker
+9. [Your backend] GET  /v1/recommended-hours      → pre-fill hours field
+10.[Your backend] POST /v1/cost-estimate          → show price preview
+11.[Your backend] POST /v1/bookings/create        → create booking → save bookingId
+12.[Webhook]      booking.cleaner_assigned        → notify user cleaner is confirmed
+13.[Webhook]      booking.completed               → trigger tip / feedback prompts
+```
+
+---
+
+## Webhook Events
+
+Register webhooks via `POST /v1/webhooks` to receive real-time notifications.
+
+| Event | Fires When |
 |---|---|
-| `100POFF` | 100% off |
-| `50POFF` | 50% off |
-| `20POFF` | 20% off |
-| `200OFF` | $200 off |
-| `100OFF` | $100 off |
+| `booking.created` | A new booking is successfully scheduled |
+| `booking.cleaner_assigned` | A cleaner is assigned to a booking |
+| `booking.cleaner_removed` | The assigned cleaner is removed |
+| `booking.rescheduled` | A booking is moved to a new date/time |
+| `booking.started` | The cleaner checks in and the service begins |
+| `booking.completed` | The service is marked as completed |
+| `booking.cancelled` | A booking is cancelled |
+| `booking.feedback_submitted` | A rating is submitted for a completed booking |
+
+**Webhook payload structure:**
+
+```json
+{
+  "event": "booking.completed",
+  "bookingId": 16459,
+  "propertyId": 1004,
+  "timestamp": "2025-09-15T13:45:00Z",
+  "data": { }
+}
+```
+
+Your endpoint should return HTTP `200` within 5 seconds to acknowledge receipt. Failed deliveries are retried with exponential backoff.
+
+---
+
+## Test Coupon Codes
+
+Use these in the **sandbox** environment to test discount logic. These codes are not valid in production.
+
+| Code | Discount Type | Value |
+|---|---|---|
+| `100POFF` | Percentage | 100% off — makes booking free |
+| `50POFF` | Percentage | 50% off |
+| `20POFF` | Percentage | 20% off |
+| `200OFF` | Fixed amount | $200 off |
+| `100OFF` | Fixed amount | $100 off |
+
+> ⚠️ `75POFF` is **expired** and will return an error if used.
+
+**Testing a coupon via cost estimate:**
+```python
+resp = client.other.get_cost_estimate({
+    "propertyId": 1004,
+    "planId": 2,
+    "hours": 3.0,
+    "couponCode": "50POFF",
+})
+print(resp.data["discount"])   # 50% of subtotal
+print(resp.data["total"])      # subtotal minus discount
+```
 
 ---
 
@@ -215,30 +1924,85 @@ var booking = await client.Bookings.CreateBookingAsync(new CreateBookingRequest 
 
 ```
 Cleanster-partner-api-sdk/
-├── java-sdk/            Java 11+ SDK (Maven / Gradle)
-├── python-sdk/          Python 3.8+ SDK (pip)
-├── typescript-sdk/      TypeScript / Node.js 18+ SDK (npm)
-├── ruby-sdk/            Ruby 2.7+ SDK (gem)
-├── go-sdk/              Go 1.21+ SDK (go get)
-├── php-sdk/             PHP 8.1+ SDK (Composer)
-└── csharp-sdk/          .NET 8.0+ SDK (NuGet)
+│
+├── java-sdk/
+│   ├── src/main/java/com/cleanster/sdk/
+│   │   ├── api/          BookingApi, PropertyApi, UserApi, ChecklistApi, ...
+│   │   ├── client/       HttpClient, CleansterClient
+│   │   └── model/        Booking, Property, User, Checklist, ...
+│   ├── src/test/java/    74 unit tests
+│   ├── pom.xml
+│   └── README.md         Full Java SDK documentation
+│
+├── python-sdk/
+│   ├── cleanster/
+│   │   ├── api/          bookings.py, properties.py, users.py, ...
+│   │   ├── models/       booking.py, property.py, response.py, ...
+│   │   └── client.py
+│   ├── tests/            99 unit tests
+│   ├── pyproject.toml
+│   └── README.md         Full Python SDK documentation
+│
+├── typescript-sdk/
+│   ├── src/
+│   │   ├── api/          bookings.ts, properties.ts, users.ts, ...
+│   │   ├── models/       booking.ts, property.ts, response.ts, ...
+│   │   └── client.ts
+│   ├── tests/            85 unit tests
+│   ├── package.json
+│   └── README.md         Full TypeScript SDK documentation
+│
+├── ruby-sdk/
+│   ├── lib/cleanster/
+│   │   ├── api/          bookings_api.rb, properties_api.rb, ...
+│   │   └── models/       booking.rb, property.rb, ...
+│   ├── spec/             119 unit tests
+│   ├── cleanster.gemspec
+│   └── README.md         Full Ruby SDK documentation
+│
+├── go-sdk/
+│   ├── bookings.go       Bookings service
+│   ├── properties.go     Properties service
+│   ├── models.go         All request/response types
+│   ├── client.go         CleansterClient
+│   ├── cleanster_test.go 92 unit tests
+│   ├── go.mod
+│   └── README.md         Full Go SDK documentation
+│
+├── php-sdk/
+│   ├── src/
+│   │   ├── Api/          BookingsApi.php, PropertiesApi.php, ...
+│   │   └── Models/       Booking.php, Property.php, ...
+│   ├── tests/            106 unit tests
+│   ├── composer.json
+│   └── README.md         Full PHP SDK documentation
+│
+├── csharp-sdk/
+│   ├── src/Cleanster/
+│   │   ├── Api/          BookingsApi.cs, PropertiesApi.cs, ...
+│   │   └── Models/       Booking.cs, Property.cs, ...
+│   ├── tests/            107 unit tests
+│   ├── Cleanster.sln
+│   └── README.md         Full C# SDK documentation
+│
+└── README.md             This file
 ```
 
-Each SDK folder contains:
-- Full source code
-- Comprehensive `README.md` with every endpoint documented
-- Complete test suite
+Each SDK is self-contained with its own dependency management, build configuration, test suite, and comprehensive README documenting every endpoint.
+
+---
+
+## Support
+
+| Channel | Contact |
+|---|---|
+| **API Documentation** | [Postman Docs](https://documenter.getpostman.com/view/26172658/2sAYdoF7ep) |
+| **Partner inquiries** | [partner@cleanster.com](mailto:partner@cleanster.com) |
+| **General support** | [support@cleanster.com](mailto:support@cleanster.com) |
+| **Bug reports** | Open an issue in this repository |
 
 ---
 
 ## License
 
 MIT License — see [LICENSE](LICENSE) for details.
-
----
-
-## Support
-
-- **API Documentation:** [Postman Docs](https://documenter.getpostman.com/view/26172658/2sAYdoF7ep)
-- **Partner inquiries:** [partner@cleanster.com](mailto:partner@cleanster.com)
-- **General support:** [support@cleanster.com](mailto:support@cleanster.com)
