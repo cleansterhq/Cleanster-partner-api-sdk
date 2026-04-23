@@ -615,9 +615,37 @@ try {
 }
 ```
 
+**Swift:**
+```swift
+do {
+    let resp = try await client.bookings.getBookingDetails(99999)
+} catch CleansterError.unauthorized(let msg) {
+    print("Auth failed: \(msg)")
+} catch CleansterError.apiError(let code, let msg) {
+    print("API error \(code): \(msg)")
+} catch CleansterError.networkError(let msg) {
+    print("Network error: \(msg)")
+}
+```
+
+**Kotlin:**
+```kotlin
+import com.cleanster.CleansterError
+
+try {
+    val resp = client.bookings.getBookingDetails(99999)
+} catch (e: CleansterError.Unauthorized) {
+    println("Auth failed: ${e.message}")
+} catch (e: CleansterError.ApiError) {
+    println("API error ${e.statusCode}: ${e.message}")
+} catch (e: CleansterError.NetworkError) {
+    println("Network error: ${e.message}")
+}
+```
+
 ---
 
-## All 53 Endpoints
+## All 59 Endpoints
 
 ---
 
@@ -706,6 +734,28 @@ var resp = await client.Users.CreateUserAsync(
 );
 ```
 
+```swift
+// Swift
+let resp = try await client.users.createUser(
+    email: "alice@example.com",
+    firstName: "Alice",
+    lastName: "Smith",
+    phone: "+14155551234"
+)
+let userId = resp.data?.id ?? 0
+```
+
+```kotlin
+// Kotlin
+val resp = client.users.createUser(
+    email     = "alice@example.com",
+    firstName = "Alice",
+    lastName  = "Smith",
+    phone     = "+14155551234",
+)
+val userId = resp.data?.id ?: 0
+```
+
 ---
 
 #### `GET /v1/user/access-token/{userId}` — Fetch User Token
@@ -748,6 +798,18 @@ var resp = await client.Users.FetchAccessTokenAsync(12345);
 client.SetToken(resp.Data.GetProperty("token").GetString()!);
 ```
 
+```swift
+// Swift
+let resp = try await client.users.fetchAccessToken(userId: 12345)
+client.setToken(resp.data?.token ?? "")
+```
+
+```kotlin
+// Kotlin
+val resp = client.users.fetchAccessToken(12345)
+client.setToken(resp.data?.token ?: "")
+```
+
 ---
 
 #### `POST /v1/user/verify-jwt` — Verify JWT
@@ -769,6 +831,18 @@ print(resp.message)  # "OK" if valid
 
 ```typescript
 const resp = await client.users.verifyJwt({ token: 'eyJhbGciOi...' });
+```
+
+```swift
+// Swift
+let resp = try await client.users.verifyJwt(token: "eyJhbGciOi...")
+print(resp.message ?? "")  // "OK" if valid
+```
+
+```kotlin
+// Kotlin
+val resp = client.users.verifyJwt("eyJhbGciOi...")
+println(resp.message)   // "OK" if valid
 ```
 
 ---
@@ -1120,6 +1194,20 @@ var open = await client.Bookings.GetBookingsAsync(status: "OPEN");
 var p2   = await client.Bookings.GetBookingsAsync(pageNo: 2, status: "COMPLETED");
 ```
 
+```swift
+// Swift
+let all  = try await client.bookings.getBookings()
+let open = try await client.bookings.getBookings(status: "OPEN")
+let p2   = try await client.bookings.getBookings(pageNo: 2, status: "COMPLETED")
+```
+
+```kotlin
+// Kotlin
+val all  = client.bookings.getBookings()
+val open = client.bookings.getBookings(status = "OPEN")
+val p2   = client.bookings.getBookings(pageNo = 2, status = "COMPLETED")
+```
+
 ---
 
 #### `POST /v1/bookings/create` — Create Booking
@@ -1206,6 +1294,44 @@ resp = client.bookings.create_booking(
   payment_method_id: 55,
   coupon_code: '20POFF'
 )
+```
+
+```swift
+// Swift
+let resp = try await client.bookings.createBooking(
+    date:            "2025-09-15",
+    time:            "09:00",
+    propertyId:      1004,
+    planId:          2,
+    hours:           3.0,
+    roomCount:       2,
+    bathroomCount:   1,
+    extraSupplies:   false,
+    paymentMethodId: 55,
+    couponCode:      "20POFF",
+    extras:          [3, 7]
+)
+let bookingId = resp.data?.id ?? 0
+```
+
+```kotlin
+// Kotlin
+val resp = client.bookings.createBooking(
+    CreateBookingRequest(
+        date            = "2025-09-15",
+        time            = "09:00",
+        propertyId      = 1004,
+        planId          = 2,
+        hours           = 3.0,
+        roomCount       = 2,
+        bathroomCount   = 1,
+        extraSupplies   = false,
+        paymentMethodId = 55,
+        couponCode      = "20POFF",
+        extras          = listOf(3, 7),
+    )
+)
+val bookingId = resp.data?.id ?: 0
 ```
 
 ---
@@ -1940,6 +2066,90 @@ resp = client.other.get_coupons()
 for coupon in resp.data:
     print(coupon["code"], coupon["discount"])
 ```
+
+---
+
+## Booking Lifecycle
+
+```
+createBooking()         →  OPEN
+                              │
+               assignCleaner()  (or auto-dispatched)
+                              │
+                              ▼
+                    CLEANER_ASSIGNED
+                              │
+                   Cleaner starts the job
+                              │
+                              ▼
+                         IN_PROGRESS
+                              │
+                Cleaner marks complete
+                    ┌─────────┴──────────┐
+                    ▼                    ▼
+               COMPLETED            CANCELLED
+                    │
+     ┌──────────────┼──────────────┐
+     ▼              ▼              ▼
+addTip()     payExpenses()   submitFeedback()
+```
+
+**Booking status values:**
+
+| Status | Description |
+|---|---|
+| `OPEN` | Booking created, no cleaner yet |
+| `CLEANER_ASSIGNED` | A cleaner has been confirmed |
+| `IN_PROGRESS` | Cleaner has checked in; job underway |
+| `COMPLETED` | Job finished successfully |
+| `CANCELLED` | Booking was cancelled |
+| `REMOVED` | Booking removed from active view |
+
+---
+
+## Chat Window Rules
+
+The chat thread for a booking is only accessible during a time window around the booking:
+
+| Rule | Detail |
+|---|---|
+| Chat opens | 24 hours **before** the booking start time |
+| Chat closes | 24 hours **after** the booking start time |
+| Outside window | API returns `400 Bad Request` |
+
+```python
+# Python — only call inside the window
+chat = client.bookings.get_chat(booking_id)
+client.bookings.send_message(booking_id, message="Please bring extra supplies.")
+```
+
+```swift
+// Swift
+let messages = try await client.bookings.getChat(bookingId: 16926)
+try await client.bookings.sendMessage(bookingId: 16926, message: "On my way!")
+```
+
+```kotlin
+// Kotlin
+val messages = client.bookings.getChat(16926)
+client.bookings.sendMessage(16926, message = "On my way!")
+```
+
+**Chat message fields:**
+
+| Field | Type | Description |
+|---|---|---|
+| `messageId` | string | Unique message identifier |
+| `senderId` | string | Sender reference (e.g. `C6`, `P3`) |
+| `content` | string | Text content |
+| `timestamp` | string | `DD MMM YYYY, HH:MM AM/PM` (GMT) |
+| `messageType` | string | `text` or `media` |
+| `attachments` | array | Media files (images, video, audio) |
+| `attachments[].type` | string | `image`, `video`, or `sound` |
+| `attachments[].url` | string | Direct media URL |
+| `attachments[].thumbUrl` | string | Thumbnail URL (nullable) |
+| `isRead` | boolean | Whether the message has been read |
+| `senderType` | string | `client`, `cleaner`, `support`, or `bot` |
 
 ---
 
