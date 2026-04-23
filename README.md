@@ -7,9 +7,9 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/API-Cleanster%20Partner-brightgreen" alt="Cleanster Partner API">
-  <img src="https://img.shields.io/badge/SDKs-10%20Languages-blue" alt="10 Languages">
+  <img src="https://img.shields.io/badge/SDKs-11%20Languages-blue" alt="11 Languages">
   <img src="https://img.shields.io/badge/Endpoints-59-orange" alt="59 Endpoints">
-  <img src="https://img.shields.io/badge/Tests-1184%20passing-success" alt="1184 Tests Passing">
+  <img src="https://img.shields.io/badge/Tests-1348%20passing-success" alt="1348 Tests Passing">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
 </p>
 
@@ -32,6 +32,7 @@
   - [Swift](#swift)
   - [Kotlin](#kotlin)
   - [Android (Retrofit)](#android)
+  - [XML (JAXB)](#xml)
 - [Standard Response Format](#standard-response-format)
 - [Error Handling](#error-handling)
 - [All 59 Endpoints](#all-59-endpoints)
@@ -67,8 +68,9 @@
 | [Swift](#swift) | [`swift-sdk/`](./swift-sdk) | 164 | Swift 5.9+ / iOS 16+ | Swift Package Manager |
 | [Kotlin](#kotlin) | [`kotlin-sdk/`](./kotlin-sdk) | 164 | Kotlin 1.9+ / JVM 11+ | Gradle |
 | [Android (Retrofit)](#android) | [`android-sdk/`](./android-sdk) | 164 | Android API 26+ / Kotlin 1.9+ | Gradle |
+| [XML (JAXB)](#xml) | [`xml-sdk/`](./xml-sdk) | 164 | Java 17+ / JAXB 4.0 | Maven |
 
-**1,184 tests passing across all SDKs.**
+**1,348 tests passing across all SDKs.**
 
 ---
 
@@ -580,6 +582,73 @@ val client = CleansterClient.production("your-access-key")
 ```
 
 [Full Android documentation →](./android-sdk/README.md)
+
+---
+
+### XML
+
+The XML SDK targets enterprise and integration-heavy Java environments where XML is the
+preferred data format.  Every model class carries full **JAXB 4.0** annotations so any
+response object can be serialised to XML with a single call to `XmlConverter.toXml()`.
+
+**Maven:**
+```xml
+<dependency>
+  <groupId>com.cleanster</groupId>
+  <artifactId>cleanster-xml-sdk</artifactId>
+  <version>1.0.0</version>
+</dependency>
+<dependency>
+  <groupId>jakarta.xml.bind</groupId>
+  <artifactId>jakarta.xml.bind-api</artifactId>
+  <version>4.0.0</version>
+</dependency>
+<dependency>
+  <groupId>com.sun.xml.bind</groupId>
+  <artifactId>jaxb-impl</artifactId>
+  <version>4.0.3</version>
+  <scope>runtime</scope>
+</dependency>
+```
+
+**Quick start:**
+```java
+import com.cleanster.xml.client.CleansterXmlClient;
+import com.cleanster.xml.client.XmlConverter;
+import com.cleanster.xml.model.*;
+
+// Create a sandbox client
+CleansterXmlClient client = CleansterXmlClient.sandbox("your-access-key");
+
+// Authenticate
+XmlApiResponse<User> tokenResp = client.users().fetchAccessToken(userId);
+client.setToken(tokenResp.getData().getToken());
+
+// Create a booking
+Booking booking = client.bookings().createBooking(
+    "2025-09-15", "09:00", 1004, 2, 3.0, 2, 1, false, 55
+).getData();
+
+// Serialise to XML
+String xml = XmlConverter.toXml(booking);
+System.out.println(xml);
+// <?xml version="1.0" encoding="UTF-8"?>
+// <booking>
+//   <id>12345</id>
+//   <status>pending</status>
+//   ...
+// </booking>
+
+// Deserialise from XML
+Booking restored = XmlConverter.fromXml(xml, Booking.class);
+```
+
+**Production client:**
+```java
+CleansterXmlClient client = CleansterXmlClient.production("your-access-key");
+```
+
+[Full XML documentation →](./xml-sdk/README.md)
 
 ---
 
