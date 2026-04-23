@@ -7,9 +7,9 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/API-Cleanster%20Partner-brightgreen" alt="Cleanster Partner API">
-  <img src="https://img.shields.io/badge/SDKs-7%20Languages-blue" alt="7 Languages">
-  <img src="https://img.shields.io/badge/Endpoints-53-orange" alt="53 Endpoints">
-  <img src="https://img.shields.io/badge/Tests-692%20passing-success" alt="692 Tests Passing">
+  <img src="https://img.shields.io/badge/SDKs-9%20Languages-blue" alt="9 Languages">
+  <img src="https://img.shields.io/badge/Endpoints-59-orange" alt="59 Endpoints">
+  <img src="https://img.shields.io/badge/Tests-1020%20passing-success" alt="1020 Tests Passing">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
 </p>
 
@@ -29,9 +29,11 @@
   - [Go](#go)
   - [PHP](#php)
   - [C# / .NET](#c--net)
+  - [Swift](#swift)
+  - [Kotlin](#kotlin)
 - [Standard Response Format](#standard-response-format)
 - [Error Handling](#error-handling)
-- [All 53 Endpoints](#all-53-endpoints)
+- [All 59 Endpoints](#all-59-endpoints)
   - [Users](#users-api)
   - [Properties](#properties-api)
   - [Bookings](#bookings-api)
@@ -41,6 +43,8 @@
   - [Blacklist](#blacklist-api)
   - [Reference Data](#reference-data-api)
 - [Integration Workflow](#integration-workflow)
+- [Booking Lifecycle](#booking-lifecycle)
+- [Chat Window Rules](#chat-window-rules)
 - [Webhook Events](#webhook-events)
 - [Test Coupon Codes](#test-coupon-codes)
 - [Repository Structure](#repository-structure)
