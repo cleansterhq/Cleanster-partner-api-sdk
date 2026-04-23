@@ -1,0 +1,26 @@
+{
+  "name": "cleanster-zapier-app",
+  "version": "1.0.0",
+  "description": "Zapier integration for the Cleanster Partner API",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --testPathPattern=test"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "zapier-platform-core": "15.5.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "keywords": [
+    "zapier",
+    "cleanster",
+    "cleaning",
+    "booking",
+    "property-management"
+  ],
+  "license": "MIT"
+}
