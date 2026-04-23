@@ -524,65 +524,6 @@ val client = CleansterClient.production("your-access-key")
 
 ---
 
-### Android
-
-The Android SDK is built on **Retrofit 2** — the most widely adopted HTTP client in the Android ecosystem — backed by OkHttp and Gson, with full Kotlin coroutines support.
-
-**Gradle (Kotlin DSL):**
-```kotlin
-dependencies {
-    implementation("com.cleanster:cleanster-android-sdk:1.0.0")
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-}
-```
-
-**AndroidManifest.xml:**
-```xml
-<uses-permission android:name="android.permission.INTERNET" />
-```
-
-**Sandbox client:**
-```kotlin
-import com.cleanster.android.CleansterClient
-import com.cleanster.android.model.*
-
-val client = CleansterClient.sandbox("your-access-key")
-
-// Authenticate
-val tokenResp = client.users.fetchAccessToken(userId)
-client.setToken(tokenResp.data?.token ?: "")
-
-// Use in a ViewModel:
-viewModelScope.launch {
-    val booking = client.bookings.createBooking(
-        CreateBookingRequest(
-            date            = "2025-09-15",
-            time            = "09:00",
-            propertyId      = 1004,
-            planId          = 2,
-            hours           = 3.0,
-            roomCount       = 2,
-            bathroomCount   = 1,
-            extraSupplies   = false,
-            paymentMethodId = 55,
-        )
-    )
-    println("Booking ID: ${booking.data?.id}")
-}
-```
-
-**Production client:**
-```kotlin
-val client = CleansterClient.production("your-access-key")
-```
-
-[Full Android documentation →](./android-sdk/README.md)
-
----
-
 ### XML
 
 The XML SDK targets enterprise and integration-heavy Java environments where XML is the
@@ -2449,17 +2390,6 @@ Cleanster-partner-api-sdk/
 │   ├── src/test/kotlin/  164 unit tests
 │   ├── build.gradle.kts
 │   └── README.md         Full Kotlin SDK documentation
-│
-├── android-sdk/              Retrofit 2 + OkHttp + Gson
-│   ├── src/main/kotlin/com/cleanster/android/
-│   │   ├── api/          BookingsApi.kt, PropertiesApi.kt, UsersApi.kt, ...
-│   │   ├── model/        Models.kt, Requests.kt, ApiResponse.kt
-│   │   ├── CleansterClient.kt   sandbox/production/custom factories
-│   │   ├── CleansterError.kt
-│   │   └── AuthInterceptor.kt   OkHttp interceptor for auth headers
-│   ├── src/test/kotlin/  164 unit tests (MockWebServer)
-│   ├── build.gradle.kts
-│   └── README.md         Full Android SDK documentation
 │
 ├── xml-sdk/                  Java 17 + JAXB 4.0 + OkHttp + Gson
 │   ├── src/main/java/com/cleanster/xml/
