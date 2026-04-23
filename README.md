@@ -31,6 +31,7 @@
   - [C# / .NET](#c--net)
   - [Swift](#swift)
   - [Kotlin](#kotlin)
+  - [Android (Retrofit)](#android)
 - [Standard Response Format](#standard-response-format)
 - [Error Handling](#error-handling)
 - [All 59 Endpoints](#all-59-endpoints)
@@ -520,6 +521,65 @@ val client = CleansterClient.production("your-access-key")
 ```
 
 [Full Kotlin documentation →](./kotlin-sdk/README.md)
+
+---
+
+### Android
+
+The Android SDK is built on **Retrofit 2** — the most widely adopted HTTP client in the Android ecosystem — backed by OkHttp and Gson, with full Kotlin coroutines support.
+
+**Gradle (Kotlin DSL):**
+```kotlin
+dependencies {
+    implementation("com.cleanster:cleanster-android-sdk:1.0.0")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+}
+```
+
+**AndroidManifest.xml:**
+```xml
+<uses-permission android:name="android.permission.INTERNET" />
+```
+
+**Sandbox client:**
+```kotlin
+import com.cleanster.android.CleansterClient
+import com.cleanster.android.model.*
+
+val client = CleansterClient.sandbox("your-access-key")
+
+// Authenticate
+val tokenResp = client.users.fetchAccessToken(userId)
+client.setToken(tokenResp.data?.token ?: "")
+
+// Use in a ViewModel:
+viewModelScope.launch {
+    val booking = client.bookings.createBooking(
+        CreateBookingRequest(
+            date            = "2025-09-15",
+            time            = "09:00",
+            propertyId      = 1004,
+            planId          = 2,
+            hours           = 3.0,
+            roomCount       = 2,
+            bathroomCount   = 1,
+            extraSupplies   = false,
+            paymentMethodId = 55,
+        )
+    )
+    println("Booking ID: ${booking.data?.id}")
+}
+```
+
+**Production client:**
+```kotlin
+val client = CleansterClient.production("your-access-key")
+```
+
+[Full Android documentation →](./android-sdk/README.md)
 
 ---
 
