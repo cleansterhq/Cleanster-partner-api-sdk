@@ -59,8 +59,9 @@
 | [Go](#go) | [`go-sdk/`](./go-sdk) | 92 | Go 1.21+ | go get |
 | [PHP](#php) | [`php-sdk/`](./php-sdk) | 106 | PHP 8.1+ | Composer |
 | [C# / .NET](#c--net) | [`csharp-sdk/`](./csharp-sdk) | 107 | .NET 8.0+ | NuGet |
+| [Swift](#swift) | [`swift-sdk/`](./swift-sdk) | 164 | Swift 5.9+ / iOS 16+ | Swift Package Manager |
 
-**692 tests passing across all SDKs.**
+**856 tests passing across all SDKs.**
 
 ---
 
