@@ -7,9 +7,9 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/API-Cleanster%20Partner-brightgreen" alt="Cleanster Partner API">
-  <img src="https://img.shields.io/badge/SDKs-11%20Languages-blue" alt="11 Languages">
+  <img src="https://img.shields.io/badge/SDKs-10%20Languages-blue" alt="10 Languages">
   <img src="https://img.shields.io/badge/Endpoints-59-orange" alt="59 Endpoints">
-  <img src="https://img.shields.io/badge/Tests-1348%20passing-success" alt="1348 Tests Passing">
+  <img src="https://img.shields.io/badge/Tests-1184%20passing-success" alt="1184 Tests Passing">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
 </p>
 
@@ -31,7 +31,6 @@
   - [C# / .NET](#c--net)
   - [Swift](#swift)
   - [Kotlin](#kotlin)
-  - [Android (Retrofit)](#android)
   - [XML (JAXB)](#xml)
 - [Standard Response Format](#standard-response-format)
 - [Error Handling](#error-handling)
@@ -67,10 +66,9 @@
 | [C# / .NET](#c--net) | [`csharp-sdk/`](./csharp-sdk) | 107 | .NET 8.0+ | NuGet |
 | [Swift](#swift) | [`swift-sdk/`](./swift-sdk) | 164 | Swift 5.9+ / iOS 16+ | Swift Package Manager |
 | [Kotlin](#kotlin) | [`kotlin-sdk/`](./kotlin-sdk) | 164 | Kotlin 1.9+ / JVM 11+ | Gradle |
-| [Android (Retrofit)](#android) | [`android-sdk/`](./android-sdk) | 164 | Android API 26+ / Kotlin 1.9+ | Gradle |
 | [XML (JAXB)](#xml) | [`xml-sdk/`](./xml-sdk) | 164 | Java 17+ / JAXB 4.0 | Maven |
 
-**1,348 tests passing across all SDKs.**
+**1,184 tests passing across all SDKs.**
 
 ---
 
