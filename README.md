@@ -2383,6 +2383,17 @@ Cleanster-partner-api-sdk/
 │   ├── build.gradle.kts
 │   └── README.md         Full Kotlin SDK documentation
 │
+├── android-sdk/              Retrofit 2 + OkHttp + Gson
+│   ├── src/main/kotlin/com/cleanster/android/
+│   │   ├── api/          BookingsApi.kt, PropertiesApi.kt, UsersApi.kt, ...
+│   │   ├── model/        Models.kt, Requests.kt, ApiResponse.kt
+│   │   ├── CleansterClient.kt   sandbox/production/custom factories
+│   │   ├── CleansterError.kt
+│   │   └── AuthInterceptor.kt   OkHttp interceptor for auth headers
+│   ├── src/test/kotlin/  164 unit tests (MockWebServer)
+│   ├── build.gradle.kts
+│   └── README.md         Full Android SDK documentation
+│
 └── README.md             This file
 ```
 
