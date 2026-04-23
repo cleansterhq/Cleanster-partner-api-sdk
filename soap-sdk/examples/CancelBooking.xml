@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SOAP Request: CancelBooking
+  Operation: Cancel an existing booking.
+  Endpoint: https://api.cleanster.com/soap
+  SOAPAction: https://api.cleanster.com/soap/CancelBooking
+-->
+<soapenv:Envelope
+    xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+    xmlns:tns="https://api.cleanster.com/soap"
+    xmlns:types="https://api.cleanster.com/soap/types">
+
+  <soapenv:Header/>
+
+  <soapenv:Body>
+    <types:CancelBookingRequest>
+      <types:bookingId>16459</types:bookingId>
+      <types:reason>Customer rescheduled to next week</types:reason>
+    </types:CancelBookingRequest>
+  </soapenv:Body>
+
+</soapenv:Envelope>

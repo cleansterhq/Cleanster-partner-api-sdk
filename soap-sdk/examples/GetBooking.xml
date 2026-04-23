@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SOAP Request: GetBooking
+  Operation: Retrieve a single booking by its ID.
+  Endpoint: https://api.cleanster.com/soap
+  SOAPAction: https://api.cleanster.com/soap/GetBooking
+-->
+<soapenv:Envelope
+    xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+    xmlns:tns="https://api.cleanster.com/soap"
+    xmlns:types="https://api.cleanster.com/soap/types">
+
+  <soapenv:Header/>
+
+  <soapenv:Body>
+    <types:GetBookingRequest>
+      <types:bookingId>16459</types:bookingId>
+    </types:GetBookingRequest>
+  </soapenv:Body>
+
+</soapenv:Envelope>
+
+<!-- Expected Response:
+<soapenv:Envelope>
+  <soapenv:Body>
+    <types:GetBookingResponse>
+      <types:booking>
+        <types:id>16459</types:id>
+        <types:status>scheduled</types:status>
+        <types:scheduledAt>2025-06-01T10:00:00Z</types:scheduledAt>
+        <types:durationHours>3.0</types:durationHours>
+        <types:serviceType>standard</types:serviceType>
+        <types:property>
+          <types:id>42</types:id>
+          <types:address>123 Main St</types:address>
+          <types:city>Atlanta</types:city>
+          <types:state>GA</types:state>
+          <types:zip>30301</types:zip>
+        </types:property>
+      </types:booking>
+    </types:GetBookingResponse>
+  </soapenv:Body>
+</soapenv:Envelope>
+-->

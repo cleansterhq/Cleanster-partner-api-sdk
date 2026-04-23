@@ -33,6 +33,10 @@ public class SOAPTransport {
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
+    public ObjectMapper getObjectMapper() {
+        return objectMapper;
+    }
+
     /**
      * Execute a GET request and return the parsed JSON response node.
      */

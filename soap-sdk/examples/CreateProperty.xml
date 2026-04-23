@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SOAP Request: CreateProperty
+  Operation: Add a new property to the account.
+  Endpoint: https://api.cleanster.com/soap
+  SOAPAction: https://api.cleanster.com/soap/CreateProperty
+-->
+<soapenv:Envelope
+    xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+    xmlns:tns="https://api.cleanster.com/soap"
+    xmlns:types="https://api.cleanster.com/soap/types">
+
+  <soapenv:Header/>
+
+  <soapenv:Body>
+    <types:CreatePropertyRequest>
+      <types:address>456 Oak Avenue</types:address>
+      <types:city>Savannah</types:city>
+      <types:state>GA</types:state>
+      <types:zip>31401</types:zip>
+      <types:name>Riverside Cottage</types:name>
+      <types:bedrooms>3</types:bedrooms>
+      <types:bathrooms>2.0</types:bathrooms>
+      <types:squareFeet>1400</types:squareFeet>
+      <types:notes>Hardwood floors throughout — use appropriate cleaner.</types:notes>
+      <types:accessInstructions>Key is in the lockbox on the front door. Code: 5523.</types:accessInstructions>
+    </types:CreatePropertyRequest>
+  </soapenv:Body>
+
+</soapenv:Envelope>

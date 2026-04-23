@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SOAP Request: SendMessage
+  Operation: Send a chat message on a booking.
+  Endpoint: https://api.cleanster.com/soap
+  SOAPAction: https://api.cleanster.com/soap/SendMessage
+-->
+<soapenv:Envelope
+    xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+    xmlns:tns="https://api.cleanster.com/soap"
+    xmlns:types="https://api.cleanster.com/soap/types">
+
+  <soapenv:Header/>
+
+  <soapenv:Body>
+    <types:SendMessageRequest>
+      <types:bookingId>16459</types:bookingId>
+      <types:message>Please pay special attention to the master bathroom — guest arriving tomorrow.</types:message>
+    </types:SendMessageRequest>
+  </soapenv:Body>
+
+</soapenv:Envelope>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SOAP Request: CreateBooking
+  Operation: Create a new cleaning booking.
+  Endpoint: https://api.cleanster.com/soap
+  SOAPAction: https://api.cleanster.com/soap/CreateBooking
+-->
+<soapenv:Envelope
+    xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+    xmlns:tns="https://api.cleanster.com/soap"
+    xmlns:types="https://api.cleanster.com/soap/types">
+
+  <soapenv:Header/>
+
+  <soapenv:Body>
+    <types:CreateBookingRequest>
+      <types:propertyId>42</types:propertyId>
+      <types:scheduledAt>2025-07-15T09:00:00Z</types:scheduledAt>
+      <types:durationHours>3.5</types:durationHours>
+      <types:serviceType>standard</types:serviceType>
+      <types:notes>Please bring extra cleaning supplies for the kitchen.</types:notes>
+      <!-- Optional: assign a cleaner at creation time -->
+      <!-- <types:cleanerId>789</types:cleanerId> -->
+      <!-- Optional: attach a checklist -->
+      <!-- <types:checklistId>105</types:checklistId> -->
+    </types:CreateBookingRequest>
+  </soapenv:Body>
+
+</soapenv:Envelope>
