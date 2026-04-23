@@ -23,6 +23,9 @@ public interface ICleansterHttpClient : IDisposable
     /// <summary>Send a DELETE request and return the parsed JSON response body.</summary>
     Task<JsonElement> DeleteAsync(string path, object? body = null, CancellationToken ct = default);
 
+    /// <summary>Upload an image via multipart/form-data POST.</summary>
+    Task<JsonElement> PostMultipartAsync(string path, byte[] imageData, string fileName, CancellationToken ct = default);
+
     /// <summary>Set the user bearer token sent as the "token" header on every request.</summary>
     void SetToken(string token);
 

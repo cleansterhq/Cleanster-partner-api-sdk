@@ -682,11 +682,13 @@ _, err = client.Checklists.DeleteChecklist(ctx, 105)
 ---
 
 #### Upload Checklist Image
-**`POST /v1/checklist/upload-image`**
+**`POST /v1/checklist/{checklistId}/upload`**
+
+Upload an image for a checklist. The image is sent as `multipart/form-data` in the `image` form field.
 
 ```go
 data, _ := os.ReadFile("bathroom-guide.jpg")
-_, err = client.Checklists.UploadChecklistImage(ctx, data, "image/jpeg")
+_, err = client.Checklists.UploadChecklistImage(ctx, 105, data, "bathroom-guide.jpg")
 ```
 
 ---

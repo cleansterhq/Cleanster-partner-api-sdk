@@ -49,4 +49,20 @@ export class ChecklistsApi {
   deleteChecklist(checklistId: number): Promise<ApiResponse<unknown>> {
     return this.http.delete(`/v1/checklist/${checklistId}`);
   }
+
+  /**
+   * Upload an image for a checklist.
+   *
+   * Sends the image as multipart/form-data in the `image` form field.
+   * @param checklistId  The checklist ID.
+   * @param imageData    Raw image bytes (Uint8Array or Buffer).
+   * @param fileName     File name for the multipart part (e.g. "photo.jpg").
+   */
+  uploadChecklistImage(
+    checklistId: number,
+    imageData: Uint8Array | Buffer,
+    fileName: string,
+  ): Promise<ApiResponse<unknown>> {
+    return this.http.postMultipart(`/v1/checklist/${checklistId}/upload`, imageData, fileName);
+  }
 }

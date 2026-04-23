@@ -766,15 +766,18 @@ resp = client.checklists.delete_checklist(checklist_id=105)
 ---
 
 #### Upload Checklist Image
-**`POST /v1/checklist/upload-image`**
+**`POST /v1/checklist/{checklistId}/upload`**
+
+Upload an image for a checklist. The image is sent as `multipart/form-data` in the `image` form field.
 
 ```python
 with open("bathroom-guide.jpg", "rb") as f:
-    image_data = f.read()
+    image_bytes = f.read()
 
-resp = client.checklists.upload_image(
-    image_data=image_data,
-    mime_type="image/jpeg"
+resp = client.checklists.upload_checklist_image(
+    checklist_id=105,
+    image_bytes=image_bytes,
+    file_name="bathroom-guide.jpg"
 )
 ```
 

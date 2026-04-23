@@ -786,6 +786,28 @@ class CleansterTest extends TestCase
         (new ChecklistsApi($http))->deleteChecklist(105);
     }
 
+    public function testUploadChecklistImageCallsCorrectPath(): void
+    {
+        $http = $this->mockHttp();
+        $http->expects($this->once())
+             ->method('postMultipart')
+             ->with('/v1/checklist/105/upload', $this->anything(), 'photo.jpg')
+             ->willReturn($this->ok([]));
+
+        (new ChecklistsApi($http))->uploadChecklistImage(105, "\xFF\xD8\xFF", 'photo.jpg');
+    }
+
+    public function testUploadChecklistImageReturnsResponse(): void
+    {
+        $http = $this->mockHttp();
+        $http->expects($this->once())
+             ->method('postMultipart')
+             ->willReturn($this->ok([]));
+
+        $result = (new ChecklistsApi($http))->uploadChecklistImage(105, "\x89PNG", 'image.png');
+        $this->assertSame(200, $result->status);
+    }
+
     // =========================================================================
     // OtherApi
     // =========================================================================

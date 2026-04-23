@@ -51,6 +51,19 @@ module Cleanster
         raw = @http.delete("/v1/checklist/#{checklist_id}")
         Models::ApiResponse.from_hash(raw)
       end
+
+      # Upload an image for a checklist.
+      #
+      # Sends the image as +multipart/form-data+ in the +image+ form field.
+      #
+      # @param checklist_id [Integer]       The checklist ID.
+      # @param image_bytes  [String]        Raw binary image content.
+      # @param file_name    [String]        File name for the part (e.g. "photo.jpg").
+      # @return [Models::ApiResponse]
+      def upload_checklist_image(checklist_id, image_bytes, file_name = "image.jpg")
+        raw = @http.post_multipart("/v1/checklist/#{checklist_id}/upload", image_bytes, file_name)
+        Models::ApiResponse.from_hash(raw)
+      end
     end
   end
 end

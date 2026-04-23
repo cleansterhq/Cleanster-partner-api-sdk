@@ -68,4 +68,23 @@ public class ChecklistApi {
         return httpClient.delete("/v1/checklist/" + checklistId,
                 new TypeReference<ApiResponse<Object>>() {});
     }
+
+    /**
+     * Upload an image for a checklist.
+     *
+     * <p>Sends the image as multipart/form-data in the {@code image} form field.
+     * The {@code fileName} is used as the part name (e.g. "photo.jpg").</p>
+     *
+     * @param checklistId The checklist ID
+     * @param imageBytes  Raw bytes of the image to upload
+     * @param fileName    File name for the multipart part (e.g. "photo.jpg")
+     * @return API response
+     */
+    public ApiResponse<Object> uploadChecklistImage(int checklistId, byte[] imageBytes, String fileName) {
+        return httpClient.postMultipart(
+                "/v1/checklist/" + checklistId + "/upload",
+                imageBytes,
+                fileName,
+                new TypeReference<ApiResponse<Object>>() {});
+    }
 }

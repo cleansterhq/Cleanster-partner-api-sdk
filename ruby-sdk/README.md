@@ -699,11 +699,13 @@ client.checklists.delete_checklist(105)
 ---
 
 #### Upload Checklist Image
-**`POST /v1/checklist/upload-image`**
+**`POST /v1/checklist/{checklistId}/upload`**
+
+Upload an image for a checklist. The image is sent as `multipart/form-data` in the `image` form field.
 
 ```ruby
-image_data = File.read('bathroom-guide.jpg', mode: 'rb')
-client.checklists.upload_image(image_data, 'image/jpeg')
+image_bytes = File.read('bathroom-guide.jpg', mode: 'rb')
+client.checklists.upload_checklist_image(105, image_bytes, 'bathroom-guide.jpg')
 ```
 
 ---

@@ -96,6 +96,64 @@ class HttpClient
     }
 
     /**
+     * Upload an image as multipart/form-data.
+     *
+     * @param  string  $path        API path (e.g. "/v1/checklist/5/upload").
+     * @param  string  $imageData   Raw binary image content.
+     * @param  string  $fileName    File name for the form-data part.
+     * @return array                Decoded JSON response.
+     */
+    public function postMultipart(string $path, string $imageData, string $fileName): array
+    {
+        $url      = $this->buildUrl($path);
+        $boundary = '----CleansterBoundary' . bin2hex(random_bytes(8));
+        $body     = "--{$boundary}\r\n"
+            . "Content-Disposition: form-data; name=\"image\"; filename=\"{$fileName}\"\r\n"
+            . "Content-Type: image/*\r\n\r\n"
+            . $imageData
+            . "\r\n--{$boundary}--\r\n";
+
+        $ch = curl_init();
+        curl_setopt_array($ch, [
+            CURLOPT_URL            => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT        => $this->config->timeout,
+            CURLOPT_POST           => true,
+            CURLOPT_POSTFIELDS     => $body,
+            CURLOPT_HTTPHEADER     => [
+                'Content-Type: multipart/form-data; boundary=' . $boundary,
+                'access-key: ' . $this->config->accessKey,
+                'token: ' . $this->bearerToken,
+                'Accept: application/json',
+            ],
+        ]);
+
+        $responseBody = curl_exec($ch);
+        $httpCode     = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlError    = curl_error($ch);
+        curl_close($ch);
+
+        if ($responseBody === false || $curlError !== '') {
+            throw new CleansterException("cURL request failed: {$curlError}");
+        }
+
+        $responseBody = (string) $responseBody;
+
+        if ($httpCode === 401) {
+            throw new AuthException(401, $responseBody);
+        }
+        if ($httpCode < 200 || $httpCode >= 300) {
+            throw new ApiException($httpCode, $responseBody, "API request failed with status {$httpCode}");
+        }
+
+        try {
+            return json_decode($responseBody, true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            throw new CleansterException('Failed to parse response JSON: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Execute an HTTP request via cURL.
      *
      * @throws CleansterException on network failure or JSON parse error.

@@ -101,6 +101,22 @@ class HttpClient:
             raise CleansterException(f"Network error: {exc}") from exc
         return self._handle_response(response)
 
+    def post_multipart(self, path: str, image_bytes: bytes, file_name: str) -> Dict[str, Any]:
+        """Upload an image via multipart/form-data POST."""
+        try:
+            response = self._session.post(
+                self._url(path),
+                headers={
+                    "access-key": self._config.access_key,
+                    "token": self._bearer_token or "",
+                },
+                files={"image": (file_name, image_bytes, "image/*")},
+                timeout=self._config.timeout,
+            )
+        except requests.RequestException as exc:
+            raise CleansterException(f"Network error: {exc}") from exc
+        return self._handle_response(response)
+
     def delete(self, path: str, body: Optional[Any] = None) -> Dict[str, Any]:
         try:
             response = self._session.delete(

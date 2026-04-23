@@ -937,6 +937,34 @@ func TestChecklists_DeleteChecklist(t *testing.T) {
 	_, _ = client.Checklists.DeleteChecklist(context.Background(), 105)
 }
 
+
+func TestChecklists_UploadChecklistImage(t *testing.T) {
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/v1/checklist/105/upload" || r.Method != http.MethodPost {
+			t.Errorf("wrong method/path: %s %s", r.Method, r.URL.Path)
+		}
+		writeJSON(w, okResponse(map[string]interface{}{}))
+	})
+	client, cleanup := newTestClient(t, handler)
+	defer cleanup()
+	_, _ = client.Checklists.UploadChecklistImage(context.Background(), 105, []byte{0xFF, 0xD8}, "photo.jpg")
+}
+
+func TestChecklists_UploadChecklistImage_ReturnsOK(t *testing.T) {
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		writeJSON(w, okResponse(map[string]interface{}{}))
+	})
+	client, cleanup := newTestClient(t, handler)
+	defer cleanup()
+	resp, err := client.Checklists.UploadChecklistImage(context.Background(), 105, []byte{0x89, 0x50}, "image.png")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if resp.Status != 200 {
+		t.Errorf("expected status 200, got %d", resp.Status)
+	}
+}
+
 // ---------------------------------------------------------------------------
 // OtherService
 // ---------------------------------------------------------------------------

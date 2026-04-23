@@ -588,6 +588,25 @@ describe("ChecklistsApi", () => {
 
     expect(http.delete).toHaveBeenCalledWith("/v1/checklist/105");
   });
+
+  test("uploadChecklistImage() calls correct path", async () => {
+    const http = { ...mockHttp(), postMultipart: jest.fn().mockResolvedValue(ok()) } as unknown as jest.Mocked<HttpClient>;
+    const api = new ChecklistsApi(http);
+    const imageData = new Uint8Array([0xff, 0xd8]);
+
+    await api.uploadChecklistImage(105, imageData, "photo.jpg");
+
+    expect(http.postMultipart).toHaveBeenCalledWith("/v1/checklist/105/upload", imageData, "photo.jpg");
+  });
+
+  test("uploadChecklistImage() returns success response", async () => {
+    const http = { ...mockHttp(), postMultipart: jest.fn().mockResolvedValue(ok()) } as unknown as jest.Mocked<HttpClient>;
+    const api = new ChecklistsApi(http);
+
+    const result = await api.uploadChecklistImage(105, new Uint8Array([0x89, 0x50]), "image.png");
+
+    expect(result.status).toBe(200);
+  });
 });
 
 // ---------------------------------------------------------------------------

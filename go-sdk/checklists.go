@@ -54,3 +54,13 @@ func (s *ChecklistsService) DeleteChecklist(ctx context.Context, checklistID int
 	}
 	return decode[map[string]interface{}](raw)
 }
+
+// UploadChecklistImage uploads an image for a checklist via multipart/form-data.
+// The image bytes are sent in the "image" form field.
+func (s *ChecklistsService) UploadChecklistImage(ctx context.Context, checklistID int, imageData []byte, fileName string) (APIResponse[map[string]interface{}], error) {
+	raw, err := s.http.postMultipart(ctx, fmt.Sprintf("/v1/checklist/%d/upload", checklistID), imageData, fileName)
+	if err != nil {
+		return APIResponse[map[string]interface{}]{}, err
+	}
+	return decode[map[string]interface{}](raw)
+}

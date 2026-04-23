@@ -49,4 +49,18 @@ public sealed class ChecklistsApi
         var root = await _http.DeleteAsync($"/v1/checklist/{checklistId}", ct: ct);
         return JsonHelper.ParseRaw(root);
     }
+
+    /// <summary>
+    /// Upload an image for a checklist.
+    /// Sends the image as multipart/form-data in the <c>image</c> form field.
+    /// </summary>
+    /// <param name="checklistId">The checklist ID.</param>
+    /// <param name="imageData">Raw bytes of the image to upload.</param>
+    /// <param name="fileName">File name for the multipart part (e.g. "photo.jpg").</param>
+    public async Task<ApiResponse<JsonElement>> UploadChecklistImageAsync(
+        int checklistId, byte[] imageData, string fileName = "image.jpg", CancellationToken ct = default)
+    {
+        var root = await _http.PostMultipartAsync($"/v1/checklist/{checklistId}/upload", imageData, fileName, ct);
+        return JsonHelper.ParseRaw(root);
+    }
 }

@@ -59,6 +59,54 @@ internal sealed class CleansterHttpClient : ICleansterHttpClient
     public Task<JsonElement> DeleteAsync(string path, object? body = null, CancellationToken ct = default)
         => SendRequestAsync(HttpMethod.Delete, path, body, ct);
 
+    public async Task<JsonElement> PostMultipartAsync(string path, byte[] imageData, string fileName, CancellationToken ct = default)
+    {
+        using var content  = new MultipartFormDataContent();
+        var imageContent   = new ByteArrayContent(imageData);
+        imageContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/*");
+        content.Add(imageContent, "image", fileName);
+
+        using var req = new HttpRequestMessage(HttpMethod.Post, path.TrimStart('/'))
+        {
+            Content = content,
+        };
+        req.Headers.Add("access-key", _config.AccessKey);
+        req.Headers.Add("token", GetToken());
+        req.Headers.Add("Accept", "application/json");
+
+        HttpResponseMessage resp;
+        try
+        {
+            resp = await _http.SendAsync(req, ct).ConfigureAwait(false);
+        }
+        catch (TaskCanceledException ex) when (!ct.IsCancellationRequested)
+        {
+            throw new CleansterException("Request timed out.", ex);
+        }
+        catch (HttpRequestException ex)
+        {
+            throw new CleansterException($"Network error: {ex.Message}", ex);
+        }
+
+        using (resp)
+        {
+            var responseBody = await resp.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
+            if (resp.StatusCode == HttpStatusCode.Unauthorized)
+                throw new AuthException(401, responseBody);
+            if (!resp.IsSuccessStatusCode)
+                throw new ApiException((int)resp.StatusCode, responseBody);
+            try
+            {
+                using var doc = JsonDocument.Parse(responseBody);
+                return doc.RootElement.Clone();
+            }
+            catch (JsonException ex)
+            {
+                throw new CleansterException($"Failed to parse response JSON: {ex.Message}", ex);
+            }
+        }
+    }
+
     public void Dispose() => _http.Dispose();
 
     // -------------------------------------------------------------------------

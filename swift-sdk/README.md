@@ -853,6 +853,18 @@ try await client.checklists.deleteChecklist(77)
 
 ---
 
+#### Upload Checklist Image
+**`POST /v1/checklist/{checklistId}/upload`**
+
+Upload an image for a checklist. The image is sent as `multipart/form-data` in the `image` form field.
+
+```swift
+let imageData = try Data(contentsOf: URL(fileURLWithPath: "bathroom-guide.jpg"))
+try await client.checklists.uploadChecklistImage(77, imageData: imageData, fileName: "bathroom-guide.jpg")
+```
+
+---
+
 ### Other / Reference Data
 
 #### Get Services

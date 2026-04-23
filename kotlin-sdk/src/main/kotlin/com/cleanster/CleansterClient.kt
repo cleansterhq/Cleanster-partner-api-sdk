@@ -110,6 +110,36 @@ class CleansterClient private constructor(
         return parsed
     }
 
+    /** Upload a checklist image via multipart/form-data. */
+    internal suspend fun requestMultipart(path: String, imageData: ByteArray, fileName: String): ApiResponse<Map<String, Any>> {
+        val url = buildUrl(path, emptyMap())
+        val headers = mapOf(
+            "access-key" to accessKey,
+            "token"      to token,
+            "Accept"     to "application/json",
+        )
+        val response = try {
+            engine.executeMultipart(url, headers, imageData, fileName)
+        } catch (e: Exception) {
+            throw CleansterError.NetworkError(e.message ?: "Network failure", e)
+        }
+
+        val type: com.google.gson.reflect.TypeToken<ApiResponse<Map<String, Any>>> = object : com.google.gson.reflect.TypeToken<ApiResponse<Map<String, Any>>>() {}
+        val parsed: ApiResponse<Map<String, Any>> = try {
+            gson.fromJson(response.body, type.type)
+        } catch (e: com.google.gson.JsonSyntaxException) {
+            throw CleansterError.DecodingError("Failed to parse response: ${e.message}", e)
+        }
+
+        when (response.statusCode) {
+            401  -> throw CleansterError.Unauthorized()
+            404  -> throw CleansterError.NotFound()
+            in 400..599 -> throw CleansterError.ApiError(response.statusCode, parsed.message)
+        }
+
+        return parsed
+    }
+
     private fun buildUrl(path: String, queryParams: Map<String, String>): String {
         val base = baseUrl + path
         if (queryParams.isEmpty()) return base

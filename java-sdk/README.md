@@ -871,13 +871,13 @@ ApiResponse<Object> resp = client.checklists().deleteChecklist(105);
 ---
 
 #### Upload Checklist Image
-**`POST /v1/checklist/upload-image`**
+**`POST /v1/checklist/{checklistId}/upload`**
 
-Upload an image to use as a visual reference within a checklist task.
+Upload an image for a checklist. The image is sent as `multipart/form-data` in the `image` form field.
 
 ```java
 byte[] imageBytes = Files.readAllBytes(Paths.get("bathroom-guide.jpg"));
-ApiResponse<Object> resp = client.checklists().uploadImage(imageBytes, "image/jpeg");
+ApiResponse<Object> resp = client.checklists().uploadChecklistImage(105, imageBytes, "bathroom-guide.jpg");
 ```
 
 ---

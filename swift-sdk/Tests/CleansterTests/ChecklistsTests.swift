@@ -94,4 +94,18 @@ final class ChecklistsTests: XCTestCase {
         _ = try await client.checklists.deleteChecklist(77)
         XCTAssertTrue(mock.capturedURL?.hasSuffix("/v1/checklist/77") == true)
     }
+
+    func testUploadChecklistImage_correctPath() async throws {
+        mock.succeedEmpty()
+        let imageData = Data([0xFF, 0xD8, 0xFF])
+        _ = try await client.checklists.uploadChecklistImage(77, imageData: imageData, fileName: "photo.jpg")
+        XCTAssertTrue(mock.capturedURL?.hasSuffix("/v1/checklist/77/upload") == true)
+    }
+
+    func testUploadChecklistImage_usesMultipart() async throws {
+        mock.succeedEmpty()
+        let imageData = Data([0x89, 0x50, 0x4E])
+        _ = try await client.checklists.uploadChecklistImage(77, imageData: imageData, fileName: "image.png")
+        XCTAssertTrue(mock.capturedHeaders?["Content-Type"]?.contains("multipart/form-data") == true)
+    }
 }

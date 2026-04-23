@@ -122,4 +122,48 @@ public final class CleansterClient {
     ) async throws -> ApiResponse<AnyCodable> {
         try await request(method: method, path: path, queryItems: queryItems, body: body)
     }
+
+    /// Upload an image via multipart/form-data POST.
+    func requestMultipart(
+        path:      String,
+        imageData: Data,
+        fileName:  String
+    ) async throws -> ApiResponse<AnyCodable> {
+        guard let url = URL(string: baseURL + path) else {
+            throw CleansterError.invalidURL(baseURL + path)
+        }
+
+        let boundary = "----CleansterBoundary\(UUID().uuidString)"
+        var body = Data()
+
+        let partHeader = "--\(boundary)\r\nContent-Disposition: form-data; name=\"image\"; filename=\"\(fileName)\"\r\nContent-Type: image/*\r\n\r\n"
+        body.append(partHeader.data(using: .utf8)!)
+        body.append(imageData)
+        body.append("\r\n--\(boundary)--\r\n".data(using: .utf8)!)
+
+        var req = URLRequest(url: url)
+        req.httpMethod = "POST"
+        req.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        req.setValue(accessKey, forHTTPHeaderField: "access-key")
+        req.setValue(token,     forHTTPHeaderField: "token")
+        req.setValue("application/json", forHTTPHeaderField: "Accept")
+        req.httpBody = body
+
+        let (data, response) = try await session.data(for: req)
+
+        guard let http = response as? HTTPURLResponse else {
+            throw CleansterError.invalidResponse
+        }
+
+        let decoded = try JSONDecoder().decode(ApiResponse<AnyCodable>.self, from: data)
+
+        if http.statusCode == 401 {
+            throw CleansterError.unauthorized
+        }
+        if http.statusCode >= 400 {
+            throw CleansterError.apiError(statusCode: http.statusCode, message: decoded.message)
+        }
+
+        return decoded
+    }
 }

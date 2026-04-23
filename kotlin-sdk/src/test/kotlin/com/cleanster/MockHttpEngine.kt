@@ -15,6 +15,20 @@ class MockHttpEngine : HttpEngine {
         return HttpResponse(statusCode = responseStatusCode, body = responseBody)
     }
 
+    var capturedMultipartUrl: String?   = null
+    var capturedMultipartFile: String?  = null
+
+    override suspend fun executeMultipart(
+        url:       String,
+        headers:   Map<String, String>,
+        imageData: ByteArray,
+        fileName:  String,
+    ): HttpResponse {
+        capturedMultipartUrl  = url
+        capturedMultipartFile = fileName
+        return HttpResponse(statusCode = responseStatusCode, body = responseBody)
+    }
+
     // ── Helpers ────────────────────────────────────────────────────────────────
 
     /** Configure a success envelope wrapping [payload]. */

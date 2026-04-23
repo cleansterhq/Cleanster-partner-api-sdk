@@ -120,6 +120,29 @@ public class HttpClient {
     }
 
     /**
+     * Execute a multipart POST request for file uploads.
+     *
+     * @param path       API path (e.g., "/v1/checklist/5/upload")
+     * @param imageBytes Raw bytes of the image to upload
+     * @param fileName   File name sent in the form-data part (e.g., "photo.jpg")
+     * @param type       TypeReference for response deserialization
+     */
+    public <T> T postMultipart(String path, byte[] imageBytes, String fileName, TypeReference<T> type) {
+        RequestBody fileBody = RequestBody.create(imageBytes, MediaType.parse("image/*"));
+        MultipartBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("image", fileName, fileBody)
+                .build();
+        Request request = new Request.Builder()
+                .url(url(path))
+                .addHeader("access-key", config.getAccessKey())
+                .addHeader("token", bearerToken != null ? bearerToken : "")
+                .post(requestBody)
+                .build();
+        return execute(request, type);
+    }
+
+    /**
      * Execute a DELETE request with a JSON body.
      */
     public <T> T delete(String path, Object body, TypeReference<T> type) {

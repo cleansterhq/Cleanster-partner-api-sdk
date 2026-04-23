@@ -693,11 +693,13 @@ await client.Checklists.DeleteChecklistAsync(105);
 ---
 
 #### Upload Checklist Image
-**`POST /v1/checklist/upload-image`**
+**`POST /v1/checklist/{checklistId}/upload`**
+
+Upload an image for a checklist. The image is sent as `multipart/form-data` in the `image` form field.
 
 ```csharp
 byte[] imageBytes = await File.ReadAllBytesAsync("bathroom-guide.jpg");
-await client.Checklists.UploadChecklistImageAsync(imageBytes, "image/jpeg");
+await client.Checklists.UploadChecklistImageAsync(105, imageBytes, "bathroom-guide.jpg");
 ```
 
 ---

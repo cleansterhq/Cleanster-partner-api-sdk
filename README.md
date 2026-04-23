@@ -9,7 +9,7 @@
   <img src="https://img.shields.io/badge/API-Cleanster%20Partner-brightgreen" alt="Cleanster Partner API">
   <img src="https://img.shields.io/badge/SDKs-10%20Languages-blue" alt="10 Languages">
   <img src="https://img.shields.io/badge/Endpoints-59-orange" alt="59 Endpoints">
-  <img src="https://img.shields.io/badge/Tests-1174%20passing-success" alt="1174 Tests Passing">
+  <img src="https://img.shields.io/badge/Tests-1192%20passing-success" alt="1192 Tests Passing">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
 </p>
 
@@ -57,18 +57,18 @@
 
 | Language | Folder | Tests Passing | Min Version | Package Manager |
 |---|---|---|---|---|
-| [Java](#java) | [`java-sdk/`](./java-sdk) | 74 | Java 11+ | Maven / Gradle |
-| [Python](#python) | [`python-sdk/`](./python-sdk) | 99 | Python 3.8+ | pip |
-| [TypeScript / Node.js](#typescript--nodejs) | [`typescript-sdk/`](./typescript-sdk) | 85 | Node.js 18+ | npm |
-| [Ruby](#ruby) | [`ruby-sdk/`](./ruby-sdk) | 119 | Ruby 2.7+ | gem |
-| [Go](#go) | [`go-sdk/`](./go-sdk) | 92 | Go 1.21+ | go get |
-| [PHP](#php) | [`php-sdk/`](./php-sdk) | 106 | PHP 8.1+ | Composer |
-| [C# / .NET](#c--net) | [`csharp-sdk/`](./csharp-sdk) | 107 | .NET 8.0+ | NuGet |
-| [Swift](#swift) | [`swift-sdk/`](./swift-sdk) | 164 | Swift 5.9+ / iOS 16+ | Swift Package Manager |
-| [Kotlin](#kotlin) | [`kotlin-sdk/`](./kotlin-sdk) | 164 | Kotlin 1.9+ / JVM 11+ | Gradle |
+| [Java](#java) | [`java-sdk/`](./java-sdk) | 76 | Java 11+ | Maven / Gradle |
+| [Python](#python) | [`python-sdk/`](./python-sdk) | 101 | Python 3.8+ | pip |
+| [TypeScript / Node.js](#typescript--nodejs) | [`typescript-sdk/`](./typescript-sdk) | 87 | Node.js 18+ | npm |
+| [Ruby](#ruby) | [`ruby-sdk/`](./ruby-sdk) | 121 | Ruby 2.7+ | gem |
+| [Go](#go) | [`go-sdk/`](./go-sdk) | 94 | Go 1.21+ | go get |
+| [PHP](#php) | [`php-sdk/`](./php-sdk) | 108 | PHP 8.1+ | Composer |
+| [C# / .NET](#c--net) | [`csharp-sdk/`](./csharp-sdk) | 109 | .NET 8.0+ | NuGet |
+| [Swift](#swift) | [`swift-sdk/`](./swift-sdk) | 166 | Swift 5.9+ / iOS 16+ | Swift Package Manager |
+| [Kotlin](#kotlin) | [`kotlin-sdk/`](./kotlin-sdk) | 166 | Kotlin 1.9+ / JVM 11+ | Gradle |
 | [XML (JAXB)](#xml) | [`xml-sdk/`](./xml-sdk) | 164 | Java 17+ / JAXB 4.0 | Maven |
 
-**1,174 tests passing across all SDKs.**
+**1,192 tests passing across all SDKs.**
 
 ---
 

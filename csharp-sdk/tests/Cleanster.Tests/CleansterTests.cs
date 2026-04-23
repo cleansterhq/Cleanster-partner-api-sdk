@@ -738,6 +738,26 @@ public class CleansterTests
         http.VerifyAll();
     }
 
+    [Fact]
+    public async Task Checklists_UploadChecklistImage_CallsCorrectPath()
+    {
+        var http = MockHttp();
+        http.Setup(h => h.PostMultipartAsync("/v1/checklist/105/upload", It.IsAny<byte[]>(), "photo.jpg", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(MakeResponse("{}"));
+        await new ChecklistsApi(http.Object).UploadChecklistImageAsync(105, new byte[] { 0xFF, 0xD8 }, "photo.jpg");
+        http.VerifyAll();
+    }
+
+    [Fact]
+    public async Task Checklists_UploadChecklistImage_ReturnsResponse()
+    {
+        var http = MockHttp();
+        http.Setup(h => h.PostMultipartAsync(It.IsAny<string>(), It.IsAny<byte[]>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(MakeResponse("{}"));
+        var result = await new ChecklistsApi(http.Object).UploadChecklistImageAsync(105, new byte[] { 0x89, 0x50 }, "image.png");
+        Assert.Equal(200, result.Status);
+    }
+
     // =========================================================================
     // OtherApi
     // =========================================================================

@@ -36,6 +36,20 @@ module Cleanster
       perform(uri, request)
     end
 
+    def post_multipart(path, image_bytes, file_name)
+      uri     = build_uri(path)
+      boundary = "----CleansterBoundary#{rand(1_000_000)}"
+      body     = build_multipart_body(boundary, image_bytes, file_name)
+
+      request = Net::HTTP::Post.new(uri)
+      request["Content-Type"]  = "multipart/form-data; boundary=#{boundary}"
+      request["access-key"]    = @config.access_key
+      request["token"]         = @bearer_token.to_s
+      request.body             = body
+
+      perform(uri, request)
+    end
+
     def delete(path, body: nil)
       uri = build_uri(path)
       request = Net::HTTP::Delete.new(uri)
@@ -45,6 +59,16 @@ module Cleanster
     end
 
     private
+
+    def build_multipart_body(boundary, image_bytes, file_name)
+      body = String.new("", encoding: "ASCII-8BIT")
+      body << "--#{boundary}\r\n"
+      body << "Content-Disposition: form-data; name=\"image\"; filename=\"#{file_name}\"\r\n"
+      body << "Content-Type: image/*\r\n\r\n"
+      body << image_bytes
+      body << "\r\n--#{boundary}--\r\n"
+      body
+    end
 
     def build_uri(path, params = nil)
       uri = URI.parse(@config.base_url + path)

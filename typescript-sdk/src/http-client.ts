@@ -127,6 +127,32 @@ export class HttpClient {
     }
   }
 
+  async postMultipart<T = unknown>(path: string, imageData: Uint8Array | Buffer, fileName: string): Promise<ApiResponse<T>> {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), this.config.timeoutMs);
+    try {
+      const formData = new FormData();
+      const blob = new Blob([imageData], { type: "image/*" });
+      formData.append("image", blob, fileName);
+      const headers: Record<string, string> = {
+        "access-key": this.config.accessKey,
+        "token": this._bearerToken ?? "",
+      };
+      const response = await fetch(this.config.baseUrl + path, {
+        method: "POST",
+        headers,
+        body: formData,
+        signal: controller.signal,
+      });
+      return this.handleResponse<T>(response);
+    } catch (err) {
+      if (err instanceof CleansterException) throw err;
+      throw new CleansterException(`Network error: ${err}`);
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+
   async delete<T = unknown>(path: string, body?: unknown): Promise<ApiResponse<T>> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), this.config.timeoutMs);
