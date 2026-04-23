@@ -20,7 +20,7 @@ public sealed class PaymentMethodsApi
     }
 
     /// <summary>Return a PayPal client token for rendering the PayPal button client-side.</summary>
-    public async Task<ApiResponse<JsonElement>> GetPaypalClientTokenAsync(CancellationToken ct = default)
+    public async Task<ApiResponse<JsonElement>> GetPayPalClientTokenAsync(CancellationToken ct = default)
     {
         var root = await _http.GetAsync("/v1/payment-methods/paypal-client-token", ct: ct);
         return JsonHelper.ParseRaw(root);

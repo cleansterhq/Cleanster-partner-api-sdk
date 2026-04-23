@@ -58,7 +58,7 @@ class OtherApi:
         )
         return ApiResponse.from_dict(raw)
 
-    def calculate_cost(self, request: Dict[str, Any]) -> ApiResponse:
+    def get_cost_estimate(self, request: Dict[str, Any]) -> ApiResponse:
         """
         Calculate the estimated cost for a potential booking.
 

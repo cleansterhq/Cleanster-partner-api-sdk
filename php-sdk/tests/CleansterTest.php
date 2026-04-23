@@ -689,7 +689,7 @@ class CleansterTest extends TestCase
         (new PropertiesApi($http))->removeICalLink(1040, 'https://cal.example.com/feed.ics');
     }
 
-    public function testAssignChecklistToPropertyTrue(): void
+    public function testSetDefaultChecklistTrue(): void
     {
         $http = $this->mockHttp();
         $http->expects($this->once())
@@ -697,10 +697,10 @@ class CleansterTest extends TestCase
              ->with($this->stringContains('updateUpcomingBookings=true'))
              ->willReturn($this->ok([]));
 
-        (new PropertiesApi($http))->assignChecklistToProperty(1040, 105, true);
+        (new PropertiesApi($http))->setDefaultChecklist(1040, 105, true);
     }
 
-    public function testAssignChecklistToPropertyFalse(): void
+    public function testSetDefaultChecklistFalse(): void
     {
         $http = $this->mockHttp();
         $http->expects($this->once())
@@ -708,7 +708,7 @@ class CleansterTest extends TestCase
              ->with($this->stringContains('updateUpcomingBookings=false'))
              ->willReturn($this->ok([]));
 
-        (new PropertiesApi($http))->assignChecklistToProperty(1040, 105, false);
+        (new PropertiesApi($http))->setDefaultChecklist(1040, 105, false);
     }
 
     // =========================================================================
@@ -832,7 +832,7 @@ class CleansterTest extends TestCase
              ->with('/v1/cost-estimate', $req)
              ->willReturn($this->ok([]));
 
-        (new OtherApi($http))->calculateCost($req);
+        (new OtherApi($http))->getCostEstimate($req);
     }
 
     public function testGetCleaningExtras(): void
@@ -940,7 +940,7 @@ class CleansterTest extends TestCase
              ->with('/v1/payment-methods/paypal-client-token')
              ->willReturn($this->ok([]));
 
-        (new PaymentMethodsApi($http))->getPaypalClientToken();
+        (new PaymentMethodsApi($http))->getPayPalClientToken();
     }
 
     public function testAddPaymentMethod(): void

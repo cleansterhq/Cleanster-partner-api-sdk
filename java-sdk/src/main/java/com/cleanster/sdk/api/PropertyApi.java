@@ -179,7 +179,7 @@ public class PropertyApi {
      * @param updateUpcomingBookings  Whether to apply the checklist to upcoming bookings
      * @return API response
      */
-    public ApiResponse<Object> assignChecklistToProperty(int propertyId, int checklistId,
+    public ApiResponse<Object> setDefaultChecklist(int propertyId, int checklistId,
             boolean updateUpcomingBookings) {
         String path = "/v1/properties/" + propertyId + "/checklist/" + checklistId
                 + "?updateUpcomingBookings=" + updateUpcomingBookings;

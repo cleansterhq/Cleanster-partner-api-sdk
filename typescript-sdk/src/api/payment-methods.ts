@@ -20,7 +20,7 @@ export class PaymentMethodsApi {
   /**
    * Get a PayPal client token for rendering the PayPal button client-side.
    */
-  getPaypalClientToken(): Promise<ApiResponse<unknown>> {
+  getPayPalClientToken(): Promise<ApiResponse<unknown>> {
     return this.http.get("/v1/payment-methods/paypal-client-token");
   }
 

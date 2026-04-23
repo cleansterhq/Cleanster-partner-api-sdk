@@ -20,8 +20,8 @@ func (s *PaymentMethodsService) GetSetupIntentDetails(ctx context.Context) (APIR
 	return decode[map[string]interface{}](raw)
 }
 
-// GetPaypalClientToken returns a PayPal client token for rendering the PayPal button client-side.
-func (s *PaymentMethodsService) GetPaypalClientToken(ctx context.Context) (APIResponse[map[string]interface{}], error) {
+// GetPayPalClientToken returns a PayPal client token for rendering the PayPal button client-side.
+func (s *PaymentMethodsService) GetPayPalClientToken(ctx context.Context) (APIResponse[map[string]interface{}], error) {
 	raw, err := s.http.get(ctx, "/v1/payment-methods/paypal-client-token", nil)
 	if err != nil {
 		return APIResponse[map[string]interface{}]{}, err

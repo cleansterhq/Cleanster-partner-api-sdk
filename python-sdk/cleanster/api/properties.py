@@ -141,7 +141,7 @@ class PropertiesApi:
         )
         return ApiResponse.from_dict(raw)
 
-    def assign_checklist_to_property(
+    def set_default_checklist(
         self,
         property_id: int,
         checklist_id: int,

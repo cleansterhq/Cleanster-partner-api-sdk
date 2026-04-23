@@ -58,7 +58,7 @@ final class OtherApi
      *   @type int[]  $extras      Optional
      * }
      */
-    public function calculateCost(array $request): ApiResponse
+    public function getCostEstimate(array $request): ApiResponse
     {
         $raw = $this->http->post('/v1/cost-estimate', $request);
         return new ApiResponse($raw['status'] ?? 200, $raw['message'] ?? 'OK', $raw['data'] ?? []);

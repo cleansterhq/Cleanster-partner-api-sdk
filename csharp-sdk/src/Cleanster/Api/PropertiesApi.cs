@@ -174,7 +174,7 @@ public sealed class PropertiesApi
 
     /// <summary>Set the default checklist for a property.</summary>
     /// <param name="updateUpcomingBookings">If <see langword="true"/>, also applies to all future bookings at this property.</param>
-    public async Task<ApiResponse<JsonElement>> AssignChecklistToPropertyAsync(
+    public async Task<ApiResponse<JsonElement>> SetDefaultChecklistAsync(
         int propertyId, int checklistId, bool updateUpcomingBookings = false, CancellationToken ct = default)
     {
         var path = $"/v1/properties/{propertyId}/checklist/{checklistId}?updateUpcomingBookings={updateUpcomingBookings.ToString().ToLower()}";

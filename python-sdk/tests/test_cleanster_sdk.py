@@ -570,12 +570,12 @@ class TestPropertiesApi(unittest.TestCase):
 
         http.get.assert_called_once_with("/v1/properties/1040/ical")
 
-    def test_assign_checklist_to_property(self):
+    def test_set_default_checklist(self):
         http = make_http()
         http.put.return_value = ok()
         api = PropertiesApi(http)
 
-        api.assign_checklist_to_property(1040, 105, update_upcoming_bookings=True)
+        api.set_default_checklist(1040, 105, update_upcoming_bookings=True)
 
         args = http.put.call_args[0]
         self.assertIn("/v1/properties/1040/checklist/105", args[0])
@@ -690,13 +690,13 @@ class TestOtherApi(unittest.TestCase):
             params={"propertyId": 1004, "bathroomCount": 2, "roomCount": 3},
         )
 
-    def test_calculate_cost(self):
+    def test_get_cost_estimate(self):
         http = make_http()
         http.post.return_value = ok({})
         api = OtherApi(http)
 
         request = {"propertyId": 1004, "planId": 2, "hours": 3.0}
-        api.calculate_cost(request)
+        api.get_cost_estimate(request)
 
         http.post.assert_called_once_with("/v1/cost-estimate", body=request)
 

@@ -618,7 +618,7 @@ await client.Properties.RemoveCleanerAsync(propertyId: 1004, cleanerId: 3);
 **`PUT /v1/properties/{propertyId}/checklist/{checklistId}?updateUpcomingBookings={bool}`**
 
 ```csharp
-await client.Properties.AssignChecklistToPropertyAsync(
+await client.Properties.SetDefaultChecklistAsync(
     propertyId: 1004, checklistId: 105, updateUpcomingBookings: true
 );
 ```
@@ -746,7 +746,7 @@ var resp = await client.Other.GetRecommendedHoursAsync(
 **`POST /v1/cost-estimate`**
 
 ```csharp
-var resp = await client.Other.CalculateCostAsync(estimateRequest);
+var resp = await client.Other.GetCostEstimateAsync(estimateRequest);
 ```
 
 ---
@@ -814,7 +814,7 @@ var resp = await client.PaymentMethods.GetSetupIntentDetailsAsync();
 **`GET /v1/payment-methods/paypal-client-token`**
 
 ```csharp
-var resp = await client.PaymentMethods.GetPaypalClientTokenAsync();
+var resp = await client.PaymentMethods.GetPayPalClientTokenAsync();
 ```
 
 ---

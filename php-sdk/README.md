@@ -591,7 +591,7 @@ $client->properties()->removeCleaner(1004, $cleanerId);
 **`PUT /v1/properties/{propertyId}/checklist/{checklistId}?updateUpcomingBookings={bool}`**
 
 ```php
-$client->properties()->assignChecklistToProperty(1004, 105, true);
+$client->properties()->setDefaultChecklist(1004, 105, true);
 ```
 
 ---
@@ -710,7 +710,7 @@ echo "Recommended hours: " . $resp->getData()['hours'] . "\n";
 **`POST /v1/cost-estimate`**
 
 ```php
-$resp = $client->other()->calculateCost($estimateRequest);
+$resp = $client->other()->getCostEstimate($estimateRequest);
 ```
 
 ---
@@ -778,7 +778,7 @@ $clientSecret = $resp->getData()['clientSecret'];
 **`GET /v1/payment-methods/paypal-client-token`**
 
 ```php
-$resp = $client->paymentMethods()->getPaypalClientToken();
+$resp = $client->paymentMethods()->getPayPalClientToken();
 ```
 
 ---

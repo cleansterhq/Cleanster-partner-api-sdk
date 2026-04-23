@@ -116,7 +116,7 @@ module Cleanster
       # @param checklist_id              [Integer]
       # @param update_upcoming_bookings  [Boolean]
       # @return [Models::ApiResponse]
-      def assign_checklist_to_property(property_id, checklist_id, update_upcoming_bookings: false)
+      def set_default_checklist(property_id, checklist_id, update_upcoming_bookings: false)
         path = "/v1/properties/#{property_id}/checklist/#{checklist_id}" \
                "?updateUpcomingBookings=#{update_upcoming_bookings}"
         raw = @http.put(path)

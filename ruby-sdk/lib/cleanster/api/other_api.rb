@@ -37,7 +37,7 @@ module Cleanster
       #
       # @param request [Hash] property_id, plan_id, hours, and optionally coupon_code.
       # @return [Models::ApiResponse]
-      def calculate_cost(request)
+      def get_cost_estimate(request)
         raw = @http.post("/v1/cost-estimate", body: camel_keys(request))
         Models::ApiResponse.from_hash(raw)
       end

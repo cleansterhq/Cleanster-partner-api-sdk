@@ -785,7 +785,7 @@ Set the default checklist for all future bookings at a property. Optionally appl
 
 ```java
 ApiResponse<Object> resp = client.properties()
-    .assignChecklistToProperty(1004, 105, true);
+    .setDefaultChecklist(1004, 105, true);
 ```
 
 ---
@@ -946,7 +946,7 @@ ApiResponse<Object> resp = client.other().getRecommendedHours(1004, 2, 3);
 Get a price estimate before creating a booking.
 
 ```java
-ApiResponse<Object> resp = client.other().calculateCost(estimateRequest);
+ApiResponse<Object> resp = client.other().getCostEstimate(estimateRequest);
 ```
 
 ---
@@ -1041,7 +1041,7 @@ String clientSecret = (String) data.get("clientSecret");
 Retrieve a PayPal client token for initializing PayPal Hosted Fields or Smart Payment Buttons.
 
 ```java
-ApiResponse<Object> resp = client.paymentMethods().getPaypalClientToken();
+ApiResponse<Object> resp = client.paymentMethods().getPayPalClientToken();
 ```
 
 ---

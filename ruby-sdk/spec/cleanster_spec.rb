@@ -527,17 +527,17 @@ RSpec.describe Cleanster do
       end
     end
 
-    describe "#assign_checklist_to_property" do
+    describe "#set_default_checklist" do
       it "PUTs with updateUpcomingBookings=true" do
         allow(http).to receive(:put).with(include("updateUpcomingBookings=true"))
                                     .and_return(ok_response)
-        api.assign_checklist_to_property(1040, 105, update_upcoming_bookings: true)
+        api.set_default_checklist(1040, 105, update_upcoming_bookings: true)
       end
 
       it "defaults updateUpcomingBookings to false" do
         allow(http).to receive(:put).with(include("updateUpcomingBookings=false"))
                                     .and_return(ok_response)
-        api.assign_checklist_to_property(1040, 105)
+        api.set_default_checklist(1040, 105)
       end
     end
   end
@@ -632,11 +632,11 @@ RSpec.describe Cleanster do
       end
     end
 
-    describe "#calculate_cost" do
+    describe "#get_cost_estimate" do
       it "POSTs to /v1/cost-estimate" do
         allow(http).to receive(:post).with("/v1/cost-estimate", body: anything)
                                      .and_return(ok_response)
-        api.calculate_cost(property_id: 1004, plan_id: 2, hours: 3, coupon_code: "20POFF")
+        api.get_cost_estimate(property_id: 1004, plan_id: 2, hours: 3, coupon_code: "20POFF")
       end
     end
 

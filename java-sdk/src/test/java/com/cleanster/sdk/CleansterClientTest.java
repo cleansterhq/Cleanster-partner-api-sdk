@@ -559,14 +559,14 @@ class CleansterClientTest {
     }
 
     @Test
-    @DisplayName("assignChecklistToProperty calls PUT /v1/properties/{id}/checklist/{checklistId}")
-    void assignChecklistToProperty() {
+    @DisplayName("setDefaultChecklist calls PUT /v1/properties/{id}/checklist/{checklistId}")
+    void setDefaultChecklist() {
         HttpClient mockHttp = mock(HttpClient.class);
         PropertyApi api = new PropertyApi(mockHttp);
         when(mockHttp.put(anyString(), any(), any(TypeReference.class)))
                 .thenReturn(new ApiResponse<>());
 
-        api.assignChecklistToProperty(1040, 200, false);
+        api.setDefaultChecklist(1040, 200, false);
 
         ArgumentCaptor<String> pathCaptor = ArgumentCaptor.forClass(String.class);
         verify(mockHttp).put(pathCaptor.capture(), any(), any(TypeReference.class));
@@ -688,8 +688,8 @@ class CleansterClientTest {
     }
 
     @Test
-    @DisplayName("calculateCost calls POST /v1/cost-estimate")
-    void calculateCost() {
+    @DisplayName("getCostEstimate calls POST /v1/cost-estimate")
+    void getCostEstimate() {
         HttpClient mockHttp = mock(HttpClient.class);
         OtherApi api = new OtherApi(mockHttp);
         when(mockHttp.post(eq("/v1/cost-estimate"), any(), any(TypeReference.class)))
@@ -699,7 +699,7 @@ class CleansterClientTest {
         req.setPropertyId(1004);
         req.setPlanId(2);
         req.setHours(3.0f);
-        api.calculateCost(req);
+        api.getCostEstimate(req);
 
         verify(mockHttp).post(eq("/v1/cost-estimate"), any(), any(TypeReference.class));
     }

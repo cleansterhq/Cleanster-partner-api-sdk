@@ -620,7 +620,7 @@ await client.properties.removeCleaner(1004, cleanerId);
 **`PUT /v1/properties/{propertyId}/checklist/{checklistId}?updateUpcomingBookings={bool}`**
 
 ```typescript
-await client.properties.assignChecklistToProperty(1004, 105, true);
+await client.properties.setDefaultChecklist(1004, 105, true);
 ```
 
 ---
@@ -747,7 +747,7 @@ const resp = await client.other.getRecommendedHours({
 **`POST /v1/cost-estimate`**
 
 ```typescript
-const resp = await client.other.calculateCost(estimateRequest);
+const resp = await client.other.getCostEstimate(estimateRequest);
 ```
 
 ---
@@ -816,7 +816,7 @@ const clientSecret = resp.data.clientSecret;
 **`GET /v1/payment-methods/paypal-client-token`**
 
 ```typescript
-const resp = await client.paymentMethods.getPaypalClientToken();
+const resp = await client.paymentMethods.getPayPalClientToken();
 ```
 
 ---

@@ -26,7 +26,7 @@ final class PaymentMethodsApi
     }
 
     /** Return a PayPal client token for rendering the PayPal button client-side. */
-    public function getPaypalClientToken(): ApiResponse
+    public function getPayPalClientToken(): ApiResponse
     {
         $raw = $this->http->get('/v1/payment-methods/paypal-client-token');
         return new ApiResponse($raw['status'] ?? 200, $raw['message'] ?? 'OK', $raw['data'] ?? []);

@@ -31,7 +31,7 @@ public class PaymentMethodApi {
      *
      * @return API response with PayPal client token
      */
-    public ApiResponse<Object> getPaypalClientToken() {
+    public ApiResponse<Object> getPayPalClientToken() {
         return httpClient.get("/v1/payment-methods/paypal-client-token",
                 new TypeReference<ApiResponse<Object>>() {});
     }

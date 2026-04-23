@@ -517,12 +517,12 @@ describe("PropertiesApi", () => {
     expect(http.get).toHaveBeenCalledWith("/v1/properties/1040/ical");
   });
 
-  test("assignChecklistToProperty() includes updateUpcomingBookings flag", async () => {
+  test("setDefaultChecklist() includes updateUpcomingBookings flag", async () => {
     const http = mockHttp();
     http.put.mockResolvedValue(ok());
     const api = new PropertiesApi(http);
 
-    await api.assignChecklistToProperty(1040, 105, true);
+    await api.setDefaultChecklist(1040, 105, true);
 
     const calledPath = (http.put.mock.calls[0][0] as string);
     expect(calledPath).toContain("/v1/properties/1040/checklist/105");
@@ -625,13 +625,13 @@ describe("OtherApi", () => {
     expect(http.get).toHaveBeenCalledWith("/v1/recommended-hours", { propertyId: 1004, bathroomCount: 2, roomCount: 3 });
   });
 
-  test("calculateCost() posts request body", async () => {
+  test("getCostEstimate() posts request body", async () => {
     const http = mockHttp();
     http.post.mockResolvedValue(ok({}));
     const api = new OtherApi(http);
 
     const req = { propertyId: 1004, planId: 2, hours: 3.0 };
-    await api.calculateCost(req);
+    await api.getCostEstimate(req);
 
     expect(http.post).toHaveBeenCalledWith("/v1/cost-estimate", req);
   });
@@ -719,12 +719,12 @@ describe("PaymentMethodsApi", () => {
     expect(http.get).toHaveBeenCalledWith("/v1/payment-methods/setup-intent-details");
   });
 
-  test("getPaypalClientToken() calls correct URL", async () => {
+  test("getPayPalClientToken() calls correct URL", async () => {
     const http = mockHttp();
     http.get.mockResolvedValue(ok({}));
     const api = new PaymentMethodsApi(http);
 
-    await api.getPaypalClientToken();
+    await api.getPayPalClientToken();
 
     expect(http.get).toHaveBeenCalledWith("/v1/payment-methods/paypal-client-token");
   });

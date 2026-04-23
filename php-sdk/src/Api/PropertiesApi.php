@@ -133,7 +133,7 @@ final class PropertiesApi
      *
      * @param bool $updateUpcomingBookings If true, also applies to all future bookings at this property.
      */
-    public function assignChecklistToProperty(
+    public function setDefaultChecklist(
         int  $propertyId,
         int  $checklistId,
         bool $updateUpcomingBookings = false

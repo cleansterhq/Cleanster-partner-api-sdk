@@ -133,7 +133,7 @@ export class PropertiesApi {
    * @param checklistId              The checklist ID.
    * @param updateUpcomingBookings   If true, applies to all upcoming bookings too.
    */
-  assignChecklistToProperty(
+  setDefaultChecklist(
     propertyId: number,
     checklistId: number,
     updateUpcomingBookings = false,

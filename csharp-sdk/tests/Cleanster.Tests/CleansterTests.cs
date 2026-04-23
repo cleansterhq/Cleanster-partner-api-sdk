@@ -653,24 +653,24 @@ public class CleansterTests
     }
 
     [Fact]
-    public async Task Properties_AssignChecklistToProperty_True()
+    public async Task Properties_SetDefaultChecklist_True()
     {
         var http = MockHttp();
         http.Setup(h => h.PutAsync(It.Is<string>(p => p.Contains("updateUpcomingBookings=true")),
             It.IsAny<object?>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(MakeResponse("{}"));
-        await new PropertiesApi(http.Object).AssignChecklistToPropertyAsync(1040, 105, true);
+        await new PropertiesApi(http.Object).SetDefaultChecklistAsync(1040, 105, true);
         http.VerifyAll();
     }
 
     [Fact]
-    public async Task Properties_AssignChecklistToProperty_False()
+    public async Task Properties_SetDefaultChecklist_False()
     {
         var http = MockHttp();
         http.Setup(h => h.PutAsync(It.Is<string>(p => p.Contains("updateUpcomingBookings=false")),
             It.IsAny<object?>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(MakeResponse("{}"));
-        await new PropertiesApi(http.Object).AssignChecklistToPropertyAsync(1040, 105, false);
+        await new PropertiesApi(http.Object).SetDefaultChecklistAsync(1040, 105, false);
         http.VerifyAll();
     }
 
@@ -781,7 +781,7 @@ public class CleansterTests
         var http = MockHttp();
         http.Setup(h => h.PostAsync("/v1/cost-estimate", It.IsAny<object?>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(MakeResponse("{}"));
-        await new OtherApi(http.Object).CalculateCostAsync(1004, 2, 3.0, "20POFF");
+        await new OtherApi(http.Object).GetCostEstimateAsync(1004, 2, 3.0, "20POFF");
         http.VerifyAll();
     }
 
@@ -885,7 +885,7 @@ public class CleansterTests
         var http = MockHttp();
         http.Setup(h => h.GetAsync("/v1/payment-methods/paypal-client-token", null, It.IsAny<CancellationToken>()))
             .ReturnsAsync(MakeResponse("{}"));
-        await new PaymentMethodsApi(http.Object).GetPaypalClientTokenAsync();
+        await new PaymentMethodsApi(http.Object).GetPayPalClientTokenAsync();
         http.VerifyAll();
     }
 

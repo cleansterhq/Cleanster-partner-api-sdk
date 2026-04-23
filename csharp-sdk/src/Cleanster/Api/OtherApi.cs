@@ -46,7 +46,7 @@ public sealed class OtherApi
     /// <param name="planId">Plan ID from <see cref="GetPlansAsync"/>.</param>
     /// <param name="hours">Cleaning duration.</param>
     /// <param name="couponCode">Optional discount coupon code.</param>
-    public async Task<ApiResponse<JsonElement>> CalculateCostAsync(
+    public async Task<ApiResponse<JsonElement>> GetCostEstimateAsync(
         int propertyId, int planId, double hours,
         string? couponCode = null, CancellationToken ct = default)
     {

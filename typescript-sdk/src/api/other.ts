@@ -53,7 +53,7 @@ export class OtherApi {
    * Use this to show a price preview before the user commits.
    * @param request  propertyId, planId, hours, and optional couponCode / extras.
    */
-  calculateCost(request: CostEstimateRequest): Promise<ApiResponse<unknown>> {
+  getCostEstimate(request: CostEstimateRequest): Promise<ApiResponse<unknown>> {
     return this.http.post("/v1/cost-estimate", request);
   }
 

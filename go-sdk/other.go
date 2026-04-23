@@ -46,9 +46,9 @@ func (s *OtherService) GetRecommendedHours(ctx context.Context, propertyID, bath
 	return decode[map[string]interface{}](raw)
 }
 
-// CalculateCost calculates the estimated price for a potential booking.
+// GetCostEstimate calculates the estimated price for a potential booking.
 // Use this to show a cost preview before committing.
-func (s *OtherService) CalculateCost(ctx context.Context, req CostEstimateRequest) (APIResponse[map[string]interface{}], error) {
+func (s *OtherService) GetCostEstimate(ctx context.Context, req CostEstimateRequest) (APIResponse[map[string]interface{}], error) {
 	raw, err := s.http.post(ctx, "/v1/cost-estimate", req)
 	if err != nil {
 		return APIResponse[map[string]interface{}]{}, err

@@ -58,7 +58,7 @@ public class OtherApi {
      * @param request Cost estimate parameters
      * @return API response with pricing breakdown
      */
-    public ApiResponse<Object> calculateCost(CostEstimateRequest request) {
+    public ApiResponse<Object> getCostEstimate(CostEstimateRequest request) {
         return httpClient.post("/v1/cost-estimate", request,
                 new TypeReference<ApiResponse<Object>>() {});
     }

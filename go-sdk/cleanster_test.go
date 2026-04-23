@@ -815,7 +815,7 @@ func TestProperties_RemoveICalLink(t *testing.T) {
 	_, _ = client.Properties.RemoveICalLink(context.Background(), 1040, cleanster.ICalRequest{ICalLink: "https://calendar.example.com/feed.ics"})
 }
 
-func TestProperties_AssignChecklistToProperty_True(t *testing.T) {
+func TestProperties_SetDefaultChecklist_True(t *testing.T) {
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if !strings.Contains(r.URL.String(), "updateUpcomingBookings=true") {
 			t.Errorf("expected updateUpcomingBookings=true in URL, got %s", r.URL.String())
@@ -824,10 +824,10 @@ func TestProperties_AssignChecklistToProperty_True(t *testing.T) {
 	})
 	client, cleanup := newTestClient(t, handler)
 	defer cleanup()
-	_, _ = client.Properties.AssignChecklistToProperty(context.Background(), 1040, 105, true)
+	_, _ = client.Properties.SetDefaultChecklist(context.Background(), 1040, 105, true)
 }
 
-func TestProperties_AssignChecklistToProperty_False(t *testing.T) {
+func TestProperties_SetDefaultChecklist_False(t *testing.T) {
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if !strings.Contains(r.URL.String(), "updateUpcomingBookings=false") {
 			t.Errorf("expected updateUpcomingBookings=false in URL, got %s", r.URL.String())
@@ -836,7 +836,7 @@ func TestProperties_AssignChecklistToProperty_False(t *testing.T) {
 	})
 	client, cleanup := newTestClient(t, handler)
 	defer cleanup()
-	_, _ = client.Properties.AssignChecklistToProperty(context.Background(), 1040, 105, false)
+	_, _ = client.Properties.SetDefaultChecklist(context.Background(), 1040, 105, false)
 }
 
 // ---------------------------------------------------------------------------
@@ -981,7 +981,7 @@ func TestOther_GetRecommendedHours(t *testing.T) {
 	_, _ = client.Other.GetRecommendedHours(context.Background(), 1004, 2, 3)
 }
 
-func TestOther_CalculateCost(t *testing.T) {
+func TestOther_GetCostEstimate(t *testing.T) {
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/v1/cost-estimate" || r.Method != http.MethodPost {
 			t.Errorf("wrong method/path: %s %s", r.Method, r.URL.Path)
@@ -995,7 +995,7 @@ func TestOther_CalculateCost(t *testing.T) {
 	})
 	client, cleanup := newTestClient(t, handler)
 	defer cleanup()
-	_, _ = client.Other.CalculateCost(context.Background(), cleanster.CostEstimateRequest{PropertyID: 1004, PlanID: 2, Hours: 3, CouponCode: "20POFF"})
+	_, _ = client.Other.GetCostEstimate(context.Background(), cleanster.CostEstimateRequest{PropertyID: 1004, PlanID: 2, Hours: 3, CouponCode: "20POFF"})
 }
 
 func TestOther_GetCleaningExtras(t *testing.T) {
@@ -1119,7 +1119,7 @@ func TestPaymentMethods_GetSetupIntentDetails(t *testing.T) {
 	_, _ = client.PaymentMethods.GetSetupIntentDetails(context.Background())
 }
 
-func TestPaymentMethods_GetPaypalClientToken(t *testing.T) {
+func TestPaymentMethods_GetPayPalClientToken(t *testing.T) {
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/v1/payment-methods/paypal-client-token" {
 			t.Errorf("wrong path: %s", r.URL.Path)
@@ -1128,7 +1128,7 @@ func TestPaymentMethods_GetPaypalClientToken(t *testing.T) {
 	})
 	client, cleanup := newTestClient(t, handler)
 	defer cleanup()
-	_, _ = client.PaymentMethods.GetPaypalClientToken(context.Background())
+	_, _ = client.PaymentMethods.GetPayPalClientToken(context.Background())
 }
 
 func TestPaymentMethods_AddPaymentMethod(t *testing.T) {

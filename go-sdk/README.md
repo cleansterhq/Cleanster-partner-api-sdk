@@ -613,7 +613,7 @@ _, err = client.Properties.RemoveCleaner(ctx, 1004, cleanerID)
 **`PUT /v1/properties/{propertyId}/checklist/{checklistId}?updateUpcomingBookings={bool}`**
 
 ```go
-_, err = client.Properties.AssignChecklistToProperty(ctx, 1004, 105, true)
+_, err = client.Properties.SetDefaultChecklist(ctx, 1004, 105, true)
 ```
 
 ---
@@ -737,7 +737,7 @@ resp, err := client.Other.GetRecommendedHours(ctx, cleanster.RecommendedHoursPar
 **`POST /v1/cost-estimate`**
 
 ```go
-resp, err := client.Other.CalculateCost(ctx, estimateReq)
+resp, err := client.Other.GetCostEstimate(ctx, estimateReq)
 ```
 
 ---
@@ -805,7 +805,7 @@ clientSecret := resp.Data["clientSecret"].(string)
 **`GET /v1/payment-methods/paypal-client-token`**
 
 ```go
-resp, err := client.PaymentMethods.GetPaypalClientToken(ctx)
+resp, err := client.PaymentMethods.GetPayPalClientToken(ctx)
 ```
 
 ---

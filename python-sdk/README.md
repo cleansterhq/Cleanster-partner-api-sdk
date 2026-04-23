@@ -688,7 +688,7 @@ resp = client.properties.remove_cleaner(property_id=1004, cleaner_id=3)
 **`PUT /v1/properties/{propertyId}/checklist/{checklistId}?updateUpcomingBookings={true|false}`**
 
 ```python
-resp = client.properties.assign_checklist_to_property(
+resp = client.properties.set_default_checklist(
     property_id=1004,
     checklist_id=105,
     update_upcoming_bookings=True
@@ -827,7 +827,7 @@ print("Recommended hours:", resp.data["hours"])
 **`POST /v1/cost-estimate`**
 
 ```python
-resp = client.other.calculate_cost(estimate_request)
+resp = client.other.get_cost_estimate(estimate_request)
 ```
 
 ---
