@@ -587,7 +587,7 @@ $client->properties()->removeCleaner(1004, $cleanerId);
 
 ---
 
-#### Assign Checklist to Property
+#### Set Default Checklist
 **`PUT /v1/properties/{propertyId}/checklist/{checklistId}?updateUpcomingBookings={bool}`**
 
 ```php
@@ -706,7 +706,7 @@ echo "Recommended hours: " . $resp->getData()['hours'] . "\n";
 
 ---
 
-#### Calculate Cost Estimate
+#### Get Cost Estimate
 **`POST /v1/cost-estimate`**
 
 ```php

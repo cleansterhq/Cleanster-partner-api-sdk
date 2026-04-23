@@ -776,7 +776,7 @@ public class CleansterTests
     }
 
     [Fact]
-    public async Task Other_CalculateCost()
+    public async Task Other_GetCostEstimate()
     {
         var http = MockHttp();
         http.Setup(h => h.PostAsync("/v1/cost-estimate", It.IsAny<object?>(), It.IsAny<CancellationToken>()))
@@ -880,7 +880,7 @@ public class CleansterTests
     }
 
     [Fact]
-    public async Task PaymentMethods_GetPaypalClientToken()
+    public async Task PaymentMethods_GetPayPalClientToken()
     {
         var http = MockHttp();
         http.Setup(h => h.GetAsync("/v1/payment-methods/paypal-client-token", null, It.IsAny<CancellationToken>()))

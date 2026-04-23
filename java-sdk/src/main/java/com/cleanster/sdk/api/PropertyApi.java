@@ -172,11 +172,12 @@ public class PropertyApi {
     // ---- Property Checklist ----
 
     /**
-     * Assign a checklist to a property.
+     * Set the default checklist for a property.
+     * Optionally apply the checklist to all upcoming (not yet completed) bookings at this property.
      *
      * @param propertyId              The property ID
      * @param checklistId             The checklist ID
-     * @param updateUpcomingBookings  Whether to apply the checklist to upcoming bookings
+     * @param updateUpcomingBookings  Whether to also apply the checklist to all upcoming bookings
      * @return API response
      */
     public ApiResponse<Object> setDefaultChecklist(int propertyId, int checklistId,

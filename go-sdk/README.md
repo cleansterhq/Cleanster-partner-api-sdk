@@ -609,7 +609,7 @@ _, err = client.Properties.RemoveCleaner(ctx, 1004, cleanerID)
 
 ---
 
-#### Assign Checklist to Property
+#### Set Default Checklist
 **`PUT /v1/properties/{propertyId}/checklist/{checklistId}?updateUpcomingBookings={bool}`**
 
 ```go
@@ -733,7 +733,7 @@ resp, err := client.Other.GetRecommendedHours(ctx, cleanster.RecommendedHoursPar
 
 ---
 
-#### Calculate Cost Estimate
+#### Get Cost Estimate
 **`POST /v1/cost-estimate`**
 
 ```go

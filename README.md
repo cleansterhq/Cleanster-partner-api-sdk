@@ -9,7 +9,7 @@
   <img src="https://img.shields.io/badge/API-Cleanster%20Partner-brightgreen" alt="Cleanster Partner API">
   <img src="https://img.shields.io/badge/SDKs-10%20Languages-blue" alt="10 Languages">
   <img src="https://img.shields.io/badge/Endpoints-59-orange" alt="59 Endpoints">
-  <img src="https://img.shields.io/badge/Tests-1184%20passing-success" alt="1184 Tests Passing">
+  <img src="https://img.shields.io/badge/Tests-1174%20passing-success" alt="1174 Tests Passing">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
 </p>
 
@@ -68,7 +68,7 @@
 | [Kotlin](#kotlin) | [`kotlin-sdk/`](./kotlin-sdk) | 164 | Kotlin 1.9+ / JVM 11+ | Gradle |
 | [XML (JAXB)](#xml) | [`xml-sdk/`](./xml-sdk) | 164 | Java 17+ / JAXB 4.0 | Maven |
 
-**1,184 tests passing across all SDKs.**
+**1,174 tests passing across all SDKs.**
 
 ---
 

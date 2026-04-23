@@ -614,7 +614,7 @@ await client.Properties.RemoveCleanerAsync(propertyId: 1004, cleanerId: 3);
 
 ---
 
-#### Assign Checklist to Property
+#### Set Default Checklist
 **`PUT /v1/properties/{propertyId}/checklist/{checklistId}?updateUpcomingBookings={bool}`**
 
 ```csharp
@@ -742,7 +742,7 @@ var resp = await client.Other.GetRecommendedHoursAsync(
 
 ---
 
-#### Calculate Cost Estimate
+#### Get Cost Estimate
 **`POST /v1/cost-estimate`**
 
 ```csharp

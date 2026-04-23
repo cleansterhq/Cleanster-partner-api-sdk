@@ -625,7 +625,7 @@ client.properties.remove_cleaner(1004, 3)
 
 ---
 
-#### Assign Checklist to Property
+#### Set Default Checklist
 **`PUT /v1/properties/{propertyId}/checklist/{checklistId}?updateUpcomingBookings={bool}`**
 
 ```ruby
@@ -750,7 +750,7 @@ resp = client.other.get_recommended_hours(
 
 ---
 
-#### Calculate Cost Estimate
+#### Get Cost Estimate
 **`POST /v1/cost-estimate`**
 
 ```ruby

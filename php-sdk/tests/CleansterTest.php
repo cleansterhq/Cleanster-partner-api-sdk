@@ -823,7 +823,7 @@ class CleansterTest extends TestCase
         (new OtherApi($http))->getRecommendedHours(1004, 2, 3);
     }
 
-    public function testCalculateCost(): void
+    public function testGetCostEstimate(): void
     {
         $http = $this->mockHttp();
         $req  = ['propertyId' => 1004, 'planId' => 2, 'hours' => 3, 'couponCode' => '20POFF'];
@@ -932,7 +932,7 @@ class CleansterTest extends TestCase
         (new PaymentMethodsApi($http))->getSetupIntentDetails();
     }
 
-    public function testGetPaypalClientToken(): void
+    public function testGetPayPalClientToken(): void
     {
         $http = $this->mockHttp();
         $http->expects($this->once())

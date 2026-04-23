@@ -616,7 +616,7 @@ await client.properties.removeCleaner(1004, cleanerId);
 
 ---
 
-#### Assign Checklist to Property
+#### Set Default Checklist
 **`PUT /v1/properties/{propertyId}/checklist/{checklistId}?updateUpcomingBookings={bool}`**
 
 ```typescript
@@ -743,7 +743,7 @@ const resp = await client.other.getRecommendedHours({
 
 ---
 
-#### Calculate Cost Estimate
+#### Get Cost Estimate
 **`POST /v1/cost-estimate`**
 
 ```typescript

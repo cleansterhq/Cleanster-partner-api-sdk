@@ -774,7 +774,7 @@ ApiResponse<Object> resp = client.properties().removeCleaner(1004, 3);
 
 ---
 
-#### Assign Checklist to Property
+#### Set Default Checklist
 **`PUT /v1/properties/{propertyId}/checklist/{checklistId}?updateUpcomingBookings={true|false}`**
 
 Set the default checklist for all future bookings at a property. Optionally apply it to upcoming (already scheduled) bookings too.
@@ -940,7 +940,7 @@ ApiResponse<Object> resp = client.other().getRecommendedHours(1004, 2, 3);
 
 ---
 
-#### Calculate Cost Estimate
+#### Get Cost Estimate
 **`POST /v1/cost-estimate`**
 
 Get a price estimate before creating a booking.
