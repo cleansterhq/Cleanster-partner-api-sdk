@@ -2,13 +2,14 @@
 
 <p align="center">
   <strong>Official TypeScript client library for the Cleanster Partner API</strong><br>
-  Manage cleaning service bookings, properties, users, checklists, payment methods, webhooks, and more.
+  Automate residential and commercial cleaning operations — bookings, properties, cleaners, checklists, payments, and more.
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/TypeScript-5.x-blue?logo=typescript" alt="TypeScript">
+  <img src="https://img.shields.io/badge/TypeScript-5.x-blue?logo=typescript" alt="TypeScript 5">
   <img src="https://img.shields.io/badge/Node.js-18%2B-green?logo=node.js" alt="Node.js 18+">
-  <img src="https://img.shields.io/badge/npm-cleanster-orange?logo=npm" alt="npm">
+  <img src="https://img.shields.io/badge/tests-85%20passing-brightgreen" alt="85 passing">
+  <img src="https://img.shields.io/badge/dependencies-zero-brightgreen" alt="Zero dependencies">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
   <img src="https://img.shields.io/badge/API-Cleanster%20Partner-brightgreen" alt="Cleanster Partner API">
 </p>
@@ -22,386 +23,352 @@
 - [Installation](#installation)
 - [Authentication](#authentication)
 - [Quick Start](#quick-start)
-- [Configuration](#configuration)
+- [Environments](#environments)
+- [Booking Flow](#booking-flow)
 - [API Reference](#api-reference)
-  - [Bookings](#bookings-clientbookings)
-  - [Users](#users-clientusers)
-  - [Properties](#properties-clientproperties)
-  - [Checklists](#checklists-clientchecklists)
-  - [Other / Utilities](#other--utilities-clientother)
-  - [Blacklist](#blacklist-clientblacklist)
-  - [Payment Methods](#payment-methods-clientpaymentmethods)
-  - [Webhooks](#webhooks-clientwebhooks)
-- [Error Handling](#error-handling)
-- [Response Structure](#response-structure)
+  - [Bookings](#bookings)
+  - [Users](#users)
+  - [Properties](#properties)
+  - [Checklists](#checklists)
+  - [Other / Reference Data](#other--reference-data)
+  - [Blacklist](#blacklist)
+  - [Payment Methods](#payment-methods)
+  - [Webhooks](#webhooks)
 - [Type Reference](#type-reference)
-- [Sandbox vs Production](#sandbox-vs-production)
-- [Test Coupon Codes](#test-coupon-codes-sandbox-only)
-- [Building & Publishing](#building--publishing)
+- [Error Handling](#error-handling)
+- [Test Coupon Codes](#test-coupon-codes)
+- [Chat Window Rules](#chat-window-rules)
+- [Webhook Events](#webhook-events)
 - [Running Tests](#running-tests)
 - [Project Structure](#project-structure)
 - [License](#license)
-- [Support](#support)
 
 ---
 
 ## Overview
 
-The Cleanster TypeScript SDK provides a fully-typed, async/await-based interface for the [Cleanster Partner API](https://documenter.getpostman.com/view/26172658/2sAYdoF7ep). It works in Node.js 18+ and any bundled TypeScript application.
+The Cleanster TypeScript SDK provides a fully-typed, async/await interface for the [Cleanster Partner API](https://documenter.getpostman.com/view/26172658/2sAYdoF7ep). It works in Node.js 18+ with zero external runtime dependencies (uses the native `fetch` API).
 
-**What it gives you:**
-
-- **100% TypeScript** — every request, response, and error is fully typed; zero `any` in your application code
-- **Generic `ApiResponse<T>`** — the `data` field is statically typed for every API call
-- **Dual-layer authentication** — partner access key + per-user bearer tokens, sent automatically on every request
-- **Typed exceptions** — distinct classes for 401 auth errors, other API errors, and network failures
-- **Environment switching** — one line to toggle between sandbox and production
-- **Native `fetch` transport** — uses the built-in `fetch` API (Node 18+) with `AbortController` timeout support; zero external HTTP dependencies
-- **Full JSDoc** — every method has hover documentation in your IDE
-- **Tree-shakeable** — all API classes are individually importable
+Use it to:
+- **Create and manage bookings** — schedule, reschedule, cancel, adjust hours
+- **Manage properties** — CRUD, iCal calendar sync, preferred cleaner lists
+- **Handle users** — create accounts and manage authorization tokens
+- **Configure checklists** — create task lists and assign to bookings or properties
+- **Process payments** — Stripe and PayPal support
+- **Receive webhooks** — subscribe to booking lifecycle events
+- **Blacklist cleaners** — prevent specific cleaners from being assigned
 
 ---
 
 ## Requirements
 
-| Requirement | Version |
-|-------------|---------|
-| Node.js | ≥ 18.0 |
-| TypeScript | ≥ 4.7 (for `exactOptionalPropertyTypes` support) |
-
-> **Why Node 18?** The SDK uses the native `fetch` API and `AbortController` introduced in Node 18. No `node-fetch` polyfill is needed.
+- **Node.js 18+** (for native `fetch`)
+- **TypeScript 4.7+** (or plain JavaScript)
+- A Cleanster Partner account — contact [partner@cleanster.com](mailto:partner@cleanster.com) for access
 
 ---
 
 ## Installation
 
-### npm
-
 ```bash
 npm install cleanster
-```
-
-### yarn
-
-```bash
+# or
 yarn add cleanster
-```
-
-### pnpm
-
-```bash
+# or
 pnpm add cleanster
 ```
 
-### Version pin
+Install from source:
 
 ```bash
-npm install cleanster@1.0.0
+git clone https://github.com/cleansterhq/Cleanster-partner-api-sdk.git
+cd Cleanster-partner-api-sdk/typescript-sdk
+npm install && npm run build
 ```
-
-### Build from Source
-
-```bash
-git clone https://github.com/cleanster/cleanster-typescript-sdk.git
-cd cleanster-typescript-sdk
-npm install
-npm run build
-```
-
-The compiled output lands in `dist/` with full `.d.ts` declaration files.
 
 ---
 
 ## Authentication
 
-The Cleanster Partner API uses **two layers of authentication** sent as HTTP headers on every request:
+Every request requires two credentials sent as HTTP headers:
 
-| Header | Value | Purpose |
-|--------|-------|---------|
-| `access-key` | Your partner key | Identifies your partner account |
-| `token` | User bearer token | Authenticates the end-user |
+| Header | Description |
+|---|---|
+| `access-key` | Your static partner key from Cleanster |
+| `token` | A per-user JWT — long-lived, from `users.fetchAccessToken(userId)` |
 
-### Step-by-Step Authentication
+### 4-Step Setup
 
-**Step 1 — Initialize the client with your partner access key:**
+**Step 1 — Contact Cleanster** to receive your `access-key`.
 
-```typescript
-import { CleansterClient } from "cleanster";
-
-const client = CleansterClient.sandbox("your-partner-access-key");
-```
-
-**Step 2 — Create or retrieve a user.** For new users, register them via the API:
+**Step 2 — Create a user account** (one-time per end-user):
 
 ```typescript
-const { data: user } = await client.users.createUser({
-  email: "user@example.com",
-  firstName: "Jane",
-  lastName: "Doe",
-  phone: "+15551234567", // optional
+import { CleansterClient } from 'cleanster';
+
+const client = new CleansterClient({ accessKey: 'your-access-key' });
+
+const resp = await client.users.createUser({
+  email: 'jane@example.com',
+  firstName: 'Jane',
+  lastName: 'Doe',
+  phone: '+15551234567',
 });
-console.log(`Created user #${user.id}`);
+const userId = resp.data.userId;
 ```
 
-**Step 3 — Fetch the user's long-lived bearer token:**
+**Step 3 — Fetch the user's access token** (store it; it is long-lived):
 
 ```typescript
-const { data: tokenUser } = await client.users.fetchAccessToken(user.id);
-const userToken = tokenUser.token!;
+const tokenResp = await client.users.fetchAccessToken(userId);
+const userToken = tokenResp.data.token;
 ```
 
-**Step 4 — Set the token on the client** for all subsequent calls:
+**Step 4 — Build the client with both credentials**:
 
 ```typescript
-client.setAccessToken(userToken);
-// Every API call from this point forward includes the user token automatically
+const client = new CleansterClient({
+  accessKey: 'your-access-key',
+  token: userToken,
+});
 ```
 
-> **Tip:** The user token is long-lived. Store it securely in your database and call `setAccessToken()` at the start of each session — no need to re-fetch each time.
+> **Token lifecycle:** Only refresh when the API returns HTTP 401.
 
 ---
 
 ## Quick Start
 
 ```typescript
-import { CleansterClient } from "cleanster";
+import { CleansterClient } from 'cleanster';
 
-async function main() {
-  // 1. Initialize (sandbox for dev, production for live)
-  const client = CleansterClient.sandbox("your-access-key");
+const client = new CleansterClient({
+  accessKey: 'your-access-key',
+  token: 'user-jwt-token',
+});
 
-  // 2. Create a user
-  const { data: user } = await client.users.createUser({
-    email: "jane@example.com",
-    firstName: "Jane",
-    lastName: "Smith",
-  });
+// Get recommended cleaning duration
+const hours = await client.other.getRecommendedHours({
+  propertyId: 1004,
+  bathroomCount: 2,
+  roomCount: 3,
+});
+console.log('Recommended hours:', hours.data);
 
-  // 3. Fetch and set the user access token
-  const { data: tokenUser } = await client.users.fetchAccessToken(user.id);
-  client.setAccessToken(tokenUser.token!);
+// Create a booking
+const booking = await client.bookings.createBooking({
+  propertyId: 1004,
+  date: '2025-09-01',
+  time: '10:00',
+  planId: 2,
+  roomCount: 3,
+  bathroomCount: 2,
+  hours: 3,
+  extraSupplies: false,
+  paymentMethodId: 10,
+  couponCode: '20POFF', // optional — 20% off in sandbox
+});
+console.log('Created booking ID:', booking.data.id);
 
-  // 4. Add a property
-  const { data: property } = await client.properties.addProperty({
-    name: "Beach House",
-    address: "123 Ocean Drive",
-    city: "Miami",
-    country: "USA",
-    roomCount: 3,
-    bathroomCount: 2,
-    serviceId: 1,
-  });
-
-  // 5. Check recommended hours and estimate cost
-  await client.other.getRecommendedHours(property.id, 2, 3);
-  await client.other.calculateCost({
-    propertyId: property.id,
-    planId: 2,
-    hours: 3,
-    couponCode: "20POFF", // optional — sandbox test coupon
-  });
-
-  // 6. Create a booking
-  const { data: booking } = await client.bookings.createBooking({
-    date: "2025-06-15",
-    time: "10:00",
-    propertyId: property.id,
-    roomCount: 3,
-    bathroomCount: 2,
-    planId: 2,
-    hours: 3,
-    extraSupplies: false,
-    paymentMethodId: 10,
-  });
-
-  console.log(`Created booking #${booking.id} — status: ${booking.status}`);
-
-  // 7. List all bookings
-  const { status, message } = await client.bookings.getBookings();
-  console.log(`${status}: ${message}`);
-}
-
-main().catch(console.error);
+// List open bookings
+const list = await client.bookings.getBookings({ pageNo: 1, status: 'OPEN' });
+console.log('Open bookings:', list.data.bookings.length);
 ```
 
 ---
 
-## Configuration
-
-### Factory Methods (Recommended)
-
-```typescript
-import { CleansterClient } from "cleanster";
-
-// Sandbox — for development and testing (no real charges or cleaners)
-const client = CleansterClient.sandbox("your-access-key");
-
-// Production — for live use (real cleaners, real charges)
-const client = CleansterClient.production("your-access-key");
-```
-
-### Builder Pattern (Custom Configuration)
-
-```typescript
-import { CleansterClient, CleansterConfig } from "cleanster";
-
-const config = CleansterConfig.builder("your-access-key")
-  .sandbox()            // or .production()
-  .timeoutMs(60_000)   // request timeout in milliseconds (default: 30,000)
-  .build();
-
-const client = new CleansterClient(config);
-```
-
-### Custom Base URL
-
-```typescript
-const config = CleansterConfig.builder("your-access-key")
-  .baseUrl("https://your-proxy.example.com/api")
-  .build();
-```
-
-### Environment Base URLs
+## Environments
 
 | Environment | Base URL |
-|-------------|----------|
-| Sandbox | `https://partner-sandbox-dot-official-tidyio-project.ue.r.appspot.com/public` |
-| Production | `https://partner-dot-official-tidyio-project.ue.r.appspot.com/public` |
+|---|---|
+| **Sandbox** (default) | `https://partner-sandbox-dot-official-tidyio-project.ue.r.appspot.com/public` |
+| **Production** | `https://partner-dot-official-tidyio-project.ue.r.appspot.com/public` |
+
+```typescript
+// Sandbox (default)
+const client = new CleansterClient({ accessKey: 'key', token: 'token' });
+
+// Production
+const client = new CleansterClient({
+  accessKey: 'key',
+  token: 'token',
+  baseUrl: 'https://partner-dot-official-tidyio-project.ue.r.appspot.com/public',
+});
+```
+
+---
+
+## Booking Flow
+
+```
+createBooking()        →   OPEN
+                               │
+     bookings.assignCleaner()
+                               │
+                               ▼
+                     CLEANER_ASSIGNED
+                               │
+                  Cleaner starts the job
+                               │
+                ┌──────────────┴──────────────┐
+                ▼                             ▼
+           COMPLETED                     CANCELLED
+```
+
+Status values: `OPEN` · `CLEANER_ASSIGNED` · `IN_PROGRESS` · `COMPLETED` · `CANCELLED` · `REMOVED`
 
 ---
 
 ## API Reference
 
-Every method returns a `Promise<ApiResponse<T>>`. Destructure `{ data }` for the typed payload, or check `{ status, message }` for the response metadata. See [Response Structure](#response-structure) for full details.
+All methods return `Promise<ApiResponse<T>>` with:
+- `.status` — HTTP status code
+- `.message` — Human-readable result
+- `.data` — Typed response payload
 
 ---
 
-### Bookings (`client.bookings`)
+### Bookings
 
-The booking API manages the full lifecycle of a cleaning appointment.
+#### List Bookings
+**`GET /v1/bookings?pageNo={pageNo}&status={status}`**
 
-#### `getBookings(pageNo?, status?)`
-
-Retrieve a paginated list of bookings. All parameters are optional.
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `pageNo` | number | Yes | Page number (1-based) |
+| `status` | string | No | `OPEN` · `CLEANER_ASSIGNED` · `COMPLETED` · `CANCELLED` · `REMOVED` |
 
 ```typescript
-// All bookings
-const result = await client.bookings.getBookings();
-
-// Filter by status
-const completed = await client.bookings.getBookings(undefined, "COMPLETED");
-
-// Page 2 of open bookings
-const page2 = await client.bookings.getBookings(2, "OPEN");
+const resp = await client.bookings.getBookings({ pageNo: 1, status: 'OPEN' });
+resp.data.bookings.forEach(b => console.log(b.id, b.status));
 ```
 
-**Valid status values:** `"OPEN"` | `"CLEANER_ASSIGNED"` | `"COMPLETED"` | `"CANCELLED"` | `"REMOVED"`
+---
+
+#### Get Booking
+**`GET /v1/bookings/{bookingId}`**
+
+```typescript
+const resp = await client.bookings.getBooking(16926);
+console.log(resp.data.status, 'on', resp.data.date);
+```
 
 ---
 
-#### `createBooking(request: CreateBookingRequest)`
+#### Create Booking
+**`POST /v1/bookings/create`**
 
-Schedule a new cleaning appointment.
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `propertyId` | number | Yes | Property to clean |
+| `date` | string | Yes | `YYYY-MM-DD` |
+| `time` | string | Yes | `HH:MM` (24-hour) |
+| `planId` | number | Yes | Cleaning plan ID |
+| `roomCount` | number | Yes | Number of rooms |
+| `bathroomCount` | number | Yes | Number of bathrooms |
+| `hours` | number | Yes | Scheduled duration |
+| `extraSupplies` | boolean | Yes | Cleaner brings supplies |
+| `paymentMethodId` | number | Yes | Payment method ID |
+| `couponCode` | string | No | Discount coupon |
+| `cleaningExtras` | number[] | No | Extra service IDs |
 
 ```typescript
-const { data: booking } = await client.bookings.createBooking({
-  date: "2025-06-15",          // Required — YYYY-MM-DD
-  time: "10:00",               // Required — HH:mm (24-hour)
-  propertyId: 1004,            // Required
-  roomCount: 2,                // Required
-  bathroomCount: 1,            // Required
-  planId: 5,                   // Required — from getPlans()
-  hours: 3,                    // Required — from getRecommendedHours()
-  extraSupplies: false,        // Required — include cleaning supplies?
-  paymentMethodId: 10,         // Required
-  couponCode: "20POFF",        // Optional
-  extras: [101, 102],          // Optional — extra service IDs
+const resp = await client.bookings.createBooking({
+  propertyId: 1004,
+  date: '2025-09-01',
+  time: '10:00',
+  planId: 2,
+  roomCount: 3,
+  bathroomCount: 2,
+  hours: 3,
+  extraSupplies: false,
+  paymentMethodId: 10,
+  couponCode: '50POFF',
 });
-
-console.log(booking.id);       // number
-console.log(booking.status);  // "OPEN"
-console.log(booking.cost);    // number
+console.log('Booking ID:', resp.data.id);
 ```
 
 ---
 
-#### `getBookingDetails(bookingId: number)`
+#### Assign Cleaner to Booking
+**`POST /v1/bookings/{bookingId}/cleaner`**
 
 ```typescript
-const { data: booking } = await client.bookings.getBookingDetails(16926);
-console.log(booking.date);         // "2025-06-15"
-console.log(booking.hours);        // 3
-console.log(booking.cleanerId);    // number | null
-console.log(booking.cost);         // number
+await client.bookings.assignCleaner(16926, cleanerId);
 ```
 
 ---
 
-#### `cancelBooking(bookingId, request?)`
+#### Remove Cleaner from Booking
+**`DELETE /v1/bookings/{bookingId}/cleaner`**
 
 ```typescript
-// With a cancellation reason
-await client.bookings.cancelBooking(16459, { reason: "Changed my schedule" });
-
-// Without a reason (reason is optional)
-await client.bookings.cancelBooking(16459);
+await client.bookings.removeCleaner(16926);
 ```
 
 ---
 
-#### `rescheduleBooking(bookingId, request)`
+#### Adjust Booking Hours
+**`POST /v1/bookings/{bookingId}/hours`**
 
 ```typescript
-await client.bookings.rescheduleBooking(16459, {
-  date: "2025-07-01",
-  time: "14:00",
+await client.bookings.adjustHours(16926, 4.5);
+```
+
+---
+
+#### Reschedule Booking
+**`POST /v1/bookings/{bookingId}/reschedule`**
+
+```typescript
+await client.bookings.rescheduleBooking(16926, {
+  date: '2025-09-15',
+  time: '14:00',
 });
 ```
 
 ---
 
-#### `assignCleaner(bookingId, request)` / `removeAssignedCleaner(bookingId)`
+#### Pay Booking Expenses
+**`POST /v1/bookings/{bookingId}/expenses`**
 
 ```typescript
-// Assign
-await client.bookings.assignCleaner(16459, { cleanerId: 5 });
-
-// Remove
-await client.bookings.removeAssignedCleaner(16459);
+await client.bookings.payExpenses(16926, paymentMethodId);
 ```
 
 ---
 
-#### `adjustHours(bookingId, request)`
+#### Get Booking Inspection
+**`GET /v1/bookings/{bookingId}/inspection`**
 
 ```typescript
-await client.bookings.adjustHours(16459, { hours: 4.0 });
+const resp = await client.bookings.getInspection(16926);
 ```
 
 ---
 
-#### `payExpenses(bookingId, request)`
-
-Pay outstanding expenses within 72 hours of booking completion.
+#### Get Booking Inspection Details
+**`GET /v1/bookings/{bookingId}/inspection/details`**
 
 ```typescript
-await client.bookings.payExpenses(16926, { paymentMethodId: 10 });
+const resp = await client.bookings.getInspectionDetails(16926);
 ```
 
 ---
 
-#### `getBookingInspection(bookingId)` / `getBookingInspectionDetails(bookingId)`
+#### Cancel Booking
+**`POST /v1/bookings/{bookingId}/cancel`**
 
 ```typescript
-const inspection = await client.bookings.getBookingInspection(16926);
-const details = await client.bookings.getBookingInspectionDetails(16926);
+await client.bookings.cancelBooking(16926, 'Scheduling conflict');
 ```
 
 ---
 
-#### `assignChecklistToBooking(bookingId, checklistId)`
+#### Assign Checklist to Booking
+**`PUT /v1/bookings/{bookingId}/checklist/{checklistId}`**
 
-Override the property's default checklist for this specific booking.
+Override the property's default checklist for this booking only.
 
 ```typescript
 await client.bookings.assignChecklistToBooking(16926, 105);
@@ -409,943 +376,730 @@ await client.bookings.assignChecklistToBooking(16926, 105);
 
 ---
 
-#### `submitFeedback(bookingId, request)`
+#### Submit Feedback
+**`POST /v1/bookings/{bookingId}/feedback`**
 
-Submit a star rating (1–5) and optional comment after a booking completes.
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `rating` | number | Yes | 1–5 stars |
+| `comment` | string | No | Written feedback |
 
 ```typescript
-await client.bookings.submitFeedback(16926, {
-  rating: 5,
-  comment: "Excellent — very thorough!",
+await client.bookings.submitFeedback(16926, { rating: 5, comment: 'Excellent!' });
+```
+
+---
+
+#### Submit Tip
+**`POST /v1/bookings/{bookingId}/tip`**
+
+```typescript
+await client.bookings.submitTip(16926, { amount: 15.00, paymentMethodId: 10 });
+```
+
+---
+
+#### Get Chat Messages
+**`GET /v1/bookings/{bookingId}/chat`**
+
+```typescript
+const resp = await client.bookings.getChat(16926);
+for (const msg of resp.data.messages) {
+  console.log(`[${msg.sender_type}] ${msg.content}`);
+}
+```
+
+**`data.messages[]` fields:**
+
+| Field | Type | Description |
+|---|---|---|
+| `message_id` | string | Unique message ID |
+| `sender_id` | string | Sender key (e.g. `C6`, `P3`) |
+| `content` | string | Text content |
+| `timestamp` | string | `DD MMM YYYY, HH:MM AM/PM` (GMT) |
+| `message_type` | string | `text` or `media` |
+| `attachments` | array | Media items |
+| `attachments[].type` | string | `image`, `video`, `sound` |
+| `attachments[].url` | string | Media URL |
+| `attachments[].thumb_url` | string | Thumbnail URL (nullable) |
+| `is_read` | boolean | Read status |
+| `sender_type` | string | `client` · `cleaner` · `support` · `bot` |
+
+---
+
+#### Send Chat Message
+**`POST /v1/bookings/{bookingId}/chat`**
+
+```typescript
+await client.bookings.sendMessage(16926, 'Please bring extra supplies.');
+```
+
+---
+
+#### Delete Chat Message
+**`DELETE /v1/bookings/{bookingId}/chat/{messageId}`**
+
+```typescript
+await client.bookings.deleteMessage(16926, '-OLPrlE06uD8tQ8ebJZw');
+```
+
+---
+
+### Users
+
+#### Create User
+**`POST /v1/user/account`**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `email` | string | Yes | Email address |
+| `firstName` | string | Yes | First name |
+| `lastName` | string | Yes | Last name |
+| `phone` | string | Yes | E.164 format |
+
+```typescript
+const resp = await client.users.createUser({
+  email: 'jane@example.com',
+  firstName: 'Jane',
+  lastName: 'Doe',
+  phone: '+15551234567',
 });
+const userId: number = resp.data.userId;
 ```
 
 ---
 
-#### `addTip(bookingId, request)`
-
-Add a tip for the cleaner (within 72 hours of booking completion).
+#### Fetch Access Token
+**`GET /v1/user/access-token/{userId}`**
 
 ```typescript
-await client.bookings.addTip(16926, {
-  amount: 20.0,
-  paymentMethodId: 10,
-});
+const resp = await client.users.fetchAccessToken(42);
+const token: string = resp.data.token;
 ```
 
 ---
 
-#### Chat — `getChat`, `sendMessage`, `deleteMessage`
+#### Verify JWT
+**`POST /v1/user/verify-jwt`**
 
 ```typescript
-// Get all messages in a thread
-const chat = await client.bookings.getChat(17142);
-
-// Send a message
-await client.bookings.sendMessage(17142, { message: "Please focus on the kitchen today." });
-
-// Delete a message
-await client.bookings.deleteMessage(17142, "msg-abc-123");
+const resp = await client.users.verifyJwt(userToken);
 ```
 
 ---
 
-**Bookings API Summary**
+### Properties
 
-| Method | HTTP | Endpoint |
-|--------|------|----------|
-| `getBookings(pageNo?, status?)` | GET | `/v1/bookings` |
-| `createBooking(req)` | POST | `/v1/bookings/create` |
-| `getBookingDetails(id)` | GET | `/v1/bookings/{id}` |
-| `cancelBooking(id, req?)` | POST | `/v1/bookings/{id}/cancel` |
-| `rescheduleBooking(id, req)` | POST | `/v1/bookings/{id}/reschedule` |
-| `assignCleaner(id, req)` | POST | `/v1/bookings/{id}/cleaner` |
-| `removeAssignedCleaner(id)` | DELETE | `/v1/bookings/{id}/cleaner` |
-| `adjustHours(id, req)` | POST | `/v1/bookings/{id}/hours` |
-| `payExpenses(id, req)` | POST | `/v1/bookings/{id}/expenses` |
-| `getBookingInspection(id)` | GET | `/v1/bookings/{id}/inspection` |
-| `getBookingInspectionDetails(id)` | GET | `/v1/bookings/{id}/inspection/details` |
-| `assignChecklistToBooking(id, cid)` | PUT | `/v1/bookings/{id}/checklist/{cid}` |
-| `submitFeedback(id, req)` | POST | `/v1/bookings/{id}/feedback` |
-| `addTip(id, req)` | POST | `/v1/bookings/{id}/tip` |
-| `getChat(id)` | GET | `/v1/bookings/{id}/chat` |
-| `sendMessage(id, req)` | POST | `/v1/bookings/{id}/chat` |
-| `deleteMessage(id, msgId)` | DELETE | `/v1/bookings/{id}/chat/{msgId}` |
-
----
-
-### Users (`client.users`)
-
-#### `createUser(request: CreateUserRequest)`
+#### List Properties
+**`GET /v1/properties?serviceId={serviceId}`**
 
 ```typescript
-const { data: user } = await client.users.createUser({
-  email: "jane@example.com",    // Required
-  firstName: "Jane",            // Required
-  lastName: "Smith",            // Required
-  phone: "+15551234567",        // Optional
-});
-
-// TypeScript knows: user is User
-console.log(user.id);          // number
-console.log(user.email);       // string
-console.log(user.firstName);   // string
+const resp = await client.properties.listProperties(1);
 ```
 
 ---
 
-#### `fetchAccessToken(userId: number)`
-
-Fetch the long-lived bearer token. Store it in your database and reuse it across sessions.
-
-```typescript
-const { data: tokenUser } = await client.users.fetchAccessToken(user.id);
-const token: string = tokenUser.token!;
-
-// Authenticate all subsequent requests:
-client.setAccessToken(token);
-```
-
----
-
-#### `verifyJwt(request: VerifyJwtRequest)`
+#### Create Property
+**`POST /v1/properties`**
 
 ```typescript
-const result = await client.users.verifyJwt({ token: "eyJhbGci..." });
-console.log(result.status); // 200 if valid
-```
-
----
-
-**Users API Summary**
-
-| Method | HTTP | Endpoint |
-|--------|------|----------|
-| `createUser(req)` | POST | `/v1/user/account` |
-| `fetchAccessToken(userId)` | GET | `/v1/user/access-token/{userId}` |
-| `verifyJwt(req)` | POST | `/v1/user/verify-jwt` |
-
----
-
-### Properties (`client.properties`)
-
-#### `listProperties(serviceId?)`
-
-```typescript
-// All properties
-const all = await client.properties.listProperties();
-
-// Only residential properties (serviceId = 1)
-const residential = await client.properties.listProperties(1);
-```
-
----
-
-#### `addProperty(request: CreatePropertyRequest)`
-
-```typescript
-const { data: property } = await client.properties.addProperty({
-  name: "Downtown Condo",
-  address: "456 Main St",
-  city: "Toronto",
-  country: "Canada",
-  roomCount: 2,
-  bathroomCount: 1,
+const resp = await client.properties.createProperty({
+  address: '123 Main St',
+  city: 'Chicago',
+  state: 'IL',
+  zip: '60601',
   serviceId: 1,
 });
-
-// TypeScript knows: property is Property
-console.log(property.id);     // number
-console.log(property.name);   // string
 ```
 
 ---
 
-#### CRUD Operations
+#### Get Property
+**`GET /v1/properties/{propertyId}`**
 
 ```typescript
-// Get
-const { data: prop } = await client.properties.getProperty(1040);
-console.log(prop.city); // string
-
-// Update
-await client.properties.updateProperty(1040, {
-  name: "Renovated Condo",
-  address: "456 Main St",
-  city: "Toronto",
-  country: "Canada",
-  roomCount: 3,
-  bathroomCount: 1,
-  serviceId: 1,
-});
-
-// Enable / Disable
-await client.properties.enableOrDisableProperty(1040, { enabled: false });
-
-// Delete
-await client.properties.deleteProperty(1040);
+const resp = await client.properties.getProperty(1004);
 ```
 
 ---
 
-#### Property Cleaners
+#### Update Property
+**`PUT /v1/properties/{propertyId}`**
 
 ```typescript
-// List assigned cleaners
-const cleaners = await client.properties.getPropertyCleaners(1040);
-
-// Assign a cleaner
-await client.properties.assignCleanerToProperty(1040, { cleanerId: 5 });
-
-// Unassign a cleaner
-await client.properties.unassignCleanerFromProperty(1040, 5);
+await client.properties.updateProperty(1004, { address: '456 Elm St' });
 ```
 
 ---
 
-#### iCal Calendar Integration
-
-Sync a property's availability with Airbnb, VRBO, or any iCal-compatible calendar.
+#### Update Additional Information
+**`PUT /v1/properties/{propertyId}/additional-information`**
 
 ```typescript
-// Add iCal link
-await client.properties.addICalLink(1040, {
-  icalLink: "https://calendar.example.com/feed.ics",
-});
-
-// Get current iCal link
-const ical = await client.properties.getICalLink(1040);
-
-// Remove iCal link
-await client.properties.removeICalLink(1040, {
-  icalLink: "https://calendar.example.com/feed.ics",
+await client.properties.updateAdditionalInfo(1004, {
+  gateCode: '1234',
+  petInfo: 'One friendly dog',
 });
 ```
 
 ---
 
-#### `assignChecklistToProperty(propertyId, checklistId, updateUpcomingBookings?)`
+#### Enable or Disable Property
+**`POST /v1/properties/{propertyId}/enable-disable`**
 
 ```typescript
-// Assign and apply to all upcoming bookings at this property
-await client.properties.assignChecklistToProperty(1040, 105, true);
+await client.properties.enableOrDisable(1004, true);
 ```
 
 ---
 
-**Properties API Summary**
-
-| Method | HTTP | Endpoint |
-|--------|------|----------|
-| `listProperties(serviceId?)` | GET | `/v1/properties` |
-| `addProperty(req)` | POST | `/v1/properties` |
-| `getProperty(id)` | GET | `/v1/properties/{id}` |
-| `updateProperty(id, req)` | PUT | `/v1/properties/{id}` |
-| `updateAdditionalInformation(id, data)` | PUT | `/v1/properties/{id}/additional-information` |
-| `enableOrDisableProperty(id, req)` | POST | `/v1/properties/{id}/enable-disable` |
-| `deleteProperty(id)` | DELETE | `/v1/properties/{id}` |
-| `getPropertyCleaners(id)` | GET | `/v1/properties/{id}/cleaners` |
-| `assignCleanerToProperty(id, req)` | POST | `/v1/properties/{id}/cleaners` |
-| `unassignCleanerFromProperty(id, cleanerId)` | DELETE | `/v1/properties/{id}/cleaners/{cid}` |
-| `addICalLink(id, req)` | PUT | `/v1/properties/{id}/ical` |
-| `getICalLink(id)` | GET | `/v1/properties/{id}/ical` |
-| `removeICalLink(id, req)` | DELETE | `/v1/properties/{id}/ical` |
-| `assignChecklistToProperty(id, cid, flag?)` | PUT | `/v1/properties/{id}/checklist/{cid}` |
-
----
-
-### Checklists (`client.checklists`)
-
-Checklists define the tasks a cleaner should complete during a booking. They can be set as property defaults or overridden per booking.
-
-#### `listChecklists()`
+#### Delete Property
+**`DELETE /v1/properties/{propertyId}`**
 
 ```typescript
-const all = await client.checklists.listChecklists();
+await client.properties.deleteProperty(1004);
 ```
 
 ---
 
-#### `getChecklist(checklistId: number)`
+#### Get iCal Links
+**`GET /v1/properties/{propertyId}/ical`**
 
 ```typescript
-const { data: checklist } = await client.checklists.getChecklist(105);
-
-// TypeScript knows: checklist is Checklist
-console.log(checklist.name); // string
-checklist.items.forEach(item => {
-  // TypeScript knows: item is ChecklistItem
-  console.log(`[${item.isCompleted ? "✓" : " "}] ${item.description}`);
-});
+const resp = await client.properties.getIcal(1004);
 ```
 
 ---
 
-#### `createChecklist(request: CreateChecklistRequest)`
+#### Add iCal Link
+**`PUT /v1/properties/{propertyId}/ical`**
 
 ```typescript
-const { data: checklist } = await client.checklists.createChecklist({
-  name: "Standard Residential Clean",
+await client.properties.addIcal(1004, 'https://airbnb.com/calendar/ical/12345.ics');
+```
+
+---
+
+#### Delete iCal Events
+**`DELETE /v1/properties/{propertyId}/ical`**
+
+```typescript
+await client.properties.deleteIcal(1004, [101, 102, 103]);
+```
+
+---
+
+#### List Property Cleaners
+**`GET /v1/properties/{propertyId}/cleaners`**
+
+```typescript
+const resp = await client.properties.listCleaners(1004);
+```
+
+---
+
+#### Add Preferred Cleaner
+**`POST /v1/properties/{propertyId}/cleaners`**
+
+```typescript
+await client.properties.addCleaner(1004, cleanerId);
+```
+
+---
+
+#### Remove Preferred Cleaner
+**`DELETE /v1/properties/{propertyId}/cleaners/{cleanerId}`**
+
+```typescript
+await client.properties.removeCleaner(1004, cleanerId);
+```
+
+---
+
+#### Assign Checklist to Property
+**`PUT /v1/properties/{propertyId}/checklist/{checklistId}?updateUpcomingBookings={bool}`**
+
+```typescript
+await client.properties.assignChecklistToProperty(1004, 105, true);
+```
+
+---
+
+### Checklists
+
+#### List Checklists
+**`GET /v1/checklist`**
+
+```typescript
+const resp = await client.checklists.listChecklists();
+```
+
+---
+
+#### Get Checklist
+**`GET /v1/checklist/{checklistId}`**
+
+```typescript
+const resp = await client.checklists.getChecklist(105);
+resp.data.items.forEach(item => console.log(item.task));
+```
+
+---
+
+#### Create Checklist
+**`POST /v1/checklist`**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `name` | string | Yes | Display name |
+| `items` | string[] | Yes | Ordered task descriptions |
+
+```typescript
+const resp = await client.checklists.createChecklist({
+  name: 'Deep Clean',
   items: [
-    "Vacuum all floors",
-    "Mop kitchen and bathroom floors",
-    "Wipe all countertops",
-    "Scrub toilets, sinks, and tubs",
-    "Empty all trash bins",
-    "Wipe mirrors and glass surfaces",
+    'Vacuum all rooms',
+    'Mop kitchen and bathroom floors',
+    'Scrub toilets, sinks, and tubs',
+    'Wipe all countertops',
+    'Clean inside microwave and oven',
   ],
 });
-console.log(`Created checklist #${checklist.id}`);
+console.log('Checklist ID:', resp.data.id);
 ```
 
 ---
 
-#### `updateChecklist(checklistId, request)` / `deleteChecklist(checklistId)`
+#### Update Checklist
+**`PUT /v1/checklist/{checklistId}`**
 
 ```typescript
-// Update
 await client.checklists.updateChecklist(105, {
-  name: "Deep Clean",
-  items: ["All standard tasks", "Inside oven", "Inside fridge"],
+  name: 'Standard Clean',
+  items: ['Vacuum', 'Wipe surfaces', 'Clean bathrooms'],
 });
+```
 
-// Delete
+---
+
+#### Delete Checklist
+**`DELETE /v1/checklist/{checklistId}`**
+
+```typescript
 await client.checklists.deleteChecklist(105);
 ```
 
 ---
 
-**Checklists API Summary**
-
-| Method | HTTP | Endpoint |
-|--------|------|----------|
-| `listChecklists()` | GET | `/v1/checklist` |
-| `getChecklist(id)` | GET | `/v1/checklist/{id}` |
-| `createChecklist(req)` | POST | `/v1/checklist` |
-| `updateChecklist(id, req)` | PUT | `/v1/checklist/{id}` |
-| `deleteChecklist(id)` | DELETE | `/v1/checklist/{id}` |
-| `uploadChecklistImage(imageData, mimeType)` | POST | `/v1/checklist/upload-image` |
-
----
-
-### Other / Utilities (`client.other`)
-
-Reference data endpoints used when building booking flows.
-
-#### `getServices()`
-
-Returns all available cleaning service types.
+#### Upload Checklist Image
+**`POST /v1/checklist/upload-image`**
 
 ```typescript
-const { data: services } = await client.other.getServices();
+const imageBuffer = fs.readFileSync('bathroom-guide.jpg');
+await client.checklists.uploadChecklistImage(imageBuffer, 'image/jpeg');
 ```
 
 ---
 
-#### `getPlans(propertyId: number)`
+### Other / Reference Data
 
-Returns all available booking plans for a given property (Standard, Deep Clean, Move-In/Move-Out, etc.).
+#### Get Services
+**`GET /v1/services`**
 
 ```typescript
-const { data: plans } = await client.other.getPlans(1004);
+const resp = await client.other.getServices();
 ```
 
 ---
 
-#### `getRecommendedHours(propertyId, bathroomCount, roomCount)`
-
-Returns the system-recommended number of cleaning hours based on property size. Use this to pre-fill the `hours` field when creating a booking.
+#### Get Plans
+**`GET /v1/plans?propertyId={propertyId}`**
 
 ```typescript
-const { data: rec } = await client.other.getRecommendedHours(1004, 2, 3);
+const resp = await client.other.getPlans(1004);
 ```
 
 ---
 
-#### `calculateCost(request: CostEstimateRequest)`
-
-Calculate the estimated price for a booking before committing. Use this to show a cost preview.
+#### Get Cleaning Extras
+**`GET /v1/cleaning-extras/{serviceId}`**
 
 ```typescript
-const estimate = await client.other.calculateCost({
+const resp = await client.other.getCleaningExtras(1);
+```
+
+---
+
+#### Get Recommended Hours
+**`GET /v1/recommended-hours?propertyId={n}&bathroomCount={n}&roomCount={n}`**
+
+```typescript
+const resp = await client.other.getRecommendedHours({
   propertyId: 1004,
-  planId: 2,
-  hours: 3,
-  couponCode: "20POFF",  // optional
-  extras: [101],         // optional
+  bathroomCount: 2,
+  roomCount: 3,
 });
 ```
 
 ---
 
-#### `getCleaningExtras(serviceId: number)`
-
-Returns available add-on services for a given service type (inside fridge, inside oven, laundry, etc.).
+#### Calculate Cost Estimate
+**`POST /v1/cost-estimate`**
 
 ```typescript
-const extras = await client.other.getCleaningExtras(1);
+const resp = await client.other.calculateCost(estimateRequest);
 ```
 
 ---
 
-#### `getAvailableCleaners(request: AvailableCleanersRequest)`
-
-Find cleaners available for a specific property, date, and time slot.
+#### Get Available Cleaners
+**`POST /v1/available-cleaners`**
 
 ```typescript
-const cleaners = await client.other.getAvailableCleaners({
-  propertyId: 1004,
-  date: "2025-06-15",
-  time: "10:00",
-});
+const resp = await client.other.getAvailableCleaners(availabilityRequest);
 ```
 
 ---
 
-#### `getCoupons()`
-
-Returns all valid coupon codes available for use at booking creation.
+#### Get Coupons
+**`GET /v1/coupons`**
 
 ```typescript
-const coupons = await client.other.getCoupons();
+const resp = await client.other.getCoupons();
 ```
 
 ---
 
-**Other API Summary**
+### Blacklist
 
-| Method | HTTP | Endpoint |
-|--------|------|----------|
-| `getServices()` | GET | `/v1/services` |
-| `getPlans(propertyId)` | GET | `/v1/plans?propertyId={id}` |
-| `getRecommendedHours(pId, baths, rooms)` | GET | `/v1/recommended-hours` |
-| `calculateCost(req)` | POST | `/v1/cost-estimate` |
-| `getCleaningExtras(serviceId)` | GET | `/v1/cleaning-extras/{serviceId}` |
-| `getAvailableCleaners(req)` | POST | `/v1/available-cleaners` |
-| `getCoupons()` | GET | `/v1/coupons` |
-
----
-
-### Blacklist (`client.blacklist`)
-
-Prevent specific cleaners from being auto-assigned to your bookings.
+#### Get Blacklisted Cleaners
+**`GET /v1/blacklist/cleaner?pageNo={pageNo}`**
 
 ```typescript
-// List all blacklisted cleaners
-const { data: list } = await client.blacklist.listBlacklistedCleaners();
-
-// Add a cleaner to the blacklist
-await client.blacklist.addToBlacklist({
-  cleanerId: 7,
-  reason: "Damaged furniture during last booking",
-});
-
-// Remove a cleaner from the blacklist
-await client.blacklist.removeFromBlacklist({ cleanerId: 7 });
+const resp = await client.blacklist.getBlacklist(1);
 ```
 
-**Blacklist API Summary**
+---
 
-| Method | HTTP | Endpoint |
-|--------|------|----------|
-| `listBlacklistedCleaners()` | GET | `/v1/blacklist/cleaner` |
-| `addToBlacklist(req)` | POST | `/v1/blacklist/cleaner` |
-| `removeFromBlacklist(req)` | DELETE | `/v1/blacklist/cleaner` |
+#### Add Cleaner to Blacklist
+**`POST /v1/blacklist/cleaner`**
+
+```typescript
+await client.blacklist.addToBlacklist(cleanerId);
+```
 
 ---
 
-### Payment Methods (`client.paymentMethods`)
-
-Manage Stripe and PayPal payment methods for your users.
+#### Remove Cleaner from Blacklist
+**`DELETE /v1/blacklist/cleaner`**
 
 ```typescript
-// Stripe — get setup intent for client-side card collection
-const { data: intent } = await client.paymentMethods.getSetupIntentDetails();
-// Use intent.clientSecret with Stripe.js
+await client.blacklist.removeFromBlacklist(cleanerId);
+```
 
-// PayPal — get client token for PayPal button rendering
-const { data: paypal } = await client.paymentMethods.getPaypalClientToken();
+---
 
-// Add a payment method (after client-side tokenization)
-await client.paymentMethods.addPaymentMethod({
-  paymentMethodId: "pm_xxxxxxxxxxxx", // Stripe token
-});
+### Payment Methods
 
-// List all saved payment methods
-const methods = await client.paymentMethods.getPaymentMethods();
+#### Get Stripe Setup Intent Details
+**`GET /v1/payment-methods/setup-intent-details`**
 
-// Set default payment method
-await client.paymentMethods.setDefaultPaymentMethod(193);
+```typescript
+const resp = await client.paymentMethods.getSetupIntentDetails();
+const clientSecret = resp.data.clientSecret;
+// Use clientSecret with Stripe.js confirmCardSetup
+```
 
-// Delete a payment method
+---
+
+#### Get PayPal Client Token
+**`GET /v1/payment-methods/paypal-client-token`**
+
+```typescript
+const resp = await client.paymentMethods.getPaypalClientToken();
+```
+
+---
+
+#### Add Payment Method
+**`POST /v1/payment-methods`**
+
+```typescript
+await client.paymentMethods.addPaymentMethod(paymentRequest);
+```
+
+---
+
+#### List Payment Methods
+**`GET /v1/payment-methods`**
+
+```typescript
+const resp = await client.paymentMethods.listPaymentMethods();
+resp.data.forEach(pm => console.log(pm.type, pm.last4));
+```
+
+---
+
+#### Delete Payment Method
+**`DELETE /v1/payment-methods/{id}`**
+
+```typescript
 await client.paymentMethods.deletePaymentMethod(193);
 ```
 
-**Payment Methods API Summary**
+---
 
-| Method | HTTP | Endpoint |
-|--------|------|----------|
-| `getSetupIntentDetails()` | GET | `/v1/payment-methods/setup-intent-details` |
-| `getPaypalClientToken()` | GET | `/v1/payment-methods/paypal-client-token` |
-| `addPaymentMethod(req)` | POST | `/v1/payment-methods` |
-| `getPaymentMethods()` | GET | `/v1/payment-methods` |
-| `deletePaymentMethod(id)` | DELETE | `/v1/payment-methods/{id}` |
-| `setDefaultPaymentMethod(id)` | PUT | `/v1/payment-methods/{id}/default` |
+#### Set Default Payment Method
+**`PUT /v1/payment-methods/{id}/default`**
+
+```typescript
+await client.paymentMethods.setDefault(193);
+```
 
 ---
 
-### Webhooks (`client.webhooks`)
+### Webhooks
 
-Receive real-time notifications when booking events occur — no polling required.
+#### List Webhooks
+**`GET /v1/webhooks`**
 
 ```typescript
-// List all configured webhook endpoints
-const { data: hooks } = await client.webhooks.listWebhooks();
+const resp = await client.webhooks.listWebhooks();
+```
 
-// Register a new webhook
-const { data: hook } = await client.webhooks.createWebhook({
-  url: "https://your-app.com/webhooks/cleanster",
-  event: "booking.status_changed",
+---
+
+#### Create Webhook
+**`POST /v1/webhooks`**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `url` | string | Yes | HTTPS endpoint |
+| `event` | string | Yes | Event type |
+
+```typescript
+await client.webhooks.createWebhook({
+  url: 'https://your-server.com/hooks/cleanster',
+  event: 'booking.status_changed',
 });
+```
 
-// Update a webhook
+---
+
+#### Update Webhook
+**`PUT /v1/webhooks/{webhookId}`**
+
+```typescript
 await client.webhooks.updateWebhook(50, {
-  url: "https://your-app.com/v2/webhooks",
-  event: "booking.status_changed",
+  url: 'https://your-server.com/hooks/cleanster-v2',
+  event: 'booking.completed',
 });
+```
 
-// Delete a webhook
+---
+
+#### Delete Webhook
+**`DELETE /v1/webhooks/{webhookId}`**
+
+```typescript
 await client.webhooks.deleteWebhook(50);
 ```
-
-**Webhooks API Summary**
-
-| Method | HTTP | Endpoint |
-|--------|------|----------|
-| `listWebhooks()` | GET | `/v1/webhooks` |
-| `createWebhook(req)` | POST | `/v1/webhooks` |
-| `updateWebhook(id, req)` | PUT | `/v1/webhooks/{id}` |
-| `deleteWebhook(id)` | DELETE | `/v1/webhooks/{id}` |
-
----
-
-## Error Handling
-
-All SDK methods are async and throw typed errors. Catch the most specific type first.
-
-```typescript
-import {
-  CleansterClient,
-  CleansterAuthException,
-  CleansterApiException,
-  CleansterException,
-} from "cleanster";
-
-const client = CleansterClient.sandbox("your-key");
-client.setAccessToken("user-token");
-
-try {
-  const { data: booking } = await client.bookings.getBookingDetails(99999);
-
-} catch (err) {
-  if (err instanceof CleansterAuthException) {
-    // HTTP 401 — bad access key or user token
-    console.error(`Auth failed [${err.statusCode}]: ${err.message}`);
-    console.error("Response body:", err.responseBody);
-    // Prompt the user to re-authenticate
-
-  } else if (err instanceof CleansterApiException) {
-    // HTTP 4xx / 5xx — API-level error
-    console.error(`API error [${err.statusCode}]: ${err.message}`);
-    console.error("Response body:", err.responseBody);
-
-    if (err.statusCode === 404) {
-      console.error("Resource not found.");
-    } else if (err.statusCode === 422) {
-      console.error("Validation error — check your request fields.");
-    } else if (err.statusCode >= 500) {
-      console.error("Server error — retry after a short delay.");
-    }
-
-  } else if (err instanceof CleansterException) {
-    // Network failure, timeout, or JSON parse error
-    console.error("SDK/network error:", err.message);
-
-  } else {
-    throw err; // Unknown error — re-throw
-  }
-}
-```
-
-### Exception Hierarchy
-
-```
-CleansterException          ← extends Error
-├── CleansterAuthException  ← HTTP 401 (invalid/missing credentials)
-└── CleansterApiException   ← HTTP 4xx / 5xx (API-level errors)
-```
-
-| Exception | When Thrown | Key Properties |
-|-----------|-------------|----------------|
-| `CleansterException` | Network error, timeout, JSON parse failure | `message` |
-| `CleansterAuthException` | HTTP 401 | `statusCode` (always `401`), `responseBody` |
-| `CleansterApiException` | HTTP 4xx/5xx (not 401) | `statusCode`, `responseBody` |
-
-All exceptions correctly implement `instanceof` checks (using `Object.setPrototypeOf` to fix TypeScript class extension in CommonJS).
-
----
-
-## Response Structure
-
-Every SDK method returns `Promise<ApiResponse<T>>`, where `T` is statically typed.
-
-```typescript
-interface ApiResponse<T> {
-  status: number;   // HTTP-style code (e.g., 200)
-  message: string;  // Human-readable status (e.g., "OK")
-  data: T;          // Typed response payload
-}
-```
-
-**Destructuring pattern:**
-
-```typescript
-// Full destructure
-const { status, message, data: booking } = await client.bookings.getBookingDetails(16926);
-console.log(status);          // 200
-console.log(message);         // "OK"
-console.log(booking.id);      // number — TypeScript knows the type!
-console.log(booking.status);  // "OPEN" | "CLEANER_ASSIGNED" | "COMPLETED" | ...
-console.log(booking.hours);   // number
-console.log(booking.cost);    // number
-```
-
-**TypeScript auto-completion:**
-Because `data` is fully typed, your IDE gives you auto-complete on every field — `booking.id`, `user.token`, `checklist.items[0].description`, etc.
 
 ---
 
 ## Type Reference
 
-All types are re-exported from the root `"cleanster"` package:
+### `ApiResponse<T>`
 
 ```typescript
-import type {
-  // Response wrapper
-  ApiResponse,
-
-  // Domain models
-  Booking,
-  User,
-  Property,
-  Checklist,
-  ChecklistItem,
-  PaymentMethod,
-
-  // Booking request types
-  CreateBookingRequest,
-  CancelBookingRequest,
-  RescheduleBookingRequest,
-  AdjustHoursRequest,
-  AssignCleanerRequest,
-  PayExpensesRequest,
-  FeedbackRequest,
-  TipRequest,
-  SendMessageRequest,
-
-  // User request types
-  CreateUserRequest,
-  VerifyJwtRequest,
-
-  // Property request types
-  CreatePropertyRequest,
-  EnableDisablePropertyRequest,
-  AssignCleanerToPropertyRequest,
-  ICalRequest,
-
-  // Checklist request types
-  CreateChecklistRequest,
-
-  // Other request types
-  CostEstimateRequest,
-  AvailableCleanersRequest,
-
-  // Blacklist request types
-  BlacklistRequest,
-
-  // Webhook request types
-  WebhookRequest,
-} from "cleanster";
+interface ApiResponse<T> {
+  status: number;   // HTTP status code
+  message: string;  // Result description
+  data: T;          // Typed payload
+}
 ```
 
 ### `Booking`
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | `number` | Booking ID |
-| `status` | `"OPEN" \| "CLEANER_ASSIGNED" \| "COMPLETED" \| "CANCELLED" \| "REMOVED"` | Current status |
-| `date` | `string` | Booking date (YYYY-MM-DD) |
-| `time` | `string` | Start time (HH:mm) |
-| `hours` | `number` | Duration in hours |
-| `cost` | `number` | Total cost |
-| `propertyId` | `number` | Associated property ID |
-| `cleanerId` | `number \| null` | Assigned cleaner ID (`null` if unassigned) |
-| `planId` | `number` | Booking plan ID |
-| `roomCount` | `number` | Number of rooms |
-| `bathroomCount` | `number` | Number of bathrooms |
-| `extraSupplies` | `boolean` | Whether cleaning supplies are included |
-| `paymentMethodId` | `number` | Payment method ID used for billing |
+```typescript
+interface Booking {
+  id: number;
+  status: 'OPEN' | 'CLEANER_ASSIGNED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED' | 'REMOVED';
+  date: string;           // YYYY-MM-DD
+  time: string;           // HH:MM
+  hours: number;
+  cost: number;
+  propertyId: number;
+  planId: number;
+  roomCount: number;
+  bathroomCount: number;
+  extraSupplies: boolean;
+  paymentMethodId: number;
+  cleaner?: Cleaner;
+}
+```
 
-### `User`
+### `Cleaner`
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | `number` | User ID |
-| `email` | `string` | Email address |
-| `firstName` | `string` | First name |
-| `lastName` | `string` | Last name |
-| `phone` | `string?` | Phone number (optional) |
-| `token` | `string?` | Bearer token — only present after `fetchAccessToken()` |
-
-### `Property`
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | `number` | Property ID |
-| `name` | `string` | Property name/label |
-| `address` | `string` | Street address |
-| `city` | `string` | City |
-| `country` | `string` | Country |
-| `roomCount` | `number` | Number of bedrooms/rooms |
-| `bathroomCount` | `number` | Number of bathrooms |
-| `serviceId` | `number` | Service type ID |
-| `isEnabled` | `boolean?` | Whether the property is active |
+```typescript
+interface Cleaner {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  profileUrl: string;
+  rating: number; // 1.0 – 5.0
+}
+```
 
 ### `Checklist`
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | `number` | Checklist ID |
-| `name` | `string` | Checklist name |
-| `items` | `ChecklistItem[]` | Task items |
+```typescript
+interface Checklist {
+  id: number;
+  name: string;
+  items: ChecklistItem[];
+}
 
-### `ChecklistItem`
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | `number` | Item ID |
-| `description` | `string` | Task description |
-| `isCompleted` | `boolean` | Whether the cleaner marked it complete |
-| `imageUrl` | `string?` | Proof photo URL (if uploaded by cleaner) |
+interface ChecklistItem {
+  id: number;
+  task: string;
+  order: number;
+  isCompleted: boolean;
+}
+```
 
 ### `PaymentMethod`
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | `number` | Payment method ID |
-| `type` | `"card" \| "paypal" \| string` | Payment method type |
-| `lastFour` | `string?` | Last 4 digits (cards only) |
-| `brand` | `string?` | Card brand (e.g. `"visa"`, `"mastercard"`) |
-| `isDefault` | `boolean` | Whether this is the default payment method |
+```typescript
+interface PaymentMethod {
+  id: number;
+  type: 'card' | 'paypal';
+  last4?: string;
+  brand?: string;
+  expiryMonth?: number;
+  expiryYear?: number;
+  isDefault: boolean;
+}
+```
 
 ---
 
-## Sandbox vs Production
-
-| Feature | Sandbox | Production |
-|---------|---------|------------|
-| Real charges | No | Yes |
-| Real cleaners dispatched | No | Yes |
-| Coupon codes | Test codes work | Real codes only |
-| Data persistence | Yes (sandbox DB) | Yes (production DB) |
-| API base URL | `partner-sandbox-dot-...` | `partner-dot-...` |
-
-> **Always develop and test against the sandbox environment.** Switch to production only when you are ready to go live.
+## Error Handling
 
 ```typescript
-// Development / CI
-const client = CleansterClient.sandbox(process.env.CLEANSTER_API_KEY!);
+import { CleansterApiError } from 'cleanster';
 
-// Production
-const client = CleansterClient.production(process.env.CLEANSTER_API_KEY!);
+try {
+  const resp = await client.bookings.getBooking(99999);
+} catch (err) {
+  if (err instanceof CleansterApiError) {
+    console.error(`HTTP ${err.statusCode}: ${err.message}`);
+    if (err.statusCode === 401) {
+      // Re-fetch user token and retry
+    }
+  }
+}
 ```
+
+| HTTP Status | Meaning |
+|---|---|
+| 400 | Bad request — malformed parameters |
+| 401 | Unauthorized — invalid or missing credentials |
+| 403 | Forbidden — insufficient permissions |
+| 404 | Not found |
+| 422 | Validation error |
+| 429 | Rate limit exceeded |
+| 500 | Internal server error |
 
 ---
 
-## Test Coupon Codes (Sandbox Only)
+## Test Coupon Codes
 
-These codes work only in the sandbox environment. Use them to test discount flows without real charges.
+Use in the **sandbox** environment only:
 
-| Code | Discount | Suggested Test Scenario |
-|------|----------|------------------------|
-| `100POFF` | 100% off (free booking) | Verify zero-cost booking flow |
-| `50POFF` | 50% off | Verify percentage discount calculation |
-| `20POFF` | 20% off | Verify small percentage discount |
-| `200OFF` | $200 flat discount | Verify flat-rate discount |
-| `100OFF` | $100 flat discount | Verify partial flat discount |
-
-Pass the code in the `couponCode` field of `CreateBookingRequest` or `CostEstimateRequest`.
+| Code | Discount | Status |
+|---|---|---|
+| `100POFF` | 100% off | Active |
+| `50POFF` | 50% off | Active |
+| `20POFF` | 20% off | Active |
+| `200OFF` | $200 off | Active |
+| `100OFF` | $100 off | Active |
+| `75POFF` | 75% off | **Expired** |
 
 ---
 
-## Building & Publishing
+## Chat Window Rules
 
-### Development Build
+| Booking State | Chat Available |
+|---|---|
+| `OPEN` — within 24 h of start | Yes |
+| `COMPLETED` — within 24 h of completion | Yes |
+| `IN_PROGRESS` (hanging state) | Yes — **no time restriction** |
+| `CANCELLED` | No |
+| Older than 24 h | No |
 
-```bash
-# Type-check only (no output)
-npm run typecheck
+---
 
-# Compile to dist/
-npm run build
+## Webhook Events
 
-# Watch mode
-npm run build:watch
-```
-
-### Publish to npm
-
-```bash
-# This runs typecheck → tests → build → publish
-npm publish
-```
-
-The `prepublishOnly` script ensures nothing broken is ever published.
-
-**Output in `dist/`:**
-
-| File | Description |
-|------|-------------|
-| `index.js` | Compiled CommonJS bundle |
-| `index.d.ts` | TypeScript declaration file |
-| `**/*.js.map` | Source maps |
-| `**/*.d.ts.map` | Declaration maps (for "Go to source" in IDEs) |
+| Event | Description |
+|---|---|
+| `booking.status_changed` | Any status transition |
+| `booking.cleaner_assigned` | Cleaner assigned |
+| `booking.cancelled` | Booking cancelled |
+| `booking.completed` | Booking completed |
 
 ---
 
 ## Running Tests
 
-The test suite contains **85 unit tests** using Jest and `ts-jest`. All tests mock the `HttpClient` using `jest.fn()` — no network access or API keys are needed.
-
-### Setup
-
 ```bash
-git clone https://github.com/cleanster/cleanster-typescript-sdk.git
-cd cleanster-typescript-sdk
-npm install
-```
-
-### Run Tests
-
-```bash
-# Run all tests
 npm test
-
-# Run with verbose output
-npm test -- --verbose
-
-# Run a specific test file
-npm test -- tests/cleanster.test.ts
-
-# Run tests matching a name pattern
-npm test -- --testNamePattern="BookingsApi"
-
-# Run with coverage report
-npm run test:coverage
 ```
 
-### Coverage Report
-
-```bash
-npm run test:coverage
-# → Writes HTML report to coverage/lcov-report/index.html
-```
-
-**Test coverage includes:**
-
-| Area | Tests |
-|------|-------|
-| `CleansterConfig` | 10 — URL assignment, blank key rejection, builder, custom timeout |
-| `CleansterClient` | 6 — factory methods, API namespace types, token get/set/clear |
-| `BookingsApi` | 19 — all 17 endpoints + edge cases (optional params, empty bodies) |
-| `UsersApi` | 4 — create, phone field, fetchAccessToken, verifyJwt |
-| `PropertiesApi` | 12 — CRUD, enable/disable, cleaners, iCal, checklist, serviceId filter |
-| `ChecklistsApi` | 5 — list, get (with typed items), create, update, delete |
-| `OtherApi` | 7 — all 7 utility endpoints |
-| `BlacklistApi` | 3 — list, add, remove |
-| `PaymentMethodsApi` | 6 — all 6 methods |
-| `WebhooksApi` | 4 — list, create, update, delete |
-| `Exceptions` | 9 — statusCode, message, instanceof, name, propagation |
+Expected: **85 tests passing.**
 
 ---
 
 ## Project Structure
 
 ```
-cleanster-typescript-sdk/
-├── src/
-│   ├── index.ts              ← Public API surface (all exports)
-│   ├── client.ts             ← CleansterClient (main entry point)
-│   ├── config.ts             ← CleansterConfig + CleansterConfigBuilder
-│   ├── exceptions.ts         ← CleansterException hierarchy
-│   ├── http-client.ts        ← fetch wrapper with auth headers + timeout
-│   ├── api/
-│   │   ├── bookings.ts       ← BookingsApi (17 methods)
-│   │   ├── users.ts          ← UsersApi (3 methods)
-│   │   ├── properties.ts     ← PropertiesApi (14 methods)
-│   │   ├── checklists.ts     ← ChecklistsApi (5 methods)
-│   │   ├── other.ts          ← OtherApi (7 methods)
-│   │   ├── blacklist.ts      ← BlacklistApi (3 methods)
-│   │   ├── payment-methods.ts ← PaymentMethodsApi (6 methods)
-│   │   └── webhooks.ts       ← WebhooksApi (4 methods)
-│   └── models/
-│       ├── index.ts           ← Re-exports all model types
-│       ├── booking.ts         ← Booking + all booking request types
-│       ├── checklist.ts       ← Checklist, ChecklistItem, CreateChecklistRequest
-│       ├── payment-method.ts  ← PaymentMethod, AddPaymentMethodRequest
-│       ├── property.ts        ← Property + all property request types
-│       ├── response.ts        ← ApiResponse<T>
-│       └── user.ts            ← User, CreateUserRequest, VerifyJwtRequest
-├── tests/
-│   └── cleanster.test.ts     ← 85 Jest unit tests
-├── dist/                     ← Compiled output (after npm run build)
+typescript-sdk/
 ├── package.json
 ├── tsconfig.json
-├── jest.config.js
-├── README.md
-├── LICENSE
-└── CHANGELOG.md
+├── src/
+│   ├── index.ts               # Public exports
+│   ├── client.ts              # CleansterClient
+│   ├── http.ts                # fetch-based HTTP layer
+│   ├── errors.ts              # CleansterApiError
+│   ├── api/
+│   │   ├── bookings.ts
+│   │   ├── users.ts
+│   │   ├── properties.ts
+│   │   ├── checklists.ts
+│   │   ├── other.ts
+│   │   ├── blacklist.ts
+│   │   ├── payment-methods.ts
+│   │   └── webhooks.ts
+│   └── models/
+│       ├── booking.ts
+│       ├── checklist.ts
+│       └── payment-method.ts
+└── tests/
+    └── cleanster.test.ts
 ```
-
----
-
-## Contributing
-
-1. Fork the repository on GitHub.
-2. Create a feature branch: `git checkout -b feature/my-feature`
-3. Make your changes and add tests.
-4. Ensure all tests pass: `npm test`
-5. Ensure no TypeScript errors: `npm run typecheck`
-6. Submit a pull request.
 
 ---
 
 ## License
 
-This SDK is released under the [MIT License](LICENSE). You are free to use, modify, and distribute it in personal and commercial projects.
+MIT License. See [LICENSE](LICENSE) for details.
 
 ---
 
 ## Support
 
-| Resource | Link |
-|----------|------|
-| API Documentation | https://documenter.getpostman.com/view/26172658/2sAYdoF7ep |
-| Partner Support | partner@cleanster.com |
-| General Support | support@cleanster.com |
-| GitHub Issues | https://github.com/cleanster/cleanster-typescript-sdk/issues |
-| npm Package | https://www.npmjs.com/package/cleanster |
-
----
-
-*Made with care for the Cleanster partner ecosystem.*
+- **API Documentation:** [Cleanster Partner API Docs](https://documenter.getpostman.com/view/26172658/2sAYdoF7ep)
+- **Partner inquiries:** [partner@cleanster.com](mailto:partner@cleanster.com)
+- **General support:** [support@cleanster.com](mailto:support@cleanster.com)
