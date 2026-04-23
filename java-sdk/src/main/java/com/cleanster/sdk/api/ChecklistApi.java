@@ -5,7 +5,7 @@ import com.cleanster.sdk.model.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
- * API operations for cleaning checklists: list, get by ID, create, update, delete, and upload image.
+ * API operations for cleaning checklists: list, get by ID, create, update, and delete.
  */
 public class ChecklistApi {
 

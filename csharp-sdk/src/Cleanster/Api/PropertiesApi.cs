@@ -22,12 +22,43 @@ public sealed class PropertiesApi
     }
 
     /// <summary>Add a new property to the partner account.</summary>
+    /// <param name="name">Property display name.</param>
+    /// <param name="address">Street address.</param>
+    /// <param name="city">City.</param>
+    /// <param name="country">Country.</param>
+    /// <param name="roomCount">Number of rooms.</param>
+    /// <param name="bathroomCount">Number of bathrooms.</param>
+    /// <param name="serviceId">Service type ID from <see cref="OtherApi.GetServicesAsync"/>.</param>
+    /// <param name="state">Optional state/province.</param>
+    /// <param name="zip">Optional postal/ZIP code.</param>
+    /// <param name="timezone">Optional IANA timezone (e.g. "America/New_York").</param>
+    /// <param name="note">Optional internal note visible to cleaners.</param>
+    /// <param name="latitude">Optional GPS latitude.</param>
+    /// <param name="longitude">Optional GPS longitude.</param>
     public async Task<ApiResponse<Property>> AddPropertyAsync(
         string name, string address, string city, string country,
-        int roomCount, int bathroomCount, int serviceId, CancellationToken ct = default)
+        int roomCount, int bathroomCount, int serviceId,
+        string? state = null, string? zip = null, string? timezone = null,
+        string? note = null, double? latitude = null, double? longitude = null,
+        CancellationToken ct = default)
     {
-        var root = await _http.PostAsync("/v1/properties",
-            new { name, address, city, country, roomCount, bathroomCount, serviceId }, ct);
+        var body = new Dictionary<string, object?>
+        {
+            ["name"]          = name,
+            ["address"]       = address,
+            ["city"]          = city,
+            ["country"]       = country,
+            ["roomCount"]     = roomCount,
+            ["bathroomCount"] = bathroomCount,
+            ["serviceId"]     = serviceId,
+        };
+        if (state     is not null) body["state"]     = state;
+        if (zip       is not null) body["zip"]       = zip;
+        if (timezone  is not null) body["timezone"]  = timezone;
+        if (note      is not null) body["note"]      = note;
+        if (latitude  is not null) body["latitude"]  = latitude;
+        if (longitude is not null) body["longitude"] = longitude;
+        var root = await _http.PostAsync("/v1/properties", body, ct);
         return JsonHelper.ParseSingle<Property>(root);
     }
 
@@ -39,12 +70,36 @@ public sealed class PropertiesApi
     }
 
     /// <summary>Replace all fields of an existing property.</summary>
+    /// <param name="state">Optional state/province.</param>
+    /// <param name="zip">Optional postal/ZIP code.</param>
+    /// <param name="timezone">Optional IANA timezone (e.g. "America/New_York").</param>
+    /// <param name="note">Optional internal note visible to cleaners.</param>
+    /// <param name="latitude">Optional GPS latitude.</param>
+    /// <param name="longitude">Optional GPS longitude.</param>
     public async Task<ApiResponse<Property>> UpdatePropertyAsync(
         int propertyId, string name, string address, string city, string country,
-        int roomCount, int bathroomCount, int serviceId, CancellationToken ct = default)
+        int roomCount, int bathroomCount, int serviceId,
+        string? state = null, string? zip = null, string? timezone = null,
+        string? note = null, double? latitude = null, double? longitude = null,
+        CancellationToken ct = default)
     {
-        var root = await _http.PutAsync($"/v1/properties/{propertyId}",
-            new { name, address, city, country, roomCount, bathroomCount, serviceId }, ct);
+        var body = new Dictionary<string, object?>
+        {
+            ["name"]          = name,
+            ["address"]       = address,
+            ["city"]          = city,
+            ["country"]       = country,
+            ["roomCount"]     = roomCount,
+            ["bathroomCount"] = bathroomCount,
+            ["serviceId"]     = serviceId,
+        };
+        if (state     is not null) body["state"]     = state;
+        if (zip       is not null) body["zip"]       = zip;
+        if (timezone  is not null) body["timezone"]  = timezone;
+        if (note      is not null) body["note"]      = note;
+        if (latitude  is not null) body["latitude"]  = latitude;
+        if (longitude is not null) body["longitude"] = longitude;
+        var root = await _http.PutAsync($"/v1/properties/{propertyId}", body, ct);
         return JsonHelper.ParseSingle<Property>(root);
     }
 
