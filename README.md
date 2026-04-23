@@ -419,6 +419,58 @@ var client = CleansterClient.Production("your-access-key");
 
 ---
 
+### Swift
+
+**Package.swift:**
+```swift
+dependencies: [
+    .package(url: "https://github.com/cleansterhq/Cleanster-partner-api-sdk", from: "1.0.0"),
+],
+targets: [
+    .target(name: "MyApp", dependencies: [
+        .product(name: "Cleanster", package: "Cleanster-partner-api-sdk")
+    ]),
+]
+```
+
+Or in Xcode: **File → Add Package Dependencies** and enter the repository URL.
+
+**Sandbox client:**
+```swift
+import Cleanster
+
+let client = CleansterClient.sandbox(accessKey: "your-access-key")
+
+// Fetch and set the per-user token
+let tokenResp = try await client.users.fetchAccessToken(12345)
+client.setToken(tokenResp.data?.token ?? "")
+
+// Create a booking
+let response = try await client.bookings.createBooking(
+    CreateBookingRequest(
+        date: "2025-09-15",
+        time: "10:00",
+        propertyId: 1004,
+        planId: 2,
+        hours: 3.0,
+        roomCount: 2,
+        bathroomCount: 1,
+        extraSupplies: false,
+        paymentMethodId: 55
+    )
+)
+print("Booking ID:", response.data?.id ?? 0)
+```
+
+**Production client:**
+```swift
+let client = CleansterClient.production(accessKey: "your-access-key")
+```
+
+[Full Swift documentation →](./swift-sdk/README.md)
+
+---
+
 ## Standard Response Format
 
 Every API response — success or failure — uses the same envelope:
@@ -1925,6 +1977,18 @@ print(resp.data["total"])      # subtotal minus discount
 
 ```
 Cleanster-partner-api-sdk/
+│
+├── swift-sdk/
+│   ├── Package.swift
+│   ├── Sources/Cleanster/
+│   │   ├── Api/          BookingsApi.swift, PropertiesApi.swift, UsersApi.swift, ...
+│   │   ├── Models/       Models.swift, Requests.swift, ApiResponse.swift
+│   │   ├── Helpers/      AnyCodable.swift
+│   │   ├── CleansterClient.swift
+│   │   ├── CleansterError.swift
+│   │   └── NetworkSession.swift
+│   ├── Tests/CleansterTests/   164 unit tests
+│   └── README.md               Full Swift SDK documentation
 │
 ├── java-sdk/
 │   ├── src/main/java/com/cleanster/sdk/
