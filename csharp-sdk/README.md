@@ -1098,7 +1098,7 @@ Use in the **sandbox** environment only:
 dotnet test
 ```
 
-Expected: **107 tests passing.**
+Expected: **109 tests passing.**
 
 To run with verbose output:
 

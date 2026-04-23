@@ -1325,7 +1325,7 @@ Payloads are sent as `POST` requests to your webhook URL with a JSON body contai
 mvn test
 ```
 
-Expected: **74 tests, 0 failures, 0 errors.**
+Expected: **76 tests, 0 failures, 0 errors.**
 
 To run a specific test class:
 

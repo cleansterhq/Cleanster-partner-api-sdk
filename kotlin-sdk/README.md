@@ -1401,7 +1401,7 @@ cd kotlin-sdk
 ./gradlew test
 ```
 
-All **164 tests** should pass.
+All **166 tests** should pass.
 
 To run a single test class:
 

@@ -1367,7 +1367,7 @@ cd swift-sdk
 swift test
 ```
 
-All **164 tests** should pass.
+All **166 tests** should pass.
 
 ---
 

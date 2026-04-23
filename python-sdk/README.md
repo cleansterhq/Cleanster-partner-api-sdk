@@ -1128,7 +1128,7 @@ pip install pytest
 pytest tests/ -v
 ```
 
-Expected: **99 tests passing.**
+Expected: **101 tests passing.**
 
 ---
 

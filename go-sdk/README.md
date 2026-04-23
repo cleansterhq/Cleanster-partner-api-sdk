@@ -1032,7 +1032,7 @@ Use in the **sandbox** environment only:
 go test ./... -v
 ```
 
-Expected: **92 tests passing.**
+Expected: **94 tests passing.**
 
 ---
 

@@ -1008,7 +1008,7 @@ composer install
 ./vendor/bin/phpunit tests/
 ```
 
-Expected: **106 tests, 0 failures.**
+Expected: **108 tests, 0 failures.**
 
 ---
 

@@ -1060,7 +1060,7 @@ Use in the **sandbox** environment only:
 npm test
 ```
 
-Expected: **85 tests passing.**
+Expected: **87 tests passing.**
 
 ---
 
