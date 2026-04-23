@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:tns="https://api.cleanster.com/soap"
+             xmlns:types="https://api.cleanster.com/soap/types"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             targetNamespace="https://api.cleanster.com/soap"
+             name="CleansterService">
+
+  <!-- =========================================================
+       Types
+  ========================================================= -->
+  <types>
+    <xsd:schema>
+      <xsd:import namespace="https://api.cleanster.com/soap/types"
+                  schemaLocation="cleanster-types.xsd"/>
+    </xsd:schema>
+  </types>
+
+  <!-- =========================================================
+       Messages — Bookings
+  ========================================================= -->
+  <message name="GetBookingInput">
+    <part name="parameters" element="types:GetBookingRequest"/>
+  </message>
+  <message name="GetBookingOutput">
+    <part name="parameters" element="types:GetBookingResponse"/>
+  </message>
+
+  <message name="ListBookingsInput">
+    <part name="parameters" element="types:ListBookingsRequest"/>
+  </message>
+  <message name="ListBookingsOutput">
+    <part name="parameters" element="types:ListBookingsResponse"/>
+  </message>
+
+  <message name="CreateBookingInput">
+    <part name="parameters" element="types:CreateBookingRequest"/>
+  </message>
+  <message name="CreateBookingOutput">
+    <part name="parameters" element="types:CreateBookingResponse"/>
+  </message>
+
+  <message name="CancelBookingInput">
+    <part name="parameters" element="types:CancelBookingRequest"/>
+  </message>
+  <message name="CancelBookingOutput">
+    <part name="parameters" element="types:CancelBookingResponse"/>
+  </message>
+
+  <message name="RescheduleBookingInput">
+    <part name="parameters" element="types:RescheduleBookingRequest"/>
+  </message>
+  <message name="RescheduleBookingOutput">
+    <part name="parameters" element="types:RescheduleBookingResponse"/>
+  </message>
+
+  <message name="AssignCleanerInput">
+    <part name="parameters" element="types:AssignCleanerRequest"/>
+  </message>
+  <message name="AssignCleanerOutput">
+    <part name="parameters" element="types:AssignCleanerResponse"/>
+  </message>
+
+  <!-- =========================================================
+       Messages — Properties
+  ========================================================= -->
+  <message name="GetPropertyInput">
+    <part name="parameters" element="types:GetPropertyRequest"/>
+  </message>
+  <message name="GetPropertyOutput">
+    <part name="parameters" element="types:GetPropertyResponse"/>
+  </message>
+
+  <message name="ListPropertiesInput">
+    <part name="parameters" element="types:ListPropertiesRequest"/>
+  </message>
+  <message name="ListPropertiesOutput">
+    <part name="parameters" element="types:ListPropertiesResponse"/>
+  </message>
+
+  <message name="CreatePropertyInput">
+    <part name="parameters" element="types:CreatePropertyRequest"/>
+  </message>
+  <message name="CreatePropertyOutput">
+    <part name="parameters" element="types:CreatePropertyResponse"/>
+  </message>
+
+  <!-- =========================================================
+       Messages — Cleaners
+  ========================================================= -->
+  <message name="ListCleanersInput">
+    <part name="parameters" element="types:ListCleanersRequest"/>
+  </message>
+  <message name="ListCleanersOutput">
+    <part name="parameters" element="types:ListCleanersResponse"/>
+  </message>
+
+  <message name="GetCleanerInput">
+    <part name="parameters" element="types:GetCleanerRequest"/>
+  </message>
+  <message name="GetCleanerOutput">
+    <part name="parameters" element="types:GetCleanerResponse"/>
+  </message>
+
+  <!-- =========================================================
+       Messages — Checklists
+  ========================================================= -->
+  <message name="ListChecklistsInput">
+    <part name="parameters" element="types:ListChecklistsRequest"/>
+  </message>
+  <message name="ListChecklistsOutput">
+    <part name="parameters" element="types:ListChecklistsResponse"/>
+  </message>
+
+  <message name="GetChecklistInput">
+    <part name="parameters" element="types:GetChecklistRequest"/>
+  </message>
+  <message name="GetChecklistOutput">
+    <part name="parameters" element="types:GetChecklistResponse"/>
+  </message>
+
+  <message name="CreateChecklistInput">
+    <part name="parameters" element="types:CreateChecklistRequest"/>
+  </message>
+  <message name="CreateChecklistOutput">
+    <part name="parameters" element="types:CreateChecklistResponse"/>
+  </message>
+
+  <message name="DeleteChecklistInput">
+    <part name="parameters" element="types:DeleteChecklistRequest"/>
+  </message>
+  <message name="DeleteChecklistOutput">
+    <part name="parameters" element="types:DeleteChecklistResponse"/>
+  </message>
+
+  <!-- =========================================================
+       Messages — Other
+  ========================================================= -->
+  <message name="GetServicesInput">
+    <part name="parameters" element="types:GetServicesRequest"/>
+  </message>
+  <message name="GetServicesOutput">
+    <part name="parameters" element="types:GetServicesResponse"/>
+  </message>
+
+  <message name="GetChatInput">
+    <part name="parameters" element="types:GetChatRequest"/>
+  </message>
+  <message name="GetChatOutput">
+    <part name="parameters" element="types:GetChatResponse"/>
+  </message>
+
+  <message name="SendMessageInput">
+    <part name="parameters" element="types:SendMessageRequest"/>
+  </message>
+  <message name="SendMessageOutput">
+    <part name="parameters" element="types:SendMessageResponse"/>
+  </message>
+
+  <!-- =========================================================
+       Port Type (abstract interface)
+  ========================================================= -->
+  <portType name="CleansterPortType">
+
+    <!-- Bookings -->
+    <operation name="GetBooking">
+      <documentation>Retrieve a single booking by its ID.</documentation>
+      <input  message="tns:GetBookingInput"/>
+      <output message="tns:GetBookingOutput"/>
+    </operation>
+    <operation name="ListBookings">
+      <documentation>List bookings with optional filters (status, propertyId, pagination).</documentation>
+      <input  message="tns:ListBookingsInput"/>
+      <output message="tns:ListBookingsOutput"/>
+    </operation>
+    <operation name="CreateBooking">
+      <documentation>Create a new cleaning booking.</documentation>
+      <input  message="tns:CreateBookingInput"/>
+      <output message="tns:CreateBookingOutput"/>
+    </operation>
+    <operation name="CancelBooking">
+      <documentation>Cancel an existing booking.</documentation>
+      <input  message="tns:CancelBookingInput"/>
+      <output message="tns:CancelBookingOutput"/>
+    </operation>
+    <operation name="RescheduleBooking">
+      <documentation>Reschedule a booking to a new date and time.</documentation>
+      <input  message="tns:RescheduleBookingInput"/>
+      <output message="tns:RescheduleBookingOutput"/>
+    </operation>
+    <operation name="AssignCleaner">
+      <documentation>Assign a cleaner to an existing booking.</documentation>
+      <input  message="tns:AssignCleanerInput"/>
+      <output message="tns:AssignCleanerOutput"/>
+    </operation>
+
+    <!-- Properties -->
+    <operation name="GetProperty">
+      <documentation>Retrieve a single property by its ID.</documentation>
+      <input  message="tns:GetPropertyInput"/>
+      <output message="tns:GetPropertyOutput"/>
+    </operation>
+    <operation name="ListProperties">
+      <documentation>List all properties in the account.</documentation>
+      <input  message="tns:ListPropertiesInput"/>
+      <output message="tns:ListPropertiesOutput"/>
+    </operation>
+    <operation name="CreateProperty">
+      <documentation>Add a new property to the account.</documentation>
+      <input  message="tns:CreatePropertyInput"/>
+      <output message="tns:CreatePropertyOutput"/>
+    </operation>
+
+    <!-- Cleaners -->
+    <operation name="ListCleaners">
+      <documentation>List cleaners with optional status filter.</documentation>
+      <input  message="tns:ListCleanersInput"/>
+      <output message="tns:ListCleanersOutput"/>
+    </operation>
+    <operation name="GetCleaner">
+      <documentation>Retrieve a single cleaner by their ID.</documentation>
+      <input  message="tns:GetCleanerInput"/>
+      <output message="tns:GetCleanerOutput"/>
+    </operation>
+
+    <!-- Checklists -->
+    <operation name="ListChecklists">
+      <documentation>List all checklists in the account.</documentation>
+      <input  message="tns:ListChecklistsInput"/>
+      <output message="tns:ListChecklistsOutput"/>
+    </operation>
+    <operation name="GetChecklist">
+      <documentation>Retrieve a single checklist by its ID.</documentation>
+      <input  message="tns:GetChecklistInput"/>
+      <output message="tns:GetChecklistOutput"/>
+    </operation>
+    <operation name="CreateChecklist">
+      <documentation>Create a new checklist.</documentation>
+      <input  message="tns:CreateChecklistInput"/>
+      <output message="tns:CreateChecklistOutput"/>
+    </operation>
+    <operation name="DeleteChecklist">
+      <documentation>Delete a checklist by its ID.</documentation>
+      <input  message="tns:DeleteChecklistInput"/>
+      <output message="tns:DeleteChecklistOutput"/>
+    </operation>
+
+    <!-- Other -->
+    <operation name="GetServices">
+      <documentation>Retrieve the list of available cleaning service types.</documentation>
+      <input  message="tns:GetServicesInput"/>
+      <output message="tns:GetServicesOutput"/>
+    </operation>
+    <operation name="GetChat">
+      <documentation>Retrieve the chat message history for a booking.</documentation>
+      <input  message="tns:GetChatInput"/>
+      <output message="tns:GetChatOutput"/>
+    </operation>
+    <operation name="SendMessage">
+      <documentation>Send a chat message on a booking.</documentation>
+      <input  message="tns:SendMessageInput"/>
+      <output message="tns:SendMessageOutput"/>
+    </operation>
+
+  </portType>
+
+  <!-- =========================================================
+       Binding (SOAP 1.1 / document-literal)
+  ========================================================= -->
+  <binding name="CleansterBinding" type="tns:CleansterPortType">
+    <soap:binding style="document"
+                  transport="http://schemas.xmlsoap.org/soap/http"/>
+
+    <operation name="GetBooking">
+      <soap:operation soapAction="https://api.cleanster.com/soap/GetBooking"/>
+      <input><soap:body use="literal"/></input>
+      <output><soap:body use="literal"/></output>
+    </operation>
+    <operation name="ListBookings">
+      <soap:operation soapAction="https://api.cleanster.com/soap/ListBookings"/>
+      <input><soap:body use="literal"/></input>
+      <output><soap:body use="literal"/></output>
+    </operation>
+    <operation name="CreateBooking">
+      <soap:operation soapAction="https://api.cleanster.com/soap/CreateBooking"/>
+      <input><soap:body use="literal"/></input>
+      <output><soap:body use="literal"/></output>
+    </operation>
+    <operation name="CancelBooking">
+      <soap:operation soapAction="https://api.cleanster.com/soap/CancelBooking"/>
+      <input><soap:body use="literal"/></input>
+      <output><soap:body use="literal"/></output>
+    </operation>
+    <operation name="RescheduleBooking">
+      <soap:operation soapAction="https://api.cleanster.com/soap/RescheduleBooking"/>
+      <input><soap:body use="literal"/></input>
+      <output><soap:body use="literal"/></output>
+    </operation>
+    <operation name="AssignCleaner">
+      <soap:operation soapAction="https://api.cleanster.com/soap/AssignCleaner"/>
+      <input><soap:body use="literal"/></input>
+      <output><soap:body use="literal"/></output>
+    </operation>
+    <operation name="GetProperty">
+      <soap:operation soapAction="https://api.cleanster.com/soap/GetProperty"/>
+      <input><soap:body use="literal"/></input>
+      <output><soap:body use="literal"/></output>
+    </operation>
+    <operation name="ListProperties">
+      <soap:operation soapAction="https://api.cleanster.com/soap/ListProperties"/>
+      <input><soap:body use="literal"/></input>
+      <output><soap:body use="literal"/></output>
+    </operation>
+    <operation name="CreateProperty">
+      <soap:operation soapAction="https://api.cleanster.com/soap/CreateProperty"/>
+      <input><soap:body use="literal"/></input>
+      <output><soap:body use="literal"/></output>
+    </operation>
+    <operation name="ListCleaners">
+      <soap:operation soapAction="https://api.cleanster.com/soap/ListCleaners"/>
+      <input><soap:body use="literal"/></input>
+      <output><soap:body use="literal"/></output>
+    </operation>
+    <operation name="GetCleaner">
+      <soap:operation soapAction="https://api.cleanster.com/soap/GetCleaner"/>
+      <input><soap:body use="literal"/></input>
+      <output><soap:body use="literal"/></output>
+    </operation>
+    <operation name="ListChecklists">
+      <soap:operation soapAction="https://api.cleanster.com/soap/ListChecklists"/>
+      <input><soap:body use="literal"/></input>
+      <output><soap:body use="literal"/></output>
+    </operation>
+    <operation name="GetChecklist">
+      <soap:operation soapAction="https://api.cleanster.com/soap/GetChecklist"/>
+      <input><soap:body use="literal"/></input>
+      <output><soap:body use="literal"/></output>
+    </operation>
+    <operation name="CreateChecklist">
+      <soap:operation soapAction="https://api.cleanster.com/soap/CreateChecklist"/>
+      <input><soap:body use="literal"/></input>
+      <output><soap:body use="literal"/></output>
+    </operation>
+    <operation name="DeleteChecklist">
+      <soap:operation soapAction="https://api.cleanster.com/soap/DeleteChecklist"/>
+      <input><soap:body use="literal"/></input>
+      <output><soap:body use="literal"/></output>
+    </operation>
+    <operation name="GetServices">
+      <soap:operation soapAction="https://api.cleanster.com/soap/GetServices"/>
+      <input><soap:body use="literal"/></input>
+      <output><soap:body use="literal"/></output>
+    </operation>
+    <operation name="GetChat">
+      <soap:operation soapAction="https://api.cleanster.com/soap/GetChat"/>
+      <input><soap:body use="literal"/></input>
+      <output><soap:body use="literal"/></output>
+    </operation>
+    <operation name="SendMessage">
+      <soap:operation soapAction="https://api.cleanster.com/soap/SendMessage"/>
+      <input><soap:body use="literal"/></input>
+      <output><soap:body use="literal"/></output>
+    </operation>
+
+  </binding>
+
+  <!-- =========================================================
+       Service
+  ========================================================= -->
+  <service name="CleansterService">
+    <documentation>
+      Cleanster Partner API — SOAP Gateway.
+      All operations require Bearer token authentication via the SOAPAction header
+      or via the X-Api-Key HTTP header.
+    </documentation>
+    <port name="CleansterPort" binding="tns:CleansterBinding">
+      <soap:address location="https://api.cleanster.com/soap"/>
+    </port>
+  </service>
+
+</definitions>

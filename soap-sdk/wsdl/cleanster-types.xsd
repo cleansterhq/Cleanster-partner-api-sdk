@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="https://api.cleanster.com/soap/types"
+           targetNamespace="https://api.cleanster.com/soap/types"
+           elementFormDefault="qualified">
+
+  <!-- =========================================================
+       Shared / Common
+  ========================================================= -->
+
+  <xs:complexType name="ApiResponse">
+    <xs:sequence>
+      <xs:element name="status"  type="xs:int"/>
+      <xs:element name="message" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- =========================================================
+       Booking Types
+  ========================================================= -->
+
+  <xs:complexType name="Property">
+    <xs:sequence>
+      <xs:element name="id"          type="xs:long"/>
+      <xs:element name="name"        type="xs:string" minOccurs="0"/>
+      <xs:element name="address"     type="xs:string"/>
+      <xs:element name="city"        type="xs:string"/>
+      <xs:element name="state"       type="xs:string"/>
+      <xs:element name="zip"         type="xs:string"/>
+      <xs:element name="bedrooms"    type="xs:int"    minOccurs="0"/>
+      <xs:element name="bathrooms"   type="xs:double" minOccurs="0"/>
+      <xs:element name="squareFeet"  type="xs:int"    minOccurs="0"/>
+      <xs:element name="notes"       type="xs:string" minOccurs="0"/>
+      <xs:element name="accessInstructions" type="xs:string" minOccurs="0"/>
+      <xs:element name="createdAt"   type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="updatedAt"   type="xs:dateTime" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Cleaner">
+    <xs:sequence>
+      <xs:element name="id"        type="xs:long"/>
+      <xs:element name="name"      type="xs:string"/>
+      <xs:element name="email"     type="xs:string" minOccurs="0"/>
+      <xs:element name="phone"     type="xs:string" minOccurs="0"/>
+      <xs:element name="status"    type="xs:string" minOccurs="0"/>
+      <xs:element name="rating"    type="xs:double" minOccurs="0"/>
+      <xs:element name="totalJobs" type="xs:int"    minOccurs="0"/>
+      <xs:element name="createdAt" type="xs:dateTime" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Booking">
+    <xs:sequence>
+      <xs:element name="id"            type="xs:long"/>
+      <xs:element name="status"        type="xs:string"/>
+      <xs:element name="scheduledAt"   type="xs:dateTime"/>
+      <xs:element name="durationHours" type="xs:double"/>
+      <xs:element name="serviceType"   type="xs:string" minOccurs="0"/>
+      <xs:element name="notes"         type="xs:string" minOccurs="0"/>
+      <xs:element name="property"      type="tns:Property" minOccurs="0"/>
+      <xs:element name="cleaner"       type="tns:Cleaner"  minOccurs="0"/>
+      <xs:element name="checklistId"   type="xs:long"    minOccurs="0"/>
+      <xs:element name="createdAt"     type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="updatedAt"     type="xs:dateTime" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="BookingList">
+    <xs:sequence>
+      <xs:element name="booking" type="tns:Booking" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="PropertyList">
+    <xs:sequence>
+      <xs:element name="property" type="tns:Property" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="CleanerList">
+    <xs:sequence>
+      <xs:element name="cleaner" type="tns:Cleaner" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- =========================================================
+       Checklist Types
+  ========================================================= -->
+
+  <xs:complexType name="ChecklistItem">
+    <xs:sequence>
+      <xs:element name="id"          type="xs:long"/>
+      <xs:element name="description" type="xs:string"/>
+      <xs:element name="completed"   type="xs:boolean" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Checklist">
+    <xs:sequence>
+      <xs:element name="id"        type="xs:long"/>
+      <xs:element name="name"      type="xs:string"/>
+      <xs:element name="items"     minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="item" type="tns:ChecklistItem" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="createdAt" type="xs:dateTime" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ChecklistList">
+    <xs:sequence>
+      <xs:element name="checklist" type="tns:Checklist" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- =========================================================
+       Service Type
+  ========================================================= -->
+
+  <xs:complexType name="ServiceType">
+    <xs:sequence>
+      <xs:element name="id"                type="xs:long"/>
+      <xs:element name="name"              type="xs:string"/>
+      <xs:element name="slug"              type="xs:string"/>
+      <xs:element name="description"       type="xs:string" minOccurs="0"/>
+      <xs:element name="baseDurationHours" type="xs:double" minOccurs="0"/>
+      <xs:element name="active"            type="xs:boolean" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ServiceTypeList">
+    <xs:sequence>
+      <xs:element name="serviceType" type="tns:ServiceType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- =========================================================
+       Chat / Message
+  ========================================================= -->
+
+  <xs:complexType name="ChatMessage">
+    <xs:sequence>
+      <xs:element name="id"        type="xs:long"/>
+      <xs:element name="bookingId" type="xs:long"/>
+      <xs:element name="message"   type="xs:string"/>
+      <xs:element name="sender"    type="xs:string"/>
+      <xs:element name="sentAt"    type="xs:dateTime"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ChatMessageList">
+    <xs:sequence>
+      <xs:element name="message" type="tns:ChatMessage" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- =========================================================
+       Request / Response Element Declarations
+  ========================================================= -->
+
+  <!-- Booking requests -->
+  <xs:element name="GetBookingRequest">
+    <xs:complexType><xs:sequence>
+      <xs:element name="bookingId" type="xs:long"/>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+  <xs:element name="GetBookingResponse">
+    <xs:complexType><xs:sequence>
+      <xs:element name="booking" type="tns:Booking"/>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+  <xs:element name="ListBookingsRequest">
+    <xs:complexType><xs:sequence>
+      <xs:element name="status"     type="xs:string"  minOccurs="0"/>
+      <xs:element name="propertyId" type="xs:long"    minOccurs="0"/>
+      <xs:element name="page"       type="xs:int"     minOccurs="0"/>
+      <xs:element name="perPage"    type="xs:int"     minOccurs="0"/>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+  <xs:element name="ListBookingsResponse">
+    <xs:complexType><xs:sequence>
+      <xs:element name="bookings" type="tns:BookingList"/>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+  <xs:element name="CreateBookingRequest">
+    <xs:complexType><xs:sequence>
+      <xs:element name="propertyId"    type="xs:long"/>
+      <xs:element name="scheduledAt"   type="xs:dateTime"/>
+      <xs:element name="durationHours" type="xs:double"/>
+      <xs:element name="serviceType"   type="xs:string" minOccurs="0"/>
+      <xs:element name="notes"         type="xs:string" minOccurs="0"/>
+      <xs:element name="cleanerId"     type="xs:long"   minOccurs="0"/>
+      <xs:element name="checklistId"   type="xs:long"   minOccurs="0"/>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+  <xs:element name="CreateBookingResponse">
+    <xs:complexType><xs:sequence>
+      <xs:element name="booking" type="tns:Booking"/>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+  <xs:element name="CancelBookingRequest">
+    <xs:complexType><xs:sequence>
+      <xs:element name="bookingId" type="xs:long"/>
+      <xs:element name="reason"    type="xs:string" minOccurs="0"/>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+  <xs:element name="CancelBookingResponse">
+    <xs:complexType><xs:sequence>
+      <xs:element name="response" type="tns:ApiResponse"/>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+  <xs:element name="RescheduleBookingRequest">
+    <xs:complexType><xs:sequence>
+      <xs:element name="bookingId"      type="xs:long"/>
+      <xs:element name="scheduledAt"    type="xs:dateTime"/>
+      <xs:element name="durationHours"  type="xs:double" minOccurs="0"/>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+  <xs:element name="RescheduleBookingResponse">
+    <xs:complexType><xs:sequence>
+      <xs:element name="booking" type="tns:Booking"/>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+  <xs:element name="AssignCleanerRequest">
+    <xs:complexType><xs:sequence>
+      <xs:element name="bookingId" type="xs:long"/>
+      <xs:element name="cleanerId" type="xs:long"/>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+  <xs:element name="AssignCleanerResponse">
+    <xs:complexType><xs:sequence>
+      <xs:element name="booking" type="tns:Booking"/>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+  <!-- Property requests -->
+  <xs:element name="GetPropertyRequest">
+    <xs:complexType><xs:sequence>
+      <xs:element name="propertyId" type="xs:long"/>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+  <xs:element name="GetPropertyResponse">
+    <xs:complexType><xs:sequence>
+      <xs:element name="property" type="tns:Property"/>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+  <xs:element name="ListPropertiesRequest">
+    <xs:complexType><xs:sequence>
+      <xs:element name="page"    type="xs:int" minOccurs="0"/>
+      <xs:element name="perPage" type="xs:int" minOccurs="0"/>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+  <xs:element name="ListPropertiesResponse">
+    <xs:complexType><xs:sequence>
+      <xs:element name="properties" type="tns:PropertyList"/>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+  <xs:element name="CreatePropertyRequest">
+    <xs:complexType><xs:sequence>
+      <xs:element name="address"            type="xs:string"/>
+      <xs:element name="city"               type="xs:string"/>
+      <xs:element name="state"              type="xs:string"/>
+      <xs:element name="zip"                type="xs:string"/>
+      <xs:element name="name"               type="xs:string" minOccurs="0"/>
+      <xs:element name="bedrooms"           type="xs:int"    minOccurs="0"/>
+      <xs:element name="bathrooms"          type="xs:double" minOccurs="0"/>
+      <xs:element name="squareFeet"         type="xs:int"    minOccurs="0"/>
+      <xs:element name="notes"              type="xs:string" minOccurs="0"/>
+      <xs:element name="accessInstructions" type="xs:string" minOccurs="0"/>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+  <xs:element name="CreatePropertyResponse">
+    <xs:complexType><xs:sequence>
+      <xs:element name="property" type="tns:Property"/>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+  <!-- Cleaner requests -->
+  <xs:element name="ListCleanersRequest">
+    <xs:complexType><xs:sequence>
+      <xs:element name="status"  type="xs:string" minOccurs="0"/>
+      <xs:element name="page"    type="xs:int"    minOccurs="0"/>
+      <xs:element name="perPage" type="xs:int"    minOccurs="0"/>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+  <xs:element name="ListCleanersResponse">
+    <xs:complexType><xs:sequence>
+      <xs:element name="cleaners" type="tns:CleanerList"/>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+  <xs:element name="GetCleanerRequest">
+    <xs:complexType><xs:sequence>
+      <xs:element name="cleanerId" type="xs:long"/>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+  <xs:element name="GetCleanerResponse">
+    <xs:complexType><xs:sequence>
+      <xs:element name="cleaner" type="tns:Cleaner"/>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+  <!-- Checklist requests -->
+  <xs:element name="ListChecklistsRequest">
+    <xs:complexType><xs:sequence>
+      <xs:element name="page"    type="xs:int" minOccurs="0"/>
+      <xs:element name="perPage" type="xs:int" minOccurs="0"/>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+  <xs:element name="ListChecklistsResponse">
+    <xs:complexType><xs:sequence>
+      <xs:element name="checklists" type="tns:ChecklistList"/>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+  <xs:element name="GetChecklistRequest">
+    <xs:complexType><xs:sequence>
+      <xs:element name="checklistId" type="xs:long"/>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+  <xs:element name="GetChecklistResponse">
+    <xs:complexType><xs:sequence>
+      <xs:element name="checklist" type="tns:Checklist"/>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+  <xs:element name="CreateChecklistRequest">
+    <xs:complexType><xs:sequence>
+      <xs:element name="name"  type="xs:string"/>
+      <xs:element name="items" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="item" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+  <xs:element name="CreateChecklistResponse">
+    <xs:complexType><xs:sequence>
+      <xs:element name="checklist" type="tns:Checklist"/>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+  <xs:element name="DeleteChecklistRequest">
+    <xs:complexType><xs:sequence>
+      <xs:element name="checklistId" type="xs:long"/>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+  <xs:element name="DeleteChecklistResponse">
+    <xs:complexType><xs:sequence>
+      <xs:element name="response" type="tns:ApiResponse"/>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+  <!-- Services -->
+  <xs:element name="GetServicesRequest">
+    <xs:complexType><xs:sequence/></xs:complexType>
+  </xs:element>
+
+  <xs:element name="GetServicesResponse">
+    <xs:complexType><xs:sequence>
+      <xs:element name="services" type="tns:ServiceTypeList"/>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+  <!-- Chat -->
+  <xs:element name="GetChatRequest">
+    <xs:complexType><xs:sequence>
+      <xs:element name="bookingId" type="xs:long"/>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+  <xs:element name="GetChatResponse">
+    <xs:complexType><xs:sequence>
+      <xs:element name="messages" type="tns:ChatMessageList"/>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+  <xs:element name="SendMessageRequest">
+    <xs:complexType><xs:sequence>
+      <xs:element name="bookingId" type="xs:long"/>
+      <xs:element name="message"   type="xs:string"/>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+  <xs:element name="SendMessageResponse">
+    <xs:complexType><xs:sequence>
+      <xs:element name="chatMessage" type="tns:ChatMessage"/>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+</xs:schema>
