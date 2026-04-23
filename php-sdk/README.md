@@ -2,13 +2,13 @@
 
 <p align="center">
   <strong>Official PHP client library for the Cleanster Partner API</strong><br>
-  Manage cleaning service bookings, properties, users, checklists, payment methods, webhooks, and more.
+  Automate residential and commercial cleaning operations — bookings, properties, cleaners, checklists, payments, and more.
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/PHP-8.1%2B-777BB4?logo=php" alt="PHP 8.1+">
-  <img src="https://img.shields.io/badge/Composer-PSR--4-blue?logo=packagist" alt="Composer PSR-4">
-  <img src="https://img.shields.io/badge/tests-106%20passing-brightgreen" alt="106 passing tests">
+  <img src="https://img.shields.io/badge/Composer-PSR--4-blue?logo=packagist" alt="PSR-4">
+  <img src="https://img.shields.io/badge/tests-106%20passing-brightgreen" alt="106 passing">
   <img src="https://img.shields.io/badge/dependencies-zero%20runtime-brightgreen" alt="Zero runtime dependencies">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
   <img src="https://img.shields.io/badge/API-Cleanster%20Partner-brightgreen" alt="Cleanster Partner API">
@@ -23,58 +23,49 @@
 - [Installation](#installation)
 - [Authentication](#authentication)
 - [Quick Start](#quick-start)
-- [Configuration](#configuration)
-- [Error Handling](#error-handling)
+- [Environments](#environments)
+- [Booking Flow](#booking-flow)
 - [API Reference](#api-reference)
-  - [Bookings](#bookings-clientbookings)
-  - [Users](#users-clientusers)
-  - [Properties](#properties-clientproperties)
-  - [Checklists](#checklists-clientchecklists)
-  - [Other / Utilities](#other--utilities-clientother)
-  - [Blacklist](#blacklist-clientblacklist)
-  - [Payment Methods](#payment-methods-clientpaymentmethods)
-  - [Webhooks](#webhooks-clientwebhooks)
-- [Response Structure](#response-structure)
-- [Model Reference](#model-reference)
-- [Sandbox vs Production](#sandbox-vs-production)
-- [Test Coupon Codes](#test-coupon-codes-sandbox-only)
+  - [Bookings](#bookings)
+  - [Users](#users)
+  - [Properties](#properties)
+  - [Checklists](#checklists)
+  - [Other / Reference Data](#other--reference-data)
+  - [Blacklist](#blacklist)
+  - [Payment Methods](#payment-methods)
+  - [Webhooks](#webhooks)
+- [Models Reference](#models-reference)
+- [Error Handling](#error-handling)
+- [Test Coupon Codes](#test-coupon-codes)
+- [Chat Window Rules](#chat-window-rules)
+- [Webhook Events](#webhook-events)
 - [Running Tests](#running-tests)
 - [Project Structure](#project-structure)
 - [License](#license)
-- [Support](#support)
 
 ---
 
 ## Overview
 
-The Cleanster PHP SDK provides a clean, idiomatic PHP interface for the [Cleanster Partner API](https://documenter.getpostman.com/view/26172658/2sAYdoF7ep). It targets PHP 8.1+ and uses only PHP's built-in `ext-curl` and `ext-json` extensions — zero Composer runtime dependencies.
+The Cleanster PHP SDK provides a clean, idiomatic PHP interface for the [Cleanster Partner API](https://documenter.getpostman.com/view/26172658/2sAYdoF7ep). It requires only PHP's built-in `ext-curl` and `ext-json` extensions — zero Composer runtime dependencies.
 
-**Feature highlights:**
-
-| Feature | Detail |
-|---------|--------|
-| **Idiomatic PHP 8.1+** | Constructor promotion, readonly properties, named arguments, `null`-safe operators |
-| **Zero runtime dependencies** | Only `ext-curl` and `ext-json` — universally available on every PHP host |
-| **Typed model objects** | `Booking`, `User`, `Property`, `Checklist`, `ChecklistItem`, `PaymentMethod` — never raw arrays |
-| **PSR-4 autoloading** | Standard Composer autoloading — works with any PSR-4-compliant framework |
-| **`ApiResponse` wrapper** | Consistent `$status`, `$message`, `$data` on every call |
-| **Injectable `HttpClient`** | Pass a mock `HttpClient` for unit testing — no real network required |
-| **Three exception types** | `CleansterException`, `AuthException` (401), `ApiException` (4xx/5xx) |
-| **8 service classes** | Bookings, Users, Properties, Checklists, Other, Blacklist, PaymentMethods, Webhooks |
-| **106 PHPUnit tests** | All passing; uses mocks — no API key or network access needed |
+Use it to:
+- **Create and manage bookings** — schedule, reschedule, cancel, adjust hours
+- **Manage properties** — CRUD, iCal calendar sync, preferred cleaner lists
+- **Handle users** — create accounts and manage authorization tokens
+- **Configure checklists** — create task lists and assign to bookings
+- **Process payments** — Stripe and PayPal support
+- **Receive webhooks** — subscribe to booking lifecycle events
+- **Blacklist cleaners** — prevent specific cleaners from being assigned
 
 ---
 
 ## Requirements
 
-| Requirement | Minimum Version |
-|-------------|----------------|
-| PHP | 8.1 |
-| ext-curl | Any (bundled with PHP) |
-| ext-json | Any (bundled with PHP) |
-| Composer | 2.x (dev install only) |
-
-> **No Guzzle or other HTTP library is required.** The SDK uses PHP's native cURL extension, which is available in every standard PHP distribution.
+- **PHP 8.1** or later
+- Extensions: `ext-curl`, `ext-json`
+- **Composer** (for installation)
+- A Cleanster Partner account — contact [partner@cleanster.com](mailto:partner@cleanster.com) for access
 
 ---
 
@@ -84,375 +75,282 @@ The Cleanster PHP SDK provides a clean, idiomatic PHP interface for the [Cleanst
 composer require cleanster/cleanster-php-sdk
 ```
 
-Then use the SDK anywhere in your project:
+Install from source:
 
-```php
-use Cleanster\CleansterClient;
+```bash
+git clone https://github.com/cleansterhq/Cleanster-partner-api-sdk.git
+cd Cleanster-partner-api-sdk/php-sdk
+composer install
 ```
 
 ---
 
 ## Authentication
 
-The Cleanster Partner API uses **two layers of authentication** on every request:
+Every request requires two credentials sent as HTTP headers:
 
-| Header | Value | Purpose |
-|--------|-------|---------|
-| `access-key` | Your partner key | Identifies your partner account |
-| `token` | User bearer token | Authenticates the end-user |
+| Header | Description |
+|---|---|
+| `access-key` | Your static partner key from Cleanster |
+| `token` | A per-user JWT — long-lived, from `$client->users()->fetchAccessToken($userId)` |
 
-The SDK sends both headers automatically. You set the partner key once at client creation, then call `setAccessToken()` after fetching a user's token.
+### 4-Step Setup
 
-### Step-by-Step Authentication
+**Step 1 — Contact Cleanster** to receive your `access-key`.
 
-**Step 1 — Create a sandbox client with your partner access key:**
+**Step 2 — Create a user account** (one-time per end-user):
 
 ```php
 use Cleanster\CleansterClient;
 
-$client = CleansterClient::sandbox($_ENV['CLEANSTER_API_KEY']);
-```
+$client = new CleansterClient('your-access-key');
 
-**Step 2 — Create a user:**
-
-```php
 $resp = $client->users()->createUser(
-    email:     'jane@example.com',
-    firstName: 'Jane',
-    lastName:  'Smith',
+    'jane@example.com',  // email
+    'Jane',              // first name
+    'Doe',               // last name
+    '+15551234567'       // phone
 );
-
-$user = $resp->data;   // Cleanster\Models\User
-echo "Created user #{$user->id}\n";
+$userId = $resp->getData()['userId'];
 ```
 
-**Step 3 — Fetch the user's long-lived bearer token:**
+**Step 3 — Fetch the user's access token** (store it; it is long-lived):
 
 ```php
-$tokenResp = $client->users()->fetchAccessToken($user->id);
-$token     = $tokenResp->data->token;   // string
+$tokenResp = $client->users()->fetchAccessToken($userId);
+$userToken = $tokenResp->getData()['token'];
 ```
 
-**Step 4 — Set the token on the client** for all subsequent calls:
+**Step 4 — Build the client with both credentials**:
 
 ```php
-$client->setAccessToken($token);
-// Every subsequent request automatically sends: token: <your-token>
+$client = new CleansterClient('your-access-key', $userToken);
 ```
 
-> **Tip:** The bearer token is long-lived. Store it in your database and reuse it across requests by calling `$client->setAccessToken($storedToken)` — no need to re-fetch it each time.
+> **Token lifecycle:** Only refresh when the API returns HTTP 401.
 
 ---
 
 ## Quick Start
 
 ```php
-<?php
-
-require 'vendor/autoload.php';
-
 use Cleanster\CleansterClient;
 
-$client = CleansterClient::sandbox($_ENV['CLEANSTER_API_KEY']);
+$client = new CleansterClient('your-access-key', 'user-jwt-token');
 
-// 1. Create a user
-$userResp = $client->users()->createUser('jane@example.com', 'Jane', 'Smith');
-$user     = $userResp->data;
+// Get recommended cleaning hours
+$hours = $client->other()->getRecommendedHours(1004, 2, 3);
+echo "Recommended hours: " . json_encode($hours->getData()) . "\n";
 
-// 2. Fetch and set the bearer token
-$tokenResp = $client->users()->fetchAccessToken($user->id);
-$client->setAccessToken($tokenResp->data->token);
-
-// 3. Add a property
-$propResp = $client->properties()->addProperty([
-    'name'          => 'Beach House',
-    'address'       => '123 Ocean Drive',
-    'city'          => 'Miami',
-    'country'       => 'USA',
-    'roomCount'     => 3,
-    'bathroomCount' => 2,
-    'serviceId'     => 1,
-]);
-$prop = $propResp->data;   // Cleanster\Models\Property
-
-// 4. Get recommended hours for this property size
-$hoursResp = $client->other()->getRecommendedHours(
-    propertyId:    $prop->id,
-    bathroomCount: $prop->bathroomCount,
-    roomCount:     $prop->roomCount,
-);
-
-// 5. Calculate the estimated cost
-$costResp = $client->other()->calculateCost([
-    'propertyId' => $prop->id,
-    'planId'     => 2,
-    'hours'      => 3,
-    'couponCode' => '20POFF',   // optional sandbox coupon
-]);
-
-// 6. Create a booking
-$bookingResp = $client->bookings()->createBooking([
-    'date'            => '2025-06-15',
+// Create a booking
+$booking = $client->bookings()->createBooking([
+    'propertyId'      => 1004,
+    'date'            => '2025-09-01',
     'time'            => '10:00',
-    'propertyId'      => $prop->id,
+    'planId'          => 2,
     'roomCount'       => 3,
     'bathroomCount'   => 2,
-    'planId'          => 2,
-    'hours'           => 3,
+    'hours'           => 3.0,
     'extraSupplies'   => false,
     'paymentMethodId' => 10,
+    'couponCode'      => '20POFF',  // optional — 20% off in sandbox
 ]);
+echo "Created booking: " . $booking->getData()['id'] . "\n";
 
-$booking = $bookingResp->data;   // Cleanster\Models\Booking
-echo "Created booking #{$booking->id} — status: {$booking->status}\n";
-
-// 7. List bookings
-$listResp = $client->bookings()->getBookings();
-echo "Total bookings: " . count($listResp->data) . "\n";
+// List open bookings
+$list = $client->bookings()->listBookings(1, 'OPEN');
+echo "Open bookings: " . count($list->getData()['bookings']) . "\n";
 ```
 
 ---
 
-## Configuration
+## Environments
 
-### Factory Methods (Recommended)
-
-```php
-use Cleanster\CleansterClient;
-
-// Sandbox — development and testing (no real charges or cleaners)
-$client = CleansterClient::sandbox('your-access-key');
-
-// Production — live traffic (real cleaners, real charges)
-$client = CleansterClient::production('your-access-key');
-```
-
-### Custom Config
-
-For custom timeouts or non-standard base URLs:
+| Environment | Base URL |
+|---|---|
+| **Sandbox** (default) | `https://partner-sandbox-dot-official-tidyio-project.ue.r.appspot.com/public` |
+| **Production** | `https://partner-dot-official-tidyio-project.ue.r.appspot.com/public` |
 
 ```php
-use Cleanster\Config;
-use Cleanster\CleansterClient;
+// Sandbox (default)
+$client = new CleansterClient('key', 'token');
 
-$config = new Config(
-    accessKey: 'your-access-key',
-    baseUrl:   Config::SANDBOX_BASE_URL,   // or PRODUCTION_BASE_URL or a custom URL
-    timeout:   60,                         // seconds (default: 30)
-);
-$client = new CleansterClient($config);
+// Production
+$client = new CleansterClient('key', 'token', 'production');
 ```
-
-### Config Helpers
-
-```php
-use Cleanster\Config;
-
-$cfg = Config::sandbox('your-access-key');
-// $cfg->accessKey → 'your-access-key'
-// $cfg->baseUrl   → Config::SANDBOX_BASE_URL
-// $cfg->timeout   → 30
-
-$cfg = Config::production('your-access-key');
-```
-
-### Environment Base URLs
-
-| Environment | Constant | Base URL |
-|-------------|----------|----------|
-| Sandbox | `Config::SANDBOX_BASE_URL` | `https://partner-sandbox-dot-official-tidyio-project.ue.r.appspot.com/public` |
-| Production | `Config::PRODUCTION_BASE_URL` | `https://partner-dot-official-tidyio-project.ue.r.appspot.com/public` |
 
 ---
 
-## Error Handling
-
-All SDK methods throw typed exceptions that extend `CleansterException`. Use a `try/catch` block — either catch `CleansterException` as a single catchall, or catch the specific subtypes for fine-grained control.
-
-### Complete Error Handling Example
-
-```php
-use Cleanster\Exceptions\AuthException;
-use Cleanster\Exceptions\ApiException;
-use Cleanster\Exceptions\CleansterException;
-
-try {
-    $resp = $client->bookings()->getBookingDetails(99999);
-    $booking = $resp->data;
-
-} catch (AuthException $e) {
-    // HTTP 401 — invalid access key or expired user token
-    echo "Auth error ({$e->statusCode}): {$e->getMessage()}\n";
-    echo "Raw response: {$e->responseBody}\n";
-    // Prompt user to re-authenticate
-
-} catch (ApiException $e) {
-    // HTTP 4xx/5xx — API-level error
-    echo "API error ({$e->statusCode}): {$e->getMessage()}\n";
-    echo "Raw response: {$e->responseBody}\n";
-
-    match ($e->statusCode) {
-        404 => print("Resource not found.\n"),
-        422 => print("Validation error — check your request fields.\n"),
-        default => print("Server error — consider retrying after a delay.\n"),
-    };
-
-} catch (CleansterException $e) {
-    // Network failure, cURL error, timeout, or JSON parse error
-    echo "SDK error: {$e->getMessage()}\n";
-}
-```
-
-### Exception Hierarchy
+## Booking Flow
 
 ```
-\RuntimeException
-└── Cleanster\Exceptions\CleansterException    ← base: network failure, cURL error, JSON parse
-    ├── Cleanster\Exceptions\AuthException     ← HTTP 401: invalid or missing credentials
-    └── Cleanster\Exceptions\ApiException      ← HTTP 4xx/5xx (other than 401)
+createBooking()          →   OPEN
+                                 │
+     bookings()->assignCleaner()
+                                 │
+                                 ▼
+                       CLEANER_ASSIGNED
+                                 │
+                    Cleaner starts the job
+                                 │
+                  ┌──────────────┴──────────────┐
+                  ▼                             ▼
+             COMPLETED                     CANCELLED
 ```
 
-| Exception Class | When Thrown | Key Properties |
-|----------------|-------------|----------------|
-| `CleansterException` | cURL failure, timeout, JSON parse error | `getMessage()` |
-| `AuthException` | HTTP 401 | `$statusCode`, `$responseBody`, `getMessage()` |
-| `ApiException` | HTTP 4xx/5xx (not 401) | `$statusCode`, `$responseBody`, `getMessage()` |
+Status values: `OPEN` · `CLEANER_ASSIGNED` · `IN_PROGRESS` · `COMPLETED` · `CANCELLED` · `REMOVED`
 
 ---
 
 ## API Reference
 
-Every method returns an `ApiResponse` object with `$status`, `$message`, and `$data` readonly properties.
-All API classes are accessible via the `$client->serviceName()` accessors.
+All methods return a `Cleanster\ApiResponse` with:
+- `->getStatus()` — HTTP status code
+- `->getMessage()` — Human-readable result
+- `->getData()` — Response payload (array)
 
 ---
 
-### Bookings (`$client->bookings()`)
+### Bookings
 
-#### `getBookings(?int $pageNo, ?string $status): ApiResponse`
+#### List Bookings
+**`GET /v1/bookings?pageNo={pageNo}&status={status}`**
 
-Retrieve a paginated list of bookings. Both parameters are optional.
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `$pageNo` | int | Yes | Page number (1-based) |
+| `$status` | string | No | `OPEN` · `CLEANER_ASSIGNED` · `COMPLETED` · `CANCELLED` · `REMOVED` |
 
 ```php
-// All bookings (no filter)
-$resp = $client->bookings()->getBookings();
-
-// Filtered by status
-$resp = $client->bookings()->getBookings(status: 'OPEN');
-
-// Paginated
-$resp = $client->bookings()->getBookings(pageNo: 2, status: 'COMPLETED');
-
-// Iterate results
-foreach ($resp->data as $booking) {   // $booking is a Booking object
-    echo "#{$booking->id} on {$booking->date} at {$booking->time} — {$booking->status}\n";
+$resp = $client->bookings()->listBookings(1, 'OPEN');
+foreach ($resp->getData()['bookings'] as $booking) {
+    echo $booking['id'] . ' - ' . $booking['status'] . "\n";
 }
 ```
 
-**Status values:** `OPEN` | `CLEANER_ASSIGNED` | `COMPLETED` | `CANCELLED` | `REMOVED`
+---
+
+#### Get Booking
+**`GET /v1/bookings/{bookingId}`**
+
+```php
+$resp = $client->bookings()->getBooking(16926);
+echo $resp->getData()['status'] . ' on ' . $resp->getData()['date'] . "\n";
+```
 
 ---
 
-#### `createBooking(array $request): ApiResponse`
+#### Create Booking
+**`POST /v1/bookings/create`**
 
-Schedule a new cleaning appointment.
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `propertyId` | int | Yes | Property to clean |
+| `date` | string | Yes | `YYYY-MM-DD` |
+| `time` | string | Yes | `HH:MM` (24-hour) |
+| `planId` | int | Yes | Cleaning plan ID |
+| `roomCount` | int | Yes | Number of rooms |
+| `bathroomCount` | int | Yes | Number of bathrooms |
+| `hours` | float | Yes | Duration |
+| `extraSupplies` | bool | Yes | Cleaner brings supplies |
+| `paymentMethodId` | int | Yes | Payment method ID |
+| `couponCode` | string | No | Discount coupon |
+| `cleaningExtras` | array | No | Extra service IDs |
 
 ```php
 $resp = $client->bookings()->createBooking([
-    'date'            => '2025-06-15',   // Required — YYYY-MM-DD
-    'time'            => '10:00',        // Required — HH:mm (24-hour)
-    'propertyId'      => 1004,           // Required — from listProperties()
-    'roomCount'       => 2,              // Required
-    'bathroomCount'   => 1,              // Required
-    'planId'          => 5,              // Required — from getPlans()
-    'hours'           => 3,              // Required — from getRecommendedHours()
-    'extraSupplies'   => false,          // Required — include cleaning supplies?
-    'paymentMethodId' => 10,             // Required
-    'couponCode'      => '20POFF',       // Optional
-    'extras'          => [101, 102],     // Optional — add-on service IDs
+    'propertyId'      => 1004,
+    'date'            => '2025-09-01',
+    'time'            => '10:00',
+    'planId'          => 2,
+    'roomCount'       => 3,
+    'bathroomCount'   => 2,
+    'hours'           => 3.0,
+    'extraSupplies'   => false,
+    'paymentMethodId' => 10,
+    'couponCode'      => '50POFF',
 ]);
-
-$booking = $resp->data;   // Cleanster\Models\Booking
-echo "Booking #{$booking->id} cost: \${$booking->cost}\n";
+echo "Booking ID: " . $resp->getData()['id'] . "\n";
 ```
 
 ---
 
-#### `getBookingDetails(int $bookingId): ApiResponse`
+#### Assign Cleaner to Booking
+**`POST /v1/bookings/{bookingId}/cleaner`**
 
 ```php
-$resp = $client->bookings()->getBookingDetails(16926);
-$b    = $resp->data;   // Cleanster\Models\Booking
-
-echo "#{$b->id} on {$b->date} at {$b->time}\n";
-echo "Status: {$b->status} — Cost: \${$b->cost}\n";
-
-if ($b->cleanerId !== null) {
-    echo "Assigned cleaner: #{$b->cleanerId}\n";
-}
+$client->bookings()->assignCleaner(16926, $cleanerId);
 ```
 
 ---
 
-#### `cancelBooking(int $bookingId, ?string $reason): ApiResponse`
+#### Remove Cleaner from Booking
+**`DELETE /v1/bookings/{bookingId}/cleaner`**
 
 ```php
-// With a reason
-$client->bookings()->cancelBooking(16459, 'Schedule conflict');
-
-// Without a reason
-$client->bookings()->cancelBooking(16459);
+$client->bookings()->removeCleaner(16926);
 ```
 
 ---
 
-#### `rescheduleBooking(int $bookingId, string $date, string $time): ApiResponse`
+#### Adjust Booking Hours
+**`POST /v1/bookings/{bookingId}/hours`**
 
 ```php
-$client->bookings()->rescheduleBooking(16459, '2025-07-01', '14:00');
+$client->bookings()->adjustHours(16926, 4.5);
 ```
 
 ---
 
-#### `assignCleaner(int $bookingId, int $cleanerId)` / `removeAssignedCleaner(int $bookingId)`
+#### Reschedule Booking
+**`POST /v1/bookings/{bookingId}/reschedule`**
 
 ```php
-$client->bookings()->assignCleaner(16459, 5);
-$client->bookings()->removeAssignedCleaner(16459);
+$client->bookings()->rescheduleBooking(16926, '2025-09-15', '14:00');
 ```
 
 ---
 
-#### `adjustHours(int $bookingId, float $hours)`
+#### Pay Booking Expenses
+**`POST /v1/bookings/{bookingId}/expenses`**
 
 ```php
-$client->bookings()->adjustHours(16459, 4.0);
+$client->bookings()->payExpenses(16926, $paymentMethodId);
 ```
 
 ---
 
-#### `payExpenses(int $bookingId, int $paymentMethodId)`
-
-Pay outstanding expenses within 72 hours of booking completion.
+#### Get Booking Inspection
+**`GET /v1/bookings/{bookingId}/inspection`**
 
 ```php
-$client->bookings()->payExpenses(16926, 10);
+$resp = $client->bookings()->getInspection(16926);
 ```
 
 ---
 
-#### `getBookingInspection` / `getBookingInspectionDetails`
+#### Get Booking Inspection Details
+**`GET /v1/bookings/{bookingId}/inspection/details`**
 
 ```php
-$resp = $client->bookings()->getBookingInspection(16926);
-$resp = $client->bookings()->getBookingInspectionDetails(16926);
+$resp = $client->bookings()->getInspectionDetails(16926);
 ```
 
 ---
 
-#### `assignChecklistToBooking(int $bookingId, int $checklistId)`
+#### Cancel Booking
+**`POST /v1/bookings/{bookingId}/cancel`**
 
-Override the property's default checklist for this specific booking only.
+```php
+$client->bookings()->cancelBooking(16926, 'Scheduling conflict');
+```
+
+---
+
+#### Assign Checklist to Booking
+**`PUT /v1/bookings/{bookingId}/checklist/{checklistId}`**
+
+Override the property's default checklist for this booking only.
 
 ```php
 $client->bookings()->assignChecklistToBooking(16926, 105);
@@ -460,333 +358,319 @@ $client->bookings()->assignChecklistToBooking(16926, 105);
 
 ---
 
-#### `submitFeedback(int $bookingId, int $rating, ?string $comment)`
-
-Submit a star rating (1–5) and optional comment.
+#### Submit Feedback
+**`POST /v1/bookings/{bookingId}/feedback`**
 
 ```php
-// With a comment
-$client->bookings()->submitFeedback(16926, 5, 'Excellent — very thorough!');
-
-// Without a comment
-$client->bookings()->submitFeedback(16926, 4);
+$client->bookings()->submitFeedback(16926, 5, 'Excellent work!');
 ```
 
 ---
 
-#### `addTip(int $bookingId, float $amount, int $paymentMethodId)`
-
-Add a tip within 72 hours of booking completion.
+#### Submit Tip
+**`POST /v1/bookings/{bookingId}/tip`**
 
 ```php
-$client->bookings()->addTip(16926, 20.0, 10);
+$client->bookings()->submitTip(16926, 15.00, $paymentMethodId);
 ```
 
 ---
 
-#### Chat: `getChat`, `sendMessage`, `deleteMessage`
+#### Get Chat Messages
+**`GET /v1/bookings/{bookingId}/chat`**
 
 ```php
-// Get all messages in a booking's chat thread
-$chat = $client->bookings()->getChat(17142);
+$resp = $client->bookings()->getChat(16926);
+foreach ($resp->getData()['messages'] as $msg) {
+    echo "[{$msg['sender_type']}] {$msg['content']}\n";
+}
+```
 
-// Send a message
-$client->bookings()->sendMessage(17142, 'Please focus on the kitchen today.');
+**`messages[]` fields:**
 
-// Delete a specific message
-$client->bookings()->deleteMessage(17142, 'msg-abc-123');
+| Field | Type | Description |
+|---|---|---|
+| `message_id` | string | Unique ID |
+| `sender_id` | string | Reference key (e.g. `C6`, `P3`) |
+| `content` | string | Text content (empty for media) |
+| `timestamp` | string | `DD MMM YYYY, HH:MM AM/PM` (GMT) |
+| `message_type` | string | `text` or `media` |
+| `attachments` | array | Media items |
+| `attachments[].type` | string | `image`, `video`, `sound` |
+| `attachments[].url` | string | Media URL |
+| `attachments[].thumb_url` | string | Thumbnail (nullable) |
+| `is_read` | bool | Read status |
+| `sender_type` | string | `client` · `cleaner` · `support` · `bot` |
+
+---
+
+#### Send Chat Message
+**`POST /v1/bookings/{bookingId}/chat`**
+
+```php
+$client->bookings()->sendMessage(16926, 'Please bring extra supplies.');
 ```
 
 ---
 
-**Bookings API Summary**
+#### Delete Chat Message
+**`DELETE /v1/bookings/{bookingId}/chat/{messageId}`**
 
-| Method | HTTP | Endpoint |
-|--------|------|----------|
-| `getBookings(?int, ?string)` | GET | `/v1/bookings` |
-| `createBooking(array)` | POST | `/v1/bookings/create` |
-| `getBookingDetails(int)` | GET | `/v1/bookings/{id}` |
-| `cancelBooking(int, ?string)` | POST | `/v1/bookings/{id}/cancel` |
-| `rescheduleBooking(int, string, string)` | POST | `/v1/bookings/{id}/reschedule` |
-| `assignCleaner(int, int)` | POST | `/v1/bookings/{id}/cleaner` |
-| `removeAssignedCleaner(int)` | DELETE | `/v1/bookings/{id}/cleaner` |
-| `adjustHours(int, float)` | POST | `/v1/bookings/{id}/hours` |
-| `payExpenses(int, int)` | POST | `/v1/bookings/{id}/expenses` |
-| `getBookingInspection(int)` | GET | `/v1/bookings/{id}/inspection` |
-| `getBookingInspectionDetails(int)` | GET | `/v1/bookings/{id}/inspection/details` |
-| `assignChecklistToBooking(int, int)` | PUT | `/v1/bookings/{id}/checklist/{cid}` |
-| `submitFeedback(int, int, ?string)` | POST | `/v1/bookings/{id}/feedback` |
-| `addTip(int, float, int)` | POST | `/v1/bookings/{id}/tip` |
-| `getChat(int)` | GET | `/v1/bookings/{id}/chat` |
-| `sendMessage(int, string)` | POST | `/v1/bookings/{id}/chat` |
-| `deleteMessage(int, string)` | DELETE | `/v1/bookings/{id}/chat/{messageId}` |
+```php
+$client->bookings()->deleteMessage(16926, '-OLPrlE06uD8tQ8ebJZw');
+```
 
 ---
 
-### Users (`$client->users()`)
+### Users
 
-#### `createUser(string $email, string $firstName, string $lastName, ?string $phone): ApiResponse`
+#### Create User
+**`POST /v1/user/account`**
 
 ```php
 $resp = $client->users()->createUser(
-    email:     'jane@example.com',
-    firstName: 'Jane',
-    lastName:  'Smith',
-    phone:     '+15551234567',   // optional — omitted from request if null
+    'jane@example.com', 'Jane', 'Doe', '+15551234567'
 );
-
-$user = $resp->data;   // Cleanster\Models\User
-echo "Created user #{$user->id}: {$user->email}\n";
+$userId = $resp->getData()['userId'];
 ```
 
 ---
 
-#### `fetchAccessToken(int $userId): ApiResponse`
+#### Fetch Access Token
+**`GET /v1/user/access-token/{userId}`**
 
-Fetch the long-lived bearer token. Store it and reuse it across sessions.
+Only `access-key` is required for this call.
 
 ```php
-$resp  = $client->users()->fetchAccessToken(42);
-$token = $resp->data->token;   // string
-
-// Set on client for all subsequent requests:
-$client->setAccessToken($token);
+$resp = $client->users()->fetchAccessToken(42);
+$token = $resp->getData()['token'];
 ```
 
 ---
 
-#### `verifyJwt(string $token): ApiResponse`
+#### Verify JWT
+**`POST /v1/user/verify-jwt`**
 
 ```php
-$resp = $client->users()->verifyJwt('eyJhbGci...');
+$resp = $client->users()->verifyJwt($userToken);
 ```
 
 ---
 
-**Users API Summary**
+### Properties
 
-| Method | HTTP | Endpoint |
-|--------|------|----------|
-| `createUser(string, string, string, ?string)` | POST | `/v1/user/account` |
-| `fetchAccessToken(int)` | GET | `/v1/user/access-token/{userId}` |
-| `verifyJwt(string)` | POST | `/v1/user/verify-jwt` |
-
----
-
-### Properties (`$client->properties()`)
-
-#### `listProperties(?int $serviceId): ApiResponse`
-
-Pass `null` to return all service types.
+#### List Properties
+**`GET /v1/properties?serviceId={serviceId}`**
 
 ```php
-// All properties
-$resp = $client->properties()->listProperties();
-
-// Residential only (serviceId = 1)
 $resp = $client->properties()->listProperties(1);
-
-foreach ($resp->data as $prop) {   // $prop is a Property object
-    echo "#{$prop->id}: {$prop->name} — {$prop->city}\n";
-}
 ```
 
 ---
 
-#### `addProperty(array $request): ApiResponse`
+#### Create Property
+**`POST /v1/properties`**
 
 ```php
-$resp = $client->properties()->addProperty([
-    'name'          => 'Downtown Condo',
-    'address'       => '456 Main St',
-    'city'          => 'Toronto',
-    'country'       => 'Canada',
-    'roomCount'     => 2,
-    'bathroomCount' => 1,
-    'serviceId'     => 1,
+$resp = $client->properties()->createProperty([
+    'address'   => '123 Main St',
+    'city'      => 'Chicago',
+    'state'     => 'IL',
+    'zip'       => '60601',
+    'serviceId' => 1,
 ]);
-
-$prop = $resp->data;   // Cleanster\Models\Property
-echo "Added property #{$prop->id}: {$prop->name}\n";
 ```
 
 ---
 
-#### CRUD operations
+#### Get Property
+**`GET /v1/properties/{propertyId}`**
 
 ```php
-// Get a single property
-$resp = $client->properties()->getProperty(1040);
+$resp = $client->properties()->getProperty(1004);
+```
 
-// Full replace (all fields required)
-$resp = $client->properties()->updateProperty(1040, [
-    'name' => 'Renovated Condo', 'address' => '456 Main St',
-    'city' => 'Toronto', 'country' => 'Canada',
-    'roomCount' => 3, 'bathroomCount' => 1, 'serviceId' => 1,
+---
+
+#### Update Property
+**`PUT /v1/properties/{propertyId}`**
+
+```php
+$client->properties()->updateProperty(1004, ['address' => '456 Elm St']);
+```
+
+---
+
+#### Update Additional Information
+**`PUT /v1/properties/{propertyId}/additional-information`**
+
+```php
+$client->properties()->updateAdditionalInfo(1004, [
+    'gateCode' => '1234',
+    'petInfo'  => 'One friendly dog',
 ]);
-
-// Toggle active state
-$client->properties()->enableOrDisableProperty(1040, false);   // disable
-$client->properties()->enableOrDisableProperty(1040, true);    // enable
-
-// Permanently delete
-$client->properties()->deleteProperty(1040);
 ```
 
 ---
 
-#### Cleaner assignment
+#### Enable or Disable Property
+**`POST /v1/properties/{propertyId}/enable-disable`**
 
 ```php
-// List assigned cleaners
-$cleaners = $client->properties()->getPropertyCleaners(1040);
-
-// Assign a cleaner
-$client->properties()->assignCleanerToProperty(1040, 5);
-
-// Remove a cleaner
-$client->properties()->unassignCleanerFromProperty(1040, 5);
+$client->properties()->enableOrDisable(1004, true);
 ```
 
 ---
 
-#### iCal calendar sync
-
-Sync property availability with Airbnb, VRBO, or any iCal-compatible platform.
+#### Delete Property
+**`DELETE /v1/properties/{propertyId}`**
 
 ```php
-$feedUrl = 'https://airbnb.com/calendar/ical/xxx.ics';
-
-// Add
-$client->properties()->addICalLink(1040, $feedUrl);
-
-// Get current link
-$link = $client->properties()->getICalLink(1040);
-
-// Remove
-$client->properties()->removeICalLink(1040, $feedUrl);
+$client->properties()->deleteProperty(1004);
 ```
 
 ---
 
-#### `assignChecklistToProperty(int $propertyId, int $checklistId, bool $updateUpcomingBookings)`
+#### Get iCal Links
+**`GET /v1/properties/{propertyId}/ical`**
 
 ```php
-// Apply and update all future bookings at this property
-$client->properties()->assignChecklistToProperty(1040, 105, updateUpcomingBookings: true);
-
-// Apply without touching upcoming bookings
-$client->properties()->assignChecklistToProperty(1040, 105, updateUpcomingBookings: false);
+$resp = $client->properties()->getIcal(1004);
 ```
 
 ---
 
-**Properties API Summary**
+#### Add iCal Link
+**`PUT /v1/properties/{propertyId}/ical`**
 
-| Method | HTTP | Endpoint |
-|--------|------|----------|
-| `listProperties(?int)` | GET | `/v1/properties` |
-| `addProperty(array)` | POST | `/v1/properties` |
-| `getProperty(int)` | GET | `/v1/properties/{id}` |
-| `updateProperty(int, array)` | PUT | `/v1/properties/{id}` |
-| `updateAdditionalInformation(int, array)` | PUT | `/v1/properties/{id}/additional-information` |
-| `enableOrDisableProperty(int, bool)` | POST | `/v1/properties/{id}/enable-disable` |
-| `deleteProperty(int)` | DELETE | `/v1/properties/{id}` |
-| `getPropertyCleaners(int)` | GET | `/v1/properties/{id}/cleaners` |
-| `assignCleanerToProperty(int, int)` | POST | `/v1/properties/{id}/cleaners` |
-| `unassignCleanerFromProperty(int, int)` | DELETE | `/v1/properties/{id}/cleaners/{cid}` |
-| `addICalLink(int, string)` | PUT | `/v1/properties/{id}/ical` |
-| `getICalLink(int)` | GET | `/v1/properties/{id}/ical` |
-| `removeICalLink(int, string)` | DELETE | `/v1/properties/{id}/ical` |
-| `assignChecklistToProperty(int, int, bool)` | PUT | `/v1/properties/{id}/checklist/{cid}` |
+```php
+$client->properties()->addIcal(
+    1004, 'https://www.airbnb.com/calendar/ical/12345.ics'
+);
+```
 
 ---
 
-### Checklists (`$client->checklists()`)
+#### Delete iCal Events
+**`DELETE /v1/properties/{propertyId}/ical`**
 
-Checklists define the tasks a cleaner must complete during a booking.
+```php
+$client->properties()->deleteIcal(1004, [101, 102, 103]);
+```
 
-#### `listChecklists(): ApiResponse`
+---
+
+#### List Property Cleaners
+**`GET /v1/properties/{propertyId}/cleaners`**
+
+```php
+$resp = $client->properties()->listCleaners(1004);
+```
+
+---
+
+#### Add Preferred Cleaner
+**`POST /v1/properties/{propertyId}/cleaners`**
+
+```php
+$client->properties()->addCleaner(1004, $cleanerId);
+```
+
+---
+
+#### Remove Preferred Cleaner
+**`DELETE /v1/properties/{propertyId}/cleaners/{cleanerId}`**
+
+```php
+$client->properties()->removeCleaner(1004, $cleanerId);
+```
+
+---
+
+#### Assign Checklist to Property
+**`PUT /v1/properties/{propertyId}/checklist/{checklistId}?updateUpcomingBookings={bool}`**
+
+```php
+$client->properties()->assignChecklistToProperty(1004, 105, true);
+```
+
+---
+
+### Checklists
+
+#### List Checklists
+**`GET /v1/checklist`**
 
 ```php
 $resp = $client->checklists()->listChecklists();
-foreach ($resp->data as $cl) {   // $cl is a Checklist object
-    $count = count($cl->items);
-    echo "#{$cl->id}: {$cl->name} ({$count} items)\n";
-}
 ```
 
 ---
 
-#### `getChecklist(int $checklistId): ApiResponse`
+#### Get Checklist
+**`GET /v1/checklist/{checklistId}`**
 
 ```php
 $resp = $client->checklists()->getChecklist(105);
-$cl   = $resp->data;   // Cleanster\Models\Checklist
-
-echo "Checklist: {$cl->name}\n";
-foreach ($cl->items as $item) {   // $item is a ChecklistItem object
-    $mark = $item->isCompleted ? '✓' : ' ';
-    echo "[{$mark}] {$item->description}\n";
-    if ($item->imageUrl !== null) {
-        echo "    Proof photo: {$item->imageUrl}\n";
-    }
+foreach ($resp->getData()['items'] as $item) {
+    echo $item['task'] . "\n";
 }
 ```
 
 ---
 
-#### `createChecklist(string $name, array $items): ApiResponse`
+#### Create Checklist
+**`POST /v1/checklist`**
 
 ```php
-$resp = $client->checklists()->createChecklist(
-    name:  'Standard Residential Clean',
-    items: [
-        'Vacuum all floors',
-        'Mop kitchen and bathroom floors',
-        'Wipe all countertops',
-        'Scrub toilets, sinks, and tubs',
-        'Empty all trash bins',
-    ],
-);
-echo "Created checklist #{$resp->data->id}\n";
+$resp = $client->checklists()->createChecklist('Deep Clean', [
+    'Vacuum all rooms',
+    'Mop kitchen and bathroom floors',
+    'Scrub toilets, sinks, and tubs',
+    'Wipe all countertops',
+    'Clean inside microwave and oven',
+]);
+echo "Checklist ID: " . $resp->getData()['id'] . "\n";
 ```
 
 ---
 
-#### `updateChecklist` / `deleteChecklist`
+#### Update Checklist
+**`PUT /v1/checklist/{checklistId}`**
 
 ```php
-// Update name and items (full replace)
-$client->checklists()->updateChecklist(105,
-    name:  'Deep Clean',
-    items: ['All standard tasks', 'Inside oven', 'Inside fridge'],
+$client->checklists()->updateChecklist(
+    105,
+    'Standard Clean',
+    ['Vacuum', 'Wipe surfaces', 'Clean bathrooms']
 );
+```
 
-// Delete permanently
+---
+
+#### Delete Checklist
+**`DELETE /v1/checklist/{checklistId}`**
+
+```php
 $client->checklists()->deleteChecklist(105);
 ```
 
 ---
 
-**Checklists API Summary**
+#### Upload Checklist Image
+**`POST /v1/checklist/upload-image`**
 
-| Method | HTTP | Endpoint |
-|--------|------|----------|
-| `listChecklists()` | GET | `/v1/checklist` |
-| `getChecklist(int)` | GET | `/v1/checklist/{id}` |
-| `createChecklist(string, array)` | POST | `/v1/checklist` |
-| `updateChecklist(int, string, array)` | PUT | `/v1/checklist/{id}` |
-| `deleteChecklist(int)` | DELETE | `/v1/checklist/{id}` |
-| `uploadImage(string $imageData, string $mimeType)` | POST | `/v1/checklist/upload-image` |
+```php
+$imageData = file_get_contents('bathroom-guide.jpg');
+$client->checklists()->uploadImage($imageData, 'image/jpeg');
+```
 
 ---
 
-### Other / Utilities (`$client->other()`)
+### Other / Reference Data
 
-Reference data and utility endpoints used when building booking flows.
-
-#### `getServices(): ApiResponse`
+#### Get Services
+**`GET /v1/services`**
 
 ```php
 $resp = $client->other()->getServices();
@@ -794,7 +678,8 @@ $resp = $client->other()->getServices();
 
 ---
 
-#### `getPlans(int $propertyId): ApiResponse`
+#### Get Plans
+**`GET /v1/plans?propertyId={propertyId}`**
 
 ```php
 $resp = $client->other()->getPlans(1004);
@@ -802,497 +687,363 @@ $resp = $client->other()->getPlans(1004);
 
 ---
 
-#### `getRecommendedHours(int $propertyId, int $bathroomCount, int $roomCount): ApiResponse`
-
-Returns the system-recommended cleaning duration. Use the result to pre-fill `hours` in `createBooking()`.
+#### Get Cleaning Extras
+**`GET /v1/cleaning-extras/{serviceId}`**
 
 ```php
-$resp = $client->other()->getRecommendedHours(
-    propertyId:    1004,
-    bathroomCount: 2,
-    roomCount:     3,
-);
+$resp = $client->other()->getCleaningExtras(1);
 ```
 
 ---
 
-#### `calculateCost(array $request): ApiResponse`
-
-Preview the estimated booking price before committing.
+#### Get Recommended Hours
+**`GET /v1/recommended-hours?propertyId={n}&bathroomCount={n}&roomCount={n}`**
 
 ```php
-$resp = $client->other()->calculateCost([
-    'propertyId' => 1004,
-    'planId'     => 2,
-    'hours'      => 3,
-    'couponCode' => '20POFF',   // optional
-]);
+$resp = $client->other()->getRecommendedHours(1004, 2, 3);
+echo "Recommended hours: " . $resp->getData()['hours'] . "\n";
 ```
 
 ---
 
-#### `getCleaningExtras` / `getAvailableCleaners` / `getCoupons`
+#### Calculate Cost Estimate
+**`POST /v1/cost-estimate`**
 
 ```php
-// Add-on services (inside fridge, laundry, etc.)
-$extras = $client->other()->getCleaningExtras(serviceId: 1);
-
-// Find available cleaners for a time slot
-$cleaners = $client->other()->getAvailableCleaners([
-    'propertyId' => 1004,
-    'date'       => '2025-06-15',
-    'time'       => '10:00',
-]);
-
-// All valid coupon codes
-$coupons = $client->other()->getCoupons();
+$resp = $client->other()->calculateCost($estimateRequest);
 ```
 
 ---
 
-**Other API Summary**
+#### Get Available Cleaners
+**`POST /v1/available-cleaners`**
 
-| Method | HTTP | Endpoint |
-|--------|------|----------|
-| `getServices()` | GET | `/v1/services` |
-| `getPlans(int)` | GET | `/v1/plans?propertyId={id}` |
-| `getRecommendedHours(int, int, int)` | GET | `/v1/recommended-hours` |
-| `calculateCost(array)` | POST | `/v1/cost-estimate` |
-| `getCleaningExtras(int)` | GET | `/v1/cleaning-extras/{serviceId}` |
-| `getAvailableCleaners(array)` | POST | `/v1/available-cleaners` |
-| `getCoupons()` | GET | `/v1/coupons` |
+```php
+$resp = $client->other()->getAvailableCleaners($availabilityRequest);
+```
 
 ---
 
-### Blacklist (`$client->blacklist()`)
-
-Prevent specific cleaners from being auto-assigned to bookings.
+#### Get Coupons
+**`GET /v1/coupons`**
 
 ```php
-// List all blacklisted cleaners
-$list = $client->blacklist()->listBlacklistedCleaners();
-
-// Add a cleaner (reason is optional)
-$client->blacklist()->addToBlacklist(cleanerId: 7, reason: 'Damaged furniture');
-
-// Add without a reason
-$client->blacklist()->addToBlacklist(7);
-
-// Remove a cleaner
-$client->blacklist()->removeFromBlacklist(7);
+$resp = $client->other()->getCoupons();
 ```
-
-**Blacklist API Summary**
-
-| Method | HTTP | Endpoint |
-|--------|------|----------|
-| `listBlacklistedCleaners()` | GET | `/v1/blacklist/cleaner` |
-| `addToBlacklist(int, ?string)` | POST | `/v1/blacklist/cleaner` |
-| `removeFromBlacklist(int)` | DELETE | `/v1/blacklist/cleaner` |
 
 ---
 
-### Payment Methods (`$client->paymentMethods()`)
+### Blacklist
 
-#### Stripe
+#### Get Blacklisted Cleaners
+**`GET /v1/blacklist/cleaner?pageNo={pageNo}`**
 
 ```php
-// 1. Get SetupIntent details (use clientSecret with Stripe.js client-side)
-$intent = $client->paymentMethods()->getSetupIntentDetails();
-
-// 2. After client-side tokenization, save the payment method
-$client->paymentMethods()->addPaymentMethod('pm_xxxxxxxxxxxxxxxx');
+$resp = $client->blacklist()->getBlacklist(1);
 ```
 
-#### PayPal
+---
+
+#### Add Cleaner to Blacklist
+**`POST /v1/blacklist/cleaner`**
 
 ```php
-// Get client token for PayPal button rendering
-$token = $client->paymentMethods()->getPaypalClientToken();
+$client->blacklist()->addToBlacklist($cleanerId);
 ```
 
-#### Manage Saved Methods
+---
+
+#### Remove Cleaner from Blacklist
+**`DELETE /v1/blacklist/cleaner`**
 
 ```php
-// List all payment methods
-$resp = $client->paymentMethods()->getPaymentMethods();
-foreach ($resp->data as $method) {   // $method is a PaymentMethod object
-    $label = $method->type;
-    if ($method->lastFour !== null) {
-        $label .= " *{$method->lastFour} ({$method->brand})";
-    }
-    if ($method->isDefault) {
-        $label .= ' [DEFAULT]';
-    }
-    echo "#{$method->id}: {$label}\n";
+$client->blacklist()->removeFromBlacklist($cleanerId);
+```
+
+---
+
+### Payment Methods
+
+#### Get Stripe Setup Intent Details
+**`GET /v1/payment-methods/setup-intent-details`**
+
+```php
+$resp = $client->paymentMethods()->getSetupIntentDetails();
+$clientSecret = $resp->getData()['clientSecret'];
+```
+
+---
+
+#### Get PayPal Client Token
+**`GET /v1/payment-methods/paypal-client-token`**
+
+```php
+$resp = $client->paymentMethods()->getPaypalClientToken();
+```
+
+---
+
+#### Add Payment Method
+**`POST /v1/payment-methods`**
+
+```php
+$resp = $client->paymentMethods()->addPaymentMethod($paymentRequest);
+```
+
+---
+
+#### List Payment Methods
+**`GET /v1/payment-methods`**
+
+```php
+$resp = $client->paymentMethods()->listPaymentMethods();
+foreach ($resp->getData() as $pm) {
+    echo $pm['type'] . ' ' . ($pm['last4'] ?? '') . "\n";
 }
+```
 
-// Set as default
-$client->paymentMethods()->setDefaultPaymentMethod(193);
+---
 
-// Delete
+#### Delete Payment Method
+**`DELETE /v1/payment-methods/{id}`**
+
+```php
 $client->paymentMethods()->deletePaymentMethod(193);
 ```
 
-**Payment Methods API Summary**
+---
 
-| Method | HTTP | Endpoint |
-|--------|------|----------|
-| `getSetupIntentDetails()` | GET | `/v1/payment-methods/setup-intent-details` |
-| `getPaypalClientToken()` | GET | `/v1/payment-methods/paypal-client-token` |
-| `addPaymentMethod(string)` | POST | `/v1/payment-methods` |
-| `getPaymentMethods()` | GET | `/v1/payment-methods` |
-| `deletePaymentMethod(int)` | DELETE | `/v1/payment-methods/{id}` |
-| `setDefaultPaymentMethod(int)` | PUT | `/v1/payment-methods/{id}/default` |
+#### Set Default Payment Method
+**`PUT /v1/payment-methods/{id}/default`**
+
+```php
+$client->paymentMethods()->setDefault(193);
+```
 
 ---
 
-### Webhooks (`$client->webhooks()`)
+### Webhooks
 
-Receive real-time notifications when booking events occur — no polling required.
+#### List Webhooks
+**`GET /v1/webhooks`**
 
 ```php
-// List all webhook endpoints
-$hooks = $client->webhooks()->listWebhooks();
+$resp = $client->webhooks()->listWebhooks();
+```
 
-// Register a new webhook
+---
+
+#### Create Webhook
+**`POST /v1/webhooks`**
+
+```php
 $client->webhooks()->createWebhook(
-    url:   'https://your-app.com/webhooks/cleanster',
-    event: 'booking.status_changed',
+    'https://your-server.com/hooks/cleanster',
+    'booking.status_changed'
 );
+```
 
-// Update a webhook
-$client->webhooks()->updateWebhook(50,
-    url:   'https://your-app.com/v2/webhooks',
-    event: 'booking.status_changed',
+---
+
+#### Update Webhook
+**`PUT /v1/webhooks/{webhookId}`**
+
+```php
+$client->webhooks()->updateWebhook(
+    50,
+    'https://your-server.com/hooks/cleanster-v2',
+    'booking.completed'
 );
+```
 
-// Delete a webhook
+---
+
+#### Delete Webhook
+**`DELETE /v1/webhooks/{webhookId}`**
+
+```php
 $client->webhooks()->deleteWebhook(50);
 ```
 
-**Webhooks API Summary**
+---
 
-| Method | HTTP | Endpoint |
-|--------|------|----------|
-| `listWebhooks()` | GET | `/v1/webhooks` |
-| `createWebhook(string, string)` | POST | `/v1/webhooks` |
-| `updateWebhook(int, string, string)` | PUT | `/v1/webhooks/{id}` |
-| `deleteWebhook(int)` | DELETE | `/v1/webhooks/{id}` |
+## Models Reference
+
+### `ApiResponse`
+
+| Method | Type | Description |
+|---|---|---|
+| `getStatus()` | int | HTTP status code |
+| `getMessage()` | string | Result description |
+| `getData()` | array | Response payload |
+
+### Booking (array keys)
+
+| Key | Type | Description |
+|---|---|---|
+| `id` | int | Unique booking ID |
+| `status` | string | `OPEN` · `CLEANER_ASSIGNED` · `IN_PROGRESS` · `COMPLETED` · `CANCELLED` · `REMOVED` |
+| `date` | string | `YYYY-MM-DD` |
+| `time` | string | `HH:MM` |
+| `hours` | float | Duration |
+| `cost` | float | Total cost USD |
+| `propertyId` | int | Property ID |
+| `planId` | int | Plan ID |
+| `roomCount` | int | Rooms |
+| `bathroomCount` | int | Bathrooms |
+| `extraSupplies` | bool | Supplies included |
+| `paymentMethodId` | int | Payment method charged |
+| `cleaner` | array\|null | Assigned cleaner |
+
+### Cleaner (array keys)
+
+| Key | Type | Description |
+|---|---|---|
+| `id` | int | Cleaner ID |
+| `name` | string | Full name |
+| `email` | string | Email |
+| `phone` | string | Phone |
+| `profileUrl` | string | Profile picture |
+| `rating` | float | Average rating (1–5) |
+
+### Checklist (array keys)
+
+| Key | Type | Description |
+|---|---|---|
+| `id` | int | Checklist ID |
+| `name` | string | Display name |
+| `items` | array | Task items |
+| `items[].id` | int | Task ID |
+| `items[].task` | string | Task description |
+| `items[].order` | int | Sort order |
+| `items[].isCompleted` | bool | Completion status |
+
+### PaymentMethod (array keys)
+
+| Key | Type | Description |
+|---|---|---|
+| `id` | int | ID |
+| `type` | string | `card` or `paypal` |
+| `last4` | string | Last 4 digits |
+| `brand` | string | Card brand |
+| `isDefault` | bool | Default method |
 
 ---
 
-## Response Structure
-
-Every SDK method returns a `Cleanster\Models\ApiResponse` object.
+## Error Handling
 
 ```php
-final class ApiResponse {
-    public readonly int    $status;    // HTTP-style status code (e.g., 200)
-    public readonly string $message;   // Human-readable status (e.g., "OK")
-    public readonly mixed  $data;      // Typed payload — model object, array of models, or raw array
+use Cleanster\Exceptions\CleansterApiException;
+
+try {
+    $resp = $client->bookings()->getBooking(99999);
+} catch (CleansterApiException $e) {
+    echo "HTTP " . $e->getCode() . ": " . $e->getMessage() . "\n";
+    if ($e->getCode() === 401) {
+        // Re-fetch user token and retry
+    } elseif ($e->getCode() === 404) {
+        echo "Booking not found\n";
+    } elseif ($e->getCode() === 422) {
+        echo "Validation error: " . $e->getMessage() . "\n";
+    }
 }
 ```
 
-**Usage examples:**
-
-```php
-// Access all three fields
-$resp = $client->bookings()->getBookingDetails(16926);
-echo $resp->status;   // 200
-echo $resp->message;  // "OK"
-$booking = $resp->data;   // Cleanster\Models\Booking
-
-// List responses return arrays of typed model objects
-$resp = $client->bookings()->getBookings();
-foreach ($resp->data as $booking) {   // each is a Booking instance
-    echo "{$booking->id}: {$booking->status}\n";
-}
-
-// Utility responses return raw arrays
-$resp = $client->other()->getCoupons();
-$coupons = $resp->data;   // array
-```
+| HTTP Status | Meaning |
+|---|---|
+| 400 | Bad request |
+| 401 | Unauthorized — invalid credentials |
+| 403 | Forbidden |
+| 404 | Not found |
+| 422 | Validation error |
+| 429 | Rate limit exceeded |
+| 500 | Server error |
 
 ---
 
-## Model Reference
+## Test Coupon Codes
 
-### `Booking`
+Use in the **sandbox** environment only:
 
-| Property | PHP Type | JSON Key | Description |
-|----------|---------|----------|-------------|
-| `$id` | `int` | `id` | Booking ID |
-| `$status` | `string` | `status` | `OPEN` / `CLEANER_ASSIGNED` / `COMPLETED` / `CANCELLED` / `REMOVED` |
-| `$date` | `string` | `date` | Booking date (YYYY-MM-DD) |
-| `$time` | `string` | `time` | Start time (HH:mm) |
-| `$hours` | `float` | `hours` | Duration in hours |
-| `$cost` | `float` | `cost` | Total cost |
-| `$propertyId` | `int` | `propertyId` | Associated property |
-| `$cleanerId` | `?int` | `cleanerId` | Assigned cleaner (`null` if unassigned) |
-| `$planId` | `int` | `planId` | Booking plan |
-| `$roomCount` | `int` | `roomCount` | Number of rooms |
-| `$bathroomCount` | `int` | `bathroomCount` | Number of bathrooms |
-| `$extraSupplies` | `bool` | `extraSupplies` | Cleaning supplies included |
-| `$paymentMethodId` | `int` | `paymentMethodId` | Payment method |
-| `$raw` | `array` | — | The complete raw array from the API |
-
-### `User`
-
-| Property | PHP Type | JSON Key | Description |
-|----------|---------|----------|-------------|
-| `$id` | `int` | `id` | User ID |
-| `$email` | `string` | `email` | Email address |
-| `$firstName` | `string` | `firstName` | First name |
-| `$lastName` | `string` | `lastName` | Last name |
-| `$phone` | `?string` | `phone` | Phone number (optional) |
-| `$token` | `?string` | `token` | Bearer token — only after `fetchAccessToken()` |
-| `$raw` | `array` | — | The complete raw array from the API |
-
-### `Property`
-
-| Property | PHP Type | JSON Key | Description |
-|----------|---------|----------|-------------|
-| `$id` | `int` | `id` | Property ID |
-| `$name` | `string` | `name` | Property label |
-| `$address` | `string` | `address` | Street address |
-| `$city` | `string` | `city` | City |
-| `$country` | `string` | `country` | Country |
-| `$roomCount` | `int` | `roomCount` | Number of rooms |
-| `$bathroomCount` | `int` | `bathroomCount` | Number of bathrooms |
-| `$serviceId` | `int` | `serviceId` | Service type ID |
-| `$isEnabled` | `?bool` | `isEnabled` | Active state (`null` if not returned by endpoint) |
-| `$raw` | `array` | — | The complete raw array from the API |
-
-### `Checklist`
-
-| Property | PHP Type | JSON Key | Description |
-|----------|---------|----------|-------------|
-| `$id` | `int` | `id` | Checklist ID |
-| `$name` | `string` | `name` | Checklist name |
-| `$items` | `ChecklistItem[]` | `items` | Typed array of task items |
-| `$raw` | `array` | — | The complete raw array from the API |
-
-### `ChecklistItem`
-
-| Property | PHP Type | JSON Key | Description |
-|----------|---------|----------|-------------|
-| `$id` | `int` | `id` | Item ID |
-| `$description` | `string` | `description` | Task description |
-| `$isCompleted` | `bool` | `isCompleted` | Marked complete by cleaner |
-| `$imageUrl` | `?string` | `imageUrl` | Proof photo URL (`null` if not uploaded) |
-| `$raw` | `array` | — | The complete raw array from the API |
-
-### `PaymentMethod`
-
-| Property | PHP Type | JSON Key | Description |
-|----------|---------|----------|-------------|
-| `$id` | `int` | `id` | Payment method ID |
-| `$type` | `string` | `type` | `"card"` / `"paypal"` / etc. |
-| `$lastFour` | `?string` | `lastFour` | Last 4 digits (cards only) |
-| `$brand` | `?string` | `brand` | Card brand (`"visa"`, `"mastercard"`, etc.) |
-| `$isDefault` | `bool` | `isDefault` | Default method flag |
-| `$raw` | `array` | — | The complete raw array from the API |
-
-All model classes use PHP 8.1 `readonly` properties — they cannot be modified after construction.
+| Code | Discount | Status |
+|---|---|---|
+| `100POFF` | 100% off | Active |
+| `50POFF` | 50% off | Active |
+| `20POFF` | 20% off | Active |
+| `200OFF` | $200 off | Active |
+| `100OFF` | $100 off | Active |
+| `75POFF` | 75% off | **Expired** |
 
 ---
 
-## Sandbox vs Production
+## Chat Window Rules
 
-| Feature | Sandbox | Production |
-|---------|---------|------------|
-| Real charges | No | Yes |
-| Real cleaners dispatched | No | Yes |
-| Coupon codes | Test codes work | Real codes only |
-| Data persistence | Yes (sandbox DB) | Yes (production DB) |
-| Factory method | `CleansterClient::sandbox()` | `CleansterClient::production()` |
-| Config constant | `Config::SANDBOX_BASE_URL` | `Config::PRODUCTION_BASE_URL` |
-
-```php
-// Development and testing
-$client = CleansterClient::sandbox($_ENV['CLEANSTER_API_KEY']);
-
-// Production
-$client = CleansterClient::production($_ENV['CLEANSTER_API_KEY']);
-```
-
-> **Always develop and test against the sandbox.** Switch to production only when you are ready to go live. The sandbox never charges real money or dispatches real cleaners.
+| Booking State | Chat Available |
+|---|---|
+| `OPEN` — within 24 h of start | Yes |
+| `COMPLETED` — within 24 h of completion | Yes |
+| `IN_PROGRESS` (hanging state) | Yes — **no time restriction** |
+| `CANCELLED` | No |
+| Older than 24 h | No |
 
 ---
 
-## Test Coupon Codes (Sandbox Only)
+## Webhook Events
 
-These discount codes work only in the sandbox environment. Use them to test coupon flows without real charges.
-
-| Code | Discount | Suggested Use |
-|------|----------|---------------|
-| `100POFF` | 100% off (free booking) | Verify zero-cost booking flow |
-| `50POFF` | 50% off | Verify percentage discount calculation |
-| `20POFF` | 20% off | Verify small percentage discount |
-| `200OFF` | $200 flat off | Verify flat-dollar discount |
-| `100OFF` | $100 flat off | Verify partial flat-dollar discount |
-
-Pass via `couponCode` in `createBooking()` or in the `calculateCost()` request array.
+| Event | Description |
+|---|---|
+| `booking.status_changed` | Any status transition |
+| `booking.cleaner_assigned` | Cleaner assigned |
+| `booking.cancelled` | Booking cancelled |
+| `booking.completed` | Booking completed |
 
 ---
 
 ## Running Tests
 
-The test suite contains **106 tests** — all passing. Tests use PHPUnit 10 with mocked `HttpClient` objects — no real API calls, no API keys, and no network access required.
-
 ```bash
-# Install dev dependencies (first time only)
 composer install
-
-# Run all tests
-vendor/bin/phpunit
-
-# Run with verbose testdox output (shows every test name)
-vendor/bin/phpunit --testdox
-
-# Run a specific test class
-vendor/bin/phpunit --filter CleansterTest
-
-# Run tests matching a name pattern
-vendor/bin/phpunit --filter testBooking
-
-# Run with code coverage (requires Xdebug or PCOV)
-vendor/bin/phpunit --coverage-text
-
-# Generate an HTML coverage report
-vendor/bin/phpunit --coverage-html coverage/
-# Then open coverage/index.html in a browser
+./vendor/bin/phpunit tests/
 ```
 
-### Test Coverage Areas
-
-| Area | Tests | What's Verified |
-|------|-------|-----------------|
-| Config | 8 | Factory URLs, access key storage, default timeout, blank key/URL rejection |
-| CleansterClient | 12 | Factory methods, all 8 service accessors, `setAccessToken` / `getAccessToken` |
-| `BookingsApi` | 22 | All 17 booking methods + edge cases (with/without reason, with/without comment, all param combos) |
-| `UsersApi` | 5 | Create with/without phone, `omitempty` behaviour, `fetchAccessToken` token field, `verifyJwt` |
-| `PropertiesApi` | 16 | CRUD, enable/disable bool, cleaner assignment, iCal add/get/remove, checklist assignment (true/false) |
-| `ChecklistsApi` | 5 | List, get with typed `ChecklistItem` array, create, update, delete |
-| `OtherApi` | 7 | All 7 utility endpoints with correct query params and request bodies |
-| `BlacklistApi` | 4 | List, add with reason, add without reason, remove |
-| `PaymentMethodsApi` | 6 | All 6 endpoints; `getPaymentMethods` maps typed `PaymentMethod` objects |
-| `WebhooksApi` | 4 | List, create, update, delete |
-| Exceptions | 8 | `AuthException` properties, `ApiException` properties (custom and auto message), `CleansterException` message, inheritance chain |
-| Models | 6 | All model fields, nullable property handling, `Checklist` typed items, `User.token` nullable |
-| **Total** | **106** | |
-
-### How Tests Work
-
-Every test injects a mock `HttpClient` into the API class being tested. The mock:
-- Asserts the correct HTTP method (`get`, `post`, `put`, or `delete`) is called.
-- Asserts the exact path string is used.
-- Asserts the exact request body or query parameters are passed.
-- Returns a pre-built response array that triggers the model parsing logic.
-
-```php
-// Example: how a booking test is structured
-$mockHttp = $this->createMock(HttpClient::class);
-$mockHttp->expects($this->once())
-         ->method('post')
-         ->with('/v1/bookings/{id}/feedback', ['rating' => 5, 'comment' => 'Excellent!'])
-         ->willReturn(['status' => 200, 'message' => 'OK', 'data' => []]);
-
-(new BookingsApi($mockHttp))->submitFeedback($bookingId, 5, 'Excellent!');
-```
+Expected: **106 tests, 0 failures.**
 
 ---
 
 ## Project Structure
 
 ```
-cleanster-php-sdk/
-├── composer.json                    ← PSR-4, PHP 8.1+, phpunit/phpunit dev dep
-├── phpunit.xml                      ← PHPUnit 10 configuration
+php-sdk/
+├── composer.json
 ├── src/
-│   ├── Config.php                   ← Config: sandbox/production URLs, timeout
-│   ├── HttpClient.php               ← cURL transport; inject mock for testing
-│   ├── CleansterClient.php          ← Main entry point; 8 service accessors
+│   ├── CleansterClient.php          # Main entry point
+│   ├── ApiResponse.php
+│   ├── HttpClient.php               # cURL wrapper
 │   ├── Exceptions/
-│   │   ├── CleansterException.php   ← Base: network/cURL/JSON errors
-│   │   ├── AuthException.php        ← HTTP 401 — $statusCode + $responseBody
-│   │   └── ApiException.php         ← HTTP 4xx/5xx — $statusCode + $responseBody
-│   ├── Models/
-│   │   ├── ApiResponse.php          ← Wrapper: $status, $message, $data
-│   │   ├── Booking.php              ← Booking model (readonly)
-│   │   ├── User.php                 ← User model (readonly)
-│   │   ├── Property.php             ← Property model (readonly)
-│   │   ├── Checklist.php            ← Checklist model — items → ChecklistItem[]
-│   │   ├── ChecklistItem.php        ← ChecklistItem model (readonly)
-│   │   └── PaymentMethod.php        ← PaymentMethod model (readonly)
+│   │   └── CleansterApiException.php
 │   └── Api/
-│       ├── BookingsApi.php          ← 17 booking methods
-│       ├── UsersApi.php             ← 3 user/auth methods
-│       ├── PropertiesApi.php        ← 14 property management methods
-│       ├── ChecklistsApi.php        ← 5 checklist CRUD methods
-│       ├── OtherApi.php             ← 7 utility/reference methods
-│       ├── BlacklistApi.php         ← 3 blacklist methods
-│       ├── PaymentMethodsApi.php    ← 6 payment method methods
-│       └── WebhooksApi.php          ← 4 webhook methods
-├── tests/
-│   └── CleansterTest.php            ← 106 PHPUnit tests (all passing)
-├── README.md
-├── LICENSE
-├── CHANGELOG.md
-└── .gitignore
+│       ├── BookingsApi.php
+│       ├── UsersApi.php
+│       ├── PropertiesApi.php
+│       ├── ChecklistsApi.php
+│       ├── OtherApi.php
+│       ├── BlacklistApi.php
+│       ├── PaymentMethodsApi.php
+│       └── WebhooksApi.php
+└── tests/
+    └── CleansterSdkTest.php
 ```
-
-### Key Design Decisions
-
-**Why `ext-curl` instead of Guzzle?**
-Every standard PHP hosting environment includes `ext-curl` — no installation required, no version conflicts, and no Composer dependency tree to audit. The `HttpClient` class is fully injectable, so if you prefer Guzzle or a PSR-18 client, you can swap it out by extending `HttpClient`.
-
-**Why PHP 8.1+ readonly properties?**
-Readonly properties guarantee that model objects are immutable after construction — you can safely pass them through your application without worrying about mutation. They also produce a clean, self-documenting API (`$booking->status`, `$user->email`) rather than forcing callers through getter methods.
-
-**Why injectable `HttpClient`?**
-Passing `$httpClient` into the `CleansterClient` constructor (or directly into each API class) is the standard dependency-injection pattern for PHP. It makes every API method testable with PHPUnit's `createMock()` — no HTTP server, no API key, no network required. All 106 tests use this mechanism.
-
-**Why named arguments on method signatures?**
-PHP 8.1 named arguments make call sites self-documenting (`createBooking(date: '2025-06-15', time: '10:00')`) and eliminate the need to remember parameter order for calls with several arguments. They also make omitting optional parameters explicit and readable.
-
----
-
-## Contributing
-
-1. Fork the repository on GitHub.
-2. Create a feature branch: `git checkout -b feature/my-feature`
-3. Make your changes and add PHPUnit tests in `tests/CleansterTest.php`.
-4. Ensure all tests pass: `vendor/bin/phpunit`
-5. Submit a pull request with a clear description.
-
-### Code Style
-
-- Follow PSR-12 coding standards.
-- All public methods must have complete PHPDoc blocks.
-- All model properties must be `readonly` and explicitly typed.
-- Test every API method — each test must assert both the HTTP verb/path and the response parsing.
-- No external runtime dependencies — only `ext-curl` and `ext-json`.
 
 ---
 
 ## License
 
-This SDK is released under the [MIT License](LICENSE). You are free to use, modify, and distribute it in personal and commercial projects.
+MIT License. See [LICENSE](LICENSE) for details.
 
 ---
 
 ## Support
 
-| Resource | Link |
-|----------|------|
-| API Documentation | https://documenter.getpostman.com/view/26172658/2sAYdoF7ep |
-| Packagist | https://packagist.org/packages/cleanster/cleanster-php-sdk |
-| Partner Support | partner@cleanster.com |
-| General Support | support@cleanster.com |
-| GitHub Issues | https://github.com/cleanster/cleanster-php-sdk/issues |
-
----
-
-*Made with care for the Cleanster partner ecosystem.*
+- **API Documentation:** [Cleanster Partner API Docs](https://documenter.getpostman.com/view/26172658/2sAYdoF7ep)
+- **Partner inquiries:** [partner@cleanster.com](mailto:partner@cleanster.com)
+- **General support:** [support@cleanster.com](mailto:support@cleanster.com)

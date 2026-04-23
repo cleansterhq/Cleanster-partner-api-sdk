@@ -2,14 +2,13 @@
 
 <p align="center">
   <strong>Official Go client library for the Cleanster Partner API</strong><br>
-  Manage cleaning service bookings, properties, users, checklists, payment methods, webhooks, and more.
+  Automate residential and commercial cleaning operations — bookings, properties, cleaners, checklists, payments, and more.
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Go-1.21%2B-00ADD8?logo=go" alt="Go 1.21+">
-  <img src="https://img.shields.io/badge/go.dev-reference-blue?logo=go" alt="pkg.go.dev">
-  <img src="https://img.shields.io/badge/tests-92%20passing-brightgreen" alt="92 passing tests">
-  <img src="https://img.shields.io/badge/dependencies-none-brightgreen" alt="Zero dependencies">
+  <img src="https://img.shields.io/badge/tests-92%20passing-brightgreen" alt="92 passing">
+  <img src="https://img.shields.io/badge/dependencies-zero-brightgreen" alt="Zero dependencies">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
   <img src="https://img.shields.io/badge/API-Cleanster%20Partner-brightgreen" alt="Cleanster Partner API">
 </p>
@@ -23,54 +22,47 @@
 - [Installation](#installation)
 - [Authentication](#authentication)
 - [Quick Start](#quick-start)
-- [Configuration](#configuration)
-- [Error Handling](#error-handling)
+- [Environments](#environments)
+- [Booking Flow](#booking-flow)
 - [API Reference](#api-reference)
-  - [Bookings](#bookings-clientbookings)
-  - [Users](#users-clientusers)
-  - [Properties](#properties-clientproperties)
-  - [Checklists](#checklists-clientchecklists)
-  - [Other / Utilities](#other--utilities-clientother)
-  - [Blacklist](#blacklist-clientblacklist)
-  - [Payment Methods](#payment-methods-clientpaymentmethods)
-  - [Webhooks](#webhooks-clientwebhooks)
-- [Response Structure](#response-structure)
-- [Model Reference](#model-reference)
-- [Sandbox vs Production](#sandbox-vs-production)
-- [Test Coupon Codes](#test-coupon-codes-sandbox-only)
+  - [Bookings](#bookings)
+  - [Users](#users)
+  - [Properties](#properties)
+  - [Checklists](#checklists)
+  - [Other / Reference Data](#other--reference-data)
+  - [Blacklist](#blacklist)
+  - [Payment Methods](#payment-methods)
+  - [Webhooks](#webhooks)
+- [Type Reference](#type-reference)
+- [Error Handling](#error-handling)
+- [Test Coupon Codes](#test-coupon-codes)
+- [Chat Window Rules](#chat-window-rules)
+- [Webhook Events](#webhook-events)
 - [Running Tests](#running-tests)
 - [Project Structure](#project-structure)
 - [License](#license)
-- [Support](#support)
 
 ---
 
 ## Overview
 
-The Cleanster Go SDK provides a clean, idiomatic Go interface for the [Cleanster Partner API](https://documenter.getpostman.com/view/26172658/2sAYdoF7ep). It targets Go 1.21+ and uses only Go's standard library — no external HTTP or JSON dependencies.
+The Cleanster Go SDK provides a clean, idiomatic Go interface for the [Cleanster Partner API](https://documenter.getpostman.com/view/26172658/2sAYdoF7ep). It targets Go 1.21+ and uses only Go's standard library — zero external dependencies.
 
-**Feature highlights:**
-
-| Feature | Detail |
-|---------|--------|
-| **Idiomatic Go** | Struct-based requests, typed responses, `errors.As`-compatible errors |
-| **Zero external dependencies** | Uses only `net/http`, `encoding/json`, `sync`, `context` from the standard library |
-| **Generics** | `APIResponse[T]` typed wrapper — no type assertions or interface casting |
-| **Context-aware** | Every API method accepts `context.Context` for cancellation and timeout |
-| **Thread-safe auth** | `SetAccessToken` / `GetAccessToken` guarded by `sync.RWMutex` |
-| **Three error types** | `CleansterError`, `AuthError` (401), `APIError` (4xx/5xx) — all work with `errors.As` |
-| **8 service types** | Bookings, Users, Properties, Checklists, Other, Blacklist, PaymentMethods, Webhooks |
-| **92 tests** | All passing; uses `net/http/httptest` — no network access or API keys required |
+Use it to:
+- **Create and manage bookings** — schedule, reschedule, cancel, adjust hours
+- **Manage properties** — CRUD, iCal calendar sync, preferred cleaner lists
+- **Handle users** — create accounts and manage authorization tokens
+- **Configure checklists** — create task lists and assign to bookings
+- **Process payments** — Stripe and PayPal support
+- **Receive webhooks** — subscribe to booking lifecycle events
+- **Blacklist cleaners** — prevent specific cleaners from being assigned
 
 ---
 
 ## Requirements
 
-| Requirement | Version |
-|-------------|---------|
-| Go | ≥ 1.21 |
-
-> Go 1.21 is required for the `APIResponse[T any]` generic type. The SDK has **zero external runtime dependencies**.
+- **Go 1.21** or later
+- A Cleanster Partner account — contact [partner@cleanster.com](mailto:partner@cleanster.com) for access
 
 ---
 
@@ -80,76 +72,60 @@ The Cleanster Go SDK provides a clean, idiomatic Go interface for the [Cleanster
 go get github.com/cleanster/cleanster-go-sdk
 ```
 
-Then import in your Go file:
-
-```go
-import cleanster "github.com/cleanster/cleanster-go-sdk"
-```
-
 ---
 
 ## Authentication
 
-The Cleanster Partner API uses **two layers of authentication** sent as HTTP headers on every request:
+Every request requires two credentials sent as HTTP headers:
 
-| Header | Value | Purpose |
-|--------|-------|---------|
-| `access-key` | Your partner key | Identifies your partner account |
-| `token` | User bearer token | Authenticates the end-user |
+| Header | Description |
+|---|---|
+| `access-key` | Your static partner key from Cleanster |
+| `token` | A per-user JWT — long-lived, from `Users.FetchAccessToken(ctx, userID)` |
 
-The SDK handles both headers automatically. You supply the partner key once at client creation, then set the user token after fetching it.
+### 4-Step Setup
 
-### Step-by-Step Authentication
+**Step 1 — Contact Cleanster** to receive your `access-key`.
 
-**Step 1 — Create the client with your partner access key:**
+**Step 2 — Create a user account** (one-time per end-user):
 
 ```go
 import (
-    "log"
     cleanster "github.com/cleanster/cleanster-go-sdk"
+    "context"
 )
 
-client, err := cleanster.NewSandboxClient(os.Getenv("CLEANSTER_API_KEY"))
-if err != nil {
-    log.Fatal(err)
-}
-```
+client := cleanster.NewClient("your-access-key", "")
 
-**Step 2 — Create or look up a user. For new users:**
-
-```go
-ctx := context.Background()
-
-userResp, err := client.Users.CreateUser(ctx, cleanster.CreateUserRequest{
+resp, err := client.Users.CreateUser(context.Background(), cleanster.CreateUserRequest{
     Email:     "jane@example.com",
     FirstName: "Jane",
-    LastName:  "Smith",
+    LastName:  "Doe",
+    Phone:     "+15551234567",
 })
 if err != nil {
     log.Fatal(err)
 }
-user := userResp.Data   // cleanster.User
-fmt.Printf("Created user #%d\n", user.ID)
+userID := int(resp.Data["userId"].(float64))
 ```
 
-**Step 3 — Fetch the user's long-lived bearer token:**
+**Step 3 — Fetch the user's access token** (store it; it is long-lived):
 
 ```go
-tokenResp, err := client.Users.FetchAccessToken(ctx, user.ID)
+tokenResp, err := client.Users.FetchAccessToken(context.Background(), userID)
 if err != nil {
     log.Fatal(err)
 }
-token := *tokenResp.Data.Token   // string
+userToken := tokenResp.Data["token"].(string)
 ```
 
-**Step 4 — Set the token on the client** for all subsequent calls:
+**Step 4 — Build the client with both credentials**:
 
 ```go
-client.SetAccessToken(token)
-// Every subsequent API call automatically includes this token
+client := cleanster.NewClient("your-access-key", userToken)
 ```
 
-> **Tip:** The bearer token is long-lived. Store it in your database and reuse it across sessions by calling `client.SetAccessToken(storedToken)` — no need to re-fetch it each time.
+> **Token lifecycle:** Only refresh when the API returns HTTP 401.
 
 ---
 
@@ -159,346 +135,255 @@ client.SetAccessToken(token)
 package main
 
 import (
+    cleanster "github.com/cleanster/cleanster-go-sdk"
     "context"
     "fmt"
     "log"
-    "os"
-
-    cleanster "github.com/cleanster/cleanster-go-sdk"
 )
 
 func main() {
     ctx := context.Background()
+    client := cleanster.NewClient("your-access-key", "user-jwt-token")
 
-    // 1. Create a sandbox client
-    client, err := cleanster.NewSandboxClient(os.Getenv("CLEANSTER_API_KEY"))
-    if err != nil {
-        log.Fatal(err)
-    }
-
-    // 2. Create a user
-    userResp, err := client.Users.CreateUser(ctx, cleanster.CreateUserRequest{
-        Email:     "jane@example.com",
-        FirstName: "Jane",
-        LastName:  "Smith",
+    // Get recommended cleaning hours
+    hoursResp, err := client.Other.GetRecommendedHours(ctx, cleanster.RecommendedHoursParams{
+        PropertyID:     1004,
+        BathroomCount:  2,
+        RoomCount:      3,
     })
     if err != nil {
         log.Fatal(err)
     }
+    fmt.Println("Recommended hours:", hoursResp.Data)
 
-    // 3. Fetch and set the user token
-    tokenResp, err := client.Users.FetchAccessToken(ctx, userResp.Data.ID)
-    if err != nil {
-        log.Fatal(err)
-    }
-    client.SetAccessToken(*tokenResp.Data.Token)
-
-    // 4. Add a property
-    propResp, err := client.Properties.AddProperty(ctx, cleanster.CreatePropertyRequest{
-        Name:          "Beach House",
-        Address:       "123 Ocean Drive",
-        City:          "Miami",
-        Country:       "USA",
-        RoomCount:     3,
-        BathroomCount: 2,
-        ServiceID:     1,
-    })
-    if err != nil {
-        log.Fatal(err)
-    }
-    prop := propResp.Data   // cleanster.Property
-
-    // 5. Check recommended hours
-    client.Other.GetRecommendedHours(ctx, prop.ID, prop.BathroomCount, prop.RoomCount)
-
-    // 6. Estimate cost
-    client.Other.CalculateCost(ctx, cleanster.CostEstimateRequest{
-        PropertyID: prop.ID,
-        PlanID:     2,
-        Hours:      3,
-        CouponCode: "20POFF",   // optional sandbox coupon
-    })
-
-    // 7. Create a booking
+    // Create a booking
     bookingResp, err := client.Bookings.CreateBooking(ctx, cleanster.CreateBookingRequest{
-        Date:            "2025-06-15",
+        PropertyID:      1004,
+        Date:            "2025-09-01",
         Time:            "10:00",
-        PropertyID:      prop.ID,
+        PlanID:          2,
         RoomCount:       3,
         BathroomCount:   2,
-        PlanID:          2,
-        Hours:           3,
+        Hours:           3.0,
         ExtraSupplies:   false,
         PaymentMethodID: 10,
+        CouponCode:      "20POFF", // optional — 20% off in sandbox
     })
     if err != nil {
         log.Fatal(err)
     }
-    fmt.Printf("Created booking #%d — status: %s\n", bookingResp.Data.ID, bookingResp.Data.Status)
+    fmt.Println("Created booking:", bookingResp.Data)
 
-    // 8. List all bookings
-    listResp, err := client.Bookings.GetBookings(ctx, cleanster.GetBookingsParams{})
+    // List open bookings
+    listResp, err := client.Bookings.GetBookings(ctx, cleanster.GetBookingsParams{
+        PageNo: cleanster.PageNo(1),
+        Status: "OPEN",
+    })
     if err != nil {
         log.Fatal(err)
     }
-    fmt.Printf("Found %d bookings\n", len(listResp.Data))
+    fmt.Printf("Open bookings: %d\n", len(listResp.Data.Bookings))
 }
 ```
 
 ---
 
-## Configuration
-
-### Factory Functions (Recommended)
-
-```go
-// Sandbox — development and testing (no real charges or cleaners)
-client, err := cleanster.NewSandboxClient("your-access-key")
-
-// Production — live traffic (real cleaners, real charges)
-client, err := cleanster.NewProductionClient("your-access-key")
-```
-
-### Custom Config
-
-For custom timeouts, proxies, or non-standard base URLs:
-
-```go
-cfg := cleanster.Config{
-    AccessKey: "your-access-key",
-    BaseURL:   cleanster.SandboxBaseURL,   // or ProductionBaseURL or custom
-    Timeout:   45 * time.Second,           // default is 30s
-}
-client, err := cleanster.NewClient(cfg)
-```
-
-### Helper Config Constructors
-
-```go
-// Returns a Config struct (not a Client — lets you customize before creating)
-sandboxCfg    := cleanster.NewSandboxConfig("your-access-key")
-productionCfg := cleanster.NewProductionConfig("your-access-key")
-
-// Modify any fields before creating the client
-sandboxCfg.Timeout = 60 * time.Second
-client, err := cleanster.NewClient(sandboxCfg)
-```
-
-### Environment Base URLs
+## Environments
 
 | Environment | Base URL |
-|-------------|----------|
-| Sandbox | `https://partner-sandbox-dot-official-tidyio-project.ue.r.appspot.com/public` |
-| Production | `https://partner-dot-official-tidyio-project.ue.r.appspot.com/public` |
+|---|---|
+| **Sandbox** (default) | `https://partner-sandbox-dot-official-tidyio-project.ue.r.appspot.com/public` |
+| **Production** | `https://partner-dot-official-tidyio-project.ue.r.appspot.com/public` |
+
+```go
+// Sandbox (default)
+client := cleanster.NewClient("key", "token")
+
+// Production
+client := cleanster.NewClientWithOptions(cleanster.ClientOptions{
+    AccessKey:   "key",
+    Token:       "token",
+    Environment: cleanster.Production,
+})
+```
 
 ---
 
-## Error Handling
-
-All SDK methods return `(value, error)`. The error is always one of the three SDK error types, all compatible with `errors.As`.
-
-### Complete Error Handling Example
-
-```go
-import "errors"
-
-bookingResp, err := client.Bookings.GetBookingDetails(ctx, 99999)
-if err != nil {
-    var authErr *cleanster.AuthError
-    var apiErr  *cleanster.APIError
-    var sdkErr  *cleanster.CleansterError
-
-    switch {
-    case errors.As(err, &authErr):
-        // HTTP 401 — bad access key or expired user token
-        fmt.Printf("Auth error (%d): %v\n", authErr.StatusCode, authErr)
-        fmt.Printf("Response body: %s\n", authErr.ResponseBody)
-        // Prompt the user to re-authenticate
-
-    case errors.As(err, &apiErr):
-        // HTTP 4xx/5xx — API-level error
-        fmt.Printf("API error (%d): %v\n", apiErr.StatusCode, apiErr)
-        fmt.Printf("Response body: %s\n", apiErr.ResponseBody)
-
-        switch apiErr.StatusCode {
-        case 404:
-            fmt.Println("Resource not found.")
-        case 422:
-            fmt.Println("Validation error — check request fields.")
-        default:
-            fmt.Printf("Server error — consider retrying.\n")
-        }
-
-    case errors.As(err, &sdkErr):
-        // Network failure, timeout, or JSON parse error
-        fmt.Printf("SDK error: %v\n", sdkErr)
-
-    default:
-        fmt.Printf("Unknown error: %v\n", err)
-    }
-    return
-}
-
-// Success — use bookingResp.Data
-fmt.Printf("Booking #%d is %s\n", bookingResp.Data.ID, bookingResp.Data.Status)
-```
-
-### Exception Hierarchy
+## Booking Flow
 
 ```
-error (interface)
-└── *cleanster.CleansterError        ← base: network failure, timeout, JSON parse error
-    ├── *cleanster.AuthError         ← HTTP 401 (invalid or missing credentials)
-    └── *cleanster.APIError          ← HTTP 4xx/5xx (API-level errors, other than 401)
+CreateBooking()          →   OPEN
+                                 │
+     Bookings.AssignCleaner()
+                                 │
+                                 ▼
+                       CLEANER_ASSIGNED
+                                 │
+                    Cleaner starts the job
+                                 │
+                  ┌──────────────┴──────────────┐
+                  ▼                             ▼
+             COMPLETED                     CANCELLED
 ```
 
-| Type | When Returned | Key Fields |
-|------|---------------|------------|
-| `*cleanster.CleansterError` | Network error, timeout, JSON parse failure | `Message string` |
-| `*cleanster.AuthError` | HTTP 401 | `StatusCode int`, `ResponseBody string` |
-| `*cleanster.APIError` | HTTP 4xx/5xx (not 401) | `StatusCode int`, `Message string`, `ResponseBody string` |
+Status values: `OPEN` · `CLEANER_ASSIGNED` · `IN_PROGRESS` · `COMPLETED` · `CANCELLED` · `REMOVED`
 
 ---
 
 ## API Reference
 
-Every method accepts `context.Context` as its first parameter and returns an `APIResponse[T]` value plus an `error`. All request structs use standard Go field names (PascalCase with JSON tags).
+All methods return `(APIResponse[T], error)`.
+
+`APIResponse[T]` has:
+- `.Status` — HTTP status code
+- `.Message` — Human-readable result
+- `.Data` — Typed payload
 
 ---
 
-### Bookings (`client.Bookings`)
+### Bookings
 
-#### `GetBookings(ctx, GetBookingsParams) → APIResponse[[]Booking]`
+#### List Bookings
+**`GET /v1/bookings?pageNo={pageNo}&status={status}`**
 
-Retrieve a paginated list of bookings. All filter parameters are optional.
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `PageNo` | `*int` | Yes | Page number (use `cleanster.PageNo(n)`) |
+| `Status` | string | No | `OPEN` · `CLEANER_ASSIGNED` · `COMPLETED` · `CANCELLED` · `REMOVED` |
 
 ```go
-// All bookings (no filter)
-resp, err := client.Bookings.GetBookings(ctx, cleanster.GetBookingsParams{})
-
-// Filter by status
-page := 2
-resp, err = client.Bookings.GetBookings(ctx, cleanster.GetBookingsParams{
+resp, err := client.Bookings.GetBookings(ctx, cleanster.GetBookingsParams{
+    PageNo: cleanster.PageNo(1),
     Status: "OPEN",
-    PageNo: &page,   // *int — nil for the first page
 })
-```
-
-**`GetBookingsParams` fields:**
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `PageNo` | `*int` | Page number (1-based); `nil` = first page |
-| `Status` | `string` | `"OPEN"` \| `"CLEANER_ASSIGNED"` \| `"COMPLETED"` \| `"CANCELLED"` \| `"REMOVED"` |
-
----
-
-#### `CreateBooking(ctx, CreateBookingRequest) → APIResponse[Booking]`
-
-Schedule a new cleaning appointment.
-
-```go
-resp, err := client.Bookings.CreateBooking(ctx, cleanster.CreateBookingRequest{
-    Date:            "2025-06-15",   // Required — YYYY-MM-DD
-    Time:            "10:00",        // Required — HH:mm (24-hour)
-    PropertyID:      1004,           // Required
-    RoomCount:       2,              // Required
-    BathroomCount:   1,              // Required
-    PlanID:          5,              // Required — from GetPlans
-    Hours:           3,              // Required — from GetRecommendedHours
-    ExtraSupplies:   false,          // Required — include cleaning supplies?
-    PaymentMethodID: 10,             // Required
-    CouponCode:      "20POFF",       // Optional
-    Extras:          []int{101, 102},// Optional — add-on service IDs
-})
-
-booking := resp.Data   // cleanster.Booking
-fmt.Println(booking.ID, booking.Status, booking.Cost)
-```
-
----
-
-#### `GetBookingDetails(ctx, bookingID int) → APIResponse[Booking]`
-
-```go
-resp, err := client.Bookings.GetBookingDetails(ctx, 16926)
-b := resp.Data
-fmt.Printf("Booking #%d on %s at %s — status: %s — cost: %.2f\n",
-    b.ID, b.Date, b.Time, b.Status, b.Cost)
-if b.CleanerID != nil {
-    fmt.Printf("Assigned cleaner: #%d\n", *b.CleanerID)
+for _, b := range resp.Data.Bookings {
+    fmt.Println(b.ID, b.Status)
 }
 ```
 
 ---
 
-#### `CancelBooking(ctx, bookingID int, CancelBookingRequest) → APIResponse[map[string]interface{}]`
+#### Get Booking
+**`GET /v1/bookings/{bookingId}`**
 
 ```go
-// With a reason
-_, err = client.Bookings.CancelBooking(ctx, 16459, cleanster.CancelBookingRequest{
-    Reason: "Schedule conflict",
+resp, err := client.Bookings.GetBooking(ctx, 16926)
+fmt.Println(resp.Data.Status, "on", resp.Data.Date)
+```
+
+---
+
+#### Create Booking
+**`POST /v1/bookings/create`**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `PropertyID` | int | Yes | Property to clean |
+| `Date` | string | Yes | `YYYY-MM-DD` |
+| `Time` | string | Yes | `HH:MM` (24-hour) |
+| `PlanID` | int | Yes | Cleaning plan ID |
+| `RoomCount` | int | Yes | Number of rooms |
+| `BathroomCount` | int | Yes | Number of bathrooms |
+| `Hours` | float64 | Yes | Duration |
+| `ExtraSupplies` | bool | Yes | Cleaner brings supplies |
+| `PaymentMethodID` | int | Yes | Payment method ID |
+| `CouponCode` | string | No | Discount coupon |
+| `CleaningExtras` | []int | No | Extra service IDs |
+
+```go
+resp, err := client.Bookings.CreateBooking(ctx, cleanster.CreateBookingRequest{
+    PropertyID:      1004,
+    Date:            "2025-09-01",
+    Time:            "10:00",
+    PlanID:          2,
+    RoomCount:       3,
+    BathroomCount:   2,
+    Hours:           3.0,
+    ExtraSupplies:   false,
+    PaymentMethodID: 10,
+    CouponCode:      "50POFF",
 })
-
-// Without a reason (Reason is omitted from JSON automatically)
-_, err = client.Bookings.CancelBooking(ctx, 16459, cleanster.CancelBookingRequest{})
+fmt.Println("Booking data:", resp.Data)
 ```
 
 ---
 
-#### `RescheduleBooking(ctx, bookingID int, RescheduleBookingRequest) → APIResponse[map[string]interface{}]`
+#### Assign Cleaner to Booking
+**`POST /v1/bookings/{bookingId}/cleaner`**
 
 ```go
-_, err = client.Bookings.RescheduleBooking(ctx, 16459, cleanster.RescheduleBookingRequest{
-    Date: "2025-07-01",
-    Time: "14:00",
-})
+_, err = client.Bookings.AssignCleaner(ctx, 16926, cleanerID)
 ```
 
 ---
 
-#### `AssignCleaner(ctx, bookingID int, AssignCleanerRequest)` / `RemoveAssignedCleaner(ctx, bookingID int)`
+#### Remove Cleaner from Booking
+**`DELETE /v1/bookings/{bookingId}/cleaner`**
 
 ```go
-// Assign a specific cleaner
-_, err = client.Bookings.AssignCleaner(ctx, 16459, cleanster.AssignCleanerRequest{CleanerID: 5})
-
-// Remove the assigned cleaner
-_, err = client.Bookings.RemoveAssignedCleaner(ctx, 16459)
+_, err = client.Bookings.RemoveCleaner(ctx, 16926)
 ```
 
 ---
 
-#### `AdjustHours(ctx, bookingID int, AdjustHoursRequest)`
+#### Adjust Booking Hours
+**`POST /v1/bookings/{bookingId}/hours`**
 
 ```go
-_, err = client.Bookings.AdjustHours(ctx, 16459, cleanster.AdjustHoursRequest{Hours: 4.0})
+_, err = client.Bookings.AdjustHours(ctx, 16926, 4.5)
 ```
 
 ---
 
-#### `PayExpenses(ctx, bookingID int, PayExpensesRequest)`
-
-Pay outstanding expenses within 72 hours of booking completion.
+#### Reschedule Booking
+**`POST /v1/bookings/{bookingId}/reschedule`**
 
 ```go
-_, err = client.Bookings.PayExpenses(ctx, 16926, cleanster.PayExpensesRequest{PaymentMethodID: 10})
+_, err = client.Bookings.RescheduleBooking(ctx, 16926, "2025-09-15", "14:00")
 ```
 
 ---
 
-#### `GetBookingInspection` / `GetBookingInspectionDetails`
+#### Pay Booking Expenses
+**`POST /v1/bookings/{bookingId}/expenses`**
 
 ```go
-resp, err := client.Bookings.GetBookingInspection(ctx, 16926)
-resp, err  = client.Bookings.GetBookingInspectionDetails(ctx, 16926)
+_, err = client.Bookings.PayExpenses(ctx, 16926, paymentMethodID)
 ```
 
 ---
 
-#### `AssignChecklistToBooking(ctx, bookingID, checklistID int)`
+#### Get Booking Inspection
+**`GET /v1/bookings/{bookingId}/inspection`**
 
-Override the property's default checklist for this specific booking only.
+```go
+resp, err := client.Bookings.GetInspection(ctx, 16926)
+```
+
+---
+
+#### Get Booking Inspection Details
+**`GET /v1/bookings/{bookingId}/inspection/details`**
+
+```go
+resp, err := client.Bookings.GetInspectionDetails(ctx, 16926)
+```
+
+---
+
+#### Cancel Booking
+**`POST /v1/bookings/{bookingId}/cancel`**
+
+```go
+_, err = client.Bookings.CancelBooking(ctx, 16926, "Scheduling conflict")
+```
+
+---
+
+#### Assign Checklist to Booking
+**`PUT /v1/bookings/{bookingId}/checklist/{checklistId}`**
+
+Override the property's default checklist for this booking only.
 
 ```go
 _, err = client.Bookings.AssignChecklistToBooking(ctx, 16926, 105)
@@ -506,337 +391,310 @@ _, err = client.Bookings.AssignChecklistToBooking(ctx, 16926, 105)
 
 ---
 
-#### `SubmitFeedback(ctx, bookingID int, FeedbackRequest)`
-
-Submit a star rating (1–5) and optional comment.
+#### Submit Feedback
+**`POST /v1/bookings/{bookingId}/feedback`**
 
 ```go
-// With a comment
-_, err = client.Bookings.SubmitFeedback(ctx, 16926, cleanster.FeedbackRequest{
-    Rating:  5,
-    Comment: "Excellent — very thorough!",
-})
-
-// Without a comment (Comment is omitted from JSON automatically)
-_, err = client.Bookings.SubmitFeedback(ctx, 16926, cleanster.FeedbackRequest{Rating: 4})
+_, err = client.Bookings.SubmitFeedback(ctx, 16926, 5, "Excellent work!")
 ```
 
 ---
 
-#### `AddTip(ctx, bookingID int, TipRequest)`
-
-Add a tip within 72 hours of booking completion.
+#### Submit Tip
+**`POST /v1/bookings/{bookingId}/tip`**
 
 ```go
-_, err = client.Bookings.AddTip(ctx, 16926, cleanster.TipRequest{
-    Amount:          20.0,
-    PaymentMethodID: 10,
-})
+_, err = client.Bookings.AddTip(ctx, 16926, 15.00, paymentMethodID)
 ```
 
 ---
 
-#### Chat: `GetChat`, `SendMessage`, `DeleteMessage`
+#### Get Chat Messages
+**`GET /v1/bookings/{bookingId}/chat`**
 
 ```go
-// Get all messages in a booking's chat thread
-chat, err := client.Bookings.GetChat(ctx, 17142)
+resp, err := client.Bookings.GetChat(ctx, 16926)
+```
 
-// Send a message
-_, err = client.Bookings.SendMessage(ctx, 17142, cleanster.SendMessageRequest{
-    Message: "Please focus on the kitchen today.",
-})
+**`data.messages[]` fields:**
 
-// Delete a specific message
-_, err = client.Bookings.DeleteMessage(ctx, 17142, "msg-abc-123")
+| Field | Type | Description |
+|---|---|---|
+| `message_id` | string | Unique ID |
+| `sender_id` | string | Reference key (e.g. `C6`, `P3`) |
+| `content` | string | Text (empty for media) |
+| `timestamp` | string | `DD MMM YYYY, HH:MM AM/PM` (GMT) |
+| `message_type` | string | `text` or `media` |
+| `attachments` | array | Media items |
+| `is_read` | bool | Read status |
+| `sender_type` | string | `client` · `cleaner` · `support` · `bot` |
+
+---
+
+#### Send Chat Message
+**`POST /v1/bookings/{bookingId}/chat`**
+
+```go
+_, err = client.Bookings.SendMessage(ctx, 16926, "Please bring extra supplies.")
 ```
 
 ---
 
-**Bookings API Summary**
+#### Delete Chat Message
+**`DELETE /v1/bookings/{bookingId}/chat/{messageId}`**
 
-| Method | HTTP | Endpoint |
-|--------|------|----------|
-| `GetBookings(ctx, params)` | GET | `/v1/bookings` |
-| `CreateBooking(ctx, req)` | POST | `/v1/bookings/create` |
-| `GetBookingDetails(ctx, id)` | GET | `/v1/bookings/{id}` |
-| `CancelBooking(ctx, id, req)` | POST | `/v1/bookings/{id}/cancel` |
-| `RescheduleBooking(ctx, id, req)` | POST | `/v1/bookings/{id}/reschedule` |
-| `AssignCleaner(ctx, id, req)` | POST | `/v1/bookings/{id}/cleaner` |
-| `RemoveAssignedCleaner(ctx, id)` | DELETE | `/v1/bookings/{id}/cleaner` |
-| `AdjustHours(ctx, id, req)` | POST | `/v1/bookings/{id}/hours` |
-| `PayExpenses(ctx, id, req)` | POST | `/v1/bookings/{id}/expenses` |
-| `GetBookingInspection(ctx, id)` | GET | `/v1/bookings/{id}/inspection` |
-| `GetBookingInspectionDetails(ctx, id)` | GET | `/v1/bookings/{id}/inspection/details` |
-| `AssignChecklistToBooking(ctx, id, cid)` | PUT | `/v1/bookings/{id}/checklist/{cid}` |
-| `SubmitFeedback(ctx, id, req)` | POST | `/v1/bookings/{id}/feedback` |
-| `AddTip(ctx, id, req)` | POST | `/v1/bookings/{id}/tip` |
-| `GetChat(ctx, id)` | GET | `/v1/bookings/{id}/chat` |
-| `SendMessage(ctx, id, req)` | POST | `/v1/bookings/{id}/chat` |
-| `DeleteMessage(ctx, id, messageID)` | DELETE | `/v1/bookings/{id}/chat/{messageID}` |
+```go
+_, err = client.Bookings.DeleteMessage(ctx, 16926, "-OLPrlE06uD8tQ8ebJZw")
+```
 
 ---
 
-### Users (`client.Users`)
+### Users
 
-#### `CreateUser(ctx, CreateUserRequest) → APIResponse[User]`
+#### Create User
+**`POST /v1/user/account`**
 
 ```go
 resp, err := client.Users.CreateUser(ctx, cleanster.CreateUserRequest{
     Email:     "jane@example.com",
     FirstName: "Jane",
-    LastName:  "Smith",
-    Phone:     "+15551234567",  // Optional — omitted from JSON if empty
+    LastName:  "Doe",
+    Phone:     "+15551234567",
 })
-
-user := resp.Data   // cleanster.User
-fmt.Println(user.ID, user.Email)
 ```
 
 ---
 
-#### `FetchAccessToken(ctx, userID int) → APIResponse[User]`
-
-Fetch the long-lived bearer token. Store it and reuse it across sessions.
+#### Fetch Access Token
+**`GET /v1/user/access-token/{userId}`**
 
 ```go
 resp, err := client.Users.FetchAccessToken(ctx, 42)
-if err != nil {
-    log.Fatal(err)
-}
-token := *resp.Data.Token   // string
-
-// Authenticate all subsequent requests:
-client.SetAccessToken(token)
+token := resp.Data["token"].(string)
 ```
 
 ---
 
-#### `VerifyJWT(ctx, VerifyJWTRequest) → APIResponse[map[string]interface{}]`
+#### Verify JWT
+**`POST /v1/user/verify-jwt`**
 
 ```go
-resp, err := client.Users.VerifyJWT(ctx, cleanster.VerifyJWTRequest{Token: "eyJhbGci..."})
+resp, err := client.Users.VerifyJWT(ctx, userToken)
 ```
 
 ---
 
-**Users API Summary**
+### Properties
 
-| Method | HTTP | Endpoint |
-|--------|------|----------|
-| `CreateUser(ctx, req)` | POST | `/v1/user/account` |
-| `FetchAccessToken(ctx, userID)` | GET | `/v1/user/access-token/{userID}` |
-| `VerifyJWT(ctx, req)` | POST | `/v1/user/verify-jwt` |
-
----
-
-### Properties (`client.Properties`)
-
-#### `ListProperties(ctx, serviceID int) → APIResponse[[]Property]`
-
-Pass `serviceID = 0` to return all service types.
+#### List Properties
+**`GET /v1/properties?serviceId={serviceId}`**
 
 ```go
-// All properties
-resp, err := client.Properties.ListProperties(ctx, 0)
-
-// Residential only (serviceID = 1)
-resp, err = client.Properties.ListProperties(ctx, 1)
+resp, err := client.Properties.ListProperties(ctx, serviceID)
 ```
 
 ---
 
-#### `AddProperty(ctx, CreatePropertyRequest) → APIResponse[Property]`
+#### Create Property
+**`POST /v1/properties`**
 
 ```go
-resp, err := client.Properties.AddProperty(ctx, cleanster.CreatePropertyRequest{
-    Name:          "Downtown Condo",
-    Address:       "456 Main St",
-    City:          "Toronto",
-    Country:       "Canada",
-    RoomCount:     2,
-    BathroomCount: 1,
-    ServiceID:     1,
+resp, err := client.Properties.CreateProperty(ctx, cleanster.CreatePropertyRequest{
+    Address:   "123 Main St",
+    City:      "Chicago",
+    State:     "IL",
+    Zip:       "60601",
+    ServiceID: 1,
 })
-prop := resp.Data   // cleanster.Property
-fmt.Println(prop.ID, prop.Name, prop.City)
 ```
 
 ---
 
-#### CRUD operations
+#### Get Property
+**`GET /v1/properties/{propertyId}`**
 
 ```go
-// Get
-prop, err := client.Properties.GetProperty(ctx, 1040)
-
-// Update (full replace)
-_, err = client.Properties.UpdateProperty(ctx, 1040, cleanster.CreatePropertyRequest{
-    Name: "Renovated Condo", Address: "456 Main St",
-    City: "Toronto", Country: "Canada",
-    RoomCount: 3, BathroomCount: 1, ServiceID: 1,
-})
-
-// Enable or disable
-_, err = client.Properties.EnableOrDisableProperty(ctx, 1040,
-    cleanster.EnableDisablePropertyRequest{Enabled: false})
-
-// Delete permanently
-_, err = client.Properties.DeleteProperty(ctx, 1040)
+resp, err := client.Properties.GetProperty(ctx, 1004)
 ```
 
 ---
 
-#### Cleaner assignment
+#### Update Property
+**`PUT /v1/properties/{propertyId}`**
 
 ```go
-// List assigned cleaners
-cleaners, err := client.Properties.GetPropertyCleaners(ctx, 1040)
-
-// Assign a cleaner
-_, err = client.Properties.AssignCleanerToProperty(ctx, 1040,
-    cleanster.AssignCleanerToPropertyRequest{CleanerID: 5})
-
-// Unassign
-_, err = client.Properties.UnassignCleanerFromProperty(ctx, 1040, 5)
+resp, err := client.Properties.UpdateProperty(ctx, 1004, updateReq)
 ```
 
 ---
 
-#### iCal calendar sync
-
-Sync property availability with Airbnb, VRBO, or any iCal-compatible platform.
+#### Update Additional Information
+**`PUT /v1/properties/{propertyId}/additional-information`**
 
 ```go
-feedURL := "https://airbnb.com/calendar/ical/xxx.ics"
-
-// Add
-_, err = client.Properties.AddICalLink(ctx, 1040, cleanster.ICalRequest{ICalLink: feedURL})
-
-// Get current link
-link, err := client.Properties.GetICalLink(ctx, 1040)
-
-// Remove
-_, err = client.Properties.RemoveICalLink(ctx, 1040, cleanster.ICalRequest{ICalLink: feedURL})
+resp, err := client.Properties.UpdateAdditionalInfo(ctx, 1004, infoReq)
 ```
 
 ---
 
-#### `AssignChecklistToProperty(ctx, propertyID, checklistID int, updateUpcomingBookings bool)`
+#### Enable or Disable Property
+**`POST /v1/properties/{propertyId}/enable-disable`**
 
 ```go
-// Apply to property and update all future bookings at this property
-_, err = client.Properties.AssignChecklistToProperty(ctx, 1040, 105, true)
-
-// Apply to property without affecting upcoming bookings
-_, err = client.Properties.AssignChecklistToProperty(ctx, 1040, 105, false)
+_, err = client.Properties.EnableOrDisable(ctx, 1004, true)
 ```
 
 ---
 
-**Properties API Summary**
+#### Delete Property
+**`DELETE /v1/properties/{propertyId}`**
 
-| Method | HTTP | Endpoint |
-|--------|------|----------|
-| `ListProperties(ctx, serviceID)` | GET | `/v1/properties` |
-| `AddProperty(ctx, req)` | POST | `/v1/properties` |
-| `GetProperty(ctx, id)` | GET | `/v1/properties/{id}` |
-| `UpdateProperty(ctx, id, req)` | PUT | `/v1/properties/{id}` |
-| `UpdateAdditionalInformation(ctx, id, data)` | PUT | `/v1/properties/{id}/additional-information` |
-| `EnableOrDisableProperty(ctx, id, req)` | POST | `/v1/properties/{id}/enable-disable` |
-| `DeleteProperty(ctx, id)` | DELETE | `/v1/properties/{id}` |
-| `GetPropertyCleaners(ctx, id)` | GET | `/v1/properties/{id}/cleaners` |
-| `AssignCleanerToProperty(ctx, id, req)` | POST | `/v1/properties/{id}/cleaners` |
-| `UnassignCleanerFromProperty(ctx, id, cleanerID)` | DELETE | `/v1/properties/{id}/cleaners/{cid}` |
-| `AddICalLink(ctx, id, req)` | PUT | `/v1/properties/{id}/ical` |
-| `GetICalLink(ctx, id)` | GET | `/v1/properties/{id}/ical` |
-| `RemoveICalLink(ctx, id, req)` | DELETE | `/v1/properties/{id}/ical` |
-| `AssignChecklistToProperty(ctx, id, cid, updateUpcoming)` | PUT | `/v1/properties/{id}/checklist/{cid}` |
+```go
+_, err = client.Properties.DeleteProperty(ctx, 1004)
+```
 
 ---
 
-### Checklists (`client.Checklists`)
+#### Get iCal Links
+**`GET /v1/properties/{propertyId}/ical`**
 
-Checklists define the tasks a cleaner must complete during a booking. They can be set as property defaults or overridden per booking.
+```go
+resp, err := client.Properties.GetIcal(ctx, 1004)
+```
 
-#### `ListChecklists(ctx) → APIResponse[[]Checklist]`
+---
+
+#### Add iCal Link
+**`PUT /v1/properties/{propertyId}/ical`**
+
+```go
+_, err = client.Properties.AddIcal(ctx, 1004, "https://airbnb.com/calendar/ical/12345.ics")
+```
+
+---
+
+#### Delete iCal Events
+**`DELETE /v1/properties/{propertyId}/ical`**
+
+```go
+_, err = client.Properties.DeleteIcal(ctx, 1004, []int{101, 102, 103})
+```
+
+---
+
+#### List Property Cleaners
+**`GET /v1/properties/{propertyId}/cleaners`**
+
+```go
+resp, err := client.Properties.ListCleaners(ctx, 1004)
+```
+
+---
+
+#### Add Preferred Cleaner
+**`POST /v1/properties/{propertyId}/cleaners`**
+
+```go
+_, err = client.Properties.AddCleaner(ctx, 1004, cleanerID)
+```
+
+---
+
+#### Remove Preferred Cleaner
+**`DELETE /v1/properties/{propertyId}/cleaners/{cleanerId}`**
+
+```go
+_, err = client.Properties.RemoveCleaner(ctx, 1004, cleanerID)
+```
+
+---
+
+#### Assign Checklist to Property
+**`PUT /v1/properties/{propertyId}/checklist/{checklistId}?updateUpcomingBookings={bool}`**
+
+```go
+_, err = client.Properties.AssignChecklistToProperty(ctx, 1004, 105, true)
+```
+
+---
+
+### Checklists
+
+#### List Checklists
+**`GET /v1/checklist`**
 
 ```go
 resp, err := client.Checklists.ListChecklists(ctx)
-for _, cl := range resp.Data {
-    fmt.Printf("Checklist #%d: %s (%d items)\n", cl.ID, cl.Name, len(cl.Items))
-}
 ```
 
 ---
 
-#### `GetChecklist(ctx, checklistID int) → APIResponse[Checklist]`
+#### Get Checklist
+**`GET /v1/checklist/{checklistId}`**
 
 ```go
 resp, err := client.Checklists.GetChecklist(ctx, 105)
-cl := resp.Data   // cleanster.Checklist
-for _, item := range cl.Items {
-    mark := " "
-    if item.IsCompleted {
-        mark = "✓"
-    }
-    fmt.Printf("[%s] %s\n", mark, item.Description)
+for _, item := range resp.Data.Items {
+    fmt.Println(item.Task)
 }
 ```
 
 ---
 
-#### `CreateChecklist(ctx, CreateChecklistRequest) → APIResponse[Checklist]`
+#### Create Checklist
+**`POST /v1/checklist`**
 
 ```go
 resp, err := client.Checklists.CreateChecklist(ctx, cleanster.CreateChecklistRequest{
-    Name: "Standard Residential Clean",
+    Name: "Deep Clean",
     Items: []string{
-        "Vacuum all floors",
+        "Vacuum all rooms",
         "Mop kitchen and bathroom floors",
-        "Wipe all countertops",
         "Scrub toilets, sinks, and tubs",
-        "Empty all trash bins",
+        "Wipe all countertops",
+        "Clean inside microwave and oven",
     },
 })
-fmt.Printf("Created checklist #%d\n", resp.Data.ID)
+fmt.Println("Checklist ID:", resp.Data.ID)
 ```
 
 ---
 
-#### `UpdateChecklist` / `DeleteChecklist`
+#### Update Checklist
+**`PUT /v1/checklist/{checklistId}`**
 
 ```go
-// Update
 _, err = client.Checklists.UpdateChecklist(ctx, 105, cleanster.CreateChecklistRequest{
-    Name:  "Deep Clean",
-    Items: []string{"All standard tasks", "Inside oven", "Inside fridge"},
+    Name:  "Standard Clean",
+    Items: []string{"Vacuum", "Wipe surfaces", "Clean bathrooms"},
 })
+```
 
-// Delete
+---
+
+#### Delete Checklist
+**`DELETE /v1/checklist/{checklistId}`**
+
+```go
 _, err = client.Checklists.DeleteChecklist(ctx, 105)
 ```
 
 ---
 
-**Checklists API Summary**
+#### Upload Checklist Image
+**`POST /v1/checklist/upload-image`**
 
-| Method | HTTP | Endpoint |
-|--------|------|----------|
-| `ListChecklists(ctx)` | GET | `/v1/checklist` |
-| `GetChecklist(ctx, id)` | GET | `/v1/checklist/{id}` |
-| `CreateChecklist(ctx, req)` | POST | `/v1/checklist` |
-| `UpdateChecklist(ctx, id, req)` | PUT | `/v1/checklist/{id}` |
-| `DeleteChecklist(ctx, id)` | DELETE | `/v1/checklist/{id}` |
-| `UploadChecklistImage(ctx, data, mime)` | POST | `/v1/checklist/upload-image` |
+```go
+data, _ := os.ReadFile("bathroom-guide.jpg")
+_, err = client.Checklists.UploadChecklistImage(ctx, data, "image/jpeg")
+```
 
 ---
 
-### Other / Utilities (`client.Other`)
+### Other / Reference Data
 
-Reference data and utility endpoints used when building booking flows.
-
-#### `GetServices(ctx) → APIResponse[[]map[string]interface{}]`
+#### Get Services
+**`GET /v1/services`**
 
 ```go
 resp, err := client.Other.GetServices(ctx)
@@ -844,7 +702,8 @@ resp, err := client.Other.GetServices(ctx)
 
 ---
 
-#### `GetPlans(ctx, propertyID int) → APIResponse[[]map[string]interface{}]`
+#### Get Plans
+**`GET /v1/plans?propertyId={propertyId}`**
 
 ```go
 resp, err := client.Other.GetPlans(ctx, 1004)
@@ -852,490 +711,358 @@ resp, err := client.Other.GetPlans(ctx, 1004)
 
 ---
 
-#### `GetRecommendedHours(ctx, propertyID, bathroomCount, roomCount int) → APIResponse[map[string]interface{}]`
-
-Returns the system-recommended cleaning duration based on property size. Use the result to pre-fill `Hours` in `CreateBookingRequest`.
+#### Get Cleaning Extras
+**`GET /v1/cleaning-extras/{serviceId}`**
 
 ```go
-resp, err := client.Other.GetRecommendedHours(ctx, 1004, 2, 3)
+resp, err := client.Other.GetCleaningExtras(ctx, 1)
 ```
 
 ---
 
-#### `CalculateCost(ctx, CostEstimateRequest) → APIResponse[map[string]interface{}]`
-
-Preview the estimated booking price before committing.
+#### Get Recommended Hours
+**`GET /v1/recommended-hours?propertyId={n}&bathroomCount={n}&roomCount={n}`**
 
 ```go
-resp, err := client.Other.CalculateCost(ctx, cleanster.CostEstimateRequest{
-    PropertyID: 1004,
-    PlanID:     2,
-    Hours:      3,
-    CouponCode: "20POFF",   // optional
+resp, err := client.Other.GetRecommendedHours(ctx, cleanster.RecommendedHoursParams{
+    PropertyID:    1004,
+    BathroomCount: 2,
+    RoomCount:     3,
 })
 ```
 
 ---
 
-#### `GetCleaningExtras(ctx, serviceID int)` / `GetAvailableCleaners(ctx, req)` / `GetCoupons(ctx)`
+#### Calculate Cost Estimate
+**`POST /v1/cost-estimate`**
 
 ```go
-// Add-on services (inside fridge, laundry, etc.)
-extras, err := client.Other.GetCleaningExtras(ctx, 1)
-
-// Find available cleaners for a time slot
-cleaners, err := client.Other.GetAvailableCleaners(ctx, cleanster.AvailableCleanersRequest{
-    PropertyID: 1004,
-    Date:       "2025-06-15",
-    Time:       "10:00",
-})
-
-// All valid coupon codes
-coupons, err := client.Other.GetCoupons(ctx)
+resp, err := client.Other.CalculateCost(ctx, estimateReq)
 ```
 
 ---
 
-**Other API Summary**
+#### Get Available Cleaners
+**`POST /v1/available-cleaners`**
 
-| Method | HTTP | Endpoint |
-|--------|------|----------|
-| `GetServices(ctx)` | GET | `/v1/services` |
-| `GetPlans(ctx, propertyID)` | GET | `/v1/plans?propertyId={id}` |
-| `GetRecommendedHours(ctx, pid, bath, rooms)` | GET | `/v1/recommended-hours` |
-| `CalculateCost(ctx, req)` | POST | `/v1/cost-estimate` |
-| `GetCleaningExtras(ctx, serviceID)` | GET | `/v1/cleaning-extras/{serviceID}` |
-| `GetAvailableCleaners(ctx, req)` | POST | `/v1/available-cleaners` |
-| `GetCoupons(ctx)` | GET | `/v1/coupons` |
+```go
+resp, err := client.Other.GetAvailableCleaners(ctx, availabilityReq)
+```
 
 ---
 
-### Blacklist (`client.Blacklist`)
-
-Prevent specific cleaners from being auto-assigned to bookings.
+#### Get Coupons
+**`GET /v1/coupons`**
 
 ```go
-// List all blacklisted cleaners
-list, err := client.Blacklist.ListBlacklistedCleaners(ctx)
-
-// Add a cleaner (reason is optional — omitted from JSON if empty)
-_, err = client.Blacklist.AddToBlacklist(ctx, cleanster.BlacklistRequest{
-    CleanerID: 7,
-    Reason:    "Damaged furniture",   // optional
-})
-
-// Remove a cleaner
-_, err = client.Blacklist.RemoveFromBlacklist(ctx, cleanster.BlacklistRequest{CleanerID: 7})
+resp, err := client.Other.GetCoupons(ctx)
 ```
-
-**Blacklist API Summary**
-
-| Method | HTTP | Endpoint |
-|--------|------|----------|
-| `ListBlacklistedCleaners(ctx)` | GET | `/v1/blacklist/cleaner` |
-| `AddToBlacklist(ctx, req)` | POST | `/v1/blacklist/cleaner` |
-| `RemoveFromBlacklist(ctx, req)` | DELETE | `/v1/blacklist/cleaner` |
 
 ---
 
-### Payment Methods (`client.PaymentMethods`)
+### Blacklist
 
-#### Stripe
+#### Get Blacklisted Cleaners
+**`GET /v1/blacklist/cleaner?pageNo={pageNo}`**
 
 ```go
-// 1. Get SetupIntent details (use clientSecret with Stripe.js client-side)
-intent, err := client.PaymentMethods.GetSetupIntentDetails(ctx)
-
-// 2. After client-side tokenization, save the payment method
-_, err = client.PaymentMethods.AddPaymentMethod(ctx, cleanster.AddPaymentMethodRequest{
-    PaymentMethodID: "pm_xxxxxxxxxxxxxxxx",
-})
+resp, err := client.Blacklist.GetBlacklist(ctx, 1)
 ```
 
-#### PayPal
+---
+
+#### Add Cleaner to Blacklist
+**`POST /v1/blacklist/cleaner`**
 
 ```go
-// Get client token for PayPal button rendering
-token, err := client.PaymentMethods.GetPaypalClientToken(ctx)
+_, err = client.Blacklist.AddToBlacklist(ctx, cleanerID)
 ```
 
-#### Manage Saved Methods
+---
+
+#### Remove Cleaner from Blacklist
+**`DELETE /v1/blacklist/cleaner`**
 
 ```go
-// List all payment methods
-methods, err := client.PaymentMethods.GetPaymentMethods(ctx)
-for _, m := range methods.Data {
-    fmt.Printf("#%d %s", m.ID, m.Type)
-    if m.LastFour != nil {
-        fmt.Printf(" *%s (%s)", *m.LastFour, *m.Brand)
-    }
-    if m.IsDefault {
-        fmt.Print(" [DEFAULT]")
-    }
-    fmt.Println()
+_, err = client.Blacklist.RemoveFromBlacklist(ctx, cleanerID)
+```
+
+---
+
+### Payment Methods
+
+#### Get Stripe Setup Intent Details
+**`GET /v1/payment-methods/setup-intent-details`**
+
+```go
+resp, err := client.PaymentMethods.GetSetupIntentDetails(ctx)
+clientSecret := resp.Data["clientSecret"].(string)
+```
+
+---
+
+#### Get PayPal Client Token
+**`GET /v1/payment-methods/paypal-client-token`**
+
+```go
+resp, err := client.PaymentMethods.GetPaypalClientToken(ctx)
+```
+
+---
+
+#### Add Payment Method
+**`POST /v1/payment-methods`**
+
+```go
+resp, err := client.PaymentMethods.AddPaymentMethod(ctx, paymentReq)
+```
+
+---
+
+#### List Payment Methods
+**`GET /v1/payment-methods`**
+
+```go
+resp, err := client.PaymentMethods.ListPaymentMethods(ctx)
+for _, pm := range resp.Data {
+    fmt.Println(pm.Type, pm.Last4)
 }
+```
 
-// Set as default
-_, err = client.PaymentMethods.SetDefaultPaymentMethod(ctx, 193)
+---
 
-// Delete
+#### Delete Payment Method
+**`DELETE /v1/payment-methods/{id}`**
+
+```go
 _, err = client.PaymentMethods.DeletePaymentMethod(ctx, 193)
 ```
 
-**Payment Methods API Summary**
+---
 
-| Method | HTTP | Endpoint |
-|--------|------|----------|
-| `GetSetupIntentDetails(ctx)` | GET | `/v1/payment-methods/setup-intent-details` |
-| `GetPaypalClientToken(ctx)` | GET | `/v1/payment-methods/paypal-client-token` |
-| `AddPaymentMethod(ctx, req)` | POST | `/v1/payment-methods` |
-| `GetPaymentMethods(ctx)` | GET | `/v1/payment-methods` |
-| `DeletePaymentMethod(ctx, id)` | DELETE | `/v1/payment-methods/{id}` |
-| `SetDefaultPaymentMethod(ctx, id)` | PUT | `/v1/payment-methods/{id}/default` |
+#### Set Default Payment Method
+**`PUT /v1/payment-methods/{id}/default`**
+
+```go
+_, err = client.PaymentMethods.SetDefaultPaymentMethod(ctx, 193)
+```
 
 ---
 
-### Webhooks (`client.Webhooks`)
+### Webhooks
 
-Receive real-time notifications when booking events occur — no polling required.
+#### List Webhooks
+**`GET /v1/webhooks`**
 
 ```go
-// List all webhook endpoints
-hooks, err := client.Webhooks.ListWebhooks(ctx)
+resp, err := client.Webhooks.ListWebhooks(ctx)
+```
 
-// Register a new webhook
+---
+
+#### Create Webhook
+**`POST /v1/webhooks`**
+
+```go
 _, err = client.Webhooks.CreateWebhook(ctx, cleanster.WebhookRequest{
-    URL:   "https://your-app.com/webhooks/cleanster",
+    URL:   "https://your-server.com/hooks/cleanster",
     Event: "booking.status_changed",
 })
+```
 
-// Update a webhook
+---
+
+#### Update Webhook
+**`PUT /v1/webhooks/{webhookId}`**
+
+```go
 _, err = client.Webhooks.UpdateWebhook(ctx, 50, cleanster.WebhookRequest{
-    URL:   "https://your-app.com/v2/webhooks",
-    Event: "booking.status_changed",
+    URL:   "https://your-server.com/hooks/cleanster-v2",
+    Event: "booking.completed",
 })
+```
 
-// Delete a webhook
+---
+
+#### Delete Webhook
+**`DELETE /v1/webhooks/{webhookId}`**
+
+```go
 _, err = client.Webhooks.DeleteWebhook(ctx, 50)
 ```
 
-**Webhooks API Summary**
-
-| Method | HTTP | Endpoint |
-|--------|------|----------|
-| `ListWebhooks(ctx)` | GET | `/v1/webhooks` |
-| `CreateWebhook(ctx, req)` | POST | `/v1/webhooks` |
-| `UpdateWebhook(ctx, id, req)` | PUT | `/v1/webhooks/{id}` |
-| `DeleteWebhook(ctx, id)` | DELETE | `/v1/webhooks/{id}` |
-
 ---
 
-## Response Structure
+## Type Reference
 
-Every SDK method returns an `APIResponse[T]` value where `T` is the specific data type.
+### `APIResponse[T]`
 
 ```go
-// Generic definition
 type APIResponse[T any] struct {
-    Status  int    // HTTP-style status code (e.g., 200)
-    Message string // Human-readable status (e.g., "OK")
-    Data    T      // Typed payload
+    Status  int    `json:"status"`
+    Message string `json:"message"`
+    Data    T      `json:"data"`
 }
 ```
-
-**Usage examples:**
-
-```go
-// Access all fields
-resp, err := client.Bookings.GetBookingDetails(ctx, 16926)
-if err != nil { /* handle */ }
-fmt.Println(resp.Status)   // 200
-fmt.Println(resp.Message)  // "OK"
-booking := resp.Data       // cleanster.Booking (fully typed)
-
-// Chain directly to Data
-booking, err := func() (cleanster.Booking, error) {
-    resp, err := client.Bookings.GetBookingDetails(ctx, 16926)
-    return resp.Data, err
-}()
-
-// Slice result
-resp, err := client.Bookings.GetBookings(ctx, cleanster.GetBookingsParams{})
-for _, b := range resp.Data {   // []cleanster.Booking
-    fmt.Println(b.ID, b.Status)
-}
-```
-
----
-
-## Model Reference
 
 ### `Booking`
 
-| Field | Go Type | JSON Key | Description |
-|-------|---------|----------|-------------|
-| `ID` | `int` | `id` | Booking ID |
-| `Status` | `string` | `status` | `"OPEN"` / `"CLEANER_ASSIGNED"` / `"COMPLETED"` / `"CANCELLED"` / `"REMOVED"` |
-| `Date` | `string` | `date` | Booking date (YYYY-MM-DD) |
-| `Time` | `string` | `time` | Start time (HH:mm) |
-| `Hours` | `float64` | `hours` | Duration in hours |
-| `Cost` | `float64` | `cost` | Total cost |
-| `PropertyID` | `int` | `propertyId` | Associated property |
-| `CleanerID` | `*int` | `cleanerId` | Assigned cleaner (`nil` if unassigned) |
-| `PlanID` | `int` | `planId` | Booking plan |
-| `RoomCount` | `int` | `roomCount` | Number of rooms |
-| `BathroomCount` | `int` | `bathroomCount` | Number of bathrooms |
-| `ExtraSupplies` | `bool` | `extraSupplies` | Cleaning supplies included |
-| `PaymentMethodID` | `int` | `paymentMethodId` | Payment method |
-
-### `User`
-
-| Field | Go Type | JSON Key | Description |
-|-------|---------|----------|-------------|
-| `ID` | `int` | `id` | User ID |
-| `Email` | `string` | `email` | Email address |
-| `FirstName` | `string` | `firstName` | First name |
-| `LastName` | `string` | `lastName` | Last name |
-| `Phone` | `*string` | `phone` | Phone number (optional) |
-| `Token` | `*string` | `token` | Bearer token — present only after `FetchAccessToken` |
-
-### `Property`
-
-| Field | Go Type | JSON Key | Description |
-|-------|---------|----------|-------------|
-| `ID` | `int` | `id` | Property ID |
-| `Name` | `string` | `name` | Property label |
-| `Address` | `string` | `address` | Street address |
-| `City` | `string` | `city` | City |
-| `Country` | `string` | `country` | Country |
-| `RoomCount` | `int` | `roomCount` | Number of rooms |
-| `BathroomCount` | `int` | `bathroomCount` | Number of bathrooms |
-| `ServiceID` | `int` | `serviceId` | Service type ID |
-| `IsEnabled` | `*bool` | `isEnabled` | Active state (`nil` if not returned) |
+```go
+type Booking struct {
+    ID              int     `json:"id"`
+    Status          string  `json:"status"`
+    Date            string  `json:"date"`
+    Time            string  `json:"time"`
+    Hours           float64 `json:"hours"`
+    Cost            float64 `json:"cost"`
+    PropertyID      int     `json:"propertyId"`
+    PlanID          int     `json:"planId"`
+    RoomCount       int     `json:"roomCount"`
+    BathroomCount   int     `json:"bathroomCount"`
+    ExtraSupplies   bool    `json:"extraSupplies"`
+    PaymentMethodID int     `json:"paymentMethodId"`
+    Cleaner         *Cleaner `json:"cleaner"`
+}
+```
 
 ### `Checklist`
 
-| Field | Go Type | JSON Key | Description |
-|-------|---------|----------|-------------|
-| `ID` | `int` | `id` | Checklist ID |
-| `Name` | `string` | `name` | Checklist name |
-| `Items` | `[]ChecklistItem` | `items` | Task items |
+```go
+type Checklist struct {
+    ID    int             `json:"id"`
+    Name  string          `json:"name"`
+    Items []ChecklistItem `json:"items"`
+}
 
-### `ChecklistItem`
-
-| Field | Go Type | JSON Key | Description |
-|-------|---------|----------|-------------|
-| `ID` | `int` | `id` | Item ID |
-| `Description` | `string` | `description` | Task description |
-| `IsCompleted` | `bool` | `isCompleted` | Marked complete by cleaner |
-| `ImageURL` | `*string` | `imageUrl` | Proof photo URL (if uploaded) |
+type ChecklistItem struct {
+    ID          int    `json:"id"`
+    Task        string `json:"task"`
+    Order       int    `json:"order"`
+    IsCompleted bool   `json:"isCompleted"`
+}
+```
 
 ### `PaymentMethod`
 
-| Field | Go Type | JSON Key | Description |
-|-------|---------|----------|-------------|
-| `ID` | `int` | `id` | Payment method ID |
-| `Type` | `string` | `type` | `"card"` / `"paypal"` / etc. |
-| `LastFour` | `*string` | `lastFour` | Last 4 digits (cards only) |
-| `Brand` | `*string` | `brand` | Card brand (`"visa"`, `"mastercard"`, etc.) |
-| `IsDefault` | `bool` | `isDefault` | Whether this is the default method |
-
-### Request Types
-
-| Struct | Used By | Key Fields |
-|--------|---------|------------|
-| `CreateBookingRequest` | `CreateBooking` | `Date`, `Time`, `PropertyID`, `PlanID`, `Hours`, `PaymentMethodID` |
-| `CancelBookingRequest` | `CancelBooking` | `Reason` (optional — `omitempty`) |
-| `RescheduleBookingRequest` | `RescheduleBooking` | `Date`, `Time` |
-| `AssignCleanerRequest` | `AssignCleaner` | `CleanerID` |
-| `AdjustHoursRequest` | `AdjustHours` | `Hours` |
-| `PayExpensesRequest` | `PayExpenses` | `PaymentMethodID` |
-| `FeedbackRequest` | `SubmitFeedback` | `Rating` (1–5), `Comment` (optional — `omitempty`) |
-| `TipRequest` | `AddTip` | `Amount`, `PaymentMethodID` |
-| `SendMessageRequest` | `SendMessage` | `Message` |
-| `CreateUserRequest` | `CreateUser` | `Email`, `FirstName`, `LastName`, `Phone` (optional) |
-| `VerifyJWTRequest` | `VerifyJWT` | `Token` |
-| `CreatePropertyRequest` | `AddProperty`, `UpdateProperty` | `Name`, `Address`, `City`, `Country`, `RoomCount`, `BathroomCount`, `ServiceID` |
-| `EnableDisablePropertyRequest` | `EnableOrDisableProperty` | `Enabled` |
-| `AssignCleanerToPropertyRequest` | `AssignCleanerToProperty` | `CleanerID` |
-| `ICalRequest` | `AddICalLink`, `RemoveICalLink` | `ICalLink` |
-| `CreateChecklistRequest` | `CreateChecklist`, `UpdateChecklist` | `Name`, `Items []string` |
-| `CostEstimateRequest` | `CalculateCost` | `PropertyID`, `PlanID`, `Hours`, `CouponCode` (optional) |
-| `AvailableCleanersRequest` | `GetAvailableCleaners` | `PropertyID`, `Date`, `Time` |
-| `BlacklistRequest` | `AddToBlacklist`, `RemoveFromBlacklist` | `CleanerID`, `Reason` (optional) |
-| `AddPaymentMethodRequest` | `AddPaymentMethod` | `PaymentMethodID` |
-| `WebhookRequest` | `CreateWebhook`, `UpdateWebhook` | `URL`, `Event` |
-
----
-
-## Sandbox vs Production
-
-| Feature | Sandbox | Production |
-|---------|---------|------------|
-| Real charges | No | Yes |
-| Real cleaners dispatched | No | Yes |
-| Coupon codes | Test codes work | Real codes only |
-| Data persistence | Yes (sandbox DB) | Yes (production DB) |
-| Factory function | `NewSandboxClient` | `NewProductionClient` |
-| Constant | `SandboxBaseURL` | `ProductionBaseURL` |
-
 ```go
-// Development / CI
-client, err := cleanster.NewSandboxClient(os.Getenv("CLEANSTER_API_KEY"))
-
-// Production
-client, err := cleanster.NewProductionClient(os.Getenv("CLEANSTER_API_KEY"))
+type PaymentMethod struct {
+    ID          int    `json:"id"`
+    Type        string `json:"type"`
+    Last4       string `json:"last4"`
+    Brand       string `json:"brand"`
+    ExpiryMonth int    `json:"expiryMonth"`
+    ExpiryYear  int    `json:"expiryYear"`
+    IsDefault   bool   `json:"isDefault"`
+}
 ```
 
-> **Always develop and test against the sandbox.** Switch to production only when you're ready to go live.
+---
+
+## Error Handling
+
+```go
+resp, err := client.Bookings.GetBooking(ctx, 99999)
+if err != nil {
+    var apiErr *cleanster.APIError
+    if errors.As(err, &apiErr) {
+        fmt.Printf("HTTP %d: %s\n", apiErr.StatusCode, apiErr.Message)
+        if apiErr.StatusCode == 401 {
+            // Re-fetch user token and retry
+        }
+    }
+    log.Fatal(err)
+}
+```
+
+| HTTP Status | Meaning |
+|---|---|
+| 400 | Bad request |
+| 401 | Unauthorized — invalid credentials |
+| 403 | Forbidden |
+| 404 | Not found |
+| 422 | Validation error |
+| 429 | Rate limit exceeded |
+| 500 | Server error |
 
 ---
 
-## Test Coupon Codes (Sandbox Only)
+## Test Coupon Codes
 
-These codes work only in the sandbox environment. Use them to test discount flows without real charges.
+Use in the **sandbox** environment only:
 
-| Code | Discount | Suggested Test |
-|------|----------|----------------|
-| `100POFF` | 100% off (free booking) | Verify zero-cost booking flow |
-| `50POFF` | 50% off | Verify percentage discount calculation |
-| `20POFF` | 20% off | Verify small percentage discount |
-| `200OFF` | $200 flat off | Verify flat discount |
-| `100OFF` | $100 flat off | Verify partial flat discount |
+| Code | Discount | Status |
+|---|---|---|
+| `100POFF` | 100% off | Active |
+| `50POFF` | 50% off | Active |
+| `20POFF` | 20% off | Active |
+| `200OFF` | $200 off | Active |
+| `100OFF` | $100 off | Active |
+| `75POFF` | 75% off | **Expired** |
 
-Pass via `CouponCode` in `CreateBookingRequest` or `CostEstimateRequest`.
+---
+
+## Chat Window Rules
+
+| Booking State | Chat Available |
+|---|---|
+| `OPEN` — within 24 h of start | Yes |
+| `COMPLETED` — within 24 h of completion | Yes |
+| `IN_PROGRESS` (hanging state) | Yes — **no time restriction** |
+| `CANCELLED` | No |
+| Older than 24 h | No |
+
+---
+
+## Webhook Events
+
+| Event | Description |
+|---|---|
+| `booking.status_changed` | Any status transition |
+| `booking.cleaner_assigned` | Cleaner assigned |
+| `booking.cancelled` | Booking cancelled |
+| `booking.completed` | Booking completed |
 
 ---
 
 ## Running Tests
 
-The test suite contains **92 tests** — all passing. Tests use `net/http/httptest` to spin up a local test server — no network access, real API keys, or external dependencies required.
-
 ```bash
-# Clone the repo
-git clone https://github.com/cleanster/cleanster-go-sdk.git
-cd cleanster-go-sdk
-
-# Run all tests
-go test ./...
-
-# Run with verbose output (shows each test name)
-go test -v ./...
-
-# Run a specific test by name
-go test -v -run TestBookings_CreateBooking ./...
-
-# Run tests matching a prefix
-go test -v -run TestBookings_ ./...
-
-# Run with race detector
-go test -race ./...
-
-# Run with coverage
-go test -cover ./...
-
-# Generate HTML coverage report
-go test -coverprofile=coverage.out ./...
-go tool cover -html=coverage.out -o coverage.html
+go test ./... -v
 ```
 
-### Test Coverage Areas
-
-| Area | Tests | What's Verified |
-|------|-------|-----------------|
-| Config | 9 | Factory functions, blank key rejection, timeout defaults |
-| Client | 6 | All 8 services exposed, token get/set/clear, auth headers sent |
-| `BookingsService` | 22 | All 17 methods + edge cases (no reason, no comment, no params, body field validation) |
-| `UsersService` | 5 | Create with/without phone, token field, verify JWT |
-| `PropertiesService` | 15 | CRUD, enable/disable, cleaners, iCal, checklist (true/false), service ID filter |
-| `ChecklistsService` | 5 | List, get (with typed items), create, update, delete |
-| `OtherService` | 7 | All 7 utility endpoints |
-| `BlacklistService` | 4 | List, add (with/without reason), remove |
-| `PaymentMethodsService` | 6 | All 6 endpoints |
-| `WebhooksService` | 4 | List, create, update, delete |
-| Error types | 8 | `AuthError` on 401, `APIError` on 404/422/500, `CleansterError` string, `ResponseBody` |
-| Models | 4 | Nullable fields, User.Token pointer, Checklist.Items array, APIResponse.Message |
-| **Total** | **95** | |
+Expected: **92 tests passing.**
 
 ---
 
 ## Project Structure
 
 ```
-cleanster-go-sdk/
-├── go.mod                  ← Module: github.com/cleanster/cleanster-go-sdk (Go 1.21)
-├── config.go               ← Config, NewSandboxConfig, NewProductionConfig, constants
-├── errors.go               ← CleansterError, AuthError, APIError
-├── models.go               ← APIResponse[T], rawAPIResponse, all model and request structs
-├── http_client.go          ← net/http transport: get/post/put/delete, auth header injection
-├── client.go               ← Client struct, NewSandboxClient, NewProductionClient, NewClient
-├── bookings.go             ← BookingsService (17 methods)
-├── users.go                ← UsersService (3 methods)
-├── properties.go           ← PropertiesService (14 methods)
-├── checklists.go           ← ChecklistsService (5 methods)
-├── other.go                ← OtherService (7 methods)
-├── blacklist.go            ← BlacklistService (3 methods)
-├── payment_methods.go      ← PaymentMethodsService (6 methods)
-├── webhooks.go             ← WebhooksService (4 methods)
-├── cleanster_test.go       ← 92 tests (package cleanster_test, net/http/httptest)
-├── README.md
-├── LICENSE
-├── CHANGELOG.md
-└── .gitignore
+go-sdk/
+├── go.mod
+├── client.go              # NewClient, ClientOptions
+├── bookings.go            # BookingsService
+├── users.go               # UsersService
+├── properties.go          # PropertiesService
+├── checklists.go          # ChecklistsService
+├── other.go               # OtherService
+├── blacklist.go           # BlacklistService
+├── payment_methods.go     # PaymentMethodsService
+├── webhooks.go            # WebhooksService
+├── models.go              # Booking, Checklist, PaymentMethod, etc.
+├── http.go                # Internal HTTP client (net/http)
+└── cleanster_test.go      # All 92 tests
 ```
-
-### Key Design Decisions
-
-**Why `net/http` only?**
-Zero external dependencies means no dependency conflicts, no security advisories from transitive deps, and a simpler `go.sum`. The standard library HTTP client is production-grade.
-
-**Why generics for `APIResponse[T]`?**
-Generics (Go 1.18+) eliminate type assertions. Callers get a fully typed `.Data` field without any casting. Requires Go 1.21+ (matching Cleanster's recommended baseline).
-
-**Why pointers for optional fields (`*int`, `*string`)?**
-Go's zero values (`0`, `""`) are semantically meaningful in the API (e.g., `cleanerID = 0` vs. `cleanerID = nil`). Pointers precisely represent nullable/optional API fields.
-
-**Why `context.Context` on every method?**
-Standard Go practice — allows callers to cancel in-flight requests, apply per-request deadlines, and propagate trace IDs through middleware.
-
----
-
-## Contributing
-
-1. Fork the repository on GitHub.
-2. Create a feature branch: `git checkout -b feature/my-feature`
-3. Make your changes and add tests in `cleanster_test.go`.
-4. Ensure all tests pass: `go test ./...`
-5. Check formatting: `gofmt -l .`
-6. Submit a pull request with a clear description.
-
-### Code Style
-
-- Follow standard Go conventions (`gofmt`, `go vet`)
-- All public types and methods must have doc comments (`// TypeName ...`)
-- Use `context.Context` as the first parameter for all API-calling methods
-- Use pointer types for all nullable/optional model fields
-- Tests live in the `cleanster_test` package (external test package)
-- No external dependencies in production code
 
 ---
 
 ## License
 
-This SDK is released under the [MIT License](LICENSE). You are free to use, modify, and distribute it in personal and commercial projects.
+MIT License. See [LICENSE](LICENSE) for details.
 
 ---
 
 ## Support
 
-| Resource | Link |
-|----------|------|
-| API Documentation | https://documenter.getpostman.com/view/26172658/2sAYdoF7ep |
-| Go Package Reference | https://pkg.go.dev/github.com/cleanster/cleanster-go-sdk |
-| Partner Support | partner@cleanster.com |
-| General Support | support@cleanster.com |
-| GitHub Issues | https://github.com/cleanster/cleanster-go-sdk/issues |
-
----
-
-*Made with care for the Cleanster partner ecosystem.*
+- **API Documentation:** [Cleanster Partner API Docs](https://documenter.getpostman.com/view/26172658/2sAYdoF7ep)
+- **Partner inquiries:** [partner@cleanster.com](mailto:partner@cleanster.com)
+- **General support:** [support@cleanster.com](mailto:support@cleanster.com)
