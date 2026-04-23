@@ -60,8 +60,9 @@
 | [PHP](#php) | [`php-sdk/`](./php-sdk) | 106 | PHP 8.1+ | Composer |
 | [C# / .NET](#c--net) | [`csharp-sdk/`](./csharp-sdk) | 107 | .NET 8.0+ | NuGet |
 | [Swift](#swift) | [`swift-sdk/`](./swift-sdk) | 164 | Swift 5.9+ / iOS 16+ | Swift Package Manager |
+| [Kotlin](#kotlin) | [`kotlin-sdk/`](./kotlin-sdk) | 164 | Kotlin 1.9+ / JVM 11+ | Gradle |
 
-**856 tests passing across all SDKs.**
+**1,020 tests passing across all SDKs.**
 
 ---
 
@@ -468,6 +469,52 @@ let client = CleansterClient.production(accessKey: "your-access-key")
 ```
 
 [Full Swift documentation →](./swift-sdk/README.md)
+
+---
+
+### Kotlin
+
+**build.gradle.kts:**
+```kotlin
+dependencies {
+    implementation("com.cleanster:cleanster-kotlin-sdk:1.0.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+}
+```
+
+**Sandbox client:**
+```kotlin
+import com.cleanster.CleansterClient
+
+val client = CleansterClient.sandbox("your-access-key")
+
+// Fetch and set the per-user token
+val tokenResp = client.users.fetchAccessToken(12345)
+client.setToken(tokenResp.data?.token ?: "")
+
+// Create a booking
+val response = client.bookings.createBooking(
+    CreateBookingRequest(
+        date            = "2025-09-15",
+        time            = "10:00",
+        propertyId      = 1004,
+        planId          = 2,
+        hours           = 3.0,
+        roomCount       = 2,
+        bathroomCount   = 1,
+        extraSupplies   = false,
+        paymentMethodId = 55,
+    )
+)
+println("Booking ID: ${response.data?.id}")
+```
+
+**Production client:**
+```kotlin
+val client = CleansterClient.production("your-access-key")
+```
+
+[Full Kotlin documentation →](./kotlin-sdk/README.md)
 
 ---
 
@@ -2049,6 +2096,17 @@ Cleanster-partner-api-sdk/
 │   ├── tests/            107 unit tests
 │   ├── Cleanster.sln
 │   └── README.md         Full C# SDK documentation
+│
+├── kotlin-sdk/
+│   ├── src/main/kotlin/com/cleanster/
+│   │   ├── api/          BookingsApi.kt, PropertiesApi.kt, UsersApi.kt, ...
+│   │   ├── model/        Models.kt, Requests.kt, ApiResponse.kt
+│   │   ├── CleansterClient.kt
+│   │   ├── CleansterError.kt
+│   │   └── HttpEngine.kt
+│   ├── src/test/kotlin/  164 unit tests
+│   ├── build.gradle.kts
+│   └── README.md         Full Kotlin SDK documentation
 │
 └── README.md             This file
 ```
