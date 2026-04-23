@@ -10,13 +10,14 @@ import java.util.*;
 /**
  * Checklists API — manage cleaning checklists.
  *
- * <h3>Endpoints (5)</h3>
+ * <h3>Endpoints (6)</h3>
  * <ol>
- *   <li>GET    /checklists       — list checklists</li>
- *   <li>GET    /checklists/{id}  — get checklist</li>
- *   <li>POST   /checklists       — create checklist</li>
- *   <li>PUT    /checklists/{id}  — update checklist</li>
- *   <li>DELETE /checklists/{id}  — delete checklist</li>
+ *   <li>GET    /checklists             — list checklists</li>
+ *   <li>GET    /checklists/{id}        — get checklist</li>
+ *   <li>POST   /checklists             — create checklist</li>
+ *   <li>PUT    /checklists/{id}        — update checklist</li>
+ *   <li>DELETE /checklists/{id}        — delete checklist</li>
+ *   <li>POST   /checklist/{id}/upload  — upload checklist image</li>
  * </ol>
  */
 public class ChecklistsXmlApi {
@@ -54,5 +55,10 @@ public class ChecklistsXmlApi {
     public XmlApiResponse<Checklist> deleteChecklist(int checklistId) {
         String json = http.delete("/checklists/" + checklistId);
         return http.fromJson(json, new TypeToken<XmlApiResponse<Checklist>>(){}.getType());
+    }
+
+    public XmlApiResponse uploadChecklistImage(int checklistId, byte[] imageData, String fileName) {
+        String json = http.postMultipart("/checklist/" + checklistId + "/upload", imageData, fileName);
+        return http.fromJson(json, XmlApiResponse.class);
     }
 }

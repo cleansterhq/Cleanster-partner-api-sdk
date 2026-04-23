@@ -64,6 +64,18 @@ public class XmlHttpClient {
         return execute(req);
     }
 
+    public String postMultipart(String path, byte[] fileData, String fileName) {
+        String ext  = fileName.contains(".") ? fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase() : "jpg";
+        String mime = ext.equals("png") ? "image/png" : ext.equals("gif") ? "image/gif" : "image/jpeg";
+        RequestBody filePart = RequestBody.create(fileData, MediaType.get(mime));
+        RequestBody multipart = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("image", fileName, filePart)
+                .build();
+        Request req = baseRequest(path).post(multipart).build();
+        return execute(req);
+    }
+
     /* ──────────────────── JSON → typed object helpers ───────────────────────── */
 
     public <T> T fromJson(String json, Class<T> clazz) {

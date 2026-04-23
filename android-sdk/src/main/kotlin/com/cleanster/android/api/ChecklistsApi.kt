@@ -1,6 +1,8 @@
 package com.cleanster.android.api
 
 import com.cleanster.android.model.*
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Retrofit
 import retrofit2.http.*
 
@@ -22,6 +24,13 @@ internal interface ChecklistsService {
 
     @DELETE("v1/checklist/{checklistId}")
     suspend fun deleteChecklist(@Path("checklistId") checklistId: Int): ApiResponse<Any>
+
+    @Multipart
+    @POST("v1/checklist/{checklistId}/upload")
+    suspend fun uploadChecklistImage(
+        @Path("checklistId") checklistId: Int,
+        @Part image: MultipartBody.Part,
+    ): ApiResponse<Any>
 }
 
 class ChecklistsApi(retrofit: Retrofit) {
@@ -38,4 +47,10 @@ class ChecklistsApi(retrofit: Retrofit) {
         wrap { service.updateChecklist(checklistId, CreateChecklistRequest(name, items)) }
 
     suspend fun deleteChecklist(checklistId: Int) = wrap { service.deleteChecklist(checklistId) }
+
+    suspend fun uploadChecklistImage(checklistId: Int, imageBytes: ByteArray, fileName: String): ApiResponse<Any> {
+        val requestBody = imageBytes.toRequestBody()
+        val part = MultipartBody.Part.createFormData("image", fileName, requestBody)
+        return wrap { service.uploadChecklistImage(checklistId, part) }
+    }
 }

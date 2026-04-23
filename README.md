@@ -7,9 +7,9 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/API-Cleanster%20Partner-brightgreen" alt="Cleanster Partner API">
-  <img src="https://img.shields.io/badge/SDKs-10%20Languages-blue" alt="10 Languages">
+  <img src="https://img.shields.io/badge/SDKs-11%20Languages-blue" alt="11 Languages">
   <img src="https://img.shields.io/badge/Endpoints-59-orange" alt="59 Endpoints">
-  <img src="https://img.shields.io/badge/Tests-1192%20passing-success" alt="1192 Tests Passing">
+  <img src="https://img.shields.io/badge/Tests-1310%20passing-success" alt="1310 Tests Passing">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
 </p>
 
@@ -32,6 +32,7 @@
   - [Swift](#swift)
   - [Kotlin](#kotlin)
   - [XML (JAXB)](#xml)
+  - [SOAP](#soap)
 - [Standard Response Format](#standard-response-format)
 - [Error Handling](#error-handling)
 - [All 59 Endpoints](#all-59-endpoints)
@@ -67,8 +68,9 @@
 | [Swift](#swift) | [`swift-sdk/`](./swift-sdk) | 166 | Swift 5.9+ / iOS 16+ | Swift Package Manager |
 | [Kotlin](#kotlin) | [`kotlin-sdk/`](./kotlin-sdk) | 166 | Kotlin 1.9+ / JVM 11+ | Gradle |
 | [XML (JAXB)](#xml) | [`xml-sdk/`](./xml-sdk) | 164 | Java 17+ / JAXB 4.0 | Maven |
+| [SOAP](#soap) | [`soap-sdk/`](./soap-sdk) | 118 | Java 11+ | Maven |
 
-**1,192 tests passing across all SDKs.**
+**1,310 tests passing across all SDKs.**
 
 ---
 
@@ -588,6 +590,67 @@ CleansterXmlClient client = CleansterXmlClient.production("your-access-key");
 ```
 
 [Full XML documentation →](./xml-sdk/README.md)
+
+---
+
+### SOAP
+
+The SOAP SDK exposes all 56 Cleanster Partner API operations through a document/literal SOAP 1.1 interface backed by a WSDL and XSD schema. Ideal for enterprise systems that require SOAP-based integration. Internally it bridges to the Cleanster REST API via `SOAPTransport`.
+
+**Maven:**
+```xml
+<dependency>
+  <groupId>com.cleanster</groupId>
+  <artifactId>cleanster-soap-sdk</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
+
+**Quick start:**
+```java
+import com.cleanster.soap.CleansterSOAPClient;
+import com.cleanster.soap.model.*;
+
+CleansterSOAPClient client = new CleansterSOAPClient("your-api-key");
+
+// Bookings
+Booking booking = client.getBooking(16459);
+List<Booking> all = client.listBookings(new ListBookingsRequest().setStatus("scheduled"));
+
+// Properties
+Property property = client.createProperty(new CreatePropertyRequest()
+    .setAddress("456 Oak Ave").setCity("Atlanta").setState("GA").setZip("30301"));
+client.addICalLink(property.getId(), "https://airbnb.com/calendar.ics");
+
+// Checklists
+Checklist checklist = client.createChecklist("Deep Clean", List.of("Oven", "Bathrooms"));
+client.uploadChecklistImage(checklist.getId(), imageBytes, "guide.jpg");
+
+// Users & auth
+User user = client.createUser(new CreateUserRequest().setEmail("alice@example.com"));
+client.verifyJwt(client.fetchAccessToken(user.getId()).getAccessToken());
+
+// Payment methods
+PaymentMethod pm = client.addPaymentMethod("pm_test_123");
+client.setDefaultPaymentMethod(pm.getId());
+
+// Webhooks
+Webhook hook = client.createWebhook("https://myapp.com/hook", "booking.completed");
+
+// Blacklist
+client.addToBlacklist(789L, "Repeated no-shows");
+```
+
+**Sending raw SOAP with cURL:**
+```bash
+curl -X POST https://api.cleanster.com/soap \
+  -H "Content-Type: text/xml; charset=utf-8" \
+  -H "SOAPAction: https://api.cleanster.com/soap/GetBooking" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -d @soap-sdk/examples/GetBooking.xml
+```
+
+[Full SOAP documentation →](./soap-sdk/README.md)
 
 ---
 

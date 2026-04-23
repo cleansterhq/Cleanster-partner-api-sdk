@@ -72,7 +72,88 @@ public class BookingService {
     public Booking assignCleaner(long bookingId, long cleanerId) {
         Map<String, Object> body = new HashMap<>();
         body.put("cleaner_id", cleanerId);
-        JsonNode root = transport.post("/v1/bookings/" + bookingId + "/assign-cleaner", body);
+        JsonNode root = transport.post("/v1/bookings/" + bookingId + "/cleaner-assignment", body);
         return transport.getObjectMapper().convertValue(transport.extractData(root), Booking.class);
+    }
+
+    public ApiResponse removeAssignedCleaner(long bookingId) {
+        JsonNode root = transport.delete("/v1/bookings/" + bookingId + "/cleaner-assignment");
+        int status = root.has("status") ? root.get("status").asInt(200) : 200;
+        return new ApiResponse(status, "OK");
+    }
+
+    public ApiResponse adjustHours(long bookingId, double hours) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("hours", hours);
+        JsonNode root = transport.post("/v1/bookings/" + bookingId + "/adjust-hours", body);
+        int status = root.has("status") ? root.get("status").asInt(200) : 200;
+        return new ApiResponse(status, "OK");
+    }
+
+    public ApiResponse payExpenses(long bookingId, long paymentMethodId) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("payment_method_id", paymentMethodId);
+        JsonNode root = transport.post("/v1/bookings/" + bookingId + "/pay-expenses", body);
+        int status = root.has("status") ? root.get("status").asInt(200) : 200;
+        return new ApiResponse(status, "OK");
+    }
+
+    public JsonNode getBookingInspection(long bookingId) {
+        return transport.extractData(transport.get("/v1/bookings/" + bookingId + "/inspection"));
+    }
+
+    public JsonNode getBookingInspectionDetails(long bookingId) {
+        return transport.extractData(transport.get("/v1/bookings/" + bookingId + "/inspection-details"));
+    }
+
+    public ApiResponse assignChecklistToBooking(long bookingId, long checklistId) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("checklist_id", checklistId);
+        JsonNode root = transport.put("/v1/bookings/" + bookingId + "/checklist", body);
+        int status = root.has("status") ? root.get("status").asInt(200) : 200;
+        return new ApiResponse(status, "OK");
+    }
+
+    public ApiResponse submitFeedback(long bookingId, int rating, String comment) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("rating", rating);
+        if (comment != null) body.put("comment", comment);
+        JsonNode root = transport.post("/v1/bookings/" + bookingId + "/feedback", body);
+        int status = root.has("status") ? root.get("status").asInt(200) : 200;
+        return new ApiResponse(status, "OK");
+    }
+
+    public ApiResponse addTip(long bookingId, double amount, long paymentMethodId) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("amount", amount);
+        body.put("payment_method_id", paymentMethodId);
+        JsonNode root = transport.post("/v1/bookings/" + bookingId + "/tip", body);
+        int status = root.has("status") ? root.get("status").asInt(200) : 200;
+        return new ApiResponse(status, "OK");
+    }
+
+    public List<ChatMessage> getChat(long bookingId) {
+        JsonNode root = transport.get("/v1/bookings/" + bookingId + "/chat");
+        JsonNode data = transport.extractData(root);
+        List<ChatMessage> list = new ArrayList<>();
+        if (data.isArray()) {
+            for (JsonNode node : data) {
+                list.add(transport.getObjectMapper().convertValue(node, ChatMessage.class));
+            }
+        }
+        return list;
+    }
+
+    public ChatMessage sendMessage(long bookingId, String message) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("message", message);
+        JsonNode root = transport.post("/v1/bookings/" + bookingId + "/chat", body);
+        return transport.getObjectMapper().convertValue(transport.extractData(root), ChatMessage.class);
+    }
+
+    public ApiResponse deleteMessage(long bookingId, String messageId) {
+        JsonNode root = transport.delete("/v1/bookings/" + bookingId + "/chat/" + messageId);
+        int status = root.has("status") ? root.get("status").asInt(200) : 200;
+        return new ApiResponse(status, "OK");
     }
 }

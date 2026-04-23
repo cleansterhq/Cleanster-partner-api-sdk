@@ -43,6 +43,14 @@ public class ChecklistService {
         return transport.getObjectMapper().convertValue(transport.extractData(root), Checklist.class);
     }
 
+    public Checklist updateChecklist(long checklistId, String name, List<String> items) {
+        Map<String, Object> body = new HashMap<>();
+        if (name != null)  body.put("name", name);
+        if (items != null) body.put("items", items);
+        JsonNode root = transport.put("/v1/checklists/" + checklistId, body);
+        return transport.getObjectMapper().convertValue(transport.extractData(root), Checklist.class);
+    }
+
     public ApiResponse deleteChecklist(long checklistId) {
         JsonNode root = transport.delete("/v1/checklists/" + checklistId);
         int status = root.has("status") ? root.get("status").asInt(200) : 200;
