@@ -2463,6 +2463,28 @@ Cleanster-partner-api-sdk/
 │   ├── pom.xml
 │   └── README.md         Full XML SDK documentation
 │
+├── soap-sdk/                 Java 11+ SOAP 1.1 (document/literal) bridge over REST
+│   ├── wsdl/
+│   │   ├── cleanster.wsdl    Full WSDL — 56 operations across 9 services
+│   │   └── cleanster-types.xsd  XML Schema for all types
+│   ├── examples/             Ready-to-use SOAP envelope XML files
+│   ├── src/main/java/com/cleanster/soap/
+│   │   ├── CleansterSOAPClient.java  Main facade (56 operations)
+│   │   ├── SOAPTransport.java        HTTP/REST bridge
+│   │   ├── BookingService.java       17 booking operations
+│   │   ├── PropertyService.java      14 property operations
+│   │   ├── CleanerService.java       2 cleaner operations
+│   │   ├── ChecklistService.java     6 checklist operations
+│   │   ├── OtherService.java         7 utility operations
+│   │   ├── UserService.java          3 user operations
+│   │   ├── BlacklistService.java     3 blacklist operations
+│   │   ├── PaymentMethodService.java 6 payment method operations
+│   │   ├── WebhookService.java       4 webhook operations
+│   │   └── model/            Booking, Property, User, Webhook, PaymentMethod, ...
+│   ├── src/test/java/        118 unit tests (JUnit 5 + Mockito)
+│   ├── pom.xml
+│   └── README.md             Full SOAP SDK documentation
+│
 └── README.md             This file
 ```
 
