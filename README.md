@@ -2463,6 +2463,15 @@ Cleanster-partner-api-sdk/
 │   ├── build.gradle.kts
 │   └── README.md         Full Android SDK documentation
 │
+├── xml-sdk/                  Java 17 + JAXB 4.0 + OkHttp + Gson
+│   ├── src/main/java/com/cleanster/xml/
+│   │   ├── api/          BookingsXmlApi.java, PropertiesXmlApi.java, UsersXmlApi.java, ...
+│   │   ├── model/        Booking.java, Property.java, User.java, ...  (all JAXB-annotated)
+│   │   └── client/       CleansterXmlClient.java, XmlConverter.java, XmlHttpClient.java
+│   ├── src/test/java/    164 unit tests (JUnit 5 + MockWebServer)
+│   ├── pom.xml
+│   └── README.md         Full XML SDK documentation
+│
 └── README.md             This file
 ```
 
