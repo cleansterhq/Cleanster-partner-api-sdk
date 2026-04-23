@@ -1,0 +1,8 @@
+{
+  "name": "cleaners",
+  "label": "Cleaners",
+  "modules": [
+    "searchCleaner",
+    "getCleaner"
+  ]
+}

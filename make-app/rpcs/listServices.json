@@ -1,0 +1,9 @@
+{
+  "name": "listServices",
+  "label": "List Services",
+  "url": "/v1/services",
+  "method": "GET",
+  "response": {
+    "output": "{{map(ifempty(body.data, body), 'item'; 'value', item.slug; 'label', item.name)}}"
+  }
+}

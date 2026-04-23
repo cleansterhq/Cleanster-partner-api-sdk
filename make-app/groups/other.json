@@ -1,0 +1,8 @@
+{
+  "name": "other",
+  "label": "Other",
+  "modules": [
+    "getServices",
+    "makeAPICall"
+  ]
+}

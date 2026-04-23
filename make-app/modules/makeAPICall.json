@@ -1,0 +1,70 @@
+{
+  "name": "makeAPICall",
+  "label": "Make an API Call",
+  "description": "Makes an arbitrary authenticated call to any Cleanster API endpoint. Use this for endpoints not covered by the other modules.",
+  "connection": "apikey",
+  "actionType": "create",
+  "url": "/{{parameters.path}}",
+  "method": "{{parameters.method}}",
+  "headers": [
+    {
+      "name": "Content-Type",
+      "value": "application/json"
+    }
+  ],
+  "qs": "{{parameters.qs}}",
+  "body": {
+    "mode": "raw",
+    "content": "{{parameters.body}}"
+  },
+  "response": {
+    "output": "{{body}}"
+  },
+  "parameters": [
+    {
+      "name": "method",
+      "type": "select",
+      "label": "HTTP Method",
+      "required": true,
+      "options": [
+        { "label": "GET", "value": "GET" },
+        { "label": "POST", "value": "POST" },
+        { "label": "PUT", "value": "PUT" },
+        { "label": "PATCH", "value": "PATCH" },
+        { "label": "DELETE", "value": "DELETE" }
+      ]
+    },
+    {
+      "name": "path",
+      "type": "text",
+      "label": "Endpoint Path",
+      "help": "The API path without the base URL (e.g. v1/bookings or v1/bookings/123).",
+      "required": true
+    },
+    {
+      "name": "qs",
+      "type": "array",
+      "label": "Query String Parameters",
+      "required": false,
+      "advanced": true,
+      "spec": [
+        { "name": "key", "type": "text", "label": "Key" },
+        { "name": "value", "type": "text", "label": "Value" }
+      ]
+    },
+    {
+      "name": "body",
+      "type": "text",
+      "label": "Request Body (JSON)",
+      "help": "Raw JSON body for POST/PUT/PATCH requests. Leave blank for GET/DELETE.",
+      "required": false,
+      "advanced": true,
+      "multiline": true
+    }
+  ],
+  "interface": [
+    { "name": "status", "type": "uinteger", "label": "HTTP Status Code" },
+    { "name": "message", "type": "text", "label": "Message" },
+    { "name": "data", "type": "any", "label": "Response Data" }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "baseUrl": "https://api.cleanster.com",
+  "headers": [
+    {
+      "name": "Authorization",
+      "value": "Bearer {{connection.apiKey}}"
+    },
+    {
+      "name": "Content-Type",
+      "value": "application/json"
+    },
+    {
+      "name": "Accept",
+      "value": "application/json"
+    }
+  ],
+  "response": {
+    "error": {
+      "message": "[{{statusCode}}] {{ifempty(body.message, body.error, 'Unknown error')}}"
+    }
+  },
+  "log": {
+    "sanitize": ["request.headers.Authorization"]
+  }
+}

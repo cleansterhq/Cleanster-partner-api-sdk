@@ -1,0 +1,41 @@
+{
+  "name": "getBooking",
+  "label": "Get a Booking",
+  "description": "Retrieves a single booking by its ID.",
+  "connection": "apikey",
+  "actionType": "read",
+  "typeId": 9,
+  "url": "/v1/bookings/{{parameters.booking_id}}",
+  "method": "GET",
+  "response": {
+    "output": "{{ifempty(body.data, body)}}"
+  },
+  "parameters": [
+    {
+      "name": "booking_id",
+      "type": "uinteger",
+      "label": "Booking ID",
+      "help": "The ID of the booking to retrieve.",
+      "required": true
+    }
+  ],
+  "interface": [
+    { "name": "id", "type": "uinteger", "label": "Booking ID" },
+    { "name": "status", "type": "text", "label": "Status" },
+    { "name": "scheduled_at", "type": "date", "label": "Scheduled At" },
+    { "name": "duration_hours", "type": "number", "label": "Duration (Hours)" },
+    { "name": "service_type", "type": "text", "label": "Service Type" },
+    { "name": "notes", "type": "text", "label": "Notes" },
+    { "name": "property_id", "type": "uinteger", "label": "Property ID" },
+    { "name": "property_address", "type": "text", "label": "Property Address" },
+    { "name": "property_city", "type": "text", "label": "Property City" },
+    { "name": "property_state", "type": "text", "label": "Property State" },
+    { "name": "property_zip", "type": "text", "label": "Property Zip" },
+    { "name": "cleaner_id", "type": "uinteger", "label": "Cleaner ID" },
+    { "name": "cleaner_name", "type": "text", "label": "Cleaner Name" },
+    { "name": "cleaner_email", "type": "email", "label": "Cleaner Email" },
+    { "name": "checklist_id", "type": "uinteger", "label": "Checklist ID" },
+    { "name": "created_at", "type": "date", "label": "Created At" },
+    { "name": "updated_at", "type": "date", "label": "Updated At" }
+  ]
+}

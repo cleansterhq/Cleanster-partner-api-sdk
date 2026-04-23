@@ -1,0 +1,15 @@
+{
+  "name": "bookings",
+  "label": "Bookings",
+  "modules": [
+    "watchNewBookings",
+    "watchBookingStatusChanged",
+    "createBooking",
+    "cancelBooking",
+    "rescheduleBooking",
+    "assignCleaner",
+    "sendMessage",
+    "searchBooking",
+    "getBooking"
+  ]
+}

@@ -1,0 +1,111 @@
+{
+  "name": "createProperty",
+  "label": "Create a Property",
+  "description": "Adds a new property to your Cleanster account.",
+  "connection": "apikey",
+  "actionType": "create",
+  "url": "/v1/properties",
+  "method": "POST",
+  "headers": [],
+  "qs": [],
+  "body": {
+    "mode": "json",
+    "content": [
+      { "name": "address", "value": "{{parameters.address}}" },
+      { "name": "city", "value": "{{parameters.city}}" },
+      { "name": "state", "value": "{{parameters.state}}" },
+      { "name": "zip", "value": "{{parameters.zip}}" },
+      { "name": "name", "value": "{{parameters.name}}" },
+      { "name": "bedrooms", "value": "{{parameters.bedrooms}}" },
+      { "name": "bathrooms", "value": "{{parameters.bathrooms}}" },
+      { "name": "square_feet", "value": "{{parameters.square_feet}}" },
+      { "name": "notes", "value": "{{parameters.notes}}" },
+      { "name": "access_instructions", "value": "{{parameters.access_instructions}}" }
+    ]
+  },
+  "response": {
+    "output": "{{ifempty(body.data, body)}}"
+  },
+  "parameters": [
+    {
+      "name": "address",
+      "type": "text",
+      "label": "Street Address",
+      "required": true
+    },
+    {
+      "name": "city",
+      "type": "text",
+      "label": "City",
+      "required": true
+    },
+    {
+      "name": "state",
+      "type": "text",
+      "label": "State",
+      "help": "Two-letter state code (e.g. GA, CA, NY).",
+      "required": true
+    },
+    {
+      "name": "zip",
+      "type": "text",
+      "label": "Zip Code",
+      "required": true
+    },
+    {
+      "name": "name",
+      "type": "text",
+      "label": "Property Name",
+      "help": "A friendly name like 'Beachfront Villa'.",
+      "required": false
+    },
+    {
+      "name": "bedrooms",
+      "type": "uinteger",
+      "label": "Bedrooms",
+      "required": false
+    },
+    {
+      "name": "bathrooms",
+      "type": "number",
+      "label": "Bathrooms",
+      "required": false
+    },
+    {
+      "name": "square_feet",
+      "type": "uinteger",
+      "label": "Square Feet",
+      "required": false
+    },
+    {
+      "name": "notes",
+      "type": "text",
+      "label": "Notes",
+      "help": "Internal notes about this property.",
+      "required": false,
+      "multiline": true
+    },
+    {
+      "name": "access_instructions",
+      "type": "text",
+      "label": "Access Instructions",
+      "help": "How cleaners can access the property (entry codes, key locations, etc.).",
+      "required": false,
+      "multiline": true
+    }
+  ],
+  "interface": [
+    { "name": "id", "type": "uinteger", "label": "Property ID" },
+    { "name": "name", "type": "text", "label": "Property Name" },
+    { "name": "address", "type": "text", "label": "Address" },
+    { "name": "city", "type": "text", "label": "City" },
+    { "name": "state", "type": "text", "label": "State" },
+    { "name": "zip", "type": "text", "label": "Zip Code" },
+    { "name": "bedrooms", "type": "uinteger", "label": "Bedrooms" },
+    { "name": "bathrooms", "type": "number", "label": "Bathrooms" },
+    { "name": "square_feet", "type": "uinteger", "label": "Square Feet" },
+    { "name": "notes", "type": "text", "label": "Notes" },
+    { "name": "access_instructions", "type": "text", "label": "Access Instructions" },
+    { "name": "created_at", "type": "date", "label": "Created At" }
+  ]
+}

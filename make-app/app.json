@@ -1,0 +1,11 @@
+{
+  "name": "cleanster",
+  "label": "Cleanster",
+  "version": "1.0.0",
+  "description": "Automate your cleaning operations with the Cleanster Partner API. Manage bookings, properties, cleaners, and real-time notifications — all from Make.",
+  "categories": ["property-management", "scheduling", "productivity"],
+  "audience": "public",
+  "homepage": "https://cleanster.com",
+  "color": "#1a9e6e",
+  "theme": "cleanster"
+}

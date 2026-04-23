@@ -1,0 +1,47 @@
+{
+  "name": "sendMessage",
+  "label": "Send Chat Message",
+  "description": "Sends a message in the booking chat thread (visible to the cleaner).",
+  "connection": "apikey",
+  "actionType": "create",
+  "url": "/v1/bookings/{{parameters.booking_id}}/chat",
+  "method": "POST",
+  "headers": [],
+  "qs": [],
+  "body": {
+    "mode": "json",
+    "content": [
+      {
+        "name": "message",
+        "value": "{{parameters.message}}"
+      }
+    ]
+  },
+  "response": {
+    "output": "{{ifempty(body.data, body)}}"
+  },
+  "parameters": [
+    {
+      "name": "booking_id",
+      "type": "uinteger",
+      "label": "Booking ID",
+      "help": "The ID of the booking to send a message on.",
+      "required": true
+    },
+    {
+      "name": "message",
+      "type": "text",
+      "label": "Message",
+      "help": "The message to send to the cleaner.",
+      "required": true,
+      "multiline": true
+    }
+  ],
+  "interface": [
+    { "name": "id", "type": "uinteger", "label": "Message ID" },
+    { "name": "booking_id", "type": "uinteger", "label": "Booking ID" },
+    { "name": "message", "type": "text", "label": "Message" },
+    { "name": "sender", "type": "text", "label": "Sender" },
+    { "name": "sent_at", "type": "date", "label": "Sent At" }
+  ]
+}

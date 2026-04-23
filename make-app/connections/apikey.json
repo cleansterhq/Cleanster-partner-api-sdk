@@ -1,0 +1,34 @@
+{
+  "name": "apikey",
+  "label": "Cleanster API Key",
+  "type": "apikey",
+  "accountName": "{{ifempty(parameters.label, 'Cleanster Account')}}",
+  "scope": [],
+  "parameters": [
+    {
+      "name": "apiKey",
+      "type": "text",
+      "label": "API Key",
+      "required": true,
+      "help": "Your Cleanster Partner API key. Find it in your Cleanster dashboard under Settings → API."
+    },
+    {
+      "name": "label",
+      "type": "text",
+      "label": "Connection Label",
+      "required": false,
+      "help": "A friendly name for this connection (optional)."
+    }
+  ],
+  "validation": {
+    "url": "/v1/services",
+    "method": "GET",
+    "headers": [
+      {
+        "name": "Authorization",
+        "value": "Bearer {{parameters.apiKey}}"
+      }
+    ],
+    "condition": "{{statusCode == 200}}"
+  }
+}

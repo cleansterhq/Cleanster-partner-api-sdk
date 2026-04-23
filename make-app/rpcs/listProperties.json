@@ -1,0 +1,15 @@
+{
+  "name": "listProperties",
+  "label": "List Properties",
+  "url": "/v1/properties",
+  "method": "GET",
+  "qs": [
+    {
+      "name": "per_page",
+      "value": "100"
+    }
+  ],
+  "response": {
+    "output": "{{map(ifempty(body.data, body), 'item'; 'value', item.id; 'label', ifempty(item.name, item.address))}}"
+  }
+}

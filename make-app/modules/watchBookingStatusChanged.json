@@ -1,0 +1,88 @@
+{
+  "name": "watchBookingStatusChanged",
+  "label": "Watch Booking Status Changed",
+  "description": "Triggers when a booking changes status (e.g. scheduled → in_progress → completed).",
+  "connection": "apikey",
+  "actionType": "read",
+  "typeId": 4,
+  "epoch": {
+    "default": "yesterday"
+  },
+  "url": "/v1/bookings",
+  "method": "GET",
+  "qs": [
+    {
+      "name": "sort_by",
+      "value": "updated_at"
+    },
+    {
+      "name": "sort_order",
+      "value": "desc"
+    },
+    {
+      "name": "status",
+      "value": "{{parameters.status}}"
+    },
+    {
+      "name": "per_page",
+      "value": "{{parameters.limit}}"
+    }
+  ],
+  "response": {
+    "iterate": "{{ifempty(body.data, body)}}",
+    "output": {
+      "id": "{{item.id}}",
+      "status": "{{item.status}}",
+      "previous_status": "{{item.previous_status}}",
+      "scheduled_at": "{{item.scheduled_at}}",
+      "duration_hours": "{{item.duration_hours}}",
+      "service_type": "{{item.service_type}}",
+      "property_id": "{{item.property.id}}",
+      "property_address": "{{item.property.address}}",
+      "property_city": "{{item.property.city}}",
+      "cleaner_id": "{{item.cleaner.id}}",
+      "cleaner_name": "{{item.cleaner.name}}",
+      "updated_at": "{{item.updated_at}}"
+    },
+    "uid": "{{item.id}}_{{item.status}}",
+    "date": "{{item.updated_at}}"
+  },
+  "parameters": [
+    {
+      "name": "status",
+      "type": "select",
+      "label": "Filter by Status",
+      "help": "Only watch for bookings with this status. Leave blank to watch all status changes.",
+      "required": false,
+      "options": [
+        { "label": "— Any Status —", "value": "" },
+        { "label": "Pending", "value": "pending" },
+        { "label": "Scheduled", "value": "scheduled" },
+        { "label": "In Progress", "value": "in_progress" },
+        { "label": "Completed", "value": "completed" },
+        { "label": "Cancelled", "value": "cancelled" }
+      ]
+    },
+    {
+      "name": "limit",
+      "type": "number",
+      "label": "Limit",
+      "default": 10,
+      "advanced": true
+    }
+  ],
+  "interface": [
+    { "name": "id", "type": "uinteger", "label": "Booking ID" },
+    { "name": "status", "type": "text", "label": "Status" },
+    { "name": "previous_status", "type": "text", "label": "Previous Status" },
+    { "name": "scheduled_at", "type": "date", "label": "Scheduled At" },
+    { "name": "duration_hours", "type": "number", "label": "Duration (Hours)" },
+    { "name": "service_type", "type": "text", "label": "Service Type" },
+    { "name": "property_id", "type": "uinteger", "label": "Property ID" },
+    { "name": "property_address", "type": "text", "label": "Property Address" },
+    { "name": "property_city", "type": "text", "label": "Property City" },
+    { "name": "cleaner_id", "type": "uinteger", "label": "Cleaner ID" },
+    { "name": "cleaner_name", "type": "text", "label": "Cleaner Name" },
+    { "name": "updated_at", "type": "date", "label": "Updated At" }
+  ]
+}

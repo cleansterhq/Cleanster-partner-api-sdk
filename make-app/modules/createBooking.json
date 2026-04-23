@@ -1,0 +1,128 @@
+{
+  "name": "createBooking",
+  "label": "Create a Booking",
+  "description": "Creates a new cleaning booking in Cleanster.",
+  "connection": "apikey",
+  "actionType": "create",
+  "url": "/v1/bookings",
+  "method": "POST",
+  "headers": [],
+  "qs": [],
+  "body": {
+    "mode": "json",
+    "content": [
+      {
+        "name": "property_id",
+        "value": "{{parameters.property_id}}"
+      },
+      {
+        "name": "scheduled_at",
+        "value": "{{parameters.scheduled_at}}"
+      },
+      {
+        "name": "duration_hours",
+        "value": "{{parameters.duration_hours}}"
+      },
+      {
+        "name": "service_type",
+        "value": "{{parameters.service_type}}"
+      },
+      {
+        "name": "notes",
+        "value": "{{parameters.notes}}"
+      },
+      {
+        "name": "cleaner_id",
+        "value": "{{parameters.cleaner_id}}"
+      },
+      {
+        "name": "checklist_id",
+        "value": "{{parameters.checklist_id}}"
+      }
+    ]
+  },
+  "response": {
+    "output": "{{ifempty(body.data, body)}}"
+  },
+  "parameters": [
+    {
+      "name": "property_id",
+      "type": "select",
+      "label": "Property",
+      "help": "The property to clean.",
+      "required": true,
+      "options": {
+        "store": "{{rpc('listProperties')}}"
+      }
+    },
+    {
+      "name": "scheduled_at",
+      "type": "date",
+      "label": "Scheduled Date & Time",
+      "help": "When the cleaning should start.",
+      "required": true,
+      "time": true
+    },
+    {
+      "name": "duration_hours",
+      "type": "number",
+      "label": "Duration (Hours)",
+      "help": "How many hours the cleaning should take (e.g. 2.5).",
+      "required": true
+    },
+    {
+      "name": "service_type",
+      "type": "select",
+      "label": "Service Type",
+      "required": true,
+      "options": [
+        { "label": "Standard Clean", "value": "standard" },
+        { "label": "Deep Clean", "value": "deep" },
+        { "label": "Move-In / Move-Out", "value": "move_in_out" },
+        { "label": "Turnover", "value": "turnover" },
+        { "label": "Post-Construction", "value": "post_construction" }
+      ]
+    },
+    {
+      "name": "notes",
+      "type": "text",
+      "label": "Notes",
+      "help": "Special instructions for the cleaner.",
+      "required": false,
+      "multiline": true
+    },
+    {
+      "name": "cleaner_id",
+      "type": "select",
+      "label": "Assign Cleaner",
+      "help": "Optionally assign a specific cleaner to this booking.",
+      "required": false,
+      "options": {
+        "store": "{{rpc('listCleaners')}}"
+      }
+    },
+    {
+      "name": "checklist_id",
+      "type": "select",
+      "label": "Attach Checklist",
+      "help": "Optionally attach a checklist to this booking.",
+      "required": false,
+      "options": {
+        "store": "{{rpc('listChecklists')}}"
+      }
+    }
+  ],
+  "interface": [
+    { "name": "id", "type": "uinteger", "label": "Booking ID" },
+    { "name": "status", "type": "text", "label": "Status" },
+    { "name": "scheduled_at", "type": "date", "label": "Scheduled At" },
+    { "name": "duration_hours", "type": "number", "label": "Duration (Hours)" },
+    { "name": "service_type", "type": "text", "label": "Service Type" },
+    { "name": "notes", "type": "text", "label": "Notes" },
+    { "name": "property_id", "type": "uinteger", "label": "Property ID" },
+    { "name": "property_address", "type": "text", "label": "Property Address" },
+    { "name": "cleaner_id", "type": "uinteger", "label": "Cleaner ID" },
+    { "name": "checklist_id", "type": "uinteger", "label": "Checklist ID" },
+    { "name": "created_at", "type": "date", "label": "Created At" }
+  ]
+}

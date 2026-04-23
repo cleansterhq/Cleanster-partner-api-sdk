@@ -1,0 +1,74 @@
+{
+  "name": "watchNewBookings",
+  "label": "Watch New Bookings",
+  "description": "Triggers when a new booking is created in Cleanster.",
+  "connection": "apikey",
+  "actionType": "read",
+  "typeId": 4,
+  "epoch": {
+    "default": "yesterday"
+  },
+  "url": "/v1/bookings",
+  "method": "GET",
+  "qs": [
+    {
+      "name": "sort_by",
+      "value": "created_at"
+    },
+    {
+      "name": "sort_order",
+      "value": "desc"
+    },
+    {
+      "name": "per_page",
+      "value": "{{parameters.limit}}"
+    }
+  ],
+  "response": {
+    "iterate": "{{ifempty(body.data, body)}}",
+    "output": {
+      "id": "{{item.id}}",
+      "status": "{{item.status}}",
+      "scheduled_at": "{{item.scheduled_at}}",
+      "duration_hours": "{{item.duration_hours}}",
+      "service_type": "{{item.service_type}}",
+      "notes": "{{item.notes}}",
+      "property_id": "{{item.property.id}}",
+      "property_address": "{{item.property.address}}",
+      "property_city": "{{item.property.city}}",
+      "property_state": "{{item.property.state}}",
+      "property_zip": "{{item.property.zip}}",
+      "cleaner_id": "{{item.cleaner.id}}",
+      "cleaner_name": "{{item.cleaner.name}}",
+      "created_at": "{{item.created_at}}"
+    },
+    "uid": "{{item.id}}",
+    "date": "{{item.created_at}}"
+  },
+  "parameters": [
+    {
+      "name": "limit",
+      "type": "number",
+      "label": "Limit",
+      "help": "Maximum number of bookings to return per cycle.",
+      "default": 10,
+      "advanced": true
+    }
+  ],
+  "interface": [
+    { "name": "id", "type": "uinteger", "label": "Booking ID" },
+    { "name": "status", "type": "text", "label": "Status" },
+    { "name": "scheduled_at", "type": "date", "label": "Scheduled At" },
+    { "name": "duration_hours", "type": "number", "label": "Duration (Hours)" },
+    { "name": "service_type", "type": "text", "label": "Service Type" },
+    { "name": "notes", "type": "text", "label": "Notes" },
+    { "name": "property_id", "type": "uinteger", "label": "Property ID" },
+    { "name": "property_address", "type": "text", "label": "Property Address" },
+    { "name": "property_city", "type": "text", "label": "Property City" },
+    { "name": "property_state", "type": "text", "label": "Property State" },
+    { "name": "property_zip", "type": "text", "label": "Property Zip" },
+    { "name": "cleaner_id", "type": "uinteger", "label": "Cleaner ID" },
+    { "name": "cleaner_name", "type": "text", "label": "Cleaner Name" },
+    { "name": "created_at", "type": "date", "label": "Created At" }
+  ]
+}

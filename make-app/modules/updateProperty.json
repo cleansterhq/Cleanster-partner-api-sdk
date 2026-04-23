@@ -1,0 +1,113 @@
+{
+  "name": "updateProperty",
+  "label": "Update a Property",
+  "description": "Updates an existing property in Cleanster.",
+  "connection": "apikey",
+  "actionType": "create",
+  "url": "/v1/properties/{{parameters.property_id}}",
+  "method": "PUT",
+  "headers": [],
+  "qs": [],
+  "body": {
+    "mode": "json",
+    "content": [
+      { "name": "name", "value": "{{parameters.name}}" },
+      { "name": "address", "value": "{{parameters.address}}" },
+      { "name": "city", "value": "{{parameters.city}}" },
+      { "name": "state", "value": "{{parameters.state}}" },
+      { "name": "zip", "value": "{{parameters.zip}}" },
+      { "name": "bedrooms", "value": "{{parameters.bedrooms}}" },
+      { "name": "bathrooms", "value": "{{parameters.bathrooms}}" },
+      { "name": "square_feet", "value": "{{parameters.square_feet}}" },
+      { "name": "notes", "value": "{{parameters.notes}}" },
+      { "name": "access_instructions", "value": "{{parameters.access_instructions}}" }
+    ]
+  },
+  "response": {
+    "output": "{{ifempty(body.data, body)}}"
+  },
+  "parameters": [
+    {
+      "name": "property_id",
+      "type": "select",
+      "label": "Property",
+      "help": "Select the property to update.",
+      "required": true,
+      "options": {
+        "store": "{{rpc('listProperties')}}"
+      }
+    },
+    {
+      "name": "name",
+      "type": "text",
+      "label": "Property Name",
+      "required": false
+    },
+    {
+      "name": "address",
+      "type": "text",
+      "label": "Street Address",
+      "required": false
+    },
+    {
+      "name": "city",
+      "type": "text",
+      "label": "City",
+      "required": false
+    },
+    {
+      "name": "state",
+      "type": "text",
+      "label": "State",
+      "help": "Two-letter state code (e.g. GA, CA, NY).",
+      "required": false
+    },
+    {
+      "name": "zip",
+      "type": "text",
+      "label": "Zip Code",
+      "required": false
+    },
+    {
+      "name": "bedrooms",
+      "type": "uinteger",
+      "label": "Bedrooms",
+      "required": false
+    },
+    {
+      "name": "bathrooms",
+      "type": "number",
+      "label": "Bathrooms",
+      "required": false
+    },
+    {
+      "name": "square_feet",
+      "type": "uinteger",
+      "label": "Square Feet",
+      "required": false
+    },
+    {
+      "name": "notes",
+      "type": "text",
+      "label": "Notes",
+      "required": false,
+      "multiline": true
+    },
+    {
+      "name": "access_instructions",
+      "type": "text",
+      "label": "Access Instructions",
+      "required": false,
+      "multiline": true
+    }
+  ],
+  "interface": [
+    { "name": "id", "type": "uinteger", "label": "Property ID" },
+    { "name": "name", "type": "text", "label": "Property Name" },
+    { "name": "address", "type": "text", "label": "Address" },
+    { "name": "city", "type": "text", "label": "City" },
+    { "name": "state", "type": "text", "label": "State" },
+    { "name": "zip", "type": "text", "label": "Zip Code" },
+    { "name": "updated_at", "type": "date", "label": "Updated At" }
+  ]
+}

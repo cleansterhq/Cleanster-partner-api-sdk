@@ -1,0 +1,15 @@
+{
+  "name": "listChecklists",
+  "label": "List Checklists",
+  "url": "/v1/checklists",
+  "method": "GET",
+  "qs": [
+    {
+      "name": "per_page",
+      "value": "100"
+    }
+  ],
+  "response": {
+    "output": "{{map(ifempty(body.data, body), 'item'; 'value', item.id; 'label', item.name)}}"
+  }
+}

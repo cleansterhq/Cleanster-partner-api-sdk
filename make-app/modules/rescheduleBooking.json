@@ -1,0 +1,58 @@
+{
+  "name": "rescheduleBooking",
+  "label": "Reschedule a Booking",
+  "description": "Moves an existing booking to a new date and time.",
+  "connection": "apikey",
+  "actionType": "create",
+  "url": "/v1/bookings/{{parameters.booking_id}}/reschedule",
+  "method": "POST",
+  "headers": [],
+  "qs": [],
+  "body": {
+    "mode": "json",
+    "content": [
+      {
+        "name": "scheduled_at",
+        "value": "{{parameters.new_scheduled_at}}"
+      },
+      {
+        "name": "duration_hours",
+        "value": "{{parameters.duration_hours}}"
+      }
+    ]
+  },
+  "response": {
+    "output": "{{ifempty(body.data, body)}}"
+  },
+  "parameters": [
+    {
+      "name": "booking_id",
+      "type": "uinteger",
+      "label": "Booking ID",
+      "help": "The ID of the booking to reschedule.",
+      "required": true
+    },
+    {
+      "name": "new_scheduled_at",
+      "type": "date",
+      "label": "New Date & Time",
+      "help": "The new date and time for the cleaning.",
+      "required": true,
+      "time": true
+    },
+    {
+      "name": "duration_hours",
+      "type": "number",
+      "label": "New Duration (Hours)",
+      "help": "Update the duration if needed. Leave blank to keep the current duration.",
+      "required": false
+    }
+  ],
+  "interface": [
+    { "name": "id", "type": "uinteger", "label": "Booking ID" },
+    { "name": "status", "type": "text", "label": "Status" },
+    { "name": "scheduled_at", "type": "date", "label": "New Scheduled At" },
+    { "name": "duration_hours", "type": "number", "label": "Duration (Hours)" },
+    { "name": "rescheduled_at", "type": "date", "label": "Rescheduled At" }
+  ]
+}

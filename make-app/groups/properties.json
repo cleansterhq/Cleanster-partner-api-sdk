@@ -1,0 +1,11 @@
+{
+  "name": "properties",
+  "label": "Properties",
+  "modules": [
+    "watchNewProperties",
+    "createProperty",
+    "updateProperty",
+    "searchProperty",
+    "getProperty"
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "name": "searchCleaner",
+  "label": "Search Cleaners",
+  "description": "Searches for cleaners by name, email, or status.",
+  "connection": "apikey",
+  "actionType": "read",
+  "typeId": 9,
+  "url": "/v1/cleaners",
+  "method": "GET",
+  "qs": [
+    { "name": "search", "value": "{{parameters.search}}" },
+    { "name": "status", "value": "{{parameters.status}}" },
+    { "name": "per_page", "value": "{{parameters.limit}}" }
+  ],
+  "response": {
+    "iterate": "{{ifempty(body.data, body)}}",
+    "output": {
+      "id": "{{item.id}}",
+      "name": "{{item.name}}",
+      "email": "{{item.email}}",
+      "phone": "{{item.phone}}",
+      "status": "{{item.status}}",
+      "rating": "{{item.rating}}",
+      "total_jobs": "{{item.total_jobs}}",
+      "created_at": "{{item.created_at}}"
+    }
+  },
+  "parameters": [
+    {
+      "name": "search",
+      "type": "text",
+      "label": "Search",
+      "help": "Search by cleaner name or email (partial match).",
+      "required": false
+    },
+    {
+      "name": "status",
+      "type": "select",
+      "label": "Status",
+      "required": false,
+      "options": [
+        { "label": "— Any —", "value": "" },
+        { "label": "Active", "value": "active" },
+        { "label": "Inactive", "value": "inactive" },
+        { "label": "Pending", "value": "pending" }
+      ]
+    },
+    {
+      "name": "limit",
+      "type": "number",
+      "label": "Maximum Results",
+      "default": 20,
+      "advanced": true
+    }
+  ],
+  "interface": [
+    { "name": "id", "type": "uinteger", "label": "Cleaner ID" },
+    { "name": "name", "type": "text", "label": "Name" },
+    { "name": "email", "type": "email", "label": "Email" },
+    { "name": "phone", "type": "text", "label": "Phone" },
+    { "name": "status", "type": "text", "label": "Status" },
+    { "name": "rating", "type": "number", "label": "Rating" },
+    { "name": "total_jobs", "type": "uinteger", "label": "Total Jobs Completed" },
+    { "name": "created_at", "type": "date", "label": "Member Since" }
+  ]
+}

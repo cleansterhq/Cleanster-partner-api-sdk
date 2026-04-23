@@ -1,0 +1,19 @@
+{
+  "name": "listCleaners",
+  "label": "List Cleaners",
+  "url": "/v1/cleaners",
+  "method": "GET",
+  "qs": [
+    {
+      "name": "per_page",
+      "value": "100"
+    },
+    {
+      "name": "status",
+      "value": "active"
+    }
+  ],
+  "response": {
+    "output": "{{map(ifempty(body.data, body), 'item'; 'value', item.id; 'label', item.name)}}"
+  }
+}

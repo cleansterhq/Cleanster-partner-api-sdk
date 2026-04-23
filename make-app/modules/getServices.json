@@ -1,0 +1,30 @@
+{
+  "name": "getServices",
+  "label": "Get Available Services",
+  "description": "Retrieves the list of available cleaning service types from Cleanster.",
+  "connection": "apikey",
+  "actionType": "read",
+  "typeId": 9,
+  "url": "/v1/services",
+  "method": "GET",
+  "response": {
+    "iterate": "{{ifempty(body.data, body)}}",
+    "output": {
+      "id": "{{item.id}}",
+      "name": "{{item.name}}",
+      "slug": "{{item.slug}}",
+      "description": "{{item.description}}",
+      "base_duration_hours": "{{item.base_duration_hours}}",
+      "active": "{{item.active}}"
+    }
+  },
+  "parameters": [],
+  "interface": [
+    { "name": "id", "type": "uinteger", "label": "Service ID" },
+    { "name": "name", "type": "text", "label": "Service Name" },
+    { "name": "slug", "type": "text", "label": "Slug" },
+    { "name": "description", "type": "text", "label": "Description" },
+    { "name": "base_duration_hours", "type": "number", "label": "Base Duration (Hours)" },
+    { "name": "active", "type": "boolean", "label": "Active" }
+  ]
+}

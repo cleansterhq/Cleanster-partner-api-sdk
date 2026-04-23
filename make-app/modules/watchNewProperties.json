@@ -1,0 +1,69 @@
+{
+  "name": "watchNewProperties",
+  "label": "Watch New Properties",
+  "description": "Triggers when a new property is added to Cleanster.",
+  "connection": "apikey",
+  "actionType": "read",
+  "typeId": 4,
+  "epoch": {
+    "default": "yesterday"
+  },
+  "url": "/v1/properties",
+  "method": "GET",
+  "qs": [
+    {
+      "name": "sort_by",
+      "value": "created_at"
+    },
+    {
+      "name": "sort_order",
+      "value": "desc"
+    },
+    {
+      "name": "per_page",
+      "value": "{{parameters.limit}}"
+    }
+  ],
+  "response": {
+    "iterate": "{{ifempty(body.data, body)}}",
+    "output": {
+      "id": "{{item.id}}",
+      "name": "{{item.name}}",
+      "address": "{{item.address}}",
+      "city": "{{item.city}}",
+      "state": "{{item.state}}",
+      "zip": "{{item.zip}}",
+      "bedrooms": "{{item.bedrooms}}",
+      "bathrooms": "{{item.bathrooms}}",
+      "square_feet": "{{item.square_feet}}",
+      "notes": "{{item.notes}}",
+      "access_instructions": "{{item.access_instructions}}",
+      "created_at": "{{item.created_at}}"
+    },
+    "uid": "{{item.id}}",
+    "date": "{{item.created_at}}"
+  },
+  "parameters": [
+    {
+      "name": "limit",
+      "type": "number",
+      "label": "Limit",
+      "default": 10,
+      "advanced": true
+    }
+  ],
+  "interface": [
+    { "name": "id", "type": "uinteger", "label": "Property ID" },
+    { "name": "name", "type": "text", "label": "Property Name" },
+    { "name": "address", "type": "text", "label": "Address" },
+    { "name": "city", "type": "text", "label": "City" },
+    { "name": "state", "type": "text", "label": "State" },
+    { "name": "zip", "type": "text", "label": "Zip Code" },
+    { "name": "bedrooms", "type": "uinteger", "label": "Bedrooms" },
+    { "name": "bathrooms", "type": "number", "label": "Bathrooms" },
+    { "name": "square_feet", "type": "uinteger", "label": "Square Feet" },
+    { "name": "notes", "type": "text", "label": "Notes" },
+    { "name": "access_instructions", "type": "text", "label": "Access Instructions" },
+    { "name": "created_at", "type": "date", "label": "Created At" }
+  ]
+}

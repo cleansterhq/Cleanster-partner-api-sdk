@@ -1,0 +1,40 @@
+{
+  "name": "getProperty",
+  "label": "Get a Property",
+  "description": "Retrieves a single property by its ID.",
+  "connection": "apikey",
+  "actionType": "read",
+  "typeId": 9,
+  "url": "/v1/properties/{{parameters.property_id}}",
+  "method": "GET",
+  "response": {
+    "output": "{{ifempty(body.data, body)}}"
+  },
+  "parameters": [
+    {
+      "name": "property_id",
+      "type": "select",
+      "label": "Property",
+      "help": "Select the property to retrieve.",
+      "required": true,
+      "options": {
+        "store": "{{rpc('listProperties')}}"
+      }
+    }
+  ],
+  "interface": [
+    { "name": "id", "type": "uinteger", "label": "Property ID" },
+    { "name": "name", "type": "text", "label": "Property Name" },
+    { "name": "address", "type": "text", "label": "Address" },
+    { "name": "city", "type": "text", "label": "City" },
+    { "name": "state", "type": "text", "label": "State" },
+    { "name": "zip", "type": "text", "label": "Zip Code" },
+    { "name": "bedrooms", "type": "uinteger", "label": "Bedrooms" },
+    { "name": "bathrooms", "type": "number", "label": "Bathrooms" },
+    { "name": "square_feet", "type": "uinteger", "label": "Square Feet" },
+    { "name": "notes", "type": "text", "label": "Notes" },
+    { "name": "access_instructions", "type": "text", "label": "Access Instructions" },
+    { "name": "created_at", "type": "date", "label": "Created At" },
+    { "name": "updated_at", "type": "date", "label": "Updated At" }
+  ]
+}

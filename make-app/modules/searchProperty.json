@@ -1,0 +1,59 @@
+{
+  "name": "searchProperty",
+  "label": "Search Properties",
+  "description": "Searches for properties by name or address.",
+  "connection": "apikey",
+  "actionType": "read",
+  "typeId": 9,
+  "url": "/v1/properties",
+  "method": "GET",
+  "qs": [
+    { "name": "search", "value": "{{parameters.search}}" },
+    { "name": "per_page", "value": "{{parameters.limit}}" }
+  ],
+  "response": {
+    "iterate": "{{ifempty(body.data, body)}}",
+    "output": {
+      "id": "{{item.id}}",
+      "name": "{{item.name}}",
+      "address": "{{item.address}}",
+      "city": "{{item.city}}",
+      "state": "{{item.state}}",
+      "zip": "{{item.zip}}",
+      "bedrooms": "{{item.bedrooms}}",
+      "bathrooms": "{{item.bathrooms}}",
+      "square_feet": "{{item.square_feet}}",
+      "notes": "{{item.notes}}",
+      "created_at": "{{item.created_at}}"
+    }
+  },
+  "parameters": [
+    {
+      "name": "search",
+      "type": "text",
+      "label": "Search",
+      "help": "Search by property name or street address (partial match).",
+      "required": false
+    },
+    {
+      "name": "limit",
+      "type": "number",
+      "label": "Maximum Results",
+      "default": 20,
+      "advanced": true
+    }
+  ],
+  "interface": [
+    { "name": "id", "type": "uinteger", "label": "Property ID" },
+    { "name": "name", "type": "text", "label": "Property Name" },
+    { "name": "address", "type": "text", "label": "Address" },
+    { "name": "city", "type": "text", "label": "City" },
+    { "name": "state", "type": "text", "label": "State" },
+    { "name": "zip", "type": "text", "label": "Zip Code" },
+    { "name": "bedrooms", "type": "uinteger", "label": "Bedrooms" },
+    { "name": "bathrooms", "type": "number", "label": "Bathrooms" },
+    { "name": "square_feet", "type": "uinteger", "label": "Square Feet" },
+    { "name": "notes", "type": "text", "label": "Notes" },
+    { "name": "created_at", "type": "date", "label": "Created At" }
+  ]
+}
