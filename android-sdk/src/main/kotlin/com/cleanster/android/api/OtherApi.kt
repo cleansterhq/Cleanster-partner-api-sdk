@@ -29,6 +29,15 @@ internal interface OtherService {
 
     @GET("v1/coupons")
     suspend fun getCoupons(): ApiResponse<List<Coupon>>
+
+    @GET("v1/cleaners")
+    suspend fun listCleaners(
+        @Query("status") status: String?,
+        @Query("search") search: String?,
+    ): ApiResponse<List<Cleaner>>
+
+    @GET("v1/cleaners/{id}")
+    suspend fun getCleaner(@Path("id") cleanerId: Int): ApiResponse<Cleaner>
 }
 
 class OtherApi(retrofit: Retrofit) {
@@ -53,4 +62,9 @@ class OtherApi(retrofit: Retrofit) {
         wrap { service.getAvailableCleaners(request) }
 
     suspend fun getCoupons() = wrap { service.getCoupons() }
+
+    suspend fun listCleaners(status: String? = null, search: String? = null) =
+        wrap { service.listCleaners(status, search) }
+
+    suspend fun getCleaner(cleanerId: Int) = wrap { service.getCleaner(cleanerId) }
 }

@@ -675,6 +675,20 @@ RSpec.describe Cleanster do
         api.get_coupons
       end
     end
+
+    describe "#list_cleaners" do
+      it "GETs /v1/cleaners" do
+        allow(http).to receive(:get).with("/v1/cleaners", params: { status: nil, search: nil }).and_return(ok_response([]))
+        api.list_cleaners
+      end
+    end
+
+    describe "#get_cleaner" do
+      it "GETs /v1/cleaners/:id" do
+        allow(http).to receive(:get).with("/v1/cleaners/789").and_return(ok_response({}))
+        api.get_cleaner(789)
+      end
+    end
   end
 
   # ---------------------------------------------------------------------------

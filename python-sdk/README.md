@@ -851,6 +851,20 @@ resp = client.other.get_available_cleaners(availability_request)
 resp = client.other.get_coupons()
 ```
 
+#### List Cleaners
+**`GET /v1/cleaners`**
+
+```python
+resp = client.other.list_cleaners(status="active", search="Jane")
+```
+
+#### Get Cleaner
+**`GET /v1/cleaners/{cleanerId}`**
+
+```python
+resp = client.other.get_cleaner(cleaner_id=789)
+```
+
 ---
 
 ### Blacklist

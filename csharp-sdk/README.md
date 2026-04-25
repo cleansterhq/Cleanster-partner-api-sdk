@@ -769,6 +769,20 @@ var resp = await client.Other.GetAvailableCleanersAsync(availabilityRequest);
 var resp = await client.Other.GetCouponsAsync();
 ```
 
+#### List Cleaners
+**`GET /v1/cleaners`**
+
+```csharp
+var resp = await client.Other.ListCleanersAsync(status: "active", search: "Jane");
+```
+
+#### Get Cleaner
+**`GET /v1/cleaners/{cleanerId}`**
+
+```csharp
+var resp = await client.Other.GetCleanerAsync(789);
+```
+
 ---
 
 ### Blacklist

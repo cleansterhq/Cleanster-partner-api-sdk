@@ -835,6 +835,26 @@ public class CleansterTests
         http.VerifyAll();
     }
 
+    [Fact]
+    public async Task Other_ListCleaners()
+    {
+        var http = MockHttp();
+        http.Setup(h => h.GetAsync("/v1/cleaners", null, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(MakeResponse("[]"));
+        await new OtherApi(http.Object).ListCleanersAsync();
+        http.VerifyAll();
+    }
+
+    [Fact]
+    public async Task Other_GetCleaner()
+    {
+        var http = MockHttp();
+        http.Setup(h => h.GetAsync("/v1/cleaners/789", null, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(MakeResponse("{}"));
+        await new OtherApi(http.Object).GetCleanerAsync(789);
+        http.VerifyAll();
+    }
+
     // =========================================================================
     // BlacklistApi
     // =========================================================================

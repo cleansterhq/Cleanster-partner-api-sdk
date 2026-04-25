@@ -79,4 +79,21 @@ export class OtherApi {
   getCoupons(): Promise<ApiResponse<unknown>> {
     return this.http.get("/v1/coupons");
   }
+
+  /**
+   * List all cleaners, with optional status and search filters.
+   * @param status  Filter by cleaner status ('active', 'inactive', 'pending').
+   * @param search  Partial match against cleaner name or email.
+   */
+  listCleaners(status?: string, search?: string): Promise<ApiResponse<unknown>> {
+    return this.http.get("/v1/cleaners", { status, search });
+  }
+
+  /**
+   * Retrieve a single cleaner by their ID.
+   * @param cleanerId  The cleaner's unique ID.
+   */
+  getCleaner(cleanerId: number): Promise<ApiResponse<unknown>> {
+    return this.http.get(`/v1/cleaners/${cleanerId}`);
+  }
 }

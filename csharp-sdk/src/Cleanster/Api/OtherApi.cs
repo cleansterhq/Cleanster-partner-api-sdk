@@ -83,4 +83,25 @@ public sealed class OtherApi
         var root = await _http.GetAsync("/v1/coupons", ct: ct);
         return JsonHelper.ParseRaw(root);
     }
+
+    /// <summary>List all cleaners, with optional status and search filters.</summary>
+    /// <param name="status">Filter by cleaner status ('active', 'inactive', 'pending').</param>
+    /// <param name="search">Partial match against cleaner name or email.</param>
+    public async Task<ApiResponse<JsonElement>> ListCleanersAsync(
+        string? status = null, string? search = null, CancellationToken ct = default)
+    {
+        var query = new Dictionary<string, string>();
+        if (status is not null) query["status"] = status;
+        if (search is not null) query["search"] = search;
+        var root = await _http.GetAsync("/v1/cleaners", query.Count > 0 ? query : null, ct);
+        return JsonHelper.ParseRaw(root);
+    }
+
+    /// <summary>Retrieve a single cleaner by their ID.</summary>
+    /// <param name="cleanerId">The cleaner's unique ID.</param>
+    public async Task<ApiResponse<JsonElement>> GetCleanerAsync(int cleanerId, CancellationToken ct = default)
+    {
+        var root = await _http.GetAsync($"/v1/cleaners/{cleanerId}", ct: ct);
+        return JsonHelper.ParseRaw(root);
+    }
 }

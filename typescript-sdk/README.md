@@ -770,6 +770,20 @@ const resp = await client.other.getAvailableCleaners(availabilityRequest);
 const resp = await client.other.getCoupons();
 ```
 
+#### List Cleaners
+**`GET /v1/cleaners`**
+
+```typescript
+const resp = await client.other.listCleaners({ status: "active", search: "Jane" });
+```
+
+#### Get Cleaner
+**`GET /v1/cleaners/{cleanerId}`**
+
+```typescript
+const resp = await client.other.getCleaner(789);
+```
+
 ---
 
 ### Blacklist

@@ -102,3 +102,37 @@ class OtherApi:
         """Return all valid coupon codes available for use."""
         raw = self._http.get("/v1/coupons")
         return ApiResponse.from_dict(raw)
+
+    def list_cleaners(
+        self, status: Optional[str] = None, search: Optional[str] = None
+    ) -> ApiResponse:
+        """
+        List all cleaners, with optional status and search filters.
+
+        Args:
+            status: Filter by cleaner status ('active', 'inactive', 'pending').
+            search: Partial match against cleaner name or email.
+
+        Returns:
+            ApiResponse with data as a list of cleaner dicts.
+        """
+        params: Dict[str, Any] = {}
+        if status is not None:
+            params["status"] = status
+        if search is not None:
+            params["search"] = search
+        raw = self._http.get("/v1/cleaners", params=params or None)
+        return ApiResponse.from_dict(raw)
+
+    def get_cleaner(self, cleaner_id: int) -> ApiResponse:
+        """
+        Retrieve a single cleaner by their ID.
+
+        Args:
+            cleaner_id: The cleaner's unique ID.
+
+        Returns:
+            ApiResponse with data as a cleaner dict.
+        """
+        raw = self._http.get(f"/v1/cleaners/{cleaner_id}")
+        return ApiResponse.from_dict(raw)

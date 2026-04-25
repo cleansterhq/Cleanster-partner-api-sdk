@@ -733,6 +733,20 @@ $resp = $client->other()->getAvailableCleaners($availabilityRequest);
 $resp = $client->other()->getCoupons();
 ```
 
+#### List Cleaners
+**`GET /v1/cleaners`**
+
+```php
+$resp = $client->other()->listCleaners(status: 'active', search: 'Jane');
+```
+
+#### Get Cleaner
+**`GET /v1/cleaners/{cleanerId}`**
+
+```php
+$resp = $client->other()->getCleaner(789);
+```
+
 ---
 
 ### Blacklist

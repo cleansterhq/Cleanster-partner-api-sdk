@@ -134,4 +134,24 @@ class OtherTest {
         mock.succeedList(); client.other.getCoupons()
         assertTrue(mock.capturedUrl?.endsWith("/v1/coupons") == true)
     }
+
+    @Test fun `listCleaners sends GET`() = runTest {
+        mock.succeedList(); client.other.listCleaners()
+        assertEquals("GET", mock.capturedMethod)
+    }
+
+    @Test fun `listCleaners correct path`() = runTest {
+        mock.succeedList(); client.other.listCleaners()
+        assertTrue(mock.capturedUrl?.contains("/v1/cleaners") == true)
+    }
+
+    @Test fun `getCleaner sends GET`() = runTest {
+        mock.succeedList(); client.other.getCleaner(789)
+        assertEquals("GET", mock.capturedMethod)
+    }
+
+    @Test fun `getCleaner correct path`() = runTest {
+        mock.succeedList(); client.other.getCleaner(789)
+        assertTrue(mock.capturedUrl?.endsWith("/v1/cleaners/789") == true)
+    }
 }

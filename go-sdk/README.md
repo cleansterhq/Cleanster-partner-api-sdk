@@ -760,6 +760,20 @@ resp, err := client.Other.GetAvailableCleaners(ctx, availabilityReq)
 resp, err := client.Other.GetCoupons(ctx)
 ```
 
+#### List Cleaners
+**`GET /v1/cleaners`**
+
+```go
+resp, err := client.Other.ListCleaners(ctx, "active", "Jane")
+```
+
+#### Get Cleaner
+**`GET /v1/cleaners/{cleanerId}`**
+
+```go
+resp, err := client.Other.GetCleaner(ctx, 789)
+```
+
 ---
 
 ### Blacklist

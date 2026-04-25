@@ -746,6 +746,24 @@ class TestOtherApi(unittest.TestCase):
 
         http.get.assert_called_once_with("/v1/coupons")
 
+    def test_list_cleaners(self):
+        http = make_http()
+        http.get.return_value = ok([])
+        api = OtherApi(http)
+
+        api.list_cleaners()
+
+        http.get.assert_called_once_with("/v1/cleaners", params=None)
+
+    def test_get_cleaner(self):
+        http = make_http()
+        http.get.return_value = ok({})
+        api = OtherApi(http)
+
+        api.get_cleaner(789)
+
+        http.get.assert_called_once_with("/v1/cleaners/789")
+
 
 # ---------------------------------------------------------------------------
 # BlacklistApi Tests

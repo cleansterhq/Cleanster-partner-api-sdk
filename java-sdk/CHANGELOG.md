@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+- `OtherApi` — `listCleaners` (`GET /v1/cleaners`) and `getCleaner` (`GET /v1/cleaners/{id}`) to list all cleaners and retrieve a single cleaner by ID.
+
 ## [1.0.0] - 2025-04-22
 
 ### Added

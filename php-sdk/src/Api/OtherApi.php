@@ -95,4 +95,29 @@ final class OtherApi
         $raw = $this->http->get('/v1/coupons');
         return new ApiResponse($raw['status'] ?? 200, $raw['message'] ?? 'OK', $raw['data'] ?? []);
     }
+
+    /**
+     * List all cleaners, with optional status and search filters.
+     *
+     * @param string|null $status Filter by status ('active', 'inactive', 'pending').
+     * @param string|null $search Partial match against cleaner name or email.
+     */
+    public function listCleaners(?string $status = null, ?string $search = null): ApiResponse
+    {
+        $params = array_filter(['status' => $status, 'search' => $search]);
+        $path = '/v1/cleaners' . ($params ? '?' . http_build_query($params) : '');
+        $raw = $this->http->get($path);
+        return new ApiResponse($raw['status'] ?? 200, $raw['message'] ?? 'OK', $raw['data'] ?? []);
+    }
+
+    /**
+     * Retrieve a single cleaner by their ID.
+     *
+     * @param int $cleanerId The cleaner's unique ID.
+     */
+    public function getCleaner(int $cleanerId): ApiResponse
+    {
+        $raw = $this->http->get("/v1/cleaners/{$cleanerId}");
+        return new ApiResponse($raw['status'] ?? 200, $raw['message'] ?? 'OK', $raw['data'] ?? []);
+    }
 }

@@ -66,6 +66,21 @@ module Cleanster
         Models::ApiResponse.from_hash(raw)
       end
 
+      # List all cleaners, with optional status and search filters.
+      # @param status [String, nil] Filter by status ('active', 'inactive', 'pending').
+      # @param search [String, nil] Partial match against cleaner name or email.
+      def list_cleaners(status: nil, search: nil)
+        raw = @http.get("/v1/cleaners", params: { status: status, search: search })
+        Models::ApiResponse.from_hash(raw)
+      end
+
+      # Retrieve a single cleaner by their ID.
+      # @param cleaner_id [Integer] The cleaner's unique ID.
+      def get_cleaner(cleaner_id)
+        raw = @http.get("/v1/cleaners/#{cleaner_id}")
+        Models::ApiResponse.from_hash(raw)
+      end
+
       private
 
       def camel_keys(hash)

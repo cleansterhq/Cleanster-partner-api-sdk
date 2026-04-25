@@ -66,4 +66,24 @@ public final class OtherApi {
     public func getCoupons() async throws -> ApiResponse<AnyCodable> {
         return try await client.requestRaw(method: "GET", path: "/v1/coupons")
     }
+
+    /// List all cleaners, with optional status and search filters.
+    ///
+    /// - Parameters:
+    ///   - status: Filter by cleaner status ('active', 'inactive', 'pending'). Pass nil to omit.
+    ///   - search: Partial match against cleaner name or email. Pass nil to omit.
+    public func listCleaners(status: String? = nil, search: String? = nil) async throws -> ApiResponse<AnyCodable> {
+        var query: [URLQueryItem] = []
+        if let s = status { query.append(URLQueryItem(name: "status", value: s)) }
+        if let s = search { query.append(URLQueryItem(name: "search", value: s)) }
+        return try await client.requestRaw(method: "GET", path: "/v1/cleaners",
+                                           queryItems: query.isEmpty ? nil : query)
+    }
+
+    /// Retrieve a single cleaner by their ID.
+    ///
+    /// - Parameter cleanerId: The cleaner's unique ID.
+    public func getCleaner(cleanerId: Int) async throws -> ApiResponse<AnyCodable> {
+        return try await client.requestRaw(method: "GET", path: "/v1/cleaners/\(cleanerId)")
+    }
 }

@@ -891,6 +891,28 @@ class CleansterTest extends TestCase
         (new OtherApi($http))->getCoupons();
     }
 
+    public function testListCleaners(): void
+    {
+        $http = $this->mockHttp();
+        $http->expects($this->once())
+             ->method('get')
+             ->with('/v1/cleaners')
+             ->willReturn($this->ok([]));
+
+        (new OtherApi($http))->listCleaners();
+    }
+
+    public function testGetCleaner(): void
+    {
+        $http = $this->mockHttp();
+        $http->expects($this->once())
+             ->method('get')
+             ->with('/v1/cleaners/789')
+             ->willReturn($this->ok([]));
+
+        (new OtherApi($http))->getCleaner(789);
+    }
+
     // =========================================================================
     // BlacklistApi
     // =========================================================================

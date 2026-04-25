@@ -93,4 +93,29 @@ public class OtherApi {
     public ApiResponse<Object> getCoupons() {
         return httpClient.get("/v1/coupons", new TypeReference<ApiResponse<Object>>() {});
     }
+
+    /**
+     * List all cleaners, with optional status and search filters.
+     *
+     * @param status Filter by cleaner status ('active', 'inactive', 'pending'). Pass null to omit.
+     * @param search Partial match against cleaner name or email. Pass null to omit.
+     * @return API response with list of cleaner objects
+     */
+    public ApiResponse<Object> listCleaners(String status, String search) {
+        StringBuilder path = new StringBuilder("/v1/cleaners");
+        String sep = "?";
+        if (status != null && !status.isEmpty()) { path.append(sep).append("status=").append(status); sep = "&"; }
+        if (search != null && !search.isEmpty()) { path.append(sep).append("search=").append(search); }
+        return httpClient.get(path.toString(), new TypeReference<ApiResponse<Object>>() {});
+    }
+
+    /**
+     * Retrieve a single cleaner by their ID.
+     *
+     * @param cleanerId The cleaner's unique ID.
+     * @return API response with cleaner details
+     */
+    public ApiResponse<Object> getCleaner(int cleanerId) {
+        return httpClient.get("/v1/cleaners/" + cleanerId, new TypeReference<ApiResponse<Object>>() {});
+    }
 }

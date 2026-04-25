@@ -756,6 +756,30 @@ class CleansterClientTest {
         verify(mockHttp).get(eq("/v1/coupons"), any(TypeReference.class));
     }
 
+    @Test
+    @DisplayName("listCleaners calls GET /v1/cleaners")
+    void listCleaners() {
+        HttpClient mockHttp = mock(HttpClient.class);
+        OtherApi api = new OtherApi(mockHttp);
+        when(mockHttp.get(eq("/v1/cleaners"), any(TypeReference.class))).thenReturn(new ApiResponse<>());
+
+        api.listCleaners(null, null);
+
+        verify(mockHttp).get(eq("/v1/cleaners"), any(TypeReference.class));
+    }
+
+    @Test
+    @DisplayName("getCleaner calls GET /v1/cleaners/{id}")
+    void getCleaner() {
+        HttpClient mockHttp = mock(HttpClient.class);
+        OtherApi api = new OtherApi(mockHttp);
+        when(mockHttp.get(eq("/v1/cleaners/789"), any(TypeReference.class))).thenReturn(new ApiResponse<>());
+
+        api.getCleaner(789);
+
+        verify(mockHttp).get(eq("/v1/cleaners/789"), any(TypeReference.class));
+    }
+
     // ---- BlacklistApi Tests ----
 
     @Test

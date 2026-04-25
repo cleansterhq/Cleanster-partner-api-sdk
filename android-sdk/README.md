@@ -903,6 +903,18 @@ client.checklists.deleteChecklist(77)
 
 ---
 
+#### Upload Checklist Image
+**`POST /v1/checklist/{checklistId}/upload`**
+
+Upload an image for a checklist. The image is sent as `multipart/form-data` in the `image` form field.
+
+```kotlin
+val imageBytes = File("bathroom-guide.jpg").readBytes()
+client.checklists.uploadChecklistImage(105, imageBytes, "bathroom-guide.jpg")
+```
+
+---
+
 ### Other / Reference Data
 
 #### Get Services
@@ -1015,6 +1027,20 @@ available.data?.forEach { println("${it.firstName} ${it.lastName} ⭐ ${it.ratin
 ```kotlin
 val coupons = client.other.getCoupons()
 coupons.data?.forEach { println("${it.code}: ${it.discount}") }
+```
+
+#### List Cleaners
+**`GET /v1/cleaners`**
+
+```kotlin
+val cleaners = client.other.listCleaners(status = "active", search = "Jane")
+```
+
+#### Get Cleaner
+**`GET /v1/cleaners/{cleanerId}`**
+
+```kotlin
+val cleaner = client.other.getCleaner(789)
 ```
 
 ---

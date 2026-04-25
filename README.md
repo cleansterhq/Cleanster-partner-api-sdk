@@ -9,8 +9,8 @@
   <img src="https://img.shields.io/badge/API-Cleanster%20Partner-brightgreen" alt="Cleanster Partner API">
   <img src="https://img.shields.io/badge/SDKs-12%20Languages-blue" alt="12 Languages">
   <img src="https://img.shields.io/badge/MCP%20Server-Claude%20%7C%20AI-blueviolet" alt="MCP Server">
-  <img src="https://img.shields.io/badge/Endpoints-60-orange" alt="60 Endpoints">
-  <img src="https://img.shields.io/badge/Tests-1541%20passing-success" alt="1541 Tests Passing">
+  <img src="https://img.shields.io/badge/Endpoints-62-orange" alt="62 Endpoints">
+  <img src="https://img.shields.io/badge/Tests-1500%20passing-success" alt="1500 Tests Passing">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
 </p>
 
@@ -38,7 +38,7 @@
   - [MCP Server (Claude / AI)](#mcp-server)
 - [Standard Response Format](#standard-response-format)
 - [Error Handling](#error-handling)
-- [All 60 Endpoints](#all-60-endpoints)
+- [All 62 Endpoints](#all-62-endpoints)
   - [Users](#users-api)
   - [Properties](#properties-api)
   - [Bookings](#bookings-api)
@@ -61,20 +61,20 @@
 
 | Language | Folder | Tests Passing | Min Version | Package Manager |
 |---|---|---|---|---|
-| [Java](#java) | [`java-sdk/`](./java-sdk) | 76 | Java 11+ | Maven / Gradle |
-| [Python](#python) | [`python-sdk/`](./python-sdk) | 101 | Python 3.8+ | pip |
-| [TypeScript / Node.js](#typescript--nodejs) | [`typescript-sdk/`](./typescript-sdk) | 87 | Node.js 18+ | npm |
-| [Ruby](#ruby) | [`ruby-sdk/`](./ruby-sdk) | 121 | Ruby 2.7+ | gem |
-| [Go](#go) | [`go-sdk/`](./go-sdk) | 94 | Go 1.21+ | go get |
-| [PHP](#php) | [`php-sdk/`](./php-sdk) | 108 | PHP 8.1+ | Composer |
-| [C# / .NET](#c--net) | [`csharp-sdk/`](./csharp-sdk) | 109 | .NET 8.0+ | NuGet |
-| [Swift](#swift) | [`swift-sdk/`](./swift-sdk) | 166 | Swift 5.9+ / iOS 16+ | Swift Package Manager |
-| [Kotlin](#kotlin) | [`kotlin-sdk/`](./kotlin-sdk) | 166 | Kotlin 1.9+ / JVM 11+ | Gradle |
+| [Java](#java) | [`java-sdk/`](./java-sdk) | 78 | Java 11+ | Maven / Gradle |
+| [Python](#python) | [`python-sdk/`](./python-sdk) | 103 | Python 3.8+ | pip |
+| [TypeScript / Node.js](#typescript--nodejs) | [`typescript-sdk/`](./typescript-sdk) | 89 | Node.js 18+ | npm |
+| [Ruby](#ruby) | [`ruby-sdk/`](./ruby-sdk) | 123 | Ruby 2.7+ | gem |
+| [Go](#go) | [`go-sdk/`](./go-sdk) | 96 | Go 1.21+ | go get |
+| [PHP](#php) | [`php-sdk/`](./php-sdk) | 110 | PHP 8.1+ | Composer |
+| [C# / .NET](#c--net) | [`csharp-sdk/`](./csharp-sdk) | 111 | .NET 8.0+ | NuGet |
+| [Swift](#swift) | [`swift-sdk/`](./swift-sdk) | 170 | Swift 5.9+ / iOS 16+ | Swift Package Manager |
+| [Kotlin](#kotlin) | [`kotlin-sdk/`](./kotlin-sdk) | 170 | Kotlin 1.9+ / JVM 11+ | Gradle |
 | [XML (JAXB)](#xml) | [`xml-sdk/`](./xml-sdk) | 164 | Java 17+ / JAXB 4.0 | Maven |
 | [SOAP](#soap) | [`soap-sdk/`](./soap-sdk) | 118 | Java 11+ | Maven |
-| [Android (Retrofit)](#android) | [`android-sdk/`](./android-sdk) | 164 | Android API 26+ / Kotlin 1.9+ | Gradle |
+| [Android (Retrofit)](#android) | [`android-sdk/`](./android-sdk) | 168 | Android API 26+ / Kotlin 1.9+ | Gradle |
 
-**1,474 tests passing across all SDKs.**
+**1,500 tests passing across all SDKs.**
 
 ### AI / Agentic Integration
 
@@ -666,7 +666,7 @@ curl -X POST https://api.cleanster.com/soap \
 
 ### Android
 
-The Android SDK wraps the Cleanster Partner API in a type-safe, coroutines-ready [Retrofit 2](https://square.github.io/retrofit/) client. All 60 API endpoints across 8 resource types are covered with full Kotlin data-class request/response models.
+The Android SDK wraps the Cleanster Partner API in a type-safe, coroutines-ready [Retrofit 2](https://square.github.io/retrofit/) client. All 62 API endpoints across 8 resource types are covered with full Kotlin data-class request/response models.
 
 **Gradle (Kotlin DSL):**
 ```kotlin
@@ -707,7 +707,7 @@ val hook = client.webhooks.createWebhook(
 
 **Run tests:**
 ```bash
-./gradlew test        # 164 tests, all should pass
+./gradlew test        # 168 tests, all should pass
 ```
 
 [Full Android documentation →](./android-sdk/README.md)
@@ -910,7 +910,7 @@ try {
 
 ---
 
-## All 60 Endpoints
+## All 62 Endpoints
 
 ---
 
@@ -2551,7 +2551,7 @@ Cleanster-partner-api-sdk/
 │   │   ├── CleansterClient.swift
 │   │   ├── CleansterError.swift
 │   │   └── NetworkSession.swift
-│   ├── Tests/CleansterTests/   164 unit tests
+│   ├── Tests/CleansterTests/   170 unit tests
 │   └── README.md               Full Swift SDK documentation
 │
 ├── java-sdk/
@@ -2559,7 +2559,7 @@ Cleanster-partner-api-sdk/
 │   │   ├── api/          BookingApi, PropertyApi, UserApi, ChecklistApi, ...
 │   │   ├── client/       HttpClient, CleansterClient
 │   │   └── model/        Booking, Property, User, Checklist, ...
-│   ├── src/test/java/    74 unit tests
+│   ├── src/test/java/    78 unit tests
 │   ├── pom.xml
 │   └── README.md         Full Java SDK documentation
 │
@@ -2568,7 +2568,7 @@ Cleanster-partner-api-sdk/
 │   │   ├── api/          bookings.py, properties.py, users.py, ...
 │   │   ├── models/       booking.py, property.py, response.py, ...
 │   │   └── client.py
-│   ├── tests/            99 unit tests
+│   ├── tests/            103 unit tests
 │   ├── pyproject.toml
 │   └── README.md         Full Python SDK documentation
 │
@@ -2577,7 +2577,7 @@ Cleanster-partner-api-sdk/
 │   │   ├── api/          bookings.ts, properties.ts, users.ts, ...
 │   │   ├── models/       booking.ts, property.ts, response.ts, ...
 │   │   └── client.ts
-│   ├── tests/            85 unit tests
+│   ├── tests/            89 unit tests
 │   ├── package.json
 │   └── README.md         Full TypeScript SDK documentation
 │
@@ -2585,7 +2585,7 @@ Cleanster-partner-api-sdk/
 │   ├── lib/cleanster/
 │   │   ├── api/          bookings_api.rb, properties_api.rb, ...
 │   │   └── models/       booking.rb, property.rb, ...
-│   ├── spec/             119 unit tests
+│   ├── spec/             123 unit tests
 │   ├── cleanster.gemspec
 │   └── README.md         Full Ruby SDK documentation
 │
@@ -2594,7 +2594,7 @@ Cleanster-partner-api-sdk/
 │   ├── properties.go     Properties service
 │   ├── models.go         All request/response types
 │   ├── client.go         CleansterClient
-│   ├── cleanster_test.go 92 unit tests
+│   ├── cleanster_test.go 96 unit tests
 │   ├── go.mod
 │   └── README.md         Full Go SDK documentation
 │
@@ -2602,7 +2602,7 @@ Cleanster-partner-api-sdk/
 │   ├── src/
 │   │   ├── Api/          BookingsApi.php, PropertiesApi.php, ...
 │   │   └── Models/       Booking.php, Property.php, ...
-│   ├── tests/            106 unit tests
+│   ├── tests/            110 unit tests
 │   ├── composer.json
 │   └── README.md         Full PHP SDK documentation
 │
@@ -2610,7 +2610,7 @@ Cleanster-partner-api-sdk/
 │   ├── src/Cleanster/
 │   │   ├── Api/          BookingsApi.cs, PropertiesApi.cs, ...
 │   │   └── Models/       Booking.cs, Property.cs, ...
-│   ├── tests/            107 unit tests
+│   ├── tests/            111 unit tests
 │   ├── Cleanster.sln
 │   └── README.md         Full C# SDK documentation
 │
@@ -2621,7 +2621,7 @@ Cleanster-partner-api-sdk/
 │   │   ├── CleansterClient.kt
 │   │   ├── CleansterError.kt
 │   │   └── HttpEngine.kt
-│   ├── src/test/kotlin/  164 unit tests
+│   ├── src/test/kotlin/  170 unit tests
 │   ├── build.gradle.kts
 │   └── README.md         Full Kotlin SDK documentation
 │

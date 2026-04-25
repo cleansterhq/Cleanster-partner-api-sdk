@@ -143,4 +143,28 @@ final class OtherTests: XCTestCase {
         _ = try await client.other.getCoupons()
         XCTAssertTrue(mock.capturedURL?.hasSuffix("/v1/coupons") == true)
     }
+
+    func testListCleaners_sendsGET() async throws {
+        mock.succeedWithArray([])
+        _ = try await client.other.listCleaners()
+        XCTAssertEqual(mock.capturedMethod, "GET")
+    }
+
+    func testListCleaners_correctPath() async throws {
+        mock.succeedWithArray([])
+        _ = try await client.other.listCleaners()
+        XCTAssertTrue(mock.capturedURL?.hasSuffix("/v1/cleaners") == true)
+    }
+
+    func testGetCleaner_sendsGET() async throws {
+        mock.succeedWithArray([])
+        _ = try await client.other.getCleaner(cleanerId: 789)
+        XCTAssertEqual(mock.capturedMethod, "GET")
+    }
+
+    func testGetCleaner_correctPath() async throws {
+        mock.succeedWithArray([])
+        _ = try await client.other.getCleaner(cleanerId: 789)
+        XCTAssertTrue(mock.capturedURL?.hasSuffix("/v1/cleaners/789") == true)
+    }
 }

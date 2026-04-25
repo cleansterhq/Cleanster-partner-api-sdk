@@ -1022,6 +1022,20 @@ Retrieve all available (non-expired) coupon codes for the account.
 val coupons = client.other.getCoupons()
 ```
 
+#### List Cleaners
+**`GET /v1/cleaners`**
+
+```kotlin
+val cleaners = client.other.listCleaners(status = "active", search = "Jane")
+```
+
+#### Get Cleaner
+**`GET /v1/cleaners/{cleanerId}`**
+
+```kotlin
+val cleaner = client.other.getCleaner(789)
+```
+
 ---
 
 ### Blacklist

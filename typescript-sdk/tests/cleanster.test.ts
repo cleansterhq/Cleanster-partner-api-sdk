@@ -685,6 +685,26 @@ describe("OtherApi", () => {
 
     expect(http.get).toHaveBeenCalledWith("/v1/coupons");
   });
+
+  test("listCleaners() calls correct URL", async () => {
+    const http = mockHttp();
+    http.get.mockResolvedValue(ok([]));
+    const api = new OtherApi(http);
+
+    await api.listCleaners();
+
+    expect(http.get).toHaveBeenCalledWith("/v1/cleaners", { status: undefined, search: undefined });
+  });
+
+  test("getCleaner() calls correct URL with ID", async () => {
+    const http = mockHttp();
+    http.get.mockResolvedValue(ok({}));
+    const api = new OtherApi(http);
+
+    await api.getCleaner(789);
+
+    expect(http.get).toHaveBeenCalledWith("/v1/cleaners/789");
+  });
 });
 
 // ---------------------------------------------------------------------------

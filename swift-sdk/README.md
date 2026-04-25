@@ -988,6 +988,20 @@ Retrieve all available (non-expired) coupon codes for the account.
 let coupons = try await client.other.getCoupons()
 ```
 
+#### List Cleaners
+**`GET /v1/cleaners`**
+
+```swift
+let cleaners = try await client.other.listCleaners(status: "active", search: "Jane")
+```
+
+#### Get Cleaner
+**`GET /v1/cleaners/{cleanerId}`**
+
+```swift
+let cleaner = try await client.other.getCleaner(cleanerId: 789)
+```
+
 ---
 
 ### Blacklist

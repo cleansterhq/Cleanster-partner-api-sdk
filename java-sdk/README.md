@@ -971,6 +971,20 @@ Return all active coupon codes for your partner account.
 ApiResponse<Object> resp = client.other().getCoupons();
 ```
 
+#### List Cleaners
+**`GET /v1/cleaners`**
+
+```java
+ApiResponse<Object> resp = client.other().listCleaners("active", "Jane");
+```
+
+#### Get Cleaner
+**`GET /v1/cleaners/{cleanerId}`**
+
+```java
+ApiResponse<Object> resp = client.other().getCleaner(789);
+```
+
 ---
 
 ### Blacklist

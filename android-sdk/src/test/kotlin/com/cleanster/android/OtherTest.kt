@@ -193,4 +193,28 @@ class OtherTest {
         val resp = client.other.getCoupons()
         assertEquals(0, resp.data?.size)
     }
+
+    @Test fun `listCleaners sends GET`() = runTest {
+        enqueue("""{"status":200,"message":"OK","data":[]}""")
+        client.other.listCleaners()
+        assertEquals("GET", server.takeRequest().method)
+    }
+
+    @Test fun `listCleaners correct path`() = runTest {
+        enqueue("""{"status":200,"message":"OK","data":[]}""")
+        client.other.listCleaners()
+        assert(server.takeRequest().path?.contains("/v1/cleaners") == true)
+    }
+
+    @Test fun `getCleaner sends GET`() = runTest {
+        enqueue("""{"status":200,"message":"OK","data":{}}""")
+        client.other.getCleaner(789)
+        assertEquals("GET", server.takeRequest().method)
+    }
+
+    @Test fun `getCleaner correct path`() = runTest {
+        enqueue("""{"status":200,"message":"OK","data":{}}""")
+        client.other.getCleaner(789)
+        assert(server.takeRequest().path?.contains("/v1/cleaners/789") == true)
+    }
 }

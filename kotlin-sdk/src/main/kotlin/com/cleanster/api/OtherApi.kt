@@ -75,4 +75,27 @@ class OtherApi internal constructor(private val client: CleansterClient) {
         method = "GET",
         path   = "/v1/coupons",
     )
+
+    /**
+     * List all cleaners, with optional status and search filters.
+     *
+     * @param status Filter by cleaner status ('active', 'inactive', 'pending'). Null omits this filter.
+     * @param search Partial match against cleaner name or email. Null omits this filter.
+     */
+    suspend fun listCleaners(status: String? = null, search: String? = null): ApiResponse<List<Any>> = client.request(
+        method      = "GET",
+        path        = "/v1/cleaners",
+        queryParams = buildMap { status?.let { put("status", it) }; search?.let { put("search", it) } }
+            .takeIf { it.isNotEmpty() },
+    )
+
+    /**
+     * Retrieve a single cleaner by their ID.
+     *
+     * @param cleanerId The cleaner's unique ID.
+     */
+    suspend fun getCleaner(cleanerId: Int): ApiResponse<Any> = client.request(
+        method = "GET",
+        path   = "/v1/cleaners/$cleanerId",
+    )
 }
