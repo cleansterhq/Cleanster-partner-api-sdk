@@ -3,18 +3,14 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Language-Java%2017-orange" alt="Java 17">
   <img src="https://img.shields.io/badge/JAXB-4.0-blue" alt="JAXB 4.0">
-  <img src="https://img.shields.io/badge/Endpoints-59-brightgreen" alt="59 Endpoints">
-  <img src="https://img.shields.io/badge/Tests-164%20passing-success" alt="164 Tests">
+  <img src="https://img.shields.io/badge/Endpoints-62-brightgreen" alt="62 Endpoints">
+  <img src="https://img.shields.io/badge/Tests-123%20passing-success" alt="123 Tests">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT">
 </p>
 
 The official **XML SDK** for the [Cleanster Partner API](https://documenter.getpostman.com/view/26172658/2sAYdoF7ep).
 
-All model classes carry full **JAXB 4.0** annotations, so every request and response object can be
-round-tripped to and from XML with a single call to `XmlConverter.toXml()` /
-`XmlConverter.fromXml()`.  HTTP transport still uses the REST/JSON API under the hood; the XML
-layer is surfaced at the SDK boundary so that enterprise integrations, message queues, and
-XML-native toolchains can work natively with the data.
+All model classes carry full **JAXB 4.0** annotations, so every request and response object can be round-tripped to and from XML with a single call to `XmlConverter.toXml()` / `XmlConverter.fromXml()`. HTTP transport uses the REST/JSON API under the hood; the XML layer is surfaced at the SDK boundary so enterprise integrations, message queues, and XML-native toolchains can work natively with the data.
 
 ---
 
@@ -35,26 +31,16 @@ XML-native toolchains can work natively with the data.
    - [Payment Methods](#payment-methods-api)
    - [Webhooks](#webhooks-api)
    - [Blacklist](#blacklist-api)
-   - [Other](#other-api)
+   - [Other / Reference Data](#other-api)
 9. [Model Reference](#model-reference)
-   - [Booking](#booking-model)
-   - [Property](#property-model)
-   - [User](#user-model)
-   - [Checklist](#checklist-model)
-   - [PaymentMethod](#paymentmethod-model)
-   - [Webhook](#webhook-model)
-   - [BlacklistEntry](#blacklistentry-model)
-   - [Plan](#plan-model)
-   - [Coupon](#coupon-model)
 10. [XML Schema Examples](#xml-schema-examples)
-11. [All 59 Endpoints](#all-59-endpoints)
+11. [All 62 Endpoints](#all-62-endpoints)
 12. [Testing](#testing)
 13. [Building](#building)
 14. [Configuration Reference](#configuration-reference)
 15. [Integration Patterns](#integration-patterns)
 16. [Booking Lifecycle](#booking-lifecycle)
-17. [Chat Window Rules](#chat-window-rules)
-18. [Changelog](#changelog)
+17. [Changelog](#changelog)
 
 ---
 
@@ -69,16 +55,11 @@ XML-native toolchains can work natively with the data.
 | OkHttp | 4.12.0 |
 | Gson | 2.10.1 |
 
-The SDK does **not** require Android; for Android use the dedicated `android-sdk/` module in this
-repository.
-
 ---
 
 ## Installation
 
 ### Maven
-
-Add the following dependency to your `pom.xml`:
 
 ```xml
 <dependency>
@@ -91,47 +72,11 @@ Add the following dependency to your `pom.xml`:
 The JAXB runtime must also be on the classpath for Java 11+:
 
 ```xml
-<dependencies>
-  <!-- Cleanster XML SDK -->
-  <dependency>
-    <groupId>com.cleanster</groupId>
-    <artifactId>cleanster-xml-sdk</artifactId>
-    <version>1.0.0</version>
-  </dependency>
-
-  <!-- JAXB API (needed on Java 11+ where JAXB was removed from the JDK) -->
-  <dependency>
-    <groupId>jakarta.xml.bind</groupId>
-    <artifactId>jakarta.xml.bind-api</artifactId>
-    <version>4.0.0</version>
-  </dependency>
-
-  <!-- JAXB Reference Implementation -->
-  <dependency>
-    <groupId>com.sun.xml.bind</groupId>
-    <artifactId>jaxb-impl</artifactId>
-    <version>4.0.3</version>
-    <scope>runtime</scope>
-  </dependency>
-</dependencies>
-```
-
-### Gradle (Kotlin DSL)
-
-```kotlin
-dependencies {
-    implementation("com.cleanster:cleanster-xml-sdk:1.0.0")
-    implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.0")
-    runtimeOnly("com.sun.xml.bind:jaxb-impl:4.0.3")
-}
-```
-
-### Building from Source
-
-```bash
-git clone https://github.com/cleansterhq/Cleanster-partner-api-sdk.git
-cd Cleanster-partner-api-sdk/xml-sdk
-mvn clean install -DskipTests
+<dependency>
+  <groupId>com.sun.xml.bind</groupId>
+  <artifactId>jaxb-impl</artifactId>
+  <version>4.0.3</version>
+</dependency>
 ```
 
 ---
@@ -139,245 +84,97 @@ mvn clean install -DskipTests
 ## Quick Start
 
 ```java
-import com.cleanster.xml.client.CleansterXmlClient;
-import com.cleanster.xml.client.XmlConverter;
-import com.cleanster.xml.model.*;
-
-// 1. Create a sandbox client
+// 1. Create client (targets sandbox by default)
 CleansterXmlClient client = CleansterXmlClient.sandbox("your-access-key");
 
-// 2. Fetch an auth token for a user
+// 2. Create a user account
+XmlApiResponse<User> userResp = client.users()
+        .createUser("alice@example.com", "Alice", "Smith");
+int userId = userResp.getData().getId();
+
+// 3. Fetch a per-user JWT token
 XmlApiResponse<User> tokenResp = client.users().fetchAccessToken(userId);
 client.setToken(tokenResp.getData().getToken());
 
-// 3. Create a booking
-XmlApiResponse<Booking> resp = client.bookings().createBooking(
-    "2025-09-15",   // date
-    "09:00",        // time
-    1004,           // propertyId
-    2,              // planId
-    3.0,            // hours
-    2,              // roomCount
-    1,              // bathroomCount
-    false,          // extraSupplies
-    55              // paymentMethodId
-);
+// 4. Create a booking and serialize it to XML
+XmlApiResponse<Booking> bookingResp = client.bookings()
+        .createBooking("2025-09-15", "09:00", 1004, 2, 3.0, 2, 1, false, 55);
 
-Booking booking = resp.getData();
-System.out.println("Created booking ID: " + booking.getId());
+Booking booking = bookingResp.getData();
+System.out.println("Booking ID: " + booking.getId());
+System.out.println(XmlConverter.toXml(booking));
+```
 
-// 4. Serialise to XML
-String xml = XmlConverter.toXml(booking);
-System.out.println(xml);
-// <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-// <booking>
-//   <id>12345</id>
-//   <status>pending</status>
-//   <date>2025-09-15</date>
-//   <time>09:00</time>
-//   ...
-// </booking>
-
-// 5. Deserialise from XML back to a Booking
-Booking restored = XmlConverter.fromXml(xml, Booking.class);
-System.out.println(restored.getStatus());
+**Production:**
+```java
+CleansterXmlClient client = CleansterXmlClient.production("your-access-key");
 ```
 
 ---
 
 ## Authentication
 
-Every API call to Cleanster requires two headers:
+Every request requires two HTTP headers:
 
 | Header | Description |
 |---|---|
-| `access-key` | Your partner access key — does not expire |
-| `token` | Per-user session token — obtained via `users().fetchAccessToken(userId)` |
+| `access-key` | Your static partner key — issued by Cleanster |
+| `token` | Per-user JWT — obtained via `fetchAccessToken(userId)` |
 
-The SDK injects both headers automatically once you have called `client.setToken(...)`.
-
-### Two-step auth pattern
-
-```java
-// Step 1: create client with your access key
-CleansterXmlClient client = CleansterXmlClient.sandbox("your-access-key");
-
-// Step 2: fetch a user token (only the access-key header is sent at this point)
-XmlApiResponse<User> tokenResp = client.users().fetchAccessToken(userId);
-if (!tokenResp.isSuccess()) {
-    throw new RuntimeException("Token fetch failed: " + tokenResp.getMessage());
-}
-
-// Step 3: store the token — all subsequent calls will include it automatically
-client.setToken(tokenResp.getData().getToken());
-
-// From here every call includes both access-key and token headers
-XmlApiResponse<List<Booking>> bookings = client.bookings().listBookings();
-```
-
-### Production vs. Sandbox
-
-```java
-// Sandbox (default)
-CleansterXmlClient sandbox = CleansterXmlClient.sandbox("your-access-key");
-
-// Production
-CleansterXmlClient production = CleansterXmlClient.production("your-access-key");
-```
-
-| Environment | Base URL |
-|---|---|
-| Sandbox | `https://partner-sandbox-dot-official-tidyio-project.ue.r.appspot.com/public` |
-| Production | `https://partner-dot-official-tidyio-project.ue.r.appspot.com/public` |
+**Flow:**
+1. Call `POST /v1/user/account` to register a user in Cleanster.
+2. Call `GET /v1/user/access-token/{userId}` to get their JWT.
+3. Store the JWT and pass it via `client.setToken(token)` on all subsequent calls.
+4. Verify tokens at any time with `POST /v1/user/verify-jwt`.
 
 ---
 
 ## XmlConverter Utility
 
-The `XmlConverter` class is the bridge between Java objects and XML strings.
-
-### Marshal an object to XML
-
 ```java
-Booking b = new Booking();
-b.setId(42);
-b.setStatus("confirmed");
-b.setDate("2025-09-15");
-b.setTime("09:00");
-b.setTotalPrice(120.0);
-b.setCurrency("USD");
+// Serialize any JAXB model to XML
+String xml = XmlConverter.toXml(booking);
 
-String xml = XmlConverter.toXml(b);
-System.out.println(xml);
-```
+// Deserialize XML back to a model
+Booking restored = XmlConverter.fromXml(xml, Booking.class);
 
-Output:
+// Detect whether a string is XML
+boolean isXml = XmlConverter.isXml(xml);  // true
+boolean notXml = XmlConverter.isXml("{}"); // false
 
-```xml
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<booking>
-    <id>42</id>
-    <status>confirmed</status>
-    <date>2025-09-15</date>
-    <time>09:00</time>
-    <totalPrice>120.0</totalPrice>
-    <currency>USD</currency>
-</booking>
-```
-
-### Unmarshal XML to an object
-
-```java
-String xml = """
-    <?xml version="1.0" encoding="UTF-8"?>
-    <booking>
-        <id>42</id>
-        <status>confirmed</status>
-    </booking>
-    """;
-
-Booking b = XmlConverter.fromXml(xml, Booking.class);
-System.out.println(b.getId());     // 42
-System.out.println(b.getStatus()); // confirmed
-```
-
-### Check if a string is XML
-
-```java
-XmlConverter.isXml("<?xml version=\"1.0\"?><root/>"); // true
-XmlConverter.isXml("<booking><id>1</id></booking>");   // true
-XmlConverter.isXml("plain text");                      // false
-XmlConverter.isXml(null);                              // false
-```
-
-### Convenience wrappers on the client
-
-The client exposes static delegates so you can write everything through one import:
-
-```java
-String xml     = CleansterXmlClient.toXml(booking);
-Booking b      = CleansterXmlClient.fromXml(xml, Booking.class);
+// Convenience methods on the client itself
+String xml2 = CleansterXmlClient.toXml(booking);
+Booking b2  = CleansterXmlClient.fromXml(xml, Booking.class);
 ```
 
 ---
 
 ## Response Envelope
 
-Every endpoint returns an `XmlApiResponse<T>` wrapper:
+Every API method returns `XmlApiResponse<T>`:
 
 ```java
-public class XmlApiResponse<T> {
-    boolean success;
-    String  message;
-    T       data;
-}
+XmlApiResponse<Booking> resp = client.bookings().getBooking(bookingId);
+
+resp.isSuccess();   // true / false
+resp.getMessage();  // "OK" or error description
+resp.getData();     // T — the payload
 ```
-
-JSON on the wire:
-
-```json
-{
-  "success": true,
-  "message": "Booking created",
-  "data": { "id": 12345, "status": "pending", ... }
-}
-```
-
-The same envelope serialised to XML:
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<response>
-    <success>true</success>
-    <message>Booking created</message>
-    <data>
-        <id>12345</id>
-        <status>pending</status>
-    </data>
-</response>
-```
-
-Always check `response.isSuccess()` before calling `response.getData()`.
 
 ---
 
 ## Error Handling
 
-Failed HTTP responses throw `CleansterXmlException`:
-
 ```java
 try {
-    XmlApiResponse<Booking> resp = client.bookings().getBooking(9999);
+    XmlApiResponse<Booking> resp = client.bookings().getBooking(bookingId);
+    System.out.println(XmlConverter.toXml(resp.getData()));
 } catch (CleansterXmlException e) {
-    System.out.println("HTTP status : " + e.getHttpStatus());  // e.g. 404
-    System.out.println("Message     : " + e.getMessage());
-    System.out.println("Raw body    : " + e.getRawBody());
+    System.err.println("HTTP " + e.getStatusCode() + ": " + e.getMessage());
 }
 ```
 
-XML conversion errors (malformed XML, unknown element) also throw `CleansterXmlException`:
-
-```java
-try {
-    Booking b = XmlConverter.fromXml("<not-valid", Booking.class);
-} catch (CleansterXmlException e) {
-    System.out.println("XML parse error: " + e.getMessage());
-}
-```
-
-### HTTP status codes
-
-| Status | Meaning |
-|---|---|
-| 200 | Success |
-| 201 | Created |
-| 400 | Bad request — check your request parameters |
-| 401 | Unauthorized — missing or invalid `access-key` / `token` |
-| 403 | Forbidden — insufficient permissions |
-| 404 | Not found |
-| 422 | Unprocessable entity — validation error |
-| 429 | Rate limited |
-| 500 | Server error |
+HTTP 4xx and 5xx responses throw `CleansterXmlException`. Network errors throw `CleansterXmlException` wrapping an `IOException`.
 
 ---
 
@@ -385,365 +182,302 @@ try {
 
 ### Users API
 
-Authenticate users and manage their profiles.
+Create partner-managed user accounts and issue access tokens.
 
 #### Endpoints
 
 | Method | Path | SDK method |
 |---|---|---|
-| POST | `/users/{userId}/token` | `fetchAccessToken(int userId)` |
-| GET  | `/users/{userId}` | `getUserProfile(int userId)` |
-| PUT  | `/users/{userId}` | `updateUserProfile(int userId, ...)` |
+| POST | `/v1/user/account`                   | `createUser(email, firstName, lastName)` |
+| GET  | `/v1/user/access-token/{userId}`     | `fetchAccessToken(int userId)` |
+| POST | `/v1/user/verify-jwt`                | `verifyJwt(String token)` |
+
+#### Create a user
+
+```java
+XmlApiResponse<User> resp = client.users()
+        .createUser("alice@example.com", "Alice", "Smith");
+int userId = resp.getData().getId();
+System.out.println(XmlConverter.toXml(resp.getData()));
+```
 
 #### Fetch access token
 
 ```java
 XmlApiResponse<User> resp = client.users().fetchAccessToken(userId);
-
-if (resp.isSuccess()) {
-    String token = resp.getData().getToken();
-    client.setToken(token);
-    System.out.println("Authenticated. Token: " + token);
-} else {
-    System.out.println("Auth failed: " + resp.getMessage());
-}
+String token = resp.getData().getToken();
+client.setToken(token);   // store it; passed as 'token' header on every call
 ```
 
-#### Get user profile
+#### Verify JWT
 
 ```java
-XmlApiResponse<User> resp = client.users().getUserProfile(userId);
-User user = resp.getData();
-
-System.out.println(user.getFirstName() + " " + user.getLastName());
-System.out.println(user.getEmail());
-
-// Serialise to XML
-System.out.println(XmlConverter.toXml(user));
-```
-
-#### Update user profile
-
-```java
-XmlApiResponse<User> resp = client.users().updateUserProfile(
-    userId,
-    "Alice",          // firstName  (null = no change)
-    "Wonderland",     // lastName   (null = no change)
-    "+1-555-0100"     // phone      (null = no change)
-);
-
-System.out.println("Updated: " + resp.isSuccess());
+XmlApiResponse<?> resp = client.users().verifyJwt(token);
+System.out.println(resp.isSuccess() ? "Valid" : "Invalid or expired");
 ```
 
 ---
 
 ### Bookings API
 
-Full lifecycle management for cleaning bookings.
+Full lifecycle management for cleaning appointments.
 
 #### Endpoints
 
 | Method | Path | SDK method |
 |---|---|---|
-| GET    | `/bookings`                        | `listBookings()` |
-| GET    | `/bookings/{id}`                   | `getBooking(int id)` |
-| POST   | `/bookings`                        | `createBooking(...)` |
-| PUT    | `/bookings/{id}`                   | `updateBooking(int id, Map body)` |
-| DELETE | `/bookings/{id}`                   | `cancelBooking(int id)` |
-| POST   | `/bookings/{id}/cancel`            | `cancelBooking(int id, String reason)` |
-| POST   | `/bookings/{id}/reschedule`        | `rescheduleBooking(int id, String date, String time)` |
-| POST   | `/bookings/{id}/confirm`           | `confirmBooking(int id)` |
-| POST   | `/bookings/{id}/complete`          | `completeBooking(int id)` |
-| POST   | `/bookings/{id}/dispute`           | `disputeBooking(int id, String reason)` |
-| POST   | `/bookings/{id}/tip`               | `addTip(int id, double amount)` |
-| GET    | `/bookings/{id}/receipt`           | `getReceipt(int id)` |
-| POST   | `/bookings/{id}/review`            | `leaveReview(int id, int rating, String comment)` |
-| GET    | `/bookings/upcoming`               | `listUpcomingBookings()` |
-| GET    | `/bookings/past`                   | `listPastBookings()` |
-| POST   | `/bookings/{id}/apply-coupon`      | `applyCoupon(int id, String code)` |
-| POST   | `/bookings/{id}/notify-cleaner`    | `notifyCleaner(int id, String message)` |
+| GET    | `/v1/bookings`                                   | `listBookings()` |
+| POST   | `/v1/bookings/create`                            | `createBooking(...)` |
+| GET    | `/v1/bookings/{id}`                              | `getBooking(int id)` |
+| POST   | `/v1/bookings/{id}/cancel`                       | `cancelBooking(int id)` |
+| POST   | `/v1/bookings/{id}/reschedule`                   | `rescheduleBooking(int id, String date, String time)` |
+| POST   | `/v1/bookings/{id}/cleaner`                      | `assignCleaner(int id, int cleanerId)` |
+| DELETE | `/v1/bookings/{id}/cleaner`                      | `removeAssignedCleaner(int id)` |
+| POST   | `/v1/bookings/{id}/hours`                        | `adjustHours(int id, double hours)` |
+| POST   | `/v1/bookings/{id}/expenses`                     | `payExpenses(int id, int paymentMethodId)` |
+| GET    | `/v1/bookings/{id}/inspection`                   | `getBookingInspection(int id)` |
+| GET    | `/v1/bookings/{id}/inspection/details`           | `getBookingInspectionDetails(int id)` |
+| PUT    | `/v1/bookings/{id}/checklist/{checklistId}`      | `assignChecklistToBooking(int id, int checklistId)` |
+| POST   | `/v1/bookings/{id}/feedback`                     | `submitFeedback(int id, int rating, String comment)` |
+| POST   | `/v1/bookings/{id}/tip`                          | `addTip(int id, double amount, int paymentMethodId)` |
+| GET    | `/v1/bookings/{id}/chat`                         | `getChat(int id)` |
+| POST   | `/v1/bookings/{id}/chat`                         | `sendMessage(int id, String message)` |
+| DELETE | `/v1/bookings/{id}/chat/{messageId}`             | `deleteMessage(int id, String messageId)` |
 
-#### List bookings
-
-```java
-XmlApiResponse<List<Booking>> resp = client.bookings().listBookings();
-
-for (Booking b : resp.getData()) {
-    System.out.printf("ID=%-5d  status=%-12s  date=%s%n",
-            b.getId(), b.getStatus(), b.getDate());
-}
-```
-
-#### Get booking
-
-```java
-XmlApiResponse<Booking> resp = client.bookings().getBooking(bookingId);
-Booking b = resp.getData();
-
-// Print XML representation
-System.out.println(XmlConverter.toXml(b));
-```
-
-#### Create booking — typed parameters
+#### Create a booking
 
 ```java
 XmlApiResponse<Booking> resp = client.bookings().createBooking(
-    "2025-09-15",   // date       (YYYY-MM-DD)
-    "09:00",        // time       (HH:mm)
-    1004,           // propertyId
-    2,              // planId
-    3.0,            // hours
-    2,              // roomCount
-    1,              // bathroomCount
-    false,          // extraSupplies
-    55              // paymentMethodId
+    "2025-09-15",  // date (YYYY-MM-DD)
+    "09:00",       // time (HH:mm)
+    1004,          // propertyId
+    2,             // planId
+    3.0,           // hours
+    2,             // roomCount
+    1,             // bathroomCount
+    false,         // extraSupplies
+    55             // paymentMethodId
 );
-
-Booking created = resp.getData();
-System.out.println("Booking " + created.getId() + " → " + created.getStatus());
+Booking b = resp.getData();
+System.out.println("Booking ID: " + b.getId());
+System.out.println(XmlConverter.toXml(b));
 ```
 
-#### Create booking — map body
+#### Cancel a booking
 
 ```java
-Map<String, Object> body = new LinkedHashMap<>();
-body.put("date",            "2025-09-15");
-body.put("time",            "09:00");
-body.put("propertyId",      1004);
-body.put("planId",          2);
-body.put("hours",           3.0);
-body.put("roomCount",       2);
-body.put("bathroomCount",   1);
-body.put("extraSupplies",   false);
-body.put("paymentMethodId", 55);
-
-XmlApiResponse<Booking> resp = client.bookings().createBooking(body);
-```
-
-#### Update booking
-
-```java
-Map<String, Object> updates = new HashMap<>();
-updates.put("notes", "Please bring eco-friendly supplies");
-updates.put("hours", 4.0);
-
-XmlApiResponse<Booking> resp = client.bookings().updateBooking(bookingId, updates);
-```
-
-#### Cancel booking
-
-```java
-// Simple cancel (DELETE)
+// No reason
 client.bookings().cancelBooking(bookingId);
 
-// Cancel with reason
+// With reason
 client.bookings().cancelBooking(bookingId, "Schedule conflict");
 ```
 
-#### Reschedule booking
+#### Reschedule
 
 ```java
 XmlApiResponse<Booking> resp = client.bookings()
         .rescheduleBooking(bookingId, "2025-10-01", "10:00");
-
-Booking rescheduled = resp.getData();
-System.out.println("New date: " + rescheduled.getDate()
-        + " at " + rescheduled.getTime());
 ```
 
-#### Apply coupon
+#### Assign / remove cleaner
 
 ```java
-// Supported coupon codes: 100POFF, 50POFF, 20POFF, 200OFF, 100OFF
-XmlApiResponse<Booking> resp = client.bookings().applyCoupon(bookingId, "100POFF");
-System.out.println("New total: " + resp.getData().getTotalPrice());
+client.bookings().assignCleaner(bookingId, cleanerId);
+client.bookings().removeAssignedCleaner(bookingId);
 ```
 
-#### Add tip
+#### Adjust hours
 
 ```java
-XmlApiResponse<Booking> resp = client.bookings().addTip(bookingId, 20.0);
+client.bookings().adjustHours(bookingId, 4.5);
 ```
 
-#### Leave review
+#### Pay expenses
 
 ```java
-XmlApiResponse<Booking> resp = client.bookings()
-        .leaveReview(bookingId, 5, "Fantastic job — spotless!");
+client.bookings().payExpenses(bookingId, paymentMethodId);
 ```
 
-#### Dispute booking
+#### Inspection
 
 ```java
-XmlApiResponse<Booking> resp = client.bookings()
-        .disputeBooking(bookingId, "Missed several areas in the kitchen");
+XmlApiResponse<?> report  = client.bookings().getBookingInspection(bookingId);
+XmlApiResponse<?> details = client.bookings().getBookingInspectionDetails(bookingId);
 ```
 
-#### Upcoming and past bookings
+#### Assign checklist to booking
 
 ```java
-List<Booking> upcoming = client.bookings().listUpcomingBookings().getData();
-List<Booking> past     = client.bookings().listPastBookings().getData();
+client.bookings().assignChecklistToBooking(bookingId, checklistId);
+```
+
+#### Feedback and tip
+
+```java
+client.bookings().submitFeedback(bookingId, 5, "Fantastic job!");
+client.bookings().addTip(bookingId, 20.0, paymentMethodId);
+```
+
+#### Chat
+
+```java
+XmlApiResponse<?> messages = client.bookings().getChat(bookingId);
+client.bookings().sendMessage(bookingId, "On my way!");
+client.bookings().deleteMessage(bookingId, messageId);
 ```
 
 ---
 
 ### Properties API
 
-Manage the cleaning locations associated with a user account.
+Manage cleaning locations (homes, offices, etc.).
 
 #### Endpoints
 
 | Method | Path | SDK method |
 |---|---|---|
-| GET    | `/properties`                        | `listProperties()` |
-| GET    | `/properties/{id}`                   | `getProperty(int id)` |
-| POST   | `/properties`                        | `createProperty(...)` |
-| PUT    | `/properties/{id}`                   | `updateProperty(int id, Map body)` |
-| DELETE | `/properties/{id}`                   | `deleteProperty(int id)` |
-| GET    | `/properties/{id}/bookings`          | `getPropertyBookings(int id)` |
-| GET    | `/properties/{id}/checklists`        | `getPropertyChecklists(int id)` |
-| POST   | `/properties/{id}/archive`           | `archiveProperty(int id)` |
-| POST   | `/properties/{id}/restore`           | `restoreProperty(int id)` |
-| GET    | `/properties/active`                 | `listActiveProperties()` |
-| GET    | `/properties/archived`               | `listArchivedProperties()` |
-| POST   | `/properties/{id}/duplicate`         | `duplicateProperty(int id)` |
-| GET    | `/properties/{id}/access-info`       | `getAccessInfo(int id)` |
-| PUT    | `/properties/{id}/access-info`       | `updateAccessInfo(int id, String instructions)` |
+| GET    | `/v1/properties`                                      | `listProperties()` |
+| POST   | `/v1/properties`                                      | `createProperty(...)` |
+| GET    | `/v1/properties/{id}`                                 | `getProperty(int id)` |
+| PUT    | `/v1/properties/{id}`                                 | `updateProperty(int id, Map body)` |
+| DELETE | `/v1/properties/{id}`                                 | `deleteProperty(int id)` |
+| PUT    | `/v1/properties/{id}/additional-information`          | `updateAdditionalInformation(int id, Map data)` |
+| POST   | `/v1/properties/{id}/enable-disable`                  | `enableOrDisableProperty(int id, boolean enabled)` |
+| GET    | `/v1/properties/{id}/cleaners`                        | `getPropertyCleaners(int id)` |
+| POST   | `/v1/properties/{id}/cleaners`                        | `assignCleanerToProperty(int id, int cleanerId)` |
+| DELETE | `/v1/properties/{id}/cleaners/{cleanerId}`            | `unassignCleanerFromProperty(int id, int cleanerId)` |
+| PUT    | `/v1/properties/{id}/ical`                            | `addICalLink(int id, String icalUrl)` |
+| GET    | `/v1/properties/{id}/ical`                            | `getICalLink(int id)` |
+| DELETE | `/v1/properties/{id}/ical`                            | `removeICalLink(int id, String icalUrl)` |
+| PUT    | `/v1/properties/{id}/checklist/{checklistId}`         | `setDefaultChecklist(int id, int checklistId, boolean updateUpcoming)` |
 
-#### Create property
+#### Create a property
 
 ```java
 XmlApiResponse<Property> resp = client.properties().createProperty(
     "Sunset Villa",   // name
     "123 Ocean Dr",   // address
     "Miami Beach",    // city
-    "FL",             // state
-    "33139",          // zipCode
     "US",             // country
     3,                // roomCount
-    2                 // bathroomCount
+    2,                // bathroomCount
+    1                 // serviceId
 );
-
 Property p = resp.getData();
-System.out.println("Property ID: " + p.getId());
-
-// XML output
 System.out.println(XmlConverter.toXml(p));
 ```
 
-#### Archive / restore
+#### Assign/unassign cleaners
 
 ```java
-client.properties().archiveProperty(propertyId);
-client.properties().restoreProperty(propertyId);
+client.properties().assignCleanerToProperty(propertyId, cleanerId);
+client.properties().unassignCleanerFromProperty(propertyId, cleanerId);
 ```
 
-#### Duplicate property
+#### iCal sync
 
 ```java
-XmlApiResponse<Property> copy = client.properties().duplicateProperty(propertyId);
-System.out.println("New property: " + copy.getData().getId());
+client.properties().addICalLink(propertyId, "https://calendar.example.com/feed.ics");
+client.properties().getICalLink(propertyId);
+client.properties().removeICalLink(propertyId, "https://calendar.example.com/feed.ics");
 ```
 
-#### Access instructions
+#### Default checklist
 
 ```java
-// Read
-XmlApiResponse<?> info = client.properties().getAccessInfo(propertyId);
-
-// Update
-client.properties().updateAccessInfo(propertyId, "Key under the front mat. Code 1234.");
+// Apply to upcoming bookings too
+client.properties().setDefaultChecklist(propertyId, checklistId, true);
 ```
 
 ---
 
 ### Checklists API
 
-Define per-property cleaning checklists.
+Define reusable cleaning task lists.
 
 #### Endpoints
 
 | Method | Path | SDK method |
 |---|---|---|
-| GET    | `/checklists`       | `listChecklists()` |
-| GET    | `/checklists/{id}`  | `getChecklist(int id)` |
-| POST   | `/checklists`       | `createChecklist(String name, String desc, List<String> items, Integer propertyId)` |
-| PUT    | `/checklists/{id}`  | `updateChecklist(int id, Map body)` |
-| DELETE | `/checklists/{id}`  | `deleteChecklist(int id)` |
+| GET    | `/v1/checklist`              | `listChecklists()` |
+| GET    | `/v1/checklist/{id}`         | `getChecklist(int id)` |
+| POST   | `/v1/checklist`              | `createChecklist(String name, List<String> items)` |
+| PUT    | `/v1/checklist/{id}`         | `updateChecklist(int id, String name, List<String> items)` |
+| DELETE | `/v1/checklist/{id}`         | `deleteChecklist(int id)` |
+| POST   | `/v1/checklist/upload-image` | `uploadChecklistImage(byte[] data, String fileName)` |
 
-#### Create checklist
+#### Create a checklist
 
 ```java
 List<String> items = List.of(
     "Vacuum all floors",
     "Wipe kitchen counters",
-    "Clean both bathrooms",
-    "Empty trash bins",
-    "Change bed linens"
+    "Clean bathrooms",
+    "Empty trash bins"
 );
-
 XmlApiResponse<Checklist> resp = client.checklists()
-        .createChecklist("Standard Clean", "Regular weekly clean", items, propertyId);
+        .createChecklist("Standard Clean", items);
 
-Checklist c = resp.getData();
-System.out.println(XmlConverter.toXml(c));
+System.out.println(XmlConverter.toXml(resp.getData()));
 ```
 
-XML output includes the items collection:
+#### Upload an image
 
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<checklist>
-    <id>7</id>
-    <name>Standard Clean</name>
-    <description>Regular weekly clean</description>
-    <active>true</active>
-    <items>
-        <item>Vacuum all floors</item>
-        <item>Wipe kitchen counters</item>
-        <item>Clean both bathrooms</item>
-        <item>Empty trash bins</item>
-        <item>Change bed linens</item>
-    </items>
-</checklist>
+```java
+byte[] imageBytes = Files.readAllBytes(Path.of("photo.jpg"));
+client.checklists().uploadChecklistImage(imageBytes, "photo.jpg");
 ```
 
 ---
 
 ### Payment Methods API
 
-Add and manage saved payment cards.
+Manage Stripe and PayPal payment methods.
 
 #### Endpoints
 
 | Method | Path | SDK method |
 |---|---|---|
-| GET    | `/payment-methods`              | `listPaymentMethods()` |
-| GET    | `/payment-methods/{id}`         | `getPaymentMethod(int id)` |
-| POST   | `/payment-methods`              | `addPaymentMethod(String token, String holder)` |
-| PUT    | `/payment-methods/{id}`         | `updatePaymentMethod(int id, Map body)` |
-| DELETE | `/payment-methods/{id}`         | `deletePaymentMethod(int id)` |
-| POST   | `/payment-methods/{id}/default` | `setDefaultPaymentMethod(int id)` |
+| GET    | `/v1/payment-methods/setup-intent-details`    | `getSetupIntentDetails()` |
+| GET    | `/v1/payment-methods/paypal-client-token`     | `getPaypalClientToken()` |
+| POST   | `/v1/payment-methods`                         | `addPaymentMethod(Map request)` |
+| GET    | `/v1/payment-methods`                         | `listPaymentMethods()` |
+| DELETE | `/v1/payment-methods/{id}`                    | `deletePaymentMethod(int id)` |
+| PUT    | `/v1/payment-methods/{id}/default`            | `setDefaultPaymentMethod(int id)` |
 
-#### Add and set default
+#### Add a card (Stripe flow)
 
 ```java
-// Tokenise the card via Stripe.js on the frontend first
-XmlApiResponse<PaymentMethod> resp = client.paymentMethods()
-        .addPaymentMethod("tok_stripe_xyz", "Jane Doe");
+// 1. Get SetupIntent client secret (send to your frontend)
+XmlApiResponse<?> intentResp = client.paymentMethods().getSetupIntentDetails();
 
-int methodId = resp.getData().getId();
+// 2. Collect the card client-side with Stripe.js, then confirm with the SetupIntent
+//    The confirmed paymentMethodId is sent back to your server
 
-// Set as default
+// 3. Save the payment method
+client.paymentMethods().addPaymentMethod(Map.of("paymentMethodId", "pm_stripe_xyz"));
+
+// 4. Set as default
 client.paymentMethods().setDefaultPaymentMethod(methodId);
 ```
 
-#### List and serialise
+#### PayPal flow
+
+```java
+// 1. Get PayPal client token (send to your frontend)
+XmlApiResponse<?> ppResp = client.paymentMethods().getPaypalClientToken();
+
+// 2. Render PayPal button, collect nonce, send nonce to server
+
+// 3. Save
+client.paymentMethods().addPaymentMethod(Map.of("nonce", "paypal-nonce-xyz"));
+```
+
+#### List and serialize
 
 ```java
 List<PaymentMethod> methods = client.paymentMethods().listPaymentMethods().getData();
-
 for (PaymentMethod pm : methods) {
     System.out.println(XmlConverter.toXml(pm));
 }
@@ -753,118 +487,125 @@ for (PaymentMethod pm : methods) {
 
 ### Webhooks API
 
-Register URLs to receive real-time event notifications.
+Register URLs to receive real-time booking events.
 
 #### Endpoints
 
 | Method | Path | SDK method |
 |---|---|---|
-| GET    | `/webhooks`       | `listWebhooks()` |
-| GET    | `/webhooks/{id}`  | `getWebhook(int id)` |
-| POST   | `/webhooks`       | `createWebhook(String url, List<String> events)` |
-| DELETE | `/webhooks/{id}`  | `deleteWebhook(int id)` |
-
-#### Supported events
-
-| Event | Fired when |
-|---|---|
-| `booking.created`   | A new booking is made |
-| `booking.confirmed` | A booking is confirmed |
-| `booking.completed` | A cleaning is marked complete |
-| `booking.cancelled` | A booking is cancelled |
-| `booking.disputed`  | A dispute is opened |
-| `payment.success`   | A payment succeeds |
-| `payment.failed`    | A payment fails |
+| GET    | `/v1/webhooks`       | `listWebhooks()` |
+| POST   | `/v1/webhooks`       | `createWebhook(String url, String event)` |
+| PUT    | `/v1/webhooks/{id}`  | `updateWebhook(int id, String url, String event)` |
+| DELETE | `/v1/webhooks/{id}`  | `deleteWebhook(int id)` |
 
 #### Register a webhook
 
 ```java
 XmlApiResponse<Webhook> resp = client.webhooks().createWebhook(
     "https://your-server.com/hooks/cleanster",
-    List.of("booking.created", "booking.completed", "booking.cancelled")
+    "booking.completed"
 );
-
 Webhook wh = resp.getData();
 System.out.println("Webhook ID: " + wh.getId());
-System.out.println("Secret:     " + wh.getSecret());
 System.out.println(XmlConverter.toXml(wh));
+```
+
+#### Update and delete
+
+```java
+client.webhooks().updateWebhook(webhookId, "https://new-server.com/hook", "booking.cancelled");
+client.webhooks().deleteWebhook(webhookId);
 ```
 
 ---
 
 ### Blacklist API
 
-Prevent specific cleaners from being assigned to bookings.
+Prevent specific cleaners from being assigned to your bookings.
 
 #### Endpoints
 
 | Method | Path | SDK method |
 |---|---|---|
-| GET    | `/blacklist`            | `listBlacklist()` |
-| POST   | `/blacklist`            | `addToBlacklist(int userId, String reason)` |
-| DELETE | `/blacklist/{userId}`   | `removeFromBlacklist(int userId)` |
+| GET    | `/v1/blacklist/cleaner` | `listBlacklist()` |
+| POST   | `/v1/blacklist/cleaner` | `addToBlacklist(int cleanerId, String reason)` |
+| DELETE | `/v1/blacklist/cleaner` | `removeFromBlacklist(int cleanerId)` |
 
 #### Add to blacklist
 
 ```java
 XmlApiResponse<BlacklistEntry> resp = client.blacklist()
         .addToBlacklist(cleanerId, "Repeated no-show");
+System.out.println(XmlConverter.toXml(resp.getData()));
+```
 
-BlacklistEntry entry = resp.getData();
-System.out.println(XmlConverter.toXml(entry));
+#### Remove from blacklist
+
+```java
+client.blacklist().removeFromBlacklist(cleanerId);
 ```
 
 ---
 
 ### Other API
 
-Utility endpoints: plans, coupons, extras, chat rules, timeslots, and configuration.
+Reference data used in booking flows.
 
 #### Endpoints
 
 | Method | Path | SDK method |
 |---|---|---|
-| GET  | `/plans`              | `listPlans()` |
-| GET  | `/plans/{id}`         | `getPlan(int id)` |
-| POST | `/coupons/validate`   | `validateCoupon(String code)` |
-| GET  | `/extras`             | `listExtras()` |
-| GET  | `/chat/rules`         | `getChatRules()` |
-| GET  | `/timeslots`          | `getTimeslots(String date, Integer propertyId)` |
-| GET  | `/config`             | `getConfig()` |
+| GET  | `/v1/services`                  | `getServices()` |
+| GET  | `/v1/plans`                     | `getPlans(int propertyId)` |
+| GET  | `/v1/recommended-hours`         | `getRecommendedHours(int propertyId, int bathrooms, int rooms)` |
+| POST | `/v1/cost-estimate`             | `getCostEstimate(Map request)` |
+| GET  | `/v1/cleaning-extras/{id}`      | `getCleaningExtras(int serviceId)` |
+| POST | `/v1/available-cleaners`        | `getAvailableCleaners(Map request)` |
+| GET  | `/v1/coupons`                   | `getCoupons()` |
+| GET  | `/v1/cleaners`                  | `listCleaners()` |
+| GET  | `/v1/cleaners/{id}`             | `getCleaner(int cleanerId)` |
 
-#### List plans and serialise
-
-```java
-List<Plan> plans = client.other().listPlans().getData();
-
-for (Plan p : plans) {
-    System.out.printf("%-20s  base=$%.2f  hourly=$%.2f%n",
-            p.getName(), p.getBasePrice(), p.getHourlyRate());
-    System.out.println(XmlConverter.toXml(p));
-}
-```
-
-#### Validate coupon
+#### Get plans for a property
 
 ```java
-// Test coupon codes: 100POFF (100% off), 50POFF, 20POFF, 200OFF (fixed $200), 100OFF
-XmlApiResponse<Coupon> resp = client.other().validateCoupon("100POFF");
-
-if (resp.isSuccess()) {
-    Coupon c = resp.getData();
-    System.out.printf("Coupon %s: %s %.1f%n",
-            c.getCode(), c.getType(), c.getValue());
-} else {
-    System.out.println("Invalid or expired coupon");
-}
+XmlApiResponse<?> resp = client.other().getPlans(propertyId);
 ```
 
-#### Get available timeslots
+#### Get recommended cleaning hours
 
 ```java
-XmlApiResponse<?> resp = client.other().getTimeslots("2025-09-15", propertyId);
-System.out.println(resp.getData());
+XmlApiResponse<?> resp = client.other().getRecommendedHours(propertyId, 2, 3);
 ```
+
+#### Cost estimate
+
+```java
+XmlApiResponse<?> resp = client.other().getCostEstimate(Map.of(
+    "propertyId", propertyId,
+    "planId",     2,
+    "hours",      3.0
+));
+```
+
+#### Find available cleaners
+
+```java
+XmlApiResponse<?> resp = client.other().getAvailableCleaners(Map.of(
+    "propertyId", propertyId,
+    "date",       "2025-09-15",
+    "time",       "10:00"
+));
+```
+
+#### Valid test coupon codes
+
+| Code | Discount |
+|---|---|
+| `100POFF` | 100% off |
+| `50POFF`  | 50% off |
+| `20POFF`  | 20% off |
+| `200OFF`  | $200 fixed |
+| `100OFF`  | $100 fixed |
 
 ---
 
@@ -872,34 +613,10 @@ System.out.println(resp.getData());
 
 ### Booking Model
 
-```java
-Booking b = new Booking();
-b.setId(12345);
-b.setStatus("confirmed");      // pending | confirmed | completed | cancelled | disputed
-b.setDate("2025-09-15");       // YYYY-MM-DD
-b.setTime("09:00");            // HH:mm
-b.setHours(3.0);
-b.setPropertyId(1004);
-b.setPropertyName("Sunset Villa");
-b.setPlanId(2);
-b.setPlanName("Standard Clean");
-b.setRoomCount(2);
-b.setBathroomCount(1);
-b.setExtraSupplies(false);
-b.setTotalPrice(120.0);
-b.setCurrency("USD");
-b.setPaymentMethodId(55);
-b.setNotes("Ring doorbell on arrival");
-b.setCreatedAt("2025-08-01T10:00:00Z");
-b.setUpdatedAt("2025-08-01T10:00:00Z");
-b.setCancelledAt(null);
-b.setCancelReason(null);
-```
-
 | Field | Type | Description |
 |---|---|---|
 | `id` | Integer | Booking identifier |
-| `status` | String | `pending`, `confirmed`, `completed`, `cancelled`, `disputed` |
+| `status` | String | `pending`, `open`, `completed`, `cancelled`, `disputed` |
 | `date` | String | Service date (YYYY-MM-DD) |
 | `time` | String | Start time (HH:mm) |
 | `hours` | Double | Duration in hours |
@@ -907,101 +624,57 @@ b.setCancelReason(null);
 | `planId` | Integer | Cleaning plan |
 | `roomCount` | Integer | Number of rooms |
 | `bathroomCount` | Integer | Number of bathrooms |
-| `extraSupplies` | Boolean | Whether to bring extra supplies |
+| `extraSupplies` | Boolean | Whether to bring supplies |
 | `totalPrice` | Double | Total cost |
-| `currency` | String | ISO 4217 currency code |
+| `currency` | String | ISO 4217 code |
 | `paymentMethodId` | Integer | Stored payment method |
 | `notes` | String | Special instructions |
 | `cancelReason` | String | Reason for cancellation |
-
----
+| `cancelledAt` | String | ISO-8601 cancellation timestamp |
 
 ### Property Model
 
-```java
-Property p = new Property();
-p.setId(1004);
-p.setName("Sunset Villa");
-p.setAddress("123 Ocean Drive");
-p.setCity("Miami Beach");
-p.setState("FL");
-p.setZipCode("33139");
-p.setCountry("US");
-p.setRoomCount(3);
-p.setBathroomCount(2);
-p.setSquareFootage(1800.0);
-p.setPropertyType("house");   // house | apartment | office | other
-p.setActive(true);
-p.setNotes("Has a pool — avoid slippery tiles");
-p.setAccessInstructions("Key under the welcome mat");
-```
-
----
+| Field | Type | Description |
+|---|---|---|
+| `id` | Integer | Property identifier |
+| `name` | String | Display name |
+| `address` | String | Street address |
+| `city` | String | City |
+| `country` | String | Country code |
+| `roomCount` | Integer | Number of bedrooms |
+| `bathroomCount` | Integer | Number of bathrooms |
+| `active` | Boolean | Whether property is active |
 
 ### User Model
 
-```java
-User u = new User();
-u.setId(7);
-u.setEmail("partner@example.com");
-u.setFirstName("Alice");
-u.setLastName("Smith");
-u.setPhone("+1-555-0100");
-u.setToken("eyJ...");          // JWT session token
-u.setRole("partner");
-u.setActive(true);
-```
-
----
+| Field | Type | Description |
+|---|---|---|
+| `id` | Integer | User identifier |
+| `email` | String | Email address |
+| `firstName` | String | First name |
+| `lastName` | String | Last name |
+| `phone` | String | Phone number |
+| `token` | String | JWT access token |
+| `active` | Boolean | Account status |
 
 ### Checklist Model
 
-```java
-Checklist c = new Checklist();
-c.setId(3);
-c.setName("Move-Out Deep Clean");
-c.setDescription("Full deep clean for end-of-tenancy inspection");
-c.setPropertyId(1004);
-c.setActive(true);
-c.setItems(List.of(
-    "Clean inside oven",
-    "Degrease extractor fan",
-    "Scrub tile grout",
-    "Wash all windows"
-));
-```
-
-XML serialisation with a list collection:
-
-```xml
-<checklist>
-    <id>3</id>
-    <name>Move-Out Deep Clean</name>
-    <items>
-        <item>Clean inside oven</item>
-        <item>Degrease extractor fan</item>
-        <item>Scrub tile grout</item>
-        <item>Wash all windows</item>
-    </items>
-</checklist>
-```
-
----
+| Field | Type | Description |
+|---|---|---|
+| `id` | Integer | Checklist identifier |
+| `name` | String | Display name |
+| `description` | String | Description |
+| `active` | Boolean | Active status |
+| `items` | List&lt;String&gt; | Task item list |
 
 ### PaymentMethod Model
 
 | Field | Type | Description |
 |---|---|---|
 | `id` | Integer | Method identifier |
-| `type` | String | `card` |
-| `brand` | String | `Visa`, `Mastercard`, `Amex`, `Discover` |
-| `last4` | String | Last 4 digits |
-| `expMonth` | Integer | Expiry month (1–12) |
-| `expYear` | Integer | Expiry year (4-digit) |
-| `isDefault` | Boolean | Whether this is the default method |
-| `holderName` | String | Cardholder name |
-
----
+| `type` | String | `card` or `paypal` |
+| `last4` | String | Last 4 digits (card) |
+| `isDefault` | Boolean | Default method flag |
 
 ### Webhook Model
 
@@ -1009,307 +682,161 @@ XML serialisation with a list collection:
 |---|---|---|
 | `id` | Integer | Webhook identifier |
 | `url` | String | HTTPS endpoint URL |
-| `active` | Boolean | Whether the webhook is active |
-| `events` | List<String> | Subscribed event types |
-| `secret` | String | HMAC-SHA256 signing secret |
-
----
+| `event` | String | Subscribed event type |
+| `active` | Boolean | Active status |
 
 ### BlacklistEntry Model
 
 | Field | Type | Description |
 |---|---|---|
-| `id` | Integer | Entry identifier |
-| `userId` | Integer | Blacklisted user's ID |
+| `cleanerId` | Integer | Blacklisted cleaner's ID |
 | `reason` | String | Reason for blacklisting |
-| `createdAt` | String | ISO-8601 timestamp |
-
----
-
-### Plan Model
-
-| Field | Type | Description |
-|---|---|---|
-| `id` | Integer | Plan identifier |
-| `name` | String | e.g. Standard, Deep Clean, Move-In/Out |
-| `description` | String | Plan description |
-| `basePrice` | Double | Starting price |
-| `hourlyRate` | Double | Additional hourly rate |
-| `currency` | String | ISO 4217 |
-| `active` | Boolean | Whether the plan is bookable |
-
----
-
-### Coupon Model
-
-| Field | Type | Description |
-|---|---|---|
-| `id` | Integer | Coupon identifier |
-| `code` | String | Coupon code (e.g. `100POFF`) |
-| `type` | String | `percent` or `fixed` |
-| `value` | Double | Discount amount/percentage |
-| `active` | Boolean | Whether the coupon is valid |
-| `expiresAt` | String | ISO-8601 expiry |
-| `usageLimit` | Integer | Maximum redemptions |
-| `usageCount` | Integer | Current redemption count |
 
 ---
 
 ## XML Schema Examples
 
-### Full Booking XML
+### Booking XML
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <booking>
     <id>12345</id>
-    <status>confirmed</status>
+    <status>open</status>
     <date>2025-09-15</date>
     <time>09:00</time>
     <hours>3.0</hours>
     <propertyId>1004</propertyId>
-    <propertyName>Sunset Villa</propertyName>
     <planId>2</planId>
-    <planName>Standard Clean</planName>
     <roomCount>2</roomCount>
     <bathroomCount>1</bathroomCount>
     <extraSupplies>false</extraSupplies>
     <totalPrice>120.0</totalPrice>
     <currency>USD</currency>
     <paymentMethodId>55</paymentMethodId>
-    <notes>Ring doorbell on arrival</notes>
-    <createdAt>2025-08-01T10:00:00Z</createdAt>
-    <updatedAt>2025-08-01T10:00:00Z</updatedAt>
 </booking>
 ```
 
-### Full Property XML
+### Checklist XML (with items)
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<property>
-    <id>1004</id>
-    <name>Sunset Villa</name>
-    <address>123 Ocean Drive</address>
-    <city>Miami Beach</city>
-    <state>FL</state>
-    <zipCode>33139</zipCode>
-    <country>US</country>
-    <roomCount>3</roomCount>
-    <bathroomCount>2</bathroomCount>
-    <squareFootage>1800.0</squareFootage>
-    <propertyType>house</propertyType>
+<checklist>
+    <id>7</id>
+    <name>Standard Clean</name>
     <active>true</active>
-    <accessInstructions>Key under welcome mat</accessInstructions>
-</property>
+    <items>
+        <item>Vacuum all floors</item>
+        <item>Wipe kitchen counters</item>
+        <item>Clean bathrooms</item>
+    </items>
+</checklist>
 ```
 
-### Webhook with events XML
+### Webhook XML
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <webhook>
     <id>9</id>
     <url>https://your-server.com/hooks/cleanster</url>
+    <event>booking.completed</event>
     <active>true</active>
-    <events>
-        <event>booking.created</event>
-        <event>booking.completed</event>
-        <event>booking.cancelled</event>
-    </events>
-    <secret>whsec_abc123xyz</secret>
-    <createdAt>2025-01-01T00:00:00Z</createdAt>
 </webhook>
 ```
 
 ---
 
-## All 59 Endpoints
+## All 62 Endpoints
 
-### Users (3)
-
-| # | Method | Path | Description |
+| # | Method | Path | API group |
 |---|---|---|---|
-| 1 | POST | `/users/{userId}/token` | Fetch access token |
-| 2 | GET  | `/users/{userId}` | Get user profile |
-| 3 | PUT  | `/users/{userId}` | Update user profile |
-
-### Bookings (17)
-
-| # | Method | Path | Description |
-|---|---|---|---|
-| 4  | GET    | `/bookings` | List all bookings |
-| 5  | GET    | `/bookings/{id}` | Get booking |
-| 6  | POST   | `/bookings` | Create booking |
-| 7  | PUT    | `/bookings/{id}` | Update booking |
-| 8  | DELETE | `/bookings/{id}` | Cancel booking |
-| 9  | POST   | `/bookings/{id}/cancel` | Cancel with reason |
-| 10 | POST   | `/bookings/{id}/reschedule` | Reschedule booking |
-| 11 | POST   | `/bookings/{id}/confirm` | Confirm booking |
-| 12 | POST   | `/bookings/{id}/complete` | Mark complete |
-| 13 | POST   | `/bookings/{id}/dispute` | Dispute booking |
-| 14 | POST   | `/bookings/{id}/tip` | Add tip |
-| 15 | GET    | `/bookings/{id}/receipt` | Get receipt |
-| 16 | POST   | `/bookings/{id}/review` | Leave review |
-| 17 | GET    | `/bookings/upcoming` | Upcoming bookings |
-| 18 | GET    | `/bookings/past` | Past bookings |
-| 19 | POST   | `/bookings/{id}/apply-coupon` | Apply coupon code |
-| 20 | POST   | `/bookings/{id}/notify-cleaner` | Notify cleaner |
-
-### Properties (14)
-
-| # | Method | Path | Description |
-|---|---|---|---|
-| 21 | GET    | `/properties` | List properties |
-| 22 | GET    | `/properties/{id}` | Get property |
-| 23 | POST   | `/properties` | Create property |
-| 24 | PUT    | `/properties/{id}` | Update property |
-| 25 | DELETE | `/properties/{id}` | Delete property |
-| 26 | GET    | `/properties/{id}/bookings` | Property bookings |
-| 27 | GET    | `/properties/{id}/checklists` | Property checklists |
-| 28 | POST   | `/properties/{id}/archive` | Archive property |
-| 29 | POST   | `/properties/{id}/restore` | Restore property |
-| 30 | GET    | `/properties/active` | Active properties |
-| 31 | GET    | `/properties/archived` | Archived properties |
-| 32 | POST   | `/properties/{id}/duplicate` | Duplicate property |
-| 33 | GET    | `/properties/{id}/access-info` | Get access instructions |
-| 34 | PUT    | `/properties/{id}/access-info` | Update access instructions |
-
-### Checklists (5)
-
-| # | Method | Path | Description |
-|---|---|---|---|
-| 35 | GET    | `/checklists` | List checklists |
-| 36 | GET    | `/checklists/{id}` | Get checklist |
-| 37 | POST   | `/checklists` | Create checklist |
-| 38 | PUT    | `/checklists/{id}` | Update checklist |
-| 39 | DELETE | `/checklists/{id}` | Delete checklist |
-
-### Payment Methods (6)
-
-| # | Method | Path | Description |
-|---|---|---|---|
-| 40 | GET    | `/payment-methods` | List payment methods |
-| 41 | GET    | `/payment-methods/{id}` | Get payment method |
-| 42 | POST   | `/payment-methods` | Add payment method |
-| 43 | PUT    | `/payment-methods/{id}` | Update payment method |
-| 44 | DELETE | `/payment-methods/{id}` | Delete payment method |
-| 45 | POST   | `/payment-methods/{id}/default` | Set as default |
-
-### Webhooks (4)
-
-| # | Method | Path | Description |
-|---|---|---|---|
-| 46 | GET    | `/webhooks` | List webhooks |
-| 47 | GET    | `/webhooks/{id}` | Get webhook |
-| 48 | POST   | `/webhooks` | Create webhook |
-| 49 | DELETE | `/webhooks/{id}` | Delete webhook |
-
-### Blacklist (3)
-
-| # | Method | Path | Description |
-|---|---|---|---|
-| 50 | GET    | `/blacklist` | List blacklisted users |
-| 51 | POST   | `/blacklist` | Add user to blacklist |
-| 52 | DELETE | `/blacklist/{userId}` | Remove from blacklist |
-
-### Other (7)
-
-| # | Method | Path | Description |
-|---|---|---|---|
-| 53 | GET  | `/plans` | List cleaning plans |
-| 54 | GET  | `/plans/{id}` | Get plan |
-| 55 | POST | `/coupons/validate` | Validate coupon code |
-| 56 | GET  | `/extras` | List available extras |
-| 57 | GET  | `/chat/rules` | Chat window rules |
-| 58 | GET  | `/timeslots` | Available time slots |
-| 59 | GET  | `/config` | Partner configuration |
+| 1  | POST   | `/v1/user/account`                                | Users |
+| 2  | GET    | `/v1/user/access-token/{userId}`                  | Users |
+| 3  | POST   | `/v1/user/verify-jwt`                             | Users |
+| 4  | GET    | `/v1/properties`                                  | Properties |
+| 5  | POST   | `/v1/properties`                                  | Properties |
+| 6  | GET    | `/v1/properties/{id}`                             | Properties |
+| 7  | PUT    | `/v1/properties/{id}`                             | Properties |
+| 8  | DELETE | `/v1/properties/{id}`                             | Properties |
+| 9  | PUT    | `/v1/properties/{id}/additional-information`      | Properties |
+| 10 | POST   | `/v1/properties/{id}/enable-disable`              | Properties |
+| 11 | GET    | `/v1/properties/{id}/cleaners`                    | Properties |
+| 12 | POST   | `/v1/properties/{id}/cleaners`                    | Properties |
+| 13 | DELETE | `/v1/properties/{id}/cleaners/{cleanerId}`        | Properties |
+| 14 | PUT    | `/v1/properties/{id}/ical`                        | Properties |
+| 15 | GET    | `/v1/properties/{id}/ical`                        | Properties |
+| 16 | DELETE | `/v1/properties/{id}/ical`                        | Properties |
+| 17 | PUT    | `/v1/properties/{id}/checklist/{checklistId}`     | Properties |
+| 18 | GET    | `/v1/bookings`                                    | Bookings |
+| 19 | POST   | `/v1/bookings/create`                             | Bookings |
+| 20 | GET    | `/v1/bookings/{id}`                               | Bookings |
+| 21 | POST   | `/v1/bookings/{id}/cancel`                        | Bookings |
+| 22 | POST   | `/v1/bookings/{id}/reschedule`                    | Bookings |
+| 23 | POST   | `/v1/bookings/{id}/cleaner`                       | Bookings |
+| 24 | DELETE | `/v1/bookings/{id}/cleaner`                       | Bookings |
+| 25 | POST   | `/v1/bookings/{id}/hours`                         | Bookings |
+| 26 | POST   | `/v1/bookings/{id}/expenses`                      | Bookings |
+| 27 | GET    | `/v1/bookings/{id}/inspection`                    | Bookings |
+| 28 | GET    | `/v1/bookings/{id}/inspection/details`            | Bookings |
+| 29 | PUT    | `/v1/bookings/{id}/checklist/{checklistId}`       | Bookings |
+| 30 | POST   | `/v1/bookings/{id}/feedback`                      | Bookings |
+| 31 | POST   | `/v1/bookings/{id}/tip`                           | Bookings |
+| 32 | GET    | `/v1/bookings/{id}/chat`                          | Bookings |
+| 33 | POST   | `/v1/bookings/{id}/chat`                          | Bookings |
+| 34 | DELETE | `/v1/bookings/{id}/chat/{messageId}`              | Bookings |
+| 35 | GET    | `/v1/checklist`                                   | Checklists |
+| 36 | POST   | `/v1/checklist`                                   | Checklists |
+| 37 | GET    | `/v1/checklist/{id}`                              | Checklists |
+| 38 | PUT    | `/v1/checklist/{id}`                              | Checklists |
+| 39 | DELETE | `/v1/checklist/{id}`                              | Checklists |
+| 40 | POST   | `/v1/checklist/upload-image`                      | Checklists |
+| 41 | GET    | `/v1/payment-methods/setup-intent-details`        | Payment Methods |
+| 42 | GET    | `/v1/payment-methods/paypal-client-token`         | Payment Methods |
+| 43 | POST   | `/v1/payment-methods`                             | Payment Methods |
+| 44 | GET    | `/v1/payment-methods`                             | Payment Methods |
+| 45 | DELETE | `/v1/payment-methods/{id}`                        | Payment Methods |
+| 46 | PUT    | `/v1/payment-methods/{id}/default`                | Payment Methods |
+| 47 | GET    | `/v1/webhooks`                                    | Webhooks |
+| 48 | POST   | `/v1/webhooks`                                    | Webhooks |
+| 49 | PUT    | `/v1/webhooks/{id}`                               | Webhooks |
+| 50 | DELETE | `/v1/webhooks/{id}`                               | Webhooks |
+| 51 | GET    | `/v1/blacklist/cleaner`                           | Blacklist |
+| 52 | POST   | `/v1/blacklist/cleaner`                           | Blacklist |
+| 53 | DELETE | `/v1/blacklist/cleaner`                           | Blacklist |
+| 54 | GET    | `/v1/services`                                    | Other |
+| 55 | GET    | `/v1/plans`                                       | Other |
+| 56 | GET    | `/v1/recommended-hours`                           | Other |
+| 57 | POST   | `/v1/cost-estimate`                               | Other |
+| 58 | GET    | `/v1/cleaning-extras/{serviceId}`                 | Other |
+| 59 | POST   | `/v1/available-cleaners`                          | Other |
+| 60 | GET    | `/v1/coupons`                                     | Other |
+| 61 | GET    | `/v1/cleaners`                                    | Other |
+| 62 | GET    | `/v1/cleaners/{id}`                               | Other |
 
 ---
 
 ## Testing
 
-The test suite covers **164 tests** across 8 test classes.  Each test uses
-OkHttp `MockWebServer` to intercept HTTP calls locally — no real API credentials are needed.
-
-### Run all tests
-
 ```bash
 mvn test
 ```
 
-### Test breakdown
-
-| Test class | Tests | What it covers |
-|---|---|---|
-| `BookingsTest` | 47 | All 17 booking endpoints + Booking XML round-trip |
-| `PropertiesTest` | 26 | All 14 property endpoints + Property XML round-trip |
-| `OtherTest` | 21 | All 7 other endpoints + Plan/Coupon XML round-trip |
-| `ChecklistsTest` | 18 | All 5 checklist endpoints + Checklist XML round-trip |
-| `UsersTest` | 18 | All 3 user endpoints + User XML round-trip + `XmlConverter` utility |
-| `PaymentMethodsTest` | 14 | All 6 payment method endpoints + PaymentMethod XML round-trip |
-| `WebhooksTest` | 11 | All 4 webhook endpoints + Webhook XML round-trip |
-| `BlacklistTest` | 9 | All 3 blacklist endpoints + BlacklistEntry XML round-trip |
-| **Total** | **164** | |
-
-### What the tests verify
-
-For every endpoint test:
-
-1. **HTTP method** is correct (GET / POST / PUT / DELETE / PATCH)
-2. **URL path** is correct (e.g. `/bookings/10/reschedule`)
-3. **Request body** contains expected fields
-4. **Response** is correctly deserialized from JSON to typed objects
-
-For every XML test:
-
-1. `XmlConverter.toXml(obj)` produces valid XML with the expected element names
-2. `XmlConverter.fromXml(xml, Class)` correctly round-trips all fields
-3. Collections (`List<String>`) are correctly wrapped in parent elements
-
-### Run a specific test class
-
-```bash
-mvn test -Dtest=BookingsTest
-mvn test -Dtest=PropertiesTest
-mvn test -Dtest=UsersTest
-```
-
-### Inspect test output
-
-```bash
-mvn test -pl xml-sdk 2>&1 | grep -E "Tests run|FAIL|ERROR"
-```
+123 tests across 8 test classes using **Mockito** (no real network calls). Each test asserts:
+- The correct HTTP method is used
+- The path contains `/v1/` prefix and the correct endpoint segment
+- Request bodies contain expected fields
+- Responses are correctly deserialized
 
 ---
 
 ## Building
 
-### Build and run tests
-
 ```bash
-mvn clean test
+mvn clean package
 ```
 
-### Build without tests
-
-```bash
-mvn clean package -DskipTests
-```
-
-### Build fat JAR (with all dependencies)
-
-Add the Maven Shade plugin to `pom.xml` and run:
-
-```bash
-mvn clean package -Pshade
-```
-
-### Check for dependency updates
-
-```bash
-mvn versions:display-dependency-updates
-```
+The resulting JAR is in `target/cleanster-xml-sdk-1.0.0.jar`.
 
 ---
 
@@ -1317,23 +844,27 @@ mvn versions:display-dependency-updates
 
 ### Client factories
 
-| Factory method | Description |
+| Factory | Environment |
 |---|---|
-| `CleansterXmlClient.sandbox("key")` | Targets the sandbox environment |
-| `CleansterXmlClient.production("key")` | Targets the production environment |
-| `CleansterXmlClient.custom(url, key, httpClient)` | Custom base URL + OkHttp client (for testing) |
+| `CleansterXmlClient.sandbox("key")` | Sandbox (default) |
+| `CleansterXmlClient.production("key")` | Production |
+| `CleansterXmlClient.custom(url, key, httpClient)` | Custom (for testing) |
+
+### Base URLs
+
+| Environment | Base URL |
+|---|---|
+| **Sandbox** | `https://partner-sandbox-dot-official-tidyio-project.ue.r.appspot.com/public` |
+| **Production** | `https://partner-dot-official-tidyio-project.ue.r.appspot.com/public` |
 
 ### Token management
 
 ```java
-client.setToken("your-session-token");  // persist the token
-String token = client.getToken();       // retrieve the stored token
+client.setToken("your-jwt-token");
+String token = client.getToken();
 ```
 
-### Timeouts
-
-The default connection and read timeout is 30 seconds.  To customise, create an
-`OkHttpClient` manually and pass it to the `custom()` factory:
+### Custom timeouts
 
 ```java
 OkHttpClient httpClient = new OkHttpClient.Builder()
@@ -1348,13 +879,6 @@ CleansterXmlClient client = CleansterXmlClient.custom(
 );
 ```
 
-### XmlConverter defaults
-
-`XmlConverter.toXml()` always produces:
-- UTF-8 encoding
-- Formatted (indented) output
-- Standard JAXB XML prolog: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>`
-
 ---
 
 ## Integration Patterns
@@ -1362,61 +886,41 @@ CleansterXmlClient client = CleansterXmlClient.custom(
 ### Writing XML bookings to disk
 
 ```java
-XmlApiResponse<List<Booking>> resp = client.bookings().listBookings();
-
-for (Booking b : resp.getData()) {
+List<Booking> bookings = client.bookings().listBookings().getData();
+for (Booking b : bookings) {
     String xml      = XmlConverter.toXml(b);
     String filename = "booking-" + b.getId() + ".xml";
     Files.writeString(Path.of(filename), xml, StandardCharsets.UTF_8);
-    System.out.println("Wrote " + filename);
 }
 ```
 
 ### XML message queue integration
 
 ```java
-// Producer: serialize to XML and put on queue
+// Producer
 Booking booking = client.bookings().createBooking(...).getData();
 String xml = XmlConverter.toXml(booking);
-myMessageQueue.send("bookings", xml);
+myQueue.send("bookings", xml);
 
-// Consumer: receive XML and deserialise
-String received = myMessageQueue.receive("bookings");
+// Consumer
+String received = myQueue.receive("bookings");
 Booking b = XmlConverter.fromXml(received, Booking.class);
 System.out.println("Processing booking " + b.getId());
 ```
 
-### Transforming to XSLT
-
-```java
-String xml = XmlConverter.toXml(booking);
-
-// Use any standard JAXP transformer
-TransformerFactory factory = TransformerFactory.newInstance();
-Transformer transformer = factory.newTransformer(
-        new StreamSource(new File("booking-template.xslt")));
-transformer.transform(
-        new StreamSource(new StringReader(xml)),
-        new StreamResult(System.out));
-```
-
 ### SOAP/WS integration
-
-All Cleanster models are standard JAXB-annotated POJOs, making them compatible with any
-`jakarta.xml.ws` or `javax.jws` binding:
 
 ```java
 @WebService
 public class CleansterBookingService {
-
     private final CleansterXmlClient client =
             CleansterXmlClient.production(System.getenv("CLEANSTER_ACCESS_KEY"));
 
     @WebMethod
     public Booking createBooking(String date, String time, int propertyId) {
-        XmlApiResponse<Booking> resp = client.bookings()
-                .createBooking(date, time, propertyId, 2, 3.0, 2, 1, false, 55);
-        return resp.getData();
+        return client.bookings()
+                .createBooking(date, time, propertyId, 2, 3.0, 2, 1, false, 55)
+                .getData();
     }
 }
 ```
@@ -1425,63 +929,35 @@ public class CleansterBookingService {
 
 ## Booking Lifecycle
 
-Cleanster bookings move through a well-defined state machine:
-
 ```
-                ┌─────────────┐
-   createBooking│             │
-  ──────────────►   PENDING   │
-                │             │
-                └──────┬──────┘
-                       │ confirmBooking()
-                       ▼
-                ┌─────────────┐
-                │  CONFIRMED  │─────────────┐
-                └──────┬──────┘             │ disputeBooking()
-                       │ completeBooking()  │
-                       ▼                    ▼
-                ┌─────────────┐      ┌─────────────┐
-                │  COMPLETED  │      │  DISPUTED   │
-                └─────────────┘      └─────────────┘
-
- Any state → CANCELLED via cancelBooking() or cancelBooking(id, reason)
- CONFIRMED  → rescheduled via rescheduleBooking(id, date, time)
- COMPLETED  → review via leaveReview(), tip via addTip()
+              POST /v1/bookings/create
+             ─────────────────────────►  PENDING / OPEN
+                                              │
+                    POST /{id}/reschedule ◄───┤──► POST /{id}/cancel
+                                              │
+                    POST /{id}/cleaner    ◄───┤  (assign cleaner)
+                                              │
+                    POST /{id}/hours      ◄───┤  (adjust hours)
+                                              │
+                                              ▼
+                                          COMPLETED
+                                              │
+                    POST /{id}/feedback   ◄───┤
+                    POST /{id}/tip        ◄───┤
+                    POST /{id}/expenses   ◄───┘
 ```
 
-### State transition methods
+### Key transitions
 
-| From state | Action | Method |
+| Action | Method | Path |
 |---|---|---|
-| PENDING | Confirm the booking | `confirmBooking(id)` |
-| PENDING / CONFIRMED | Cancel | `cancelBooking(id)` |
-| CONFIRMED | Reschedule | `rescheduleBooking(id, date, time)` |
-| CONFIRMED | Mark complete | `completeBooking(id)` |
-| CONFIRMED | Dispute | `disputeBooking(id, reason)` |
-| COMPLETED | Leave review | `leaveReview(id, rating, comment)` |
-| COMPLETED | Add tip | `addTip(id, amount)` |
-| CONFIRMED | Apply coupon | `applyCoupon(id, code)` |
-
----
-
-## Chat Window Rules
-
-The `/chat/rules` endpoint (`getChatRules()`) returns the partner's configured chat window
-behaviour:
-
-```java
-XmlApiResponse<?> resp = client.other().getChatRules();
-System.out.println(resp.getData());
-```
-
-Rules typically include:
-- **maxMessages** — maximum messages per conversation
-- **messageWindowHours** — hours after booking when messaging is open
-- **allowAttachments** — whether file attachments are permitted
-- **autoCloseAfterHours** — hours of inactivity before thread is closed
-
-These rules apply to the in-app messaging thread between the partner customer and the
-assigned cleaner.
+| Cancel | `cancelBooking(id)` | `POST /v1/bookings/{id}/cancel` |
+| Reschedule | `rescheduleBooking(id, date, time)` | `POST /v1/bookings/{id}/reschedule` |
+| Assign cleaner | `assignCleaner(id, cleanerId)` | `POST /v1/bookings/{id}/cleaner` |
+| Adjust hours | `adjustHours(id, hours)` | `POST /v1/bookings/{id}/hours` |
+| Pay expenses | `payExpenses(id, paymentMethodId)` | `POST /v1/bookings/{id}/expenses` |
+| Submit feedback | `submitFeedback(id, rating, comment)` | `POST /v1/bookings/{id}/feedback` |
+| Add tip | `addTip(id, amount, paymentMethodId)` | `POST /v1/bookings/{id}/tip` |
 
 ---
 
@@ -1490,12 +966,12 @@ assigned cleaner.
 ### v1.0.0
 
 - Initial release
-- 59 endpoints across 8 API groups
+- 62 endpoints across 8 API groups, all with `/v1/` prefix
 - Full JAXB 4.0 annotation on all model classes
 - `XmlConverter` utility (toXml / fromXml / isXml)
 - `CleansterXmlClient` with sandbox, production, and custom factories
 - OkHttp 4.12.0 transport with configurable timeouts
-- 164 tests with MockWebServer
+- 123 tests with Mockito
 
 ---
 
@@ -1505,8 +981,8 @@ assigned cleaner.
 |---|---|
 | **API Documentation** | [Postman Docs](https://documenter.getpostman.com/view/26172658/2sAYdoF7ep) |
 | **Partner inquiries** | [partner@cleanster.com](mailto:partner@cleanster.com) |
-| **General support**   | [support@cleanster.com](mailto:support@cleanster.com) |
-| **Bug reports**       | Open an issue on GitHub |
+| **General support** | [support@cleanster.com](mailto:support@cleanster.com) |
+| **Bug reports** | Open an issue on GitHub |
 
 ---
 
