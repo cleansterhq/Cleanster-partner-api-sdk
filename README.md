@@ -101,7 +101,7 @@ The Cleanster Partner API is a white-label backend for cleaning service platform
 | **Payment methods** | Attach Stripe cards and PayPal accounts to user profiles |
 | **Webhooks** | Receive real-time events for every stage of a booking |
 | **Blacklist** | Prevent specific cleaners from being assigned to your properties |
-| **Reference data** | Fetch service types, plans, pricing, extras, available cleaners |
+| **Reference data** | Fetch service types, plans, pricing, extras, available cleaners, and cleaner profiles |
 
 ---
 
@@ -2368,6 +2368,26 @@ Returns all valid coupon codes available for use at booking creation.
 resp = client.other.get_coupons()
 for coupon in resp.data:
     print(coupon["code"], coupon["discount"])
+```
+
+---
+
+#### `GET /v1/cleaners` — List Cleaners
+
+Returns all cleaners on the partner account. Supports optional `status` and `search` query parameters.
+
+```python
+resp = client.other.list_cleaners(status="active", search="Jane")
+```
+
+---
+
+#### `GET /v1/cleaners/{cleanerId}` — Get Cleaner
+
+Returns a single cleaner by their ID.
+
+```python
+resp = client.other.get_cleaner(cleaner_id=789)
 ```
 
 ---
