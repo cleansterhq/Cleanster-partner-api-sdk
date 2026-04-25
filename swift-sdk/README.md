@@ -10,7 +10,7 @@
   <img src="https://img.shields.io/badge/iOS-16%2B-blue?logo=apple" alt="iOS 16+">
   <img src="https://img.shields.io/badge/macOS-13%2B-blue?logo=apple" alt="macOS 13+">
   <img src="https://img.shields.io/badge/SPM-compatible-brightgreen" alt="SPM">
-  <img src="https://img.shields.io/badge/tests-166%20passing-brightgreen" alt="166 passing">
+  <img src="https://img.shields.io/badge/tests-170%20passing-brightgreen" alt="170 passing">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
   <img src="https://img.shields.io/badge/API-Cleanster%20Partner-brightgreen" alt="Cleanster Partner API">
 </p>
@@ -1381,7 +1381,7 @@ cd swift-sdk
 swift test
 ```
 
-All **166 tests** should pass.
+All **170 tests** should pass.
 
 ---
 
