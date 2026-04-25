@@ -111,3 +111,17 @@ See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and pa
 - 107 xUnit 2.7 + Moq 4.20 tests — all passing; `MockBehavior.Strict` ensures exact path/verb/body verification; zero real HTTP calls
 - Packaging: `Cleanster.sln`, `Cleanster.csproj`, `Cleanster.Tests.csproj`, `LICENSE`, `CHANGELOG.md`, `.gitignore`
 - Detailed README: dual-auth step-by-step, all API methods with C# named-argument examples, full model property tables, exception hierarchy, DI/ASP.NET Core patterns, design decision rationale, test coverage breakdown
+
+## MCP Server (`mcp-server/`)
+
+Standalone Node.js 20+ TypeScript server implementing the Model Context Protocol (MCP). Allows Claude and other AI assistants to interact with the Cleanster Partner API through natural language.
+
+- **Transports**: HTTP/SSE via Express (default, `MCP_TRANSPORT=http`, port 8000) or stdio for Claude Desktop direct connection (`MCP_TRANSPORT=stdio`)
+- **Tools**: 11 tools — list_bookings, get_booking, list_properties, get_property, list_cleaners, get_payout_records, create_booking, cancel_booking, reschedule_booking, assign_crew, update_checklist
+- **Auth**: Per-connection bearer token (API key); OAuth 2.0 + PKCE seam in `src/auth/token.ts`
+- **Rate limiting**: 60 req/min per token via express-rate-limit (HTTP mode only)
+- **Logging**: Pino with bearer token redaction; pretty-print in dev, JSON in production
+- **Tests**: 51 Vitest unit tests — all passing (mocked API, no real HTTP calls)
+- **Run**: `cd mcp-server && npm run dev`; Health endpoint at `GET /health`
+- **GitHub**: Pushed to `cleansterhq/Cleanster-partner-api-sdk` at `mcp-server/`
+- **Workflow**: "MCP Server" workflow configured, auto-starts
