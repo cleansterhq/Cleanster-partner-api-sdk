@@ -26,16 +26,16 @@ A Java SOAP SDK for the Cleanster Partner API. Provides a WSDL-defined, document
 |---|---|---|---|
 | `GetBooking` | GET | `/v1/bookings/{id}` | Retrieve a booking by ID |
 | `ListBookings` | GET | `/v1/bookings` | List bookings with optional filters |
-| `CreateBooking` | POST | `/v1/bookings` | Create a new cleaning booking |
+| `CreateBooking` | POST | `/v1/bookings/create` | Create a new cleaning booking |
 | `CancelBooking` | POST | `/v1/bookings/{id}/cancel` | Cancel a booking |
 | `RescheduleBooking` | POST | `/v1/bookings/{id}/reschedule` | Reschedule to a new date/time |
 | `AssignCleaner` | POST | `/v1/bookings/{id}/cleaner` | Assign a cleaner to a booking |
 | `RemoveAssignedCleaner` | DELETE | `/v1/bookings/{id}/cleaner` | Remove the assigned cleaner |
-| `AdjustHours` | POST | `/v1/bookings/{id}/adjust-hours` | Adjust booking duration |
-| `PayExpenses` | POST | `/v1/bookings/{id}/pay-expenses` | Pay booking expenses |
+| `AdjustHours` | POST | `/v1/bookings/{id}/hours` | Adjust booking duration |
+| `PayExpenses` | POST | `/v1/bookings/{id}/expenses` | Pay booking expenses |
 | `GetBookingInspection` | GET | `/v1/bookings/{id}/inspection` | Get inspection report |
-| `GetBookingInspectionDetails` | GET | `/v1/bookings/{id}/inspection-details` | Get detailed inspection |
-| `AssignChecklistToBooking` | PUT | `/v1/bookings/{id}/checklist` | Assign a checklist to a booking |
+| `GetBookingInspectionDetails` | GET | `/v1/bookings/{id}/inspection/details` | Get detailed inspection |
+| `AssignChecklistToBooking` | PUT | `/v1/bookings/{id}/checklist/{checklistId}` | Assign a checklist to a booking |
 | `SubmitFeedback` | POST | `/v1/bookings/{id}/feedback` | Submit a rating and comment |
 | `AddTip` | POST | `/v1/bookings/{id}/tip` | Add a tip to a booking |
 | `GetChat` | GET | `/v1/bookings/{id}/chat` | Get chat messages for a booking |
@@ -49,7 +49,7 @@ A Java SOAP SDK for the Cleanster Partner API. Provides a WSDL-defined, document
 | `ListProperties` | GET | `/v1/properties` | List all properties |
 | `CreateProperty` | POST | `/v1/properties` | Add a new property |
 | `UpdateProperty` | PUT | `/v1/properties/{id}` | Update a property |
-| `UpdateAdditionalInformation` | PUT | `/v1/properties/{id}/additional-info` | Update property notes/extras |
+| `UpdateAdditionalInformation` | PUT | `/v1/properties/{id}/additional-information` | Update property notes/extras |
 | `EnableOrDisableProperty` | POST | `/v1/properties/{id}/enable-disable` | Enable or disable a property |
 | `DeleteProperty` | DELETE | `/v1/properties/{id}` | Delete a property |
 | `GetPropertyCleaners` | GET | `/v1/properties/{id}/cleaners` | List cleaners for a property |
@@ -90,8 +90,8 @@ A Java SOAP SDK for the Cleanster Partner API. Provides a WSDL-defined, document
 ### Users (3 operations)
 | Operation | HTTP Method | Path | Description |
 |---|---|---|---|
-| `CreateUser` | POST | `/v1/user` | Create a new partner user |
-| `FetchAccessToken` | GET | `/v1/user/{id}/access-token` | Get a user's access token |
+| `CreateUser` | POST | `/v1/user/account` | Create a new partner user |
+| `FetchAccessToken` | GET | `/v1/user/access-token/{id}` | Get a user's access token |
 | `VerifyJwt` | POST | `/v1/user/verify-jwt` | Verify a JWT token |
 
 ### Blacklist (3 operations)
