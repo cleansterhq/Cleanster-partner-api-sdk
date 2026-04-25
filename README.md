@@ -662,6 +662,79 @@ curl -X POST https://api.cleanster.com/soap \
 
 ---
 
+## MCP Server
+
+Connect Claude (or any MCP-compatible AI assistant) directly to the Cleanster Partner API. The MCP server exposes 11 tools covering bookings, properties, cleaners, payouts, and checklists — all controlled by natural language.
+
+### Quick Start
+
+**Install dependencies:**
+
+```bash
+cd mcp-server
+npm install
+cp .env.example .env   # fill in CLEANSTER_API_BASE_URL
+```
+
+**Run (HTTP/SSE mode — for remote or shared access):**
+
+```bash
+MCP_SERVER_PORT=8000 npm run dev
+# Health: http://localhost:8000/health
+# SSE:    http://localhost:8000/sse  (Authorization: Bearer <key>)
+```
+
+**Claude Desktop (stdio mode — for local direct connection):**
+
+1. Build: `npm run build`
+2. Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "cleanster": {
+      "command": "node",
+      "args": ["/path/to/mcp-server/dist/index.js"],
+      "env": {
+        "MCP_TRANSPORT": "stdio",
+        "CLEANSTER_API_KEY": "your-api-key",
+        "CLEANSTER_API_BASE_URL": "https://partner-sandbox-dot-official-tidyio-project.ue.r.appspot.com/public"
+      }
+    }
+  }
+}
+```
+
+3. Restart Claude Desktop — you'll see Cleanster tools available.
+
+**Example conversation with Claude:**
+
+> "List the upcoming bookings for property prop_42 this month"
+
+> "Create a booking for property prop_99, house cleaning, July 15th at 10am. Notes: focus on kitchen."
+
+> "Cancel booking bk_001 — guest checked out early."
+
+### Available Tools
+
+| Tool | Type | Description |
+|---|---|---|
+| `list_bookings` | Read | List bookings (filter by property, status, date) |
+| `get_booking` | Read | Get full booking details |
+| `list_properties` | Read | List properties by type |
+| `get_property` | Read | Get property details + cleaners + iCal |
+| `list_cleaners` | Read | Find available cleaners by region/date |
+| `get_payout_records` | Read | Get payout records for a date range |
+| `create_booking` | Write | Schedule a new cleaning |
+| `cancel_booking` | Write | Cancel a booking |
+| `reschedule_booking` | Write | Move a booking to a new time |
+| `assign_crew` | Write | Assign cleaners to a booking |
+| `update_checklist` | Write | Set checklist items for a booking |
+
+[Full MCP server documentation →](./mcp-server/README.md)
+
+---
+
 ## Standard Response Format
 
 Every API response — success or failure — uses the same envelope:
