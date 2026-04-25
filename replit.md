@@ -52,6 +52,13 @@ Python3 script using `GITHUB_PERSONAL_ACCESS_TOKEN` env var. Owner: `cleansterhq
 
 **Root README totals:** 1,474 SDK tests + 67 MCP = **1,541 total** (badge correct)
 
+### API Endpoint Count: 60 (confirmed)
+
+All SDKs cover the same 60 API endpoints across 8 resource types:
+- Bookings: 17, Properties: 14, Users: 3, Checklists: 6 (incl. image upload), Other: 7, Payment Methods: 6, Webhooks: 4, Blacklist: 3
+- Root README "All 60 Endpoints" section fully documents all 60 (was 59 — `POST /v1/checklist/{id}/upload` was missing)
+- Two DELETE-with-body endpoints use `@HTTP` in Android/Kotlin Retrofit (correct pattern, not a bug)
+
 ### Java SDK (`java-sdk/`)
 
 - Full Maven project targeting Java 11+
@@ -132,6 +139,7 @@ Python3 script using `GITHUB_PERSONAL_ACCESS_TOKEN` env var. Owner: `cleansterhq
 
 - Android API 26+ / Kotlin 1.9+, Retrofit 2 + OkHttp + Gson + Coroutines
 - Retrofit 2.9.0 annotation-based interface with `suspend` functions
+- **60 API endpoints** across 8 API classes (2 use `@HTTP` annotation for DELETE-with-body: `removeFromBlacklist` and `deleteICalLink` — correct Retrofit pattern)
 - 8 test files covering all API namespaces (MockWebServer, no real HTTP)
 - **164 tests** — all passing
 - Pushed to GitHub at `android-sdk/`
