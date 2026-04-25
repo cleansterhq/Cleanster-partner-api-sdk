@@ -877,7 +877,7 @@ Upload an image for a checklist. The image is sent as `multipart/form-data` in t
 
 ```java
 byte[] imageBytes = Files.readAllBytes(Paths.get("bathroom-guide.jpg"));
-ApiResponse<Object> resp = client.checklists().uploadChecklistImage(105, imageBytes, "bathroom-guide.jpg");
+ApiResponse<Object> resp = client.checklists().uploadChecklistImage(imageBytes, "bathroom-guide.jpg");
 ```
 
 ---

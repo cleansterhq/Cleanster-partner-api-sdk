@@ -391,12 +391,12 @@ class CleansterSOAPClientTest {
     // =========================================================================
 
     @Test
-    @DisplayName("uploadChecklistImage calls POST multipart /v1/checklist/{id}/upload")
+    @DisplayName("uploadChecklistImage calls POST multipart /v1/checklist/upload-image")
     void uploadChecklistImageCallsCorrectPath() {
-        when(transport.postMultipart("/v1/checklist/105/upload", new byte[]{1, 2, 3}, "photo.jpg"))
+        when(transport.postMultipart("/v1/checklist/upload-image", new byte[]{1, 2, 3}, "photo.jpg"))
                 .thenReturn(apiResponseNode(200, "Uploaded"));
-        client.uploadChecklistImage(105, new byte[]{1, 2, 3}, "photo.jpg");
-        verify(transport).postMultipart("/v1/checklist/105/upload", new byte[]{1, 2, 3}, "photo.jpg");
+        client.uploadChecklistImage(new byte[]{1, 2, 3}, "photo.jpg");
+        verify(transport).postMultipart("/v1/checklist/upload-image", new byte[]{1, 2, 3}, "photo.jpg");
     }
 
     @Test
@@ -404,7 +404,7 @@ class CleansterSOAPClientTest {
     void uploadChecklistImageReturnsSuccess() {
         when(transport.postMultipart(anyString(), any(), anyString()))
                 .thenReturn(apiResponseNode(200, "Uploaded"));
-        ApiResponse resp = client.uploadChecklistImage(105, new byte[]{}, "image.png");
+        ApiResponse resp = client.uploadChecklistImage(new byte[]{}, "image.png");
         assertTrue(resp.isSuccess());
     }
 

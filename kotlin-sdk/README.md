@@ -894,7 +894,7 @@ Upload an image for a checklist. The image is sent as `multipart/form-data` in t
 
 ```kotlin
 val imageBytes = File("bathroom-guide.jpg").readBytes()
-client.checklists.uploadChecklistImage(77, imageBytes, "bathroom-guide.jpg")
+client.checklists.uploadChecklistImage(imageBytes, "bathroom-guide.jpg")
 ```
 
 ---

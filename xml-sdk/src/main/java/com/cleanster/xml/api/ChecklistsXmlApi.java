@@ -57,8 +57,8 @@ public class ChecklistsXmlApi {
         return http.fromJson(json, new TypeToken<XmlApiResponse<Checklist>>(){}.getType());
     }
 
-    public XmlApiResponse uploadChecklistImage(int checklistId, byte[] imageData, String fileName) {
-        String json = http.postMultipart("/checklist/" + checklistId + "/upload", imageData, fileName);
+    public XmlApiResponse uploadChecklistImage(byte[] imageData, String fileName) {
+        String json = http.postMultipart("/checklist/upload-image", imageData, fileName);
         return http.fromJson(json, XmlApiResponse.class);
     }
 }

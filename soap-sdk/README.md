@@ -74,7 +74,7 @@ A Java SOAP SDK for the Cleanster Partner API. Provides a WSDL-defined, document
 | `CreateChecklist` | POST | `/v1/checklists` | Create a new checklist |
 | `UpdateChecklist` | PUT | `/v1/checklists/{id}` | Update a checklist |
 | `DeleteChecklist` | DELETE | `/v1/checklists/{id}` | Delete a checklist |
-| `UploadChecklistImage` | POST | `/v1/checklist/{id}/upload` | Upload an image to a checklist item |
+| `UploadChecklistImage` | POST | `/v1/checklist/upload-image` | Upload an image to a checklist item |
 
 ### Other / Utilities (7 operations)
 | Operation | HTTP Method | Path | Description |
@@ -222,7 +222,7 @@ client.updateChecklist(checklist.getId(), "Standard Clean", null);
 
 // Upload image
 byte[] imageBytes = Files.readAllBytes(Paths.get("bathroom-guide.jpg"));
-client.uploadChecklistImage(checklist.getId(), imageBytes, "bathroom-guide.jpg");
+client.uploadChecklistImage(imageBytes, "bathroom-guide.jpg");
 
 // ── Users ────────────────────────────────────────────────────────────────────
 

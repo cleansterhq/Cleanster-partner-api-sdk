@@ -63,7 +63,7 @@ module Cleanster
     def build_multipart_body(boundary, image_bytes, file_name)
       body = String.new("", encoding: "ASCII-8BIT")
       body << "--#{boundary}\r\n"
-      body << "Content-Disposition: form-data; name=\"image\"; filename=\"#{file_name}\"\r\n"
+      body << "Content-Disposition: form-data; name=\"file\"; filename=\"#{file_name}\"\r\n"
       body << "Content-Type: image/*\r\n\r\n"
       body << image_bytes
       body << "\r\n--#{boundary}--\r\n"

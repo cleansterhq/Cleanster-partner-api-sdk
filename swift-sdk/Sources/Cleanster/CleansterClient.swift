@@ -136,7 +136,7 @@ public final class CleansterClient {
         let boundary = "----CleansterBoundary\(UUID().uuidString)"
         var body = Data()
 
-        let partHeader = "--\(boundary)\r\nContent-Disposition: form-data; name=\"image\"; filename=\"\(fileName)\"\r\nContent-Type: image/*\r\n\r\n"
+        let partHeader = "--\(boundary)\r\nContent-Disposition: form-data; name=\"file\"; filename=\"\(fileName)\"\r\nContent-Type: image/*\r\n\r\n"
         body.append(partHeader.data(using: .utf8)!)
         body.append(imageData)
         body.append("\r\n--\(boundary)--\r\n".data(using: .utf8)!)

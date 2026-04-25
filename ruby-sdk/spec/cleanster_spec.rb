@@ -601,15 +601,15 @@ RSpec.describe Cleanster do
     end
 
     describe "#upload_checklist_image" do
-      it "sends multipart POST to /v1/checklist/105/upload" do
-        allow(http).to receive(:post_multipart).with("/v1/checklist/105/upload", "\x89PNG", "photo.png").and_return(ok_response)
-        api.upload_checklist_image(105, "\x89PNG", "photo.png")
-        expect(http).to have_received(:post_multipart).with("/v1/checklist/105/upload", "\x89PNG", "photo.png")
+      it "sends multipart POST to /v1/checklist/upload-image" do
+        allow(http).to receive(:post_multipart).with("/v1/checklist/upload-image", "\x89PNG", "photo.png").and_return(ok_response)
+        api.upload_checklist_image("\x89PNG", "photo.png")
+        expect(http).to have_received(:post_multipart).with("/v1/checklist/upload-image", "\x89PNG", "photo.png")
       end
 
       it "returns an ApiResponse" do
         allow(http).to receive(:post_multipart).and_return(ok_response)
-        result = api.upload_checklist_image(105, "\x89PNG", "photo.png")
+        result = api.upload_checklist_image("\x89PNG", "photo.png")
         expect(result).to be_a(Cleanster::Models::ApiResponse)
       end
     end

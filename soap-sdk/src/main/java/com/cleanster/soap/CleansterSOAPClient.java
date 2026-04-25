@@ -247,8 +247,8 @@ public class CleansterSOAPClient {
         return checklistService.deleteChecklist(checklistId);
     }
 
-    public ApiResponse uploadChecklistImage(long checklistId, byte[] imageData, String fileName) {
-        return checklistService.uploadChecklistImage(checklistId, imageData, fileName);
+    public ApiResponse uploadChecklistImage(byte[] imageData, String fileName) {
+        return checklistService.uploadChecklistImage(imageData, fileName);
     }
 
     // =========================================================================

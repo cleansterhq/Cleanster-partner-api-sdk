@@ -36,21 +36,19 @@ public final class ChecklistsApi {
         return try await client.requestRaw(method: "DELETE", path: "/v1/checklist/\(checklistId)")
     }
 
-    /// Upload an image for a checklist.
+    /// Upload an image via multipart/form-data.
     ///
-    /// Sends the image as multipart/form-data in the `image` form field.
+    /// Sends the image as multipart/form-data in the `file` form field.
     ///
     /// - Parameters:
-    ///   - checklistId: The checklist ID.
     ///   - imageData:   Raw bytes of the image to upload.
     ///   - fileName:    File name for the multipart part (e.g. "photo.jpg").
     public func uploadChecklistImage(
-        _ checklistId: Int,
         imageData: Data,
         fileName: String = "image.jpg"
     ) async throws -> ApiResponse<AnyCodable> {
         return try await client.requestMultipart(
-            path:      "/v1/checklist/\(checklistId)/upload",
+            path:      "/v1/checklist/upload-image",
             imageData: imageData,
             fileName:  fileName
         )

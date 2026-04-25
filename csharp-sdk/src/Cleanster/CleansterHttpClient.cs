@@ -64,7 +64,7 @@ internal sealed class CleansterHttpClient : ICleansterHttpClient
         using var content  = new MultipartFormDataContent();
         var imageContent   = new ByteArrayContent(imageData);
         imageContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/*");
-        content.Add(imageContent, "image", fileName);
+        content.Add(imageContent, "file", fileName);
 
         using var req = new HttpRequestMessage(HttpMethod.Post, path.TrimStart('/'))
         {

@@ -51,18 +51,16 @@ export class ChecklistsApi {
   }
 
   /**
-   * Upload an image for a checklist.
+   * Upload an image via multipart/form-data.
    *
-   * Sends the image as multipart/form-data in the `image` form field.
-   * @param checklistId  The checklist ID.
+   * Sends the image as multipart/form-data in the `file` form field.
    * @param imageData    Raw image bytes (Uint8Array or Buffer).
    * @param fileName     File name for the multipart part (e.g. "photo.jpg").
    */
   uploadChecklistImage(
-    checklistId: number,
     imageData: Uint8Array | Buffer,
     fileName: string,
   ): Promise<ApiResponse<unknown>> {
-    return this.http.postMultipart(`/v1/checklist/${checklistId}/upload`, imageData, fileName);
+    return this.http.postMultipart("/v1/checklist/upload-image", imageData, fileName);
   }
 }

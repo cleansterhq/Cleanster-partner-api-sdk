@@ -68,7 +68,7 @@ class OkHttpEngine(
         val imageBody = imageData.toRequestBody("image/*".toMediaType())
         val multipart = MultipartBody.Builder()
             .setType(MultipartBody.FORM)
-            .addFormDataPart("image", fileName, imageBody)
+            .addFormDataPart("file", fileName, imageBody)
             .build()
 
         val okRequest = Request.Builder()

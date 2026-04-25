@@ -44,20 +44,18 @@ class ChecklistsApi internal constructor(private val client: CleansterClient) {
     )
 
     /**
-     * Upload an image for a checklist.
+     * Upload an image via multipart/form-data.
      *
-     * Sends the image as multipart/form-data in the `image` form field.
+     * Sends the image as multipart/form-data in the `file` form field.
      *
-     * @param checklistId The checklist ID.
      * @param imageData   Raw bytes of the image to upload.
      * @param fileName    File name for the multipart part (e.g. "photo.jpg").
      */
     suspend fun uploadChecklistImage(
-        checklistId: Int,
         imageData:   ByteArray,
         fileName:    String = "image.jpg",
     ): ApiResponse<Map<String, Any>> = client.requestMultipart(
-        path      = "/v1/checklist/$checklistId/upload",
+        path      = "/v1/checklist/upload-image",
         imageData = imageData,
         fileName  = fileName,
     )

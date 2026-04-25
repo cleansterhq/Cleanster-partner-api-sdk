@@ -158,7 +158,7 @@ public class SOAPTransport {
 
         StringBuilder sb = new StringBuilder();
         sb.append("--").append(boundary).append("\r\n");
-        sb.append("Content-Disposition: form-data; name=\"image\"; filename=\"")
+        sb.append("Content-Disposition: form-data; name=\"file\"; filename=\"")
           .append(fileName).append("\"\r\n");
         sb.append("Content-Type: ").append(mime).append("\r\n\r\n");
 

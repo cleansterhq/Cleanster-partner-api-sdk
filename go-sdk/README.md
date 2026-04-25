@@ -688,7 +688,7 @@ Upload an image for a checklist. The image is sent as `multipart/form-data` in t
 
 ```go
 data, _ := os.ReadFile("bathroom-guide.jpg")
-_, err = client.Checklists.UploadChecklistImage(ctx, 105, data, "bathroom-guide.jpg")
+_, err = client.Checklists.UploadChecklistImage(ctx, data, "bathroom-guide.jpg")
 ```
 
 ---

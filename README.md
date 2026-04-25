@@ -634,7 +634,7 @@ client.addICalLink(property.getId(), "https://airbnb.com/calendar.ics");
 
 // Checklists
 Checklist checklist = client.createChecklist("Deep Clean", List.of("Oven", "Bathrooms"));
-client.uploadChecklistImage(checklist.getId(), imageBytes, "guide.jpg");
+client.uploadChecklistImage(imageBytes, "guide.jpg");
 
 // Users & auth
 User user = client.createUser(new CreateUserRequest().setEmail("alice@example.com"));
@@ -1931,42 +1931,36 @@ client.checklists.update_checklist(77, name="Deep Clean v2", items=["Vacuum", "M
 client.checklists.delete_checklist(77)
 ```
 
-#### `POST /v1/checklist/{checklistId}/upload` — Upload Checklist Image
+#### `POST /v1/checklist/upload-image` — Upload Checklist Image
 
-Upload an image to associate with a checklist. The image is sent as `multipart/form-data` in the `image` field.
+Upload an image. The image is sent as `multipart/form-data` in the `file` field.
 
-**Path parameters:**
-
-| Parameter | Type | Description |
-|---|---|---|
-| `checklistId` | integer | The checklist ID |
-
-**Request body:** `multipart/form-data` with an `image` field containing the image bytes.
+**Request body:** `multipart/form-data` with a `file` field containing the image bytes.
 
 **Examples:**
 
 ```python
 # Python
 with open("photo.jpg", "rb") as f:
-    client.checklists.upload_checklist_image(77, f.read(), file_name="photo.jpg")
+    client.checklists.upload_checklist_image(f.read(), file_name="photo.jpg")
 ```
 
 ```typescript
 // TypeScript
 const imageBytes = fs.readFileSync('photo.jpg');
-await client.checklists.uploadChecklistImage(77, imageBytes, 'photo.jpg');
+await client.checklists.uploadChecklistImage(imageBytes, 'photo.jpg');
 ```
 
 ```go
 // Go
 imageData, _ := os.ReadFile("photo.jpg")
-client.Checklists.UploadChecklistImage(ctx, 77, imageData, "photo.jpg")
+client.Checklists.UploadChecklistImage(ctx, imageData, "photo.jpg")
 ```
 
 ```kotlin
 // Kotlin / Android
 val imageBytes = File("photo.jpg").readBytes()
-client.checklists.uploadChecklistImage(77, imageBytes, "photo.jpg")
+client.checklists.uploadChecklistImage(imageBytes, "photo.jpg")
 ```
 
 ---

@@ -70,19 +70,17 @@ public class ChecklistApi {
     }
 
     /**
-     * Upload an image for a checklist.
+     * Upload an image via multipart/form-data.
      *
-     * <p>Sends the image as multipart/form-data in the {@code image} form field.
-     * The {@code fileName} is used as the part name (e.g. "photo.jpg").</p>
+     * <p>Sends the image as multipart/form-data in the {@code file} form field.</p>
      *
-     * @param checklistId The checklist ID
      * @param imageBytes  Raw bytes of the image to upload
      * @param fileName    File name for the multipart part (e.g. "photo.jpg")
      * @return API response
      */
-    public ApiResponse<Object> uploadChecklistImage(int checklistId, byte[] imageBytes, String fileName) {
+    public ApiResponse<Object> uploadChecklistImage(byte[] imageBytes, String fileName) {
         return httpClient.postMultipart(
-                "/v1/checklist/" + checklistId + "/upload",
+                "/v1/checklist/upload-image",
                 imageBytes,
                 fileName,
                 new TypeReference<ApiResponse<Object>>() {});

@@ -85,15 +85,14 @@ class ChecklistsApi:
         return ApiResponse.from_dict(raw)
 
     def upload_checklist_image(
-        self, checklist_id: int, image_bytes: bytes, file_name: str = "image.jpg"
+        self, image_bytes: bytes, file_name: str = "image.jpg"
     ) -> ApiResponse:
         """
-        Upload an image for a checklist.
+        Upload an image via multipart/form-data.
 
-        Sends the image as ``multipart/form-data`` in the ``image`` form field.
+        Sends the image as ``multipart/form-data`` in the ``file`` form field.
 
         Args:
-            checklist_id: The checklist ID.
             image_bytes:  Raw bytes of the image to upload.
             file_name:    File name for the multipart part (e.g. ``"photo.jpg"``).
 
@@ -101,7 +100,7 @@ class ChecklistsApi:
             ApiResponse.
         """
         raw = self._http.post_multipart(
-            f"/v1/checklist/{checklist_id}/upload",
+            "/v1/checklist/upload-image",
             image_bytes,
             file_name,
         )

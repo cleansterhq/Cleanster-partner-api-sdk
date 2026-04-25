@@ -72,7 +72,7 @@ func (h *httpClient) delete(ctx context.Context, path string, body interface{}) 
 func (h *httpClient) postMultipart(ctx context.Context, path string, imageData []byte, fileName string) (rawAPIResponse, error) {
         var buf bytes.Buffer
         w := multipart.NewWriter(&buf)
-        part, err := w.CreateFormFile("image", fileName)
+        part, err := w.CreateFormFile("file", fileName)
         if err != nil {
                 return rawAPIResponse{}, &CleansterError{Message: "failed to create multipart writer: " + err.Error()}
         }

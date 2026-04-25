@@ -705,7 +705,7 @@ Upload an image for a checklist. The image is sent as `multipart/form-data` in t
 
 ```ruby
 image_bytes = File.read('bathroom-guide.jpg', mode: 'rb')
-client.checklists.upload_checklist_image(105, image_bytes, 'bathroom-guide.jpg')
+client.checklists.upload_checklist_image(image_bytes, 'bathroom-guide.jpg')
 ```
 
 ---

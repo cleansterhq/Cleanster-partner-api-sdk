@@ -133,7 +133,7 @@ export class HttpClient {
     try {
       const formData = new FormData();
       const blob = new Blob([imageData], { type: "image/*" });
-      formData.append("image", blob, fileName);
+      formData.append("file", blob, fileName);
       const headers: Record<string, string> = {
         "access-key": this.config.accessKey,
         "token": this._bearerToken ?? "",

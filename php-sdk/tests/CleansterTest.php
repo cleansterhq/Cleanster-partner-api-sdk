@@ -791,10 +791,10 @@ class CleansterTest extends TestCase
         $http = $this->mockHttp();
         $http->expects($this->once())
              ->method('postMultipart')
-             ->with('/v1/checklist/105/upload', $this->anything(), 'photo.jpg')
+             ->with('/v1/checklist/upload-image', $this->anything(), 'photo.jpg')
              ->willReturn($this->ok([]));
 
-        (new ChecklistsApi($http))->uploadChecklistImage(105, "\xFF\xD8\xFF", 'photo.jpg');
+        (new ChecklistsApi($http))->uploadChecklistImage("\xFF\xD8\xFF", 'photo.jpg');
     }
 
     public function testUploadChecklistImageReturnsResponse(): void
@@ -804,7 +804,7 @@ class CleansterTest extends TestCase
              ->method('postMultipart')
              ->willReturn($this->ok([]));
 
-        $result = (new ChecklistsApi($http))->uploadChecklistImage(105, "\x89PNG", 'image.png');
+        $result = (new ChecklistsApi($http))->uploadChecklistImage("\x89PNG", 'image.png');
         $this->assertSame(200, $result->status);
     }
 

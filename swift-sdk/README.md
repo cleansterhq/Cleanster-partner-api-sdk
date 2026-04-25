@@ -860,7 +860,7 @@ Upload an image for a checklist. The image is sent as `multipart/form-data` in t
 
 ```swift
 let imageData = try Data(contentsOf: URL(fileURLWithPath: "bathroom-guide.jpg"))
-try await client.checklists.uploadChecklistImage(77, imageData: imageData, fileName: "bathroom-guide.jpg")
+try await client.checklists.uploadChecklistImage(imageData: imageData, fileName: "bathroom-guide.jpg")
 ```
 
 ---

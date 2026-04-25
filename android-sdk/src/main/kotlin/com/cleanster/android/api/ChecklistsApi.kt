@@ -26,10 +26,9 @@ internal interface ChecklistsService {
     suspend fun deleteChecklist(@Path("checklistId") checklistId: Int): ApiResponse<Any>
 
     @Multipart
-    @POST("v1/checklist/{checklistId}/upload")
+    @POST("v1/checklist/upload-image")
     suspend fun uploadChecklistImage(
-        @Path("checklistId") checklistId: Int,
-        @Part image: MultipartBody.Part,
+        @Part file: MultipartBody.Part,
     ): ApiResponse<Any>
 }
 
@@ -48,9 +47,9 @@ class ChecklistsApi(retrofit: Retrofit) {
 
     suspend fun deleteChecklist(checklistId: Int) = wrap { service.deleteChecklist(checklistId) }
 
-    suspend fun uploadChecklistImage(checklistId: Int, imageBytes: ByteArray, fileName: String): ApiResponse<Any> {
+    suspend fun uploadChecklistImage(imageBytes: ByteArray, fileName: String): ApiResponse<Any> {
         val requestBody = imageBytes.toRequestBody()
-        val part = MultipartBody.Part.createFormData("image", fileName, requestBody)
-        return wrap { service.uploadChecklistImage(checklistId, part) }
+        val part = MultipartBody.Part.createFormData("file", fileName, requestBody)
+        return wrap { service.uploadChecklistImage(part) }
     }
 }

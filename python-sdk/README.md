@@ -775,7 +775,6 @@ with open("bathroom-guide.jpg", "rb") as f:
     image_bytes = f.read()
 
 resp = client.checklists.upload_checklist_image(
-    checklist_id=105,
     image_bytes=image_bytes,
     file_name="bathroom-guide.jpg"
 )

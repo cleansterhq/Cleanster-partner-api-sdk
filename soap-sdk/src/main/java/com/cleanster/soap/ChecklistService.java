@@ -57,9 +57,9 @@ public class ChecklistService {
         return new ApiResponse(status, "OK");
     }
 
-    public ApiResponse uploadChecklistImage(long checklistId, byte[] imageData, String fileName) {
+    public ApiResponse uploadChecklistImage(byte[] imageData, String fileName) {
         JsonNode root = transport.postMultipart(
-                "/v1/checklist/" + checklistId + "/upload", imageData, fileName);
+                "/v1/checklist/upload-image", imageData, fileName);
         int status = root.has("status") ? root.get("status").asInt(200) : 200;
         String message = root.has("message") ? root.get("message").asText() : "OK";
         return new ApiResponse(status, message);

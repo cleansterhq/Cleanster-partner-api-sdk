@@ -70,7 +70,7 @@ public class XmlHttpClient {
         RequestBody filePart = RequestBody.create(fileData, MediaType.get(mime));
         RequestBody multipart = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("image", fileName, filePart)
+                .addFormDataPart("file", fileName, filePart)
                 .build();
         Request req = baseRequest(path).post(multipart).build();
         return execute(req);

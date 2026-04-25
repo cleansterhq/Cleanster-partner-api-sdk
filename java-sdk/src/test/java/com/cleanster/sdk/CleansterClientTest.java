@@ -642,16 +642,16 @@ class CleansterClientTest {
     }
 
     @Test
-    @DisplayName("uploadChecklistImage calls POST multipart /v1/checklist/{id}/upload")
+    @DisplayName("uploadChecklistImage calls POST multipart /v1/checklist/upload-image")
     void uploadChecklistImageCallsCorrectPath() {
         HttpClient mockHttp = mock(HttpClient.class);
         ChecklistApi api = new ChecklistApi(mockHttp);
-        when(mockHttp.postMultipart(eq("/v1/checklist/105/upload"), any(byte[].class), eq("photo.jpg"), any(TypeReference.class)))
+        when(mockHttp.postMultipart(eq("/v1/checklist/upload-image"), any(byte[].class), eq("photo.jpg"), any(TypeReference.class)))
                 .thenReturn(new ApiResponse<>());
 
-        api.uploadChecklistImage(105, new byte[]{1, 2, 3}, "photo.jpg");
+        api.uploadChecklistImage(new byte[]{1, 2, 3}, "photo.jpg");
 
-        verify(mockHttp).postMultipart(eq("/v1/checklist/105/upload"), any(byte[].class), eq("photo.jpg"), any(TypeReference.class));
+        verify(mockHttp).postMultipart(eq("/v1/checklist/upload-image"), any(byte[].class), eq("photo.jpg"), any(TypeReference.class));
     }
 
     @Test
@@ -662,7 +662,7 @@ class CleansterClientTest {
         when(mockHttp.postMultipart(anyString(), any(byte[].class), anyString(), any(TypeReference.class)))
                 .thenReturn(new ApiResponse<>());
 
-        ApiResponse<Object> result = api.uploadChecklistImage(105, new byte[]{}, "image.jpg");
+        ApiResponse<Object> result = api.uploadChecklistImage(new byte[]{}, "image.jpg");
 
         assertNotNull(result);
     }

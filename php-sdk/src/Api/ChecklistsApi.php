@@ -75,18 +75,17 @@ final class ChecklistsApi
     }
 
     /**
-     * Upload an image for a checklist.
+     * Upload an image via multipart/form-data.
      *
-     * Sends the image as multipart/form-data in the "image" form field.
+     * Sends the image as multipart/form-data in the "file" form field.
      *
-     * @param  int     $checklistId  The checklist ID.
      * @param  string  $imageData    Raw binary image content.
      * @param  string  $fileName     File name for the multipart part (e.g. "photo.jpg").
      * @return ApiResponse
      */
-    public function uploadChecklistImage(int $checklistId, string $imageData, string $fileName = 'image.jpg'): ApiResponse
+    public function uploadChecklistImage(string $imageData, string $fileName = 'image.jpg'): ApiResponse
     {
-        $raw = $this->http->postMultipart("/v1/checklist/{$checklistId}/upload", $imageData, $fileName);
+        $raw = $this->http->postMultipart("/v1/checklist/upload-image", $imageData, $fileName);
         return new ApiResponse($raw['status'] ?? 200, $raw['message'] ?? 'OK', $raw['data'] ?? []);
     }
 }

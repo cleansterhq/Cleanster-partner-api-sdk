@@ -698,7 +698,7 @@ Upload an image for a checklist. The image is sent as `multipart/form-data` in t
 
 ```typescript
 const imageData = fs.readFileSync('bathroom-guide.jpg');
-await client.checklists.uploadChecklistImage(105, imageData, 'bathroom-guide.jpg');
+await client.checklists.uploadChecklistImage(imageData, 'bathroom-guide.jpg');
 ```
 
 ---

@@ -100,13 +100,13 @@ class ChecklistsTest {
 
     @Test fun `uploadChecklistImage uses correct path`() = runTest {
         mock.succeedEmpty()
-        client.checklists.uploadChecklistImage(77, byteArrayOf(0xFF.toByte(), 0xD8.toByte()), "photo.jpg")
-        assertTrue(mock.capturedMultipartUrl?.endsWith("/v1/checklist/77/upload") == true)
+        client.checklists.uploadChecklistImage(byteArrayOf(0xFF.toByte(), 0xD8.toByte()), "photo.jpg")
+        assertTrue(mock.capturedMultipartUrl?.endsWith("/v1/checklist/upload-image") == true)
     }
 
     @Test fun `uploadChecklistImage passes correct fileName`() = runTest {
         mock.succeedEmpty()
-        client.checklists.uploadChecklistImage(77, byteArrayOf(0x89.toByte(), 0x50.toByte()), "image.png")
+        client.checklists.uploadChecklistImage(byteArrayOf(0x89.toByte(), 0x50.toByte()), "image.png")
         assertEquals("image.png", mock.capturedMultipartFile)
     }
 }

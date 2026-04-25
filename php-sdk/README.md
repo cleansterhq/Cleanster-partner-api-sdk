@@ -664,7 +664,7 @@ Upload an image for a checklist. The image is sent as `multipart/form-data` in t
 
 ```php
 $imageData = file_get_contents('bathroom-guide.jpg');
-$client->checklists()->uploadChecklistImage(105, $imageData, 'bathroom-guide.jpg');
+$client->checklists()->uploadChecklistImage($imageData, 'bathroom-guide.jpg');
 ```
 
 ---

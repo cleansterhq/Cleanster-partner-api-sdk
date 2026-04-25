@@ -131,7 +131,7 @@ public class HttpClient {
         RequestBody fileBody = RequestBody.create(imageBytes, MediaType.parse("image/*"));
         MultipartBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("image", fileName, fileBody)
+                .addFormDataPart("file", fileName, fileBody)
                 .build();
         Request request = new Request.Builder()
                 .url(url(path))

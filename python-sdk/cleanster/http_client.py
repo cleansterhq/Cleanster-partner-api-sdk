@@ -110,7 +110,7 @@ class HttpClient:
                     "access-key": self._config.access_key,
                     "token": self._bearer_token or "",
                 },
-                files={"image": (file_name, image_bytes, "image/*")},
+                files={"file": (file_name, image_bytes, "image/*")},
                 timeout=self._config.timeout,
             )
         except requests.RequestException as exc:

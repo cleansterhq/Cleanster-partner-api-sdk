@@ -108,7 +108,7 @@ class HttpClient
         $url      = $this->buildUrl($path);
         $boundary = '----CleansterBoundary' . bin2hex(random_bytes(8));
         $body     = "--{$boundary}\r\n"
-            . "Content-Disposition: form-data; name=\"image\"; filename=\"{$fileName}\"\r\n"
+            . "Content-Disposition: form-data; name=\"file\"; filename=\"{$fileName}\"\r\n"
             . "Content-Type: image/*\r\n\r\n"
             . $imageData
             . "\r\n--{$boundary}--\r\n";

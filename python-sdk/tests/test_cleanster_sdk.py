@@ -658,16 +658,16 @@ class TestChecklistsApi(unittest.TestCase):
         http.post_multipart.return_value = ok()
         api = ChecklistsApi(http)
 
-        api.upload_checklist_image(105, b"imagedata", "photo.jpg")
+        api.upload_checklist_image(b"imagedata", "photo.jpg")
 
-        http.post_multipart.assert_called_once_with("/v1/checklist/105/upload", b"imagedata", "photo.jpg")
+        http.post_multipart.assert_called_once_with("/v1/checklist/upload-image", b"imagedata", "photo.jpg")
 
     def test_upload_checklist_image_returns_response(self):
         http = make_http()
         http.post_multipart.return_value = ok()
         api = ChecklistsApi(http)
 
-        resp = api.upload_checklist_image(105, b"imagedata", "photo.jpg")
+        resp = api.upload_checklist_image(b"imagedata", "photo.jpg")
 
         self.assertEqual(resp.status, 200)
 

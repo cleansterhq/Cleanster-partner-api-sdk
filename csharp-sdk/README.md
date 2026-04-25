@@ -699,7 +699,7 @@ Upload an image for a checklist. The image is sent as `multipart/form-data` in t
 
 ```csharp
 byte[] imageBytes = await File.ReadAllBytesAsync("bathroom-guide.jpg");
-await client.Checklists.UploadChecklistImageAsync(105, imageBytes, "bathroom-guide.jpg");
+await client.Checklists.UploadChecklistImageAsync(imageBytes, "bathroom-guide.jpg");
 ```
 
 ---
