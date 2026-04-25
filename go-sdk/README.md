@@ -7,7 +7,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Go-1.21%2B-00ADD8?logo=go" alt="Go 1.21+">
-  <img src="https://img.shields.io/badge/tests-94%20passing-brightgreen" alt="94 passing">
+  <img src="https://img.shields.io/badge/tests-96%20passing-brightgreen" alt="96 passing">
   <img src="https://img.shields.io/badge/dependencies-zero-brightgreen" alt="Zero dependencies">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
   <img src="https://img.shields.io/badge/API-Cleanster%20Partner-brightgreen" alt="Cleanster Partner API">
@@ -95,7 +95,10 @@ import (
     "context"
 )
 
-client := cleanster.NewClient("your-access-key", "")
+client, err := cleanster.NewSandboxClient("your-access-key")
+if err != nil {
+    log.Fatal(err)
+}
 
 resp, err := client.Users.CreateUser(context.Background(), cleanster.CreateUserRequest{
     Email:     "jane@example.com",
@@ -119,10 +122,10 @@ if err != nil {
 userToken := tokenResp.Data["token"].(string)
 ```
 
-**Step 4 — Build the client with both credentials**:
+**Step 4 — Set the token on the client**:
 
 ```go
-client := cleanster.NewClient("your-access-key", userToken)
+client.SetAccessToken(userToken)
 ```
 
 > **Token lifecycle:** Only refresh when the API returns HTTP 401.
@@ -143,7 +146,11 @@ import (
 
 func main() {
     ctx := context.Background()
-    client := cleanster.NewClient("your-access-key", "user-jwt-token")
+    client, err := cleanster.NewSandboxClient("your-access-key")
+    if err != nil {
+        log.Fatal(err)
+    }
+    client.SetAccessToken("user-jwt-token")
 
     // Get recommended cleaning hours
     hoursResp, err := client.Other.GetRecommendedHours(ctx, cleanster.RecommendedHoursParams{
@@ -174,9 +181,10 @@ func main() {
     }
     fmt.Println("Created booking:", bookingResp.Data)
 
-    // List open bookings
+    // List open bookings (page 1)
+    pageNo := 1
     listResp, err := client.Bookings.GetBookings(ctx, cleanster.GetBookingsParams{
-        PageNo: cleanster.PageNo(1),
+        PageNo: &pageNo,
         Status: "OPEN",
     })
     if err != nil {
@@ -197,14 +205,14 @@ func main() {
 
 ```go
 // Sandbox (default)
-client := cleanster.NewClient("key", "token")
+client, err := cleanster.NewSandboxClient("key")
+if err != nil { log.Fatal(err) }
+client.SetAccessToken("token")
 
 // Production
-client := cleanster.NewClientWithOptions(cleanster.ClientOptions{
-    AccessKey:   "key",
-    Token:       "token",
-    Environment: cleanster.Production,
-})
+client, err = cleanster.NewProductionClient("key")
+if err != nil { log.Fatal(err) }
+client.SetAccessToken("token")
 ```
 
 ---
@@ -248,12 +256,13 @@ All methods return `(APIResponse[T], error)`.
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `PageNo` | `*int` | Yes | Page number (use `cleanster.PageNo(n)`) |
+| `PageNo` | `*int` | No | Page number (1-based; pass `&n` where `n` is an `int`). Omit for page 1. |
 | `Status` | string | No | `OPEN` · `CLEANER_ASSIGNED` · `COMPLETED` · `CANCELLED` · `REMOVED` |
 
 ```go
+pageNo := 1
 resp, err := client.Bookings.GetBookings(ctx, cleanster.GetBookingsParams{
-    PageNo: cleanster.PageNo(1),
+    PageNo: &pageNo,
     Status: "OPEN",
 })
 for _, b := range resp.Data.Bookings {
@@ -1046,7 +1055,7 @@ Use in the **sandbox** environment only:
 go test ./... -v
 ```
 
-Expected: **94 tests passing.**
+Expected: **96 tests passing.**
 
 ---
 
@@ -1055,7 +1064,7 @@ Expected: **94 tests passing.**
 ```
 go-sdk/
 ├── go.mod
-├── client.go              # NewClient, ClientOptions
+├── client.go              # NewSandboxClient, NewProductionClient, NewClient
 ├── bookings.go            # BookingsService
 ├── users.go               # UsersService
 ├── properties.go          # PropertiesService
@@ -1066,7 +1075,7 @@ go-sdk/
 ├── webhooks.go            # WebhooksService
 ├── models.go              # Booking, Checklist, PaymentMethod, etc.
 ├── http.go                # Internal HTTP client (net/http)
-└── cleanster_test.go      # All 92 tests
+└── cleanster_test.go      # All 96 tests
 ```
 
 ---
