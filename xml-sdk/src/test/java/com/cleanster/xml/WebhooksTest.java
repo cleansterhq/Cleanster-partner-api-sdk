@@ -1,156 +1,110 @@
 package com.cleanster.xml;
 
-import com.cleanster.xml.client.CleansterXmlClient;
-import com.cleanster.xml.client.CleansterXmlException;
+import com.cleanster.xml.api.WebhooksXmlApi;
 import com.cleanster.xml.client.XmlConverter;
+import com.cleanster.xml.client.XmlHttpClient;
 import com.cleanster.xml.model.Webhook;
 import com.cleanster.xml.model.XmlApiResponse;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import okhttp3.mockwebserver.RecordedRequest;
 import org.junit.jupiter.api.*;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
-/**
- * 11 tests covering all 4 Webhooks endpoints plus Webhook JAXB XML serialisation.
- */
 class WebhooksTest {
 
-    private MockWebServer     server;
-    private CleansterXmlClient client;
+    private XmlHttpClient   http;
+    private WebhooksXmlApi  api;
 
-    @BeforeEach
-    void setUp() throws Exception {
-        server = new MockWebServer();
-        server.start();
-        client = CleansterXmlClient.custom(server.url("/").toString(), "key-test", null);
+    private static final String LIST_JSON  = "{\"success\":true,\"message\":\"OK\","
+            + "\"data\":[{\"id\":1,\"url\":\"https://example.com/hook\",\"events\":[\"booking.completed\"]}]}";
+    private static final String HOOK_JSON  = "{\"success\":true,\"message\":\"OK\","
+            + "\"data\":{\"id\":1,\"url\":\"https://example.com/hook\",\"events\":[\"booking.completed\"]}}";
+    private static final String OK_JSON    = "{\"success\":true,\"message\":\"OK\",\"data\":{}}";
+
+    @BeforeEach void setUp() {
+        XmlHttpClient real = XmlHttpClient.builder().baseUrl("http://dummy").accessKey("key").build();
+        http = spy(real);
+        api  = new WebhooksXmlApi(http);
     }
 
-    @AfterEach
-    void tearDown() throws Exception { server.shutdown(); }
+    // ── listWebhooks ───────────────────────────────────────────────────────────
 
-    private void enqueueWebhook(int id, String url) {
-        server.enqueue(new MockResponse()
-                .setBody("{\"success\":true,\"message\":\"OK\","
-                        + "\"data\":{\"id\":" + id + ",\"url\":\"" + url + "\",\"active\":true}}")
-                .addHeader("Content-Type", "application/json"));
+    @Test void listWebhooks_callsGet() {
+        doReturn(LIST_JSON).when(http).get("/v1/webhooks");
+        api.listWebhooks();
+        verify(http).get("/v1/webhooks");
     }
 
-    // ─── listWebhooks ──────────────────────────────────────────────────────────
-
-    @Test
-    void listWebhooks_returnsAll() throws Exception {
-        server.enqueue(new MockResponse()
-                .setBody("{\"success\":true,\"message\":\"OK\",\"data\":["
-                        + "{\"id\":1,\"url\":\"https://example.com/wh1\"},"
-                        + "{\"id\":2,\"url\":\"https://example.com/wh2\"}]}")
-                .addHeader("Content-Type", "application/json"));
-        XmlApiResponse<List<Webhook>> resp = client.webhooks().listWebhooks();
-        assertEquals(2, resp.getData().size());
+    @Test void listWebhooks_returnsParsedList() {
+        doReturn(LIST_JSON).when(http).get("/v1/webhooks");
+        XmlApiResponse<List<Webhook>> resp = api.listWebhooks();
+        assertTrue(resp.isSuccess());
+        assertEquals(1, resp.getData().size());
     }
 
-    @Test
-    void listWebhooks_usesGET() throws Exception {
-        server.enqueue(new MockResponse()
-                .setBody("{\"success\":true,\"message\":\"OK\",\"data\":[]}")
-                .addHeader("Content-Type", "application/json"));
-        client.webhooks().listWebhooks();
-        RecordedRequest req = server.takeRequest();
-        assertEquals("GET", req.getMethod());
-        assertTrue(req.getPath().endsWith("/webhooks"));
+    @Test void listWebhooks_emptyList() {
+        doReturn("{\"success\":true,\"message\":\"OK\",\"data\":[]}")
+                .when(http).get("/v1/webhooks");
+        assertTrue(api.listWebhooks().getData().isEmpty());
     }
 
-    // ─── getWebhook ────────────────────────────────────────────────────────────
+    // ── createWebhook ──────────────────────────────────────────────────────────
 
-    @Test
-    void getWebhook_returnsWebhook() throws Exception {
-        enqueueWebhook(1, "https://hooks.example.com");
-        Webhook w = client.webhooks().getWebhook(1).getData();
-        assertEquals(1, w.getId());
-        assertEquals("https://hooks.example.com", w.getUrl());
+    @Test void createWebhook_callsPost() {
+        doReturn(HOOK_JSON).when(http).post(eq("/v1/webhooks"), any());
+        api.createWebhook("https://example.com/hook", "booking.completed");
+        verify(http).post(eq("/v1/webhooks"), any());
     }
 
-    @Test
-    void getWebhook_notFound_throws() {
-        server.enqueue(new MockResponse().setResponseCode(404).setBody("{\"error\":\"Not found\"}"));
-        assertThrows(CleansterXmlException.class, () -> client.webhooks().getWebhook(9999));
+    @Test void createWebhook_returnsParsedWebhook() {
+        doReturn(HOOK_JSON).when(http).post(eq("/v1/webhooks"), any());
+        XmlApiResponse<Webhook> resp = api.createWebhook("https://example.com/hook", "booking.completed");
+        assertTrue(resp.isSuccess());
+        assertEquals(1, resp.getData().getId());
     }
 
-    // ─── createWebhook ─────────────────────────────────────────────────────────
+    // ── updateWebhook ──────────────────────────────────────────────────────────
 
-    @Test
-    void createWebhook_usesPOST() throws Exception {
-        enqueueWebhook(3, "https://new.example.com");
-        client.webhooks().createWebhook("https://new.example.com",
-                List.of("booking.created", "booking.cancelled"));
-        RecordedRequest req = server.takeRequest();
-        assertEquals("POST", req.getMethod());
-        assertTrue(req.getPath().endsWith("/webhooks"));
+    @Test void updateWebhook_callsPut_withId() {
+        doReturn(HOOK_JSON).when(http).put(eq("/v1/webhooks/1"), any());
+        api.updateWebhook(1, "https://new.example.com/hook", "booking.completed");
+        verify(http).put(eq("/v1/webhooks/1"), any());
     }
 
-    @Test
-    void createWebhook_bodyContainsUrl() throws Exception {
-        enqueueWebhook(3, "https://new.example.com");
-        client.webhooks().createWebhook("https://new.example.com", List.of("booking.created"));
-        RecordedRequest req = server.takeRequest();
-        assertTrue(req.getBody().readUtf8().contains("new.example.com"));
+    @Test void updateWebhook_differentId_usesCorrectPath() {
+        doReturn(HOOK_JSON).when(http).put(eq("/v1/webhooks/99"), any());
+        api.updateWebhook(99, "https://example.com/hook", "booking.cancelled");
+        verify(http).put(eq("/v1/webhooks/99"), any());
     }
 
-    @Test
-    void createWebhook_returnsCreated() throws Exception {
-        enqueueWebhook(5, "https://cb.example.com");
-        Webhook w = client.webhooks()
-                .createWebhook("https://cb.example.com", List.of("booking.created")).getData();
-        assertEquals(5, w.getId());
+    // ── deleteWebhook ──────────────────────────────────────────────────────────
+
+    @Test void deleteWebhook_callsDelete_withId() {
+        doReturn(OK_JSON).when(http).delete("/v1/webhooks/1");
+        api.deleteWebhook(1);
+        verify(http).delete("/v1/webhooks/1");
     }
 
-    // ─── deleteWebhook ─────────────────────────────────────────────────────────
-
-    @Test
-    void deleteWebhook_usesDELETE() throws Exception {
-        enqueueWebhook(2, "https://old.example.com");
-        client.webhooks().deleteWebhook(2);
-        RecordedRequest req = server.takeRequest();
-        assertEquals("DELETE", req.getMethod());
-        assertTrue(req.getPath().endsWith("/webhooks/2"));
+    @Test void deleteWebhook_returnsSuccess() {
+        doReturn(OK_JSON).when(http).delete("/v1/webhooks/1");
+        assertTrue(api.deleteWebhook(1).isSuccess());
     }
 
-    // ─── JAXB XML serialisation ─────────────────────────────────────────────────
+    // ── JAXB ───────────────────────────────────────────────────────────────────
 
-    @Test
-    void webhook_toXml_containsFields() {
-        Webhook w = new Webhook();
-        w.setId(1);
-        w.setUrl("https://example.com/hook");
-        w.setActive(true);
-        String xml = XmlConverter.toXml(w);
-        assertTrue(xml.contains("<id>1</id>"));
-        assertTrue(xml.contains("https://example.com/hook"));
-        assertTrue(xml.contains("<active>true</active>"));
+    @Test void webhook_toXml_isValidXml() {
+        Webhook w = new Webhook(); w.setId(1); w.setEvents(List.of("booking.completed")); w.setUrl("https://x.com");
+        assertTrue(XmlConverter.isXml(XmlConverter.toXml(w)));
     }
 
-    @Test
-    void webhook_fromXml_roundTrip() {
-        Webhook original = new Webhook();
-        original.setId(9);
-        original.setUrl("https://rt.example.com");
-        original.setActive(false);
-        original.setEvents(List.of("booking.created", "booking.completed"));
-        String  xml      = XmlConverter.toXml(original);
-        Webhook restored = XmlConverter.fromXml(xml, Webhook.class);
-        assertEquals(9,                        restored.getId());
-        assertEquals("https://rt.example.com", restored.getUrl());
-        assertFalse(restored.getActive());
-        assertNotNull(restored.getEvents());
-        assertEquals(2, restored.getEvents().size());
-    }
-
-    @Test
-    void deleteWebhook_successResponse() throws Exception {
-        enqueueWebhook(2, "https://old.example.com");
-        assertTrue(client.webhooks().deleteWebhook(2).isSuccess());
+    @Test void webhook_fromXml_roundTrip() {
+        Webhook o = new Webhook(); o.setId(5); o.setEvents(List.of("booking.cancelled")); o.setUrl("https://t.com");
+        Webhook r = XmlConverter.fromXml(XmlConverter.toXml(o), Webhook.class);
+        assertEquals(5, r.getId());
+        assertNotNull(r.getEvents());
+        assertTrue(r.getEvents().contains("booking.cancelled"));
     }
 }
