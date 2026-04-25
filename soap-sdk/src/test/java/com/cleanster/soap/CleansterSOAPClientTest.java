@@ -28,7 +28,8 @@ class CleansterSOAPClientTest {
 
     @BeforeEach
     void setUp() {
-        when(transport.getObjectMapper()).thenReturn(MAPPER);
+        lenient().when(transport.getObjectMapper()).thenReturn(MAPPER);
+        lenient().when(transport.extractData(any())).thenAnswer(inv -> inv.getArgument(0));
         client = new CleansterSOAPClient(transport);
     }
 
@@ -103,21 +104,21 @@ class CleansterSOAPClientTest {
     // =========================================================================
 
     @Test
-    @DisplayName("createBooking calls POST /v1/bookings")
+    @DisplayName("createBooking calls POST /v1/bookings/create")
     void createBookingCallsCorrectPath() {
-        when(transport.post(eq("/v1/bookings"), any())).thenReturn(bookingNode(16460L, "scheduled"));
+        when(transport.post(eq("/v1/bookings/create"), any())).thenReturn(bookingNode(16460L, "scheduled"));
         CreateBookingRequest req = new CreateBookingRequest()
                 .setPropertyId(42L)
                 .setScheduledAt("2025-06-01T10:00:00Z")
                 .setDurationHours(3.0);
         client.createBooking(req);
-        verify(transport).post(eq("/v1/bookings"), any());
+        verify(transport).post(eq("/v1/bookings/create"), any());
     }
 
     @Test
     @DisplayName("createBooking returns new booking")
     void createBookingReturnsBooking() {
-        when(transport.post(eq("/v1/bookings"), any())).thenReturn(bookingNode(16460L, "scheduled"));
+        when(transport.post(eq("/v1/bookings/create"), any())).thenReturn(bookingNode(16460L, "scheduled"));
         CreateBookingRequest req = new CreateBookingRequest()
                 .setPropertyId(42L)
                 .setScheduledAt("2025-06-01T10:00:00Z")
@@ -309,17 +310,17 @@ class CleansterSOAPClientTest {
     // =========================================================================
 
     @Test
-    @DisplayName("listChecklists calls GET /v1/checklists")
+    @DisplayName("listChecklists calls GET /v1/checklist")
     void listChecklistsCallsCorrectPath() {
-        when(transport.get(contains("/v1/checklists"))).thenReturn(MAPPER.createArrayNode());
+        when(transport.get(contains("/v1/checklist"))).thenReturn(MAPPER.createArrayNode());
         client.listChecklists(1, 20);
-        verify(transport).get(contains("/v1/checklists?page=1"));
+        verify(transport).get(contains("/v1/checklist?page=1"));
     }
 
     @Test
     @DisplayName("listChecklists returns empty list when no checklists")
     void listChecklistsReturnsEmptyList() {
-        when(transport.get(contains("/v1/checklists"))).thenReturn(MAPPER.createArrayNode());
+        when(transport.get(contains("/v1/checklist"))).thenReturn(MAPPER.createArrayNode());
         List<Checklist> result = client.listChecklists(1, 20);
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -330,17 +331,17 @@ class CleansterSOAPClientTest {
     // =========================================================================
 
     @Test
-    @DisplayName("getChecklist calls GET /v1/checklists/{id}")
+    @DisplayName("getChecklist calls GET /v1/checklist/{id}")
     void getChecklistCallsCorrectPath() {
-        when(transport.get("/v1/checklists/105")).thenReturn(checklistNode(105L));
+        when(transport.get("/v1/checklist/105")).thenReturn(checklistNode(105L));
         client.getChecklist(105);
-        verify(transport).get("/v1/checklists/105");
+        verify(transport).get("/v1/checklist/105");
     }
 
     @Test
     @DisplayName("getChecklist returns correct checklist")
     void getChecklistReturnsChecklist() {
-        when(transport.get("/v1/checklists/105")).thenReturn(checklistNode(105L));
+        when(transport.get("/v1/checklist/105")).thenReturn(checklistNode(105L));
         Checklist result = client.getChecklist(105);
         assertEquals(105L, result.getId());
     }
@@ -350,17 +351,17 @@ class CleansterSOAPClientTest {
     // =========================================================================
 
     @Test
-    @DisplayName("createChecklist calls POST /v1/checklists")
+    @DisplayName("createChecklist calls POST /v1/checklist")
     void createChecklistCallsCorrectPath() {
-        when(transport.post(eq("/v1/checklists"), any())).thenReturn(checklistNode(106L));
+        when(transport.post(eq("/v1/checklist"), any())).thenReturn(checklistNode(106L));
         client.createChecklist("Bathroom Deep Clean", Arrays.asList("Scrub tub", "Clean mirror"));
-        verify(transport).post(eq("/v1/checklists"), any());
+        verify(transport).post(eq("/v1/checklist"), any());
     }
 
     @Test
     @DisplayName("createChecklist returns new checklist")
     void createChecklistReturnsChecklist() {
-        when(transport.post(eq("/v1/checklists"), any())).thenReturn(checklistNode(106L));
+        when(transport.post(eq("/v1/checklist"), any())).thenReturn(checklistNode(106L));
         Checklist result = client.createChecklist("Test", null);
         assertEquals(106L, result.getId());
     }
@@ -370,17 +371,17 @@ class CleansterSOAPClientTest {
     // =========================================================================
 
     @Test
-    @DisplayName("deleteChecklist calls DELETE /v1/checklists/{id}")
+    @DisplayName("deleteChecklist calls DELETE /v1/checklist/{id}")
     void deleteChecklistCallsCorrectPath() {
-        when(transport.delete("/v1/checklists/105")).thenReturn(apiResponseNode(200, "Deleted"));
+        when(transport.delete("/v1/checklist/105")).thenReturn(apiResponseNode(200, "Deleted"));
         client.deleteChecklist(105);
-        verify(transport).delete("/v1/checklists/105");
+        verify(transport).delete("/v1/checklist/105");
     }
 
     @Test
     @DisplayName("deleteChecklist returns success response")
     void deleteChecklistReturnsSuccess() {
-        when(transport.delete("/v1/checklists/105")).thenReturn(apiResponseNode(200, "Deleted"));
+        when(transport.delete("/v1/checklist/105")).thenReturn(apiResponseNode(200, "Deleted"));
         ApiResponse resp = client.deleteChecklist(105);
         assertTrue(resp.isSuccess());
     }

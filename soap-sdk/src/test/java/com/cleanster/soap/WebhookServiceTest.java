@@ -27,7 +27,8 @@ class WebhookServiceTest {
 
     @BeforeEach
     void setUp() {
-        when(transport.getObjectMapper()).thenReturn(MAPPER);
+        lenient().when(transport.getObjectMapper()).thenReturn(MAPPER);
+        lenient().when(transport.extractData(any())).thenAnswer(inv -> inv.getArgument(0));
         client = new CleansterSOAPClient(transport);
     }
 

@@ -18,11 +18,11 @@ public class PaymentMethodService {
     }
 
     public JsonNode getSetupIntentDetails() {
-        return transport.extractData(transport.get("/v1/payment-methods/setup-intent"));
+        return transport.extractData(transport.get("/v1/payment-methods/setup-intent-details"));
     }
 
     public JsonNode getPaypalClientToken() {
-        return transport.extractData(transport.get("/v1/payment-methods/paypal-token"));
+        return transport.extractData(transport.get("/v1/payment-methods/paypal-client-token"));
     }
 
     public PaymentMethod addPaymentMethod(String paymentMethodId) {

@@ -27,40 +27,41 @@ class PaymentMethodServiceTest {
 
     @BeforeEach
     void setUp() {
-        when(transport.getObjectMapper()).thenReturn(MAPPER);
+        lenient().when(transport.getObjectMapper()).thenReturn(MAPPER);
+        lenient().when(transport.extractData(any())).thenAnswer(inv -> inv.getArgument(0));
         client = new CleansterSOAPClient(transport);
     }
 
     // GetSetupIntentDetails
     @Test
-    @DisplayName("getSetupIntentDetails calls GET /v1/payment-methods/setup-intent")
+    @DisplayName("getSetupIntentDetails calls GET /v1/payment-methods/setup-intent-details")
     void getSetupIntentCallsCorrectPath() {
-        when(transport.get("/v1/payment-methods/setup-intent")).thenReturn(MAPPER.createObjectNode());
+        when(transport.get("/v1/payment-methods/setup-intent-details")).thenReturn(MAPPER.createObjectNode());
         client.getSetupIntentDetails();
-        verify(transport).get("/v1/payment-methods/setup-intent");
+        verify(transport).get("/v1/payment-methods/setup-intent-details");
     }
 
     @Test
     @DisplayName("getSetupIntentDetails returns non-null node")
     void getSetupIntentReturnsNode() {
-        when(transport.get("/v1/payment-methods/setup-intent")).thenReturn(MAPPER.createObjectNode());
+        when(transport.get("/v1/payment-methods/setup-intent-details")).thenReturn(MAPPER.createObjectNode());
         JsonNode result = client.getSetupIntentDetails();
         assertNotNull(result);
     }
 
     // GetPaypalClientToken
     @Test
-    @DisplayName("getPaypalClientToken calls GET /v1/payment-methods/paypal-token")
+    @DisplayName("getPaypalClientToken calls GET /v1/payment-methods/paypal-client-token")
     void getPaypalTokenCallsCorrectPath() {
-        when(transport.get("/v1/payment-methods/paypal-token")).thenReturn(MAPPER.createObjectNode());
+        when(transport.get("/v1/payment-methods/paypal-client-token")).thenReturn(MAPPER.createObjectNode());
         client.getPaypalClientToken();
-        verify(transport).get("/v1/payment-methods/paypal-token");
+        verify(transport).get("/v1/payment-methods/paypal-client-token");
     }
 
     @Test
     @DisplayName("getPaypalClientToken returns non-null node")
     void getPaypalTokenReturnsNode() {
-        when(transport.get("/v1/payment-methods/paypal-token")).thenReturn(MAPPER.createObjectNode());
+        when(transport.get("/v1/payment-methods/paypal-client-token")).thenReturn(MAPPER.createObjectNode());
         assertNotNull(client.getPaypalClientToken());
     }
 

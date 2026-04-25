@@ -25,25 +25,26 @@ class UserServiceTest {
 
     @BeforeEach
     void setUp() {
-        when(transport.getObjectMapper()).thenReturn(MAPPER);
+        lenient().when(transport.getObjectMapper()).thenReturn(MAPPER);
+        lenient().when(transport.extractData(any())).thenAnswer(inv -> inv.getArgument(0));
         client = new CleansterSOAPClient(transport);
     }
 
     // CreateUser
     @Test
-    @DisplayName("createUser calls POST /v1/user")
+    @DisplayName("createUser calls POST /v1/user/account")
     void createUserCallsCorrectPath() {
-        when(transport.post(eq("/v1/user"), any())).thenReturn(userNode(1L));
+        when(transport.post(eq("/v1/user/account"), any())).thenReturn(userNode(1L));
         CreateUserRequest req = new CreateUserRequest()
                 .setName("Alice").setEmail("alice@example.com").setPassword("secret");
         client.createUser(req);
-        verify(transport).post(eq("/v1/user"), any());
+        verify(transport).post(eq("/v1/user/account"), any());
     }
 
     @Test
     @DisplayName("createUser returns new User")
     void createUserReturnsUser() {
-        when(transport.post(eq("/v1/user"), any())).thenReturn(userNode(1L));
+        when(transport.post(eq("/v1/user/account"), any())).thenReturn(userNode(1L));
         User result = client.createUser(new CreateUserRequest().setEmail("alice@example.com"));
         assertEquals(1L, result.getId());
         assertEquals("Alice", result.getName());
@@ -51,17 +52,17 @@ class UserServiceTest {
 
     // FetchAccessToken
     @Test
-    @DisplayName("fetchAccessToken calls GET /v1/user/{id}/access-token")
+    @DisplayName("fetchAccessToken calls GET /v1/user/access-token/{id}")
     void fetchAccessTokenCallsCorrectPath() {
-        when(transport.get("/v1/user/1/access-token")).thenReturn(userNode(1L));
+        when(transport.get("/v1/user/access-token/1")).thenReturn(userNode(1L));
         client.fetchAccessToken(1L);
-        verify(transport).get("/v1/user/1/access-token");
+        verify(transport).get("/v1/user/access-token/1");
     }
 
     @Test
     @DisplayName("fetchAccessToken returns User with token")
     void fetchAccessTokenReturnsUser() {
-        when(transport.get("/v1/user/1/access-token")).thenReturn(userNode(1L));
+        when(transport.get("/v1/user/access-token/1")).thenReturn(userNode(1L));
         User result = client.fetchAccessToken(1L);
         assertNotNull(result);
         assertEquals(1L, result.getId());

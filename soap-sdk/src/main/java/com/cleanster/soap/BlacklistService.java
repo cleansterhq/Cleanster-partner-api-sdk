@@ -18,7 +18,7 @@ public class BlacklistService {
     }
 
     public List<BlacklistEntry> listBlacklist() {
-        JsonNode root = transport.get("/v1/blacklist");
+        JsonNode root = transport.get("/v1/blacklist/cleaner");
         JsonNode data = transport.extractData(root);
         List<BlacklistEntry> list = new ArrayList<>();
         if (data.isArray()) {
@@ -33,14 +33,16 @@ public class BlacklistService {
         Map<String, Object> body = new HashMap<>();
         body.put("cleaner_id", cleanerId);
         if (reason != null) body.put("reason", reason);
-        JsonNode root = transport.post("/v1/blacklist", body);
+        JsonNode root = transport.post("/v1/blacklist/cleaner", body);
         int status = root.has("status") ? root.get("status").asInt(200) : 200;
         String message = root.has("message") ? root.get("message").asText() : "OK";
         return new ApiResponse(status, message);
     }
 
     public ApiResponse removeFromBlacklist(long cleanerId) {
-        JsonNode root = transport.delete("/v1/blacklist/" + cleanerId);
+        Map<String, Object> body = new HashMap<>();
+        body.put("cleanerId", cleanerId);
+        JsonNode root = transport.delete("/v1/blacklist/cleaner", body);
         int status = root.has("status") ? root.get("status").asInt(200) : 200;
         return new ApiResponse(status, "OK");
     }

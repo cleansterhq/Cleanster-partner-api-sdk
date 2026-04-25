@@ -69,10 +69,22 @@ public class SOAPTransport {
     }
 
     /**
-     * Execute a DELETE request.
+     * Execute a DELETE request (no body).
      */
     public JsonNode delete(String path) {
         return execute("DELETE", path, null, "application/json");
+    }
+
+    /**
+     * Execute a DELETE request with a JSON body.
+     */
+    public JsonNode delete(String path, Object body) {
+        try {
+            String json = objectMapper.writeValueAsString(body);
+            return execute("DELETE", path, json.getBytes(StandardCharsets.UTF_8), "application/json");
+        } catch (IOException e) {
+            throw new SOAPClientException("Failed to serialize request body", e);
+        }
     }
 
     /**

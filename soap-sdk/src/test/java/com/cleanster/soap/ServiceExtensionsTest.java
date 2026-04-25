@@ -34,7 +34,8 @@ class ServiceExtensionsTest {
 
     @BeforeEach
     void setUp() {
-        when(transport.getObjectMapper()).thenReturn(MAPPER);
+        lenient().when(transport.getObjectMapper()).thenReturn(MAPPER);
+        lenient().when(transport.extractData(any())).thenAnswer(inv -> inv.getArgument(0));
         client = new CleansterSOAPClient(transport);
     }
 
@@ -58,32 +59,32 @@ class ServiceExtensionsTest {
     }
 
     @Test
-    @DisplayName("adjustHours calls POST /v1/bookings/{id}/adjust-hours")
+    @DisplayName("adjustHours calls POST /v1/bookings/{id}/hours")
     void adjustHoursCallsCorrectPath() {
-        when(transport.post(eq("/v1/bookings/16459/adjust-hours"), any())).thenReturn(okNode());
+        when(transport.post(eq("/v1/bookings/16459/hours"), any())).thenReturn(okNode());
         client.adjustHours(16459L, 1.0);
-        verify(transport).post(eq("/v1/bookings/16459/adjust-hours"), any());
+        verify(transport).post(eq("/v1/bookings/16459/hours"), any());
     }
 
     @Test
     @DisplayName("adjustHours returns success response")
     void adjustHoursReturnsSuccess() {
-        when(transport.post(eq("/v1/bookings/16459/adjust-hours"), any())).thenReturn(okNode());
+        when(transport.post(eq("/v1/bookings/16459/hours"), any())).thenReturn(okNode());
         assertTrue(client.adjustHours(16459L, 1.0).isSuccess());
     }
 
     @Test
-    @DisplayName("payExpenses calls POST /v1/bookings/{id}/pay-expenses")
+    @DisplayName("payExpenses calls POST /v1/bookings/{id}/expenses")
     void payExpensesCallsCorrectPath() {
-        when(transport.post(eq("/v1/bookings/16459/pay-expenses"), any())).thenReturn(okNode());
+        when(transport.post(eq("/v1/bookings/16459/expenses"), any())).thenReturn(okNode());
         client.payExpenses(16459L, 10L);
-        verify(transport).post(eq("/v1/bookings/16459/pay-expenses"), any());
+        verify(transport).post(eq("/v1/bookings/16459/expenses"), any());
     }
 
     @Test
     @DisplayName("payExpenses returns success response")
     void payExpensesReturnsSuccess() {
-        when(transport.post(eq("/v1/bookings/16459/pay-expenses"), any())).thenReturn(okNode());
+        when(transport.post(eq("/v1/bookings/16459/expenses"), any())).thenReturn(okNode());
         assertTrue(client.payExpenses(16459L, 10L).isSuccess());
     }
 
@@ -96,25 +97,25 @@ class ServiceExtensionsTest {
     }
 
     @Test
-    @DisplayName("getBookingInspectionDetails calls GET /v1/bookings/{id}/inspection-details")
+    @DisplayName("getBookingInspectionDetails calls GET /v1/bookings/{id}/inspection/details")
     void getBookingInspectionDetailsCallsCorrectPath() {
-        when(transport.get("/v1/bookings/16459/inspection-details")).thenReturn(MAPPER.createObjectNode());
+        when(transport.get("/v1/bookings/16459/inspection/details")).thenReturn(MAPPER.createObjectNode());
         client.getBookingInspectionDetails(16459L);
-        verify(transport).get("/v1/bookings/16459/inspection-details");
+        verify(transport).get("/v1/bookings/16459/inspection/details");
     }
 
     @Test
-    @DisplayName("assignChecklistToBooking calls PUT /v1/bookings/{id}/checklist")
+    @DisplayName("assignChecklistToBooking calls PUT /v1/bookings/{id}/checklist/{checklistId}")
     void assignChecklistToBookingCallsCorrectPath() {
-        when(transport.put(eq("/v1/bookings/16459/checklist"), any())).thenReturn(okNode());
+        when(transport.put(eq("/v1/bookings/16459/checklist/105"), any())).thenReturn(okNode());
         client.assignChecklistToBooking(16459L, 105L);
-        verify(transport).put(eq("/v1/bookings/16459/checklist"), any());
+        verify(transport).put(eq("/v1/bookings/16459/checklist/105"), any());
     }
 
     @Test
     @DisplayName("assignChecklistToBooking returns success response")
     void assignChecklistToBookingReturnsSuccess() {
-        when(transport.put(eq("/v1/bookings/16459/checklist"), any())).thenReturn(okNode());
+        when(transport.put(eq("/v1/bookings/16459/checklist/105"), any())).thenReturn(okNode());
         assertTrue(client.assignChecklistToBooking(16459L, 105L).isSuccess());
     }
 
@@ -185,17 +186,17 @@ class ServiceExtensionsTest {
     }
 
     @Test
-    @DisplayName("updateAdditionalInformation calls PUT /v1/properties/{id}/additional-info")
+    @DisplayName("updateAdditionalInformation calls PUT /v1/properties/{id}/additional-information")
     void updateAdditionalInformationCallsCorrectPath() {
-        when(transport.put(eq("/v1/properties/42/additional-info"), any())).thenReturn(okNode());
+        when(transport.put(eq("/v1/properties/42/additional-information"), any())).thenReturn(okNode());
         client.updateAdditionalInformation(42L, Map.of("notes", "Gate code 1234"));
-        verify(transport).put(eq("/v1/properties/42/additional-info"), any());
+        verify(transport).put(eq("/v1/properties/42/additional-information"), any());
     }
 
     @Test
     @DisplayName("updateAdditionalInformation returns success")
     void updateAdditionalInformationReturnsSuccess() {
-        when(transport.put(eq("/v1/properties/42/additional-info"), any())).thenReturn(okNode());
+        when(transport.put(eq("/v1/properties/42/additional-information"), any())).thenReturn(okNode());
         assertTrue(client.updateAdditionalInformation(42L, Map.of()).isSuccess());
     }
 
@@ -279,17 +280,17 @@ class ServiceExtensionsTest {
     }
 
     @Test
-    @DisplayName("setDefaultChecklist calls PUT /v1/properties/{id}/checklist")
+    @DisplayName("setDefaultChecklist calls PUT /v1/properties/{id}/checklist/{checklistId}")
     void setDefaultChecklistCallsCorrectPath() {
-        when(transport.put(eq("/v1/properties/42/checklist"), any())).thenReturn(okNode());
+        when(transport.put(contains("/v1/properties/42/checklist/105"), any())).thenReturn(okNode());
         client.setDefaultChecklist(42L, 105L, true);
-        verify(transport).put(eq("/v1/properties/42/checklist"), any());
+        verify(transport).put(contains("/v1/properties/42/checklist/105"), any());
     }
 
     @Test
     @DisplayName("setDefaultChecklist returns success")
     void setDefaultChecklistReturnsSuccess() {
-        when(transport.put(eq("/v1/properties/42/checklist"), any())).thenReturn(okNode());
+        when(transport.put(contains("/v1/properties/42/checklist/105"), any())).thenReturn(okNode());
         assertTrue(client.setDefaultChecklist(42L, 105L, false).isSuccess());
     }
 
@@ -298,17 +299,17 @@ class ServiceExtensionsTest {
     // =========================================================================
 
     @Test
-    @DisplayName("updateChecklist calls PUT /v1/checklists/{id}")
+    @DisplayName("updateChecklist calls PUT /v1/checklist/{id}")
     void updateChecklistCallsCorrectPath() {
-        when(transport.put(eq("/v1/checklists/105"), any())).thenReturn(checklistNode(105L));
+        when(transport.put(eq("/v1/checklist/105"), any())).thenReturn(checklistNode(105L));
         client.updateChecklist(105L, "Updated Name", Arrays.asList("Item 1", "Item 2"));
-        verify(transport).put(eq("/v1/checklists/105"), any());
+        verify(transport).put(eq("/v1/checklist/105"), any());
     }
 
     @Test
     @DisplayName("updateChecklist returns updated Checklist")
     void updateChecklistReturnsChecklist() {
-        when(transport.put(eq("/v1/checklists/105"), any())).thenReturn(checklistNode(105L));
+        when(transport.put(eq("/v1/checklist/105"), any())).thenReturn(checklistNode(105L));
         Checklist result = client.updateChecklist(105L, "Updated Name", null);
         assertEquals(105L, result.getId());
     }
@@ -318,71 +319,71 @@ class ServiceExtensionsTest {
     // =========================================================================
 
     @Test
-    @DisplayName("getPlans calls GET /v1/other/plans")
+    @DisplayName("getPlans calls GET /v1/plans")
     void getPlansCallsCorrectPath() {
-        when(transport.get(contains("/v1/other/plans"))).thenReturn(MAPPER.createArrayNode());
+        when(transport.get(contains("/v1/plans"))).thenReturn(MAPPER.createArrayNode());
         client.getPlans(42L);
-        verify(transport).get(contains("/v1/other/plans?property_id=42"));
+        verify(transport).get(contains("/v1/plans?propertyId=42"));
     }
 
     @Test
     @DisplayName("getPlans returns non-null result")
     void getPlansReturnsResult() {
-        when(transport.get(contains("/v1/other/plans"))).thenReturn(MAPPER.createArrayNode());
+        when(transport.get(contains("/v1/plans"))).thenReturn(MAPPER.createArrayNode());
         assertNotNull(client.getPlans(42L));
     }
 
     @Test
-    @DisplayName("getRecommendedHours calls GET /v1/other/recommended-hours")
+    @DisplayName("getRecommendedHours calls GET /v1/recommended-hours")
     void getRecommendedHoursCallsCorrectPath() {
-        when(transport.get(contains("/v1/other/recommended-hours"))).thenReturn(MAPPER.createObjectNode());
+        when(transport.get(contains("/v1/recommended-hours"))).thenReturn(MAPPER.createObjectNode());
         client.getRecommendedHours(42L, 2, 3);
-        verify(transport).get(contains("/v1/other/recommended-hours"));
+        verify(transport).get(contains("/v1/recommended-hours"));
     }
 
     @Test
     @DisplayName("getRecommendedHours returns non-null result")
     void getRecommendedHoursReturnsResult() {
-        when(transport.get(contains("/v1/other/recommended-hours"))).thenReturn(MAPPER.createObjectNode());
+        when(transport.get(contains("/v1/recommended-hours"))).thenReturn(MAPPER.createObjectNode());
         assertNotNull(client.getRecommendedHours(42L, 2, 3));
     }
 
     @Test
-    @DisplayName("getCostEstimate calls POST /v1/other/calculate-cost")
+    @DisplayName("getCostEstimate calls POST /v1/cost-estimate")
     void getCostEstimateCallsCorrectPath() {
-        when(transport.post(eq("/v1/other/calculate-cost"), any())).thenReturn(MAPPER.createObjectNode());
+        when(transport.post(eq("/v1/cost-estimate"), any())).thenReturn(MAPPER.createObjectNode());
         client.getCostEstimate(Map.of("service_type", "standard"));
-        verify(transport).post(eq("/v1/other/calculate-cost"), any());
+        verify(transport).post(eq("/v1/cost-estimate"), any());
     }
 
     @Test
-    @DisplayName("getCleaningExtras calls GET /v1/other/cleaning-extras")
+    @DisplayName("getCleaningExtras calls GET /v1/cleaning-extras/{serviceId}")
     void getCleaningExtrasCallsCorrectPath() {
-        when(transport.get(contains("/v1/other/cleaning-extras"))).thenReturn(MAPPER.createArrayNode());
+        when(transport.get(contains("/v1/cleaning-extras"))).thenReturn(MAPPER.createArrayNode());
         client.getCleaningExtras(3L);
-        verify(transport).get(contains("/v1/other/cleaning-extras?service_id=3"));
+        verify(transport).get(contains("/v1/cleaning-extras/3"));
     }
 
     @Test
-    @DisplayName("getAvailableCleaners calls POST /v1/other/available-cleaners")
+    @DisplayName("getAvailableCleaners calls POST /v1/available-cleaners")
     void getAvailableCleanersCallsCorrectPath() {
-        when(transport.post(eq("/v1/other/available-cleaners"), any())).thenReturn(MAPPER.createArrayNode());
+        when(transport.post(eq("/v1/available-cleaners"), any())).thenReturn(MAPPER.createArrayNode());
         client.getAvailableCleaners(Map.of("date", "2025-07-01"));
-        verify(transport).post(eq("/v1/other/available-cleaners"), any());
+        verify(transport).post(eq("/v1/available-cleaners"), any());
     }
 
     @Test
-    @DisplayName("getCoupons calls GET /v1/other/coupons")
+    @DisplayName("getCoupons calls GET /v1/coupons")
     void getCouponsCallsCorrectPath() {
-        when(transport.get("/v1/other/coupons")).thenReturn(MAPPER.createArrayNode());
+        when(transport.get("/v1/coupons")).thenReturn(MAPPER.createArrayNode());
         client.getCoupons();
-        verify(transport).get("/v1/other/coupons");
+        verify(transport).get("/v1/coupons");
     }
 
     @Test
     @DisplayName("getCoupons returns non-null result")
     void getCouponsReturnsResult() {
-        when(transport.get("/v1/other/coupons")).thenReturn(MAPPER.createArrayNode());
+        when(transport.get("/v1/coupons")).thenReturn(MAPPER.createArrayNode());
         assertNotNull(client.getCoupons());
     }
 
