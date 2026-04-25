@@ -10,7 +10,7 @@
   <img src="https://img.shields.io/badge/SDKs-12%20Languages-blue" alt="12 Languages">
   <img src="https://img.shields.io/badge/MCP%20Server-Claude%20%7C%20AI-blueviolet" alt="MCP Server">
   <img src="https://img.shields.io/badge/Endpoints-62-orange" alt="62 Endpoints">
-  <img src="https://img.shields.io/badge/Tests-1500%20passing-success" alt="1500 Tests Passing">
+  <img src="https://img.shields.io/badge/Tests-1523%20passing-success" alt="1523 Tests Passing">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
 </p>
 
@@ -70,17 +70,17 @@
 | [C# / .NET](#c--net) | [`csharp-sdk/`](./csharp-sdk) | 111 | .NET 8.0+ | NuGet |
 | [Swift](#swift) | [`swift-sdk/`](./swift-sdk) | 170 | Swift 5.9+ / iOS 16+ | Swift Package Manager |
 | [Kotlin](#kotlin) | [`kotlin-sdk/`](./kotlin-sdk) | 170 | Kotlin 1.9+ / JVM 11+ | Gradle |
-| [XML (JAXB)](#xml) | [`xml-sdk/`](./xml-sdk) | 164 | Java 17+ / JAXB 4.0 | Maven |
+| [XML (JAXB)](#xml) | [`xml-sdk/`](./xml-sdk) | 123 | Java 17+ / JAXB 4.0 | Maven |
 | [SOAP](#soap) | [`soap-sdk/`](./soap-sdk) | 118 | Java 11+ | Maven |
 | [Android (Retrofit)](#android) | [`android-sdk/`](./android-sdk) | 168 | Android API 26+ / Kotlin 1.9+ | Gradle |
 
-**1,500 tests passing across all SDKs.**
+**1,523 tests passing across all SDKs.**
 
 ### AI / Agentic Integration
 
 | Integration | Folder | Tests | Runtime | Description |
 |---|---|---|---|---|
-| [MCP Server](#mcp-server) | [`mcp-server/`](./mcp-server) | 67 | Node.js 20+ | Model Context Protocol server for Claude and AI assistants |
+| [MCP Server](#mcp-server) | [`mcp-server/`](./mcp-server) | 64 | Node.js 20+ | Model Context Protocol server for Claude and AI assistants |
 
 ---
 
@@ -2644,7 +2644,7 @@ Cleanster-partner-api-sdk/
 │   │   ├── api/          BookingsXmlApi.java, PropertiesXmlApi.java, UsersXmlApi.java, ...
 │   │   ├── model/        Booking.java, Property.java, User.java, ...  (all JAXB-annotated)
 │   │   └── client/       CleansterXmlClient.java, XmlConverter.java, XmlHttpClient.java
-│   ├── src/test/java/    164 unit tests (JUnit 5 + MockWebServer)
+│   ├── src/test/java/    123 unit tests (JUnit 5 + Mockito)
 │   ├── pom.xml
 │   └── README.md         Full XML SDK documentation
 │
@@ -2703,7 +2703,7 @@ Cleanster-partner-api-sdk/
 │   │   │   └── update_checklist.ts
 │   │   ├── server.ts         McpServer factory + tool registration loop
 │   │   └── index.ts          Entry point — stdio or HTTP/SSE transport
-│   ├── tests/                67 unit tests (Vitest, mocked API)
+│   ├── tests/                64 unit tests (Vitest, mocked API)
 │   ├── .env.example
 │   ├── package.json
 │   ├── tsconfig.json
