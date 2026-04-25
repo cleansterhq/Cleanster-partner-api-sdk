@@ -50,7 +50,7 @@
 
 ## Overview
 
-The Cleanster Android SDK wraps the [Cleanster Partner API](https://documenter.getpostman.com/view/26172658/2sAYdoF7ep) in a type-safe, coroutines-ready Retrofit 2 client. All 59 API endpoints across 8 resource types are covered with full Kotlin data-class request/response models.
+The Cleanster Android SDK wraps the [Cleanster Partner API](https://documenter.getpostman.com/view/26172658/2sAYdoF7ep) in a type-safe, coroutines-ready Retrofit 2 client. All 60 API endpoints across 8 resource types are covered with full Kotlin data-class request/response models.
 
 Use it to:
 - **Create and manage bookings** — schedule, reschedule, cancel, adjust hours
@@ -1600,7 +1600,7 @@ To run with verbose output:
 | `BlacklistTest.kt` | 9 | 3 endpoints |
 | `PaymentMethodsTest.kt` | 14 | 6 endpoints |
 | `WebhooksTest.kt` | 11 | 4 endpoints + 8 event types |
-| **Total** | **164** | **59 endpoints** |
+| **Total** | **164** | **60 endpoints** |
 
 ---
 

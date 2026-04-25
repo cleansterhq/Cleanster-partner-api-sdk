@@ -9,7 +9,7 @@
   <img src="https://img.shields.io/badge/API-Cleanster%20Partner-brightgreen" alt="Cleanster Partner API">
   <img src="https://img.shields.io/badge/SDKs-12%20Languages-blue" alt="12 Languages">
   <img src="https://img.shields.io/badge/MCP%20Server-Claude%20%7C%20AI-blueviolet" alt="MCP Server">
-  <img src="https://img.shields.io/badge/Endpoints-59-orange" alt="59 Endpoints">
+  <img src="https://img.shields.io/badge/Endpoints-60-orange" alt="60 Endpoints">
   <img src="https://img.shields.io/badge/Tests-1541%20passing-success" alt="1541 Tests Passing">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
 </p>
@@ -38,7 +38,7 @@
   - [MCP Server (Claude / AI)](#mcp-server)
 - [Standard Response Format](#standard-response-format)
 - [Error Handling](#error-handling)
-- [All 59 Endpoints](#all-59-endpoints)
+- [All 60 Endpoints](#all-60-endpoints)
   - [Users](#users-api)
   - [Properties](#properties-api)
   - [Bookings](#bookings-api)
@@ -666,7 +666,7 @@ curl -X POST https://api.cleanster.com/soap \
 
 ### Android
 
-The Android SDK wraps the Cleanster Partner API in a type-safe, coroutines-ready [Retrofit 2](https://square.github.io/retrofit/) client. All 59 API endpoints across 8 resource types are covered with full Kotlin data-class request/response models.
+The Android SDK wraps the Cleanster Partner API in a type-safe, coroutines-ready [Retrofit 2](https://square.github.io/retrofit/) client. All 60 API endpoints across 8 resource types are covered with full Kotlin data-class request/response models.
 
 **Gradle (Kotlin DSL):**
 ```kotlin
@@ -910,7 +910,7 @@ try {
 
 ---
 
-## All 59 Endpoints
+## All 60 Endpoints
 
 ---
 
@@ -1931,6 +1931,44 @@ client.checklists.update_checklist(77, name="Deep Clean v2", items=["Vacuum", "M
 client.checklists.delete_checklist(77)
 ```
 
+#### `POST /v1/checklist/{checklistId}/upload` — Upload Checklist Image
+
+Upload an image to associate with a checklist. The image is sent as `multipart/form-data` in the `image` field.
+
+**Path parameters:**
+
+| Parameter | Type | Description |
+|---|---|---|
+| `checklistId` | integer | The checklist ID |
+
+**Request body:** `multipart/form-data` with an `image` field containing the image bytes.
+
+**Examples:**
+
+```python
+# Python
+with open("photo.jpg", "rb") as f:
+    client.checklists.upload_checklist_image(77, f.read(), file_name="photo.jpg")
+```
+
+```typescript
+// TypeScript
+const imageBytes = fs.readFileSync('photo.jpg');
+await client.checklists.uploadChecklistImage(77, imageBytes, 'photo.jpg');
+```
+
+```go
+// Go
+imageData, _ := os.ReadFile("photo.jpg")
+client.Checklists.UploadChecklistImage(ctx, 77, imageData, "photo.jpg")
+```
+
+```kotlin
+// Kotlin / Android
+val imageBytes = File("photo.jpg").readBytes()
+client.checklists.uploadChecklistImage(77, imageBytes, "photo.jpg")
+```
+
 ---
 
 ### Payment Methods API
@@ -2622,11 +2660,11 @@ Cleanster-partner-api-sdk/
 │   ├── src/main/kotlin/com/cleanster/android/
 │   │   ├── CleansterClient.kt      Main client entry point
 │   │   ├── CleansterConfig.kt      Configuration (apiKey, baseUrl, timeout)
-│   │   ├── CleansterApi.kt         Retrofit interface (all 59 endpoints)
+│   │   ├── CleansterApi.kt         Retrofit interface (all 60 endpoints)
 │   │   ├── api/                    BookingsApi, PropertiesApi, UsersApi, ...
 │   │   └── model/                  Data classes for all request/response types
 │   ├── src/test/kotlin/com/cleanster/android/
-│   │   ├── BookingsTest.kt         44 booking tests (MockWebServer)
+│   │   ├── BookingsTest.kt         47 booking tests (MockWebServer)
 │   │   ├── PropertiesTest.kt       Property API tests
 │   │   ├── UsersTest.kt            User API tests
 │   │   ├── ChecklistsTest.kt       Checklist API tests
