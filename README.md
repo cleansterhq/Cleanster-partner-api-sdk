@@ -2566,6 +2566,25 @@ Cleanster-partner-api-sdk/
 │   ├── pom.xml
 │   └── README.md             Full SOAP SDK documentation
 │
+├── mcp-server/               MCP server — TypeScript/Node.js 20+, two transports
+│   ├── src/
+│   │   ├── api/
+│   │   │   ├── cleanster.ts  Cleanster REST API client (axios)
+│   │   │   └── endpoints.ts  Endpoint constants
+│   │   ├── auth/
+│   │   │   ├── token.ts      Bearer token validation + OAuth seam (TODO)
+│   │   │   └── middleware.ts Express auth middleware
+│   │   ├── tools/            11 tool files (one per MCP tool)
+│   │   │   ├── list_bookings.ts, get_booking.ts, create_booking.ts, ...
+│   │   │   └── update_checklist.ts
+│   │   ├── server.ts         McpServer factory + tool registration loop
+│   │   └── index.ts          Entry point — stdio or HTTP/SSE transport
+│   ├── tests/                51 unit tests (Vitest, mocked API)
+│   ├── .env.example
+│   ├── package.json
+│   ├── tsconfig.json
+│   └── README.md             Full MCP server documentation
+│
 └── README.md             This file
 ```
 
