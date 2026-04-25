@@ -42,7 +42,7 @@ async function startStdio(): Promise<void> {
 // ── HTTP/SSE transport (Express) ─────────────────────────────────────────────
 
 async function startHttp(): Promise<void> {
-  const port = parseInt(process.env['MCP_SERVER_PORT'] ?? '3100', 10);
+  const port = parseInt(process.env['MCP_SERVER_PORT'] ?? '8000', 10);
   const app = express();
 
   app.use(express.json());

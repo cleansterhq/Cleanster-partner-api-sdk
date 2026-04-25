@@ -10,7 +10,7 @@
   <img src="https://img.shields.io/badge/SDKs-11%20Languages-blue" alt="11 Languages">
   <img src="https://img.shields.io/badge/MCP%20Server-Claude%20%7C%20AI-blueviolet" alt="MCP Server">
   <img src="https://img.shields.io/badge/Endpoints-59-orange" alt="59 Endpoints">
-  <img src="https://img.shields.io/badge/Tests-1361%20passing-success" alt="1361 Tests Passing">
+  <img src="https://img.shields.io/badge/Tests-1377%20passing-success" alt="1377 Tests Passing">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
 </p>
 
@@ -78,7 +78,7 @@
 
 | Integration | Folder | Tests | Runtime | Description |
 |---|---|---|---|---|
-| [MCP Server](#mcp-server) | [`mcp-server/`](./mcp-server) | 51 | Node.js 20+ | Model Context Protocol server for Claude and AI assistants |
+| [MCP Server](#mcp-server) | [`mcp-server/`](./mcp-server) | 67 | Node.js 20+ | Model Context Protocol server for Claude and AI assistants |
 
 ---
 

@@ -7,6 +7,7 @@
  */
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import type { ZodRawShape } from 'zod';
 import { CleansterApiClient } from './api/cleanster.js';
 
 import * as listBookings from './tools/list_bookings.js';
@@ -21,14 +22,19 @@ import * as rescheduleBooking from './tools/reschedule_booking.js';
 import * as assignCrew from './tools/assign_crew.js';
 import * as updateChecklist from './tools/update_checklist.js';
 
-type ToolModule = {
+/**
+ * The contract every tool module must satisfy.
+ * `inputSchema` is a z.object(); we only need its `.shape` at registration time.
+ */
+interface ToolModule {
   name: string;
   description: string;
-  inputSchema: { shape: Record<string, import('zod').ZodTypeAny> };
-  handler: (params: Record<string, unknown>, api: CleansterApiClient) => Promise<{
-    content: Array<{ type: 'text'; text: string }>;
-  }>;
-};
+  inputSchema: { shape: ZodRawShape };
+  handler: (
+    params: Record<string, unknown>,
+    api: CleansterApiClient,
+  ) => Promise<{ content: Array<{ type: 'text'; text: string }> }>;
+}
 
 const TOOLS: ToolModule[] = [
   listBookings,
@@ -42,7 +48,7 @@ const TOOLS: ToolModule[] = [
   rescheduleBooking,
   assignCrew,
   updateChecklist,
-] as unknown as ToolModule[];
+] as ToolModule[];
 
 /**
  * Build and return a new McpServer instance with a dedicated API client for
