@@ -2660,7 +2660,7 @@ Cleanster-partner-api-sdk/
 │   ├── src/main/kotlin/com/cleanster/android/
 │   │   ├── CleansterClient.kt      Main client entry point
 │   │   ├── CleansterConfig.kt      Configuration (apiKey, baseUrl, timeout)
-│   │   ├── CleansterApi.kt         Retrofit interface (all 60 endpoints)
+│   │   ├── CleansterApi.kt         Retrofit interface (all 62 endpoints)
 │   │   ├── api/                    BookingsApi, PropertiesApi, UsersApi, ...
 │   │   └── model/                  Data classes for all request/response types
 │   ├── src/test/kotlin/com/cleanster/android/
