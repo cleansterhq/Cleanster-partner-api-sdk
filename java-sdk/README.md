@@ -8,7 +8,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Java-11%2B-blue?logo=openjdk" alt="Java 11+">
   <img src="https://img.shields.io/badge/Maven-3.6%2B-orange?logo=apache-maven" alt="Maven">
-  <img src="https://img.shields.io/badge/tests-74%20passing-brightgreen" alt="74 passing">
+  <img src="https://img.shields.io/badge/tests-76%20passing-brightgreen" alt="76 passing">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
   <img src="https://img.shields.io/badge/API-Cleanster%20Partner-brightgreen" alt="Cleanster Partner API">
 </p>

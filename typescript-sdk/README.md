@@ -8,7 +8,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/TypeScript-5.x-blue?logo=typescript" alt="TypeScript 5">
   <img src="https://img.shields.io/badge/Node.js-18%2B-green?logo=node.js" alt="Node.js 18+">
-  <img src="https://img.shields.io/badge/tests-85%20passing-brightgreen" alt="85 passing">
+  <img src="https://img.shields.io/badge/tests-87%20passing-brightgreen" alt="87 passing">
   <img src="https://img.shields.io/badge/dependencies-zero-brightgreen" alt="Zero dependencies">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
   <img src="https://img.shields.io/badge/API-Cleanster%20Partner-brightgreen" alt="Cleanster Partner API">

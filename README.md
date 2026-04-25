@@ -7,10 +7,10 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/API-Cleanster%20Partner-brightgreen" alt="Cleanster Partner API">
-  <img src="https://img.shields.io/badge/SDKs-11%20Languages-blue" alt="11 Languages">
+  <img src="https://img.shields.io/badge/SDKs-12%20Languages-blue" alt="12 Languages">
   <img src="https://img.shields.io/badge/MCP%20Server-Claude%20%7C%20AI-blueviolet" alt="MCP Server">
   <img src="https://img.shields.io/badge/Endpoints-59-orange" alt="59 Endpoints">
-  <img src="https://img.shields.io/badge/Tests-1377%20passing-success" alt="1377 Tests Passing">
+  <img src="https://img.shields.io/badge/Tests-1541%20passing-success" alt="1541 Tests Passing">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
 </p>
 
@@ -34,6 +34,7 @@
   - [Kotlin](#kotlin)
   - [XML (JAXB)](#xml)
   - [SOAP](#soap)
+  - [Android (Retrofit)](#android)
   - [MCP Server (Claude / AI)](#mcp-server)
 - [Standard Response Format](#standard-response-format)
 - [Error Handling](#error-handling)
@@ -71,8 +72,9 @@
 | [Kotlin](#kotlin) | [`kotlin-sdk/`](./kotlin-sdk) | 166 | Kotlin 1.9+ / JVM 11+ | Gradle |
 | [XML (JAXB)](#xml) | [`xml-sdk/`](./xml-sdk) | 164 | Java 17+ / JAXB 4.0 | Maven |
 | [SOAP](#soap) | [`soap-sdk/`](./soap-sdk) | 118 | Java 11+ | Maven |
+| [Android (Retrofit)](#android) | [`android-sdk/`](./android-sdk) | 164 | Android API 26+ / Kotlin 1.9+ | Gradle |
 
-**1,310 tests passing across all SDKs.**
+**1,474 tests passing across all SDKs.**
 
 ### AI / Agentic Integration
 
@@ -659,6 +661,56 @@ curl -X POST https://api.cleanster.com/soap \
 ```
 
 [Full SOAP documentation →](./soap-sdk/README.md)
+
+---
+
+### Android
+
+The Android SDK wraps the Cleanster Partner API in a type-safe, coroutines-ready [Retrofit 2](https://square.github.io/retrofit/) client. All 59 API endpoints across 8 resource types are covered with full Kotlin data-class request/response models.
+
+**Gradle (Kotlin DSL):**
+```kotlin
+// app/build.gradle.kts
+dependencies {
+    implementation("com.cleanster:cleanster-android-sdk:1.0.0")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+}
+```
+
+**Quick start:**
+```kotlin
+import com.cleanster.android.CleansterClient
+import com.cleanster.android.CleansterConfig
+
+val client = CleansterClient(CleansterConfig(apiKey = "YOUR_API_KEY"))
+
+// Bookings
+val booking = client.bookings.getBooking(16459)
+val list = client.bookings.listBookings(status = "scheduled")
+
+// Properties
+val property = client.properties.createProperty(
+    address = "456 Oak Ave", city = "Atlanta", state = "GA", zip = "30301"
+)
+
+// Users
+val user = client.users.createUser(email = "alice@example.com")
+
+// Webhooks
+val hook = client.webhooks.createWebhook(
+    url = "https://myapp.com/hook", event = "booking.completed"
+)
+```
+
+**Run tests:**
+```bash
+./gradlew test        # 164 tests, all should pass
+```
+
+[Full Android documentation →](./android-sdk/README.md)
 
 ---
 
@@ -2566,6 +2618,26 @@ Cleanster-partner-api-sdk/
 │   ├── pom.xml
 │   └── README.md             Full SOAP SDK documentation
 │
+├── android-sdk/              Android (Retrofit 2 + OkHttp + Gson + Coroutines)
+│   ├── src/main/kotlin/com/cleanster/android/
+│   │   ├── CleansterClient.kt      Main client entry point
+│   │   ├── CleansterConfig.kt      Configuration (apiKey, baseUrl, timeout)
+│   │   ├── CleansterApi.kt         Retrofit interface (all 59 endpoints)
+│   │   ├── api/                    BookingsApi, PropertiesApi, UsersApi, ...
+│   │   └── model/                  Data classes for all request/response types
+│   ├── src/test/kotlin/com/cleanster/android/
+│   │   ├── BookingsTest.kt         44 booking tests (MockWebServer)
+│   │   ├── PropertiesTest.kt       Property API tests
+│   │   ├── UsersTest.kt            User API tests
+│   │   ├── ChecklistsTest.kt       Checklist API tests
+│   │   ├── OtherTest.kt            Reference data & cost estimate tests
+│   │   ├── BlacklistTest.kt        Blacklist API tests
+│   │   ├── PaymentMethodsTest.kt   Payment method tests
+│   │   └── WebhooksTest.kt         Webhook tests
+│   ├── build.gradle.kts
+│   ├── settings.gradle.kts
+│   └── README.md                   Full Android SDK documentation
+│
 ├── mcp-server/               MCP server — TypeScript/Node.js 20+, two transports
 │   ├── src/
 │   │   ├── api/
@@ -2579,7 +2651,7 @@ Cleanster-partner-api-sdk/
 │   │   │   └── update_checklist.ts
 │   │   ├── server.ts         McpServer factory + tool registration loop
 │   │   └── index.ts          Entry point — stdio or HTTP/SSE transport
-│   ├── tests/                51 unit tests (Vitest, mocked API)
+│   ├── tests/                67 unit tests (Vitest, mocked API)
 │   ├── .env.example
 │   ├── package.json
 │   ├── tsconfig.json

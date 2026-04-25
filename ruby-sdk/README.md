@@ -8,7 +8,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Ruby-2.7%2B-red?logo=ruby" alt="Ruby 2.7+">
   <img src="https://img.shields.io/badge/gem-cleanster-orange?logo=rubygems" alt="RubyGems">
-  <img src="https://img.shields.io/badge/tests-119%20passing-brightgreen" alt="119 passing">
+  <img src="https://img.shields.io/badge/tests-121%20passing-brightgreen" alt="121 passing">
   <img src="https://img.shields.io/badge/dependencies-zero-brightgreen" alt="Zero dependencies">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
   <img src="https://img.shields.io/badge/API-Cleanster%20Partner-brightgreen" alt="Cleanster Partner API">
@@ -1047,7 +1047,7 @@ Use in the **sandbox** environment only:
 bundle exec rspec
 ```
 
-Expected: **119 examples, 0 failures.**
+Expected: **121 examples, 0 failures.**
 
 ---
 
