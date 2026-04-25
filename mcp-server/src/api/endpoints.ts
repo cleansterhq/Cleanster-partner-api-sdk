@@ -14,7 +14,7 @@ export const ENDPOINTS = {
   BOOKING_GET: (id: string) => `/v1/bookings/${id}`,
 
   /** POST → create a new booking */
-  BOOKING_CREATE: '/v1/bookings',
+  BOOKING_CREATE: '/v1/bookings/create',
 
   /** POST → cancel a booking */
   BOOKING_CANCEL: (id: string) => `/v1/bookings/${id}/cancel`,
@@ -25,8 +25,8 @@ export const ENDPOINTS = {
   /** POST → assign a single cleaner to a booking (body: { cleaner_id }) */
   BOOKING_ASSIGN_CREW: (id: string) => `/v1/bookings/${id}/cleaner`,
 
-  /** PUT  → assign an existing checklist to a booking (body: { checklist_id }) */
-  BOOKING_CHECKLIST: (id: string) => `/v1/bookings/${id}/checklist`,
+  /** PUT  → assign an existing checklist to a booking (checklistId in URL path) */
+  BOOKING_CHECKLIST: (bookingId: string, checklistId: string) => `/v1/bookings/${bookingId}/checklist/${checklistId}`,
 
   // ── Properties ────────────────────────────────────────────────────────────
   /** GET  → list properties (query: account_id, property_type) */

@@ -46,7 +46,7 @@ public class PropertyService {
     }
 
     public ApiResponse updateAdditionalInformation(long propertyId, Map<String, Object> info) {
-        JsonNode root = transport.put("/v1/properties/" + propertyId + "/additional-info", info);
+        JsonNode root = transport.put("/v1/properties/" + propertyId + "/additional-information", info);
         int status = root.has("status") ? root.get("status").asInt(200) : 200;
         return new ApiResponse(status, "OK");
     }
@@ -112,10 +112,9 @@ public class PropertyService {
     }
 
     public ApiResponse setDefaultChecklist(long propertyId, long checklistId, boolean updateUpcoming) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("checklist_id", checklistId);
-        body.put("update_upcoming_bookings", updateUpcoming);
-        JsonNode root = transport.put("/v1/properties/" + propertyId + "/checklist", body);
+        String path = "/v1/properties/" + propertyId + "/checklist/" + checklistId
+                + "?updateUpcomingBookings=" + updateUpcoming;
+        JsonNode root = transport.put(path, null);
         int status = root.has("status") ? root.get("status").asInt(200) : 200;
         return new ApiResponse(status, "OK");
     }

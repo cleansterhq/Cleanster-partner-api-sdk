@@ -19,7 +19,7 @@ public class ChecklistService {
 
     public List<Checklist> listChecklists(int page, int perPage) {
         JsonNode root = transport.get(
-                "/v1/checklists?page=" + page + "&per_page=" + perPage);
+                "/v1/checklist?page=" + page + "&per_page=" + perPage);
         JsonNode data = transport.extractData(root);
         List<Checklist> list = new ArrayList<>();
         if (data.isArray()) {
@@ -31,7 +31,7 @@ public class ChecklistService {
     }
 
     public Checklist getChecklist(long checklistId) {
-        JsonNode root = transport.get("/v1/checklists/" + checklistId);
+        JsonNode root = transport.get("/v1/checklist/" + checklistId);
         return transport.getObjectMapper().convertValue(transport.extractData(root), Checklist.class);
     }
 
@@ -39,7 +39,7 @@ public class ChecklistService {
         Map<String, Object> body = new HashMap<>();
         body.put("name", name);
         if (items != null) body.put("items", items);
-        JsonNode root = transport.post("/v1/checklists", body);
+        JsonNode root = transport.post("/v1/checklist", body);
         return transport.getObjectMapper().convertValue(transport.extractData(root), Checklist.class);
     }
 
@@ -47,12 +47,12 @@ public class ChecklistService {
         Map<String, Object> body = new HashMap<>();
         if (name != null)  body.put("name", name);
         if (items != null) body.put("items", items);
-        JsonNode root = transport.put("/v1/checklists/" + checklistId, body);
+        JsonNode root = transport.put("/v1/checklist/" + checklistId, body);
         return transport.getObjectMapper().convertValue(transport.extractData(root), Checklist.class);
     }
 
     public ApiResponse deleteChecklist(long checklistId) {
-        JsonNode root = transport.delete("/v1/checklists/" + checklistId);
+        JsonNode root = transport.delete("/v1/checklist/" + checklistId);
         int status = root.has("status") ? root.get("status").asInt(200) : 200;
         return new ApiResponse(status, "OK");
     }

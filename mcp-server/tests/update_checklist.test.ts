@@ -27,9 +27,7 @@ describe('assign_checklist tool', () => {
       checklist_id: 'ch_42',
     });
     await handler(params, mockApi as CleansterApiClient);
-    expect(mockApi.assignChecklist).toHaveBeenCalledWith('bk_001', {
-      checklist_id: 'ch_42',
-    });
+    expect(mockApi.assignChecklist).toHaveBeenCalledWith('bk_001', 'ch_42');
   });
 
   it('returns checklist response in content', async () => {

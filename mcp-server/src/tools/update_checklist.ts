@@ -21,9 +21,7 @@ export async function handler(
   params: Input,
   api: CleansterApiClient,
 ): Promise<{ content: Array<{ type: 'text'; text: string }> }> {
-  const data = await api.assignChecklist(params.booking_id, {
-    checklist_id: params.checklist_id,
-  });
+  const data = await api.assignChecklist(params.booking_id, params.checklist_id);
   return {
     content: [{ type: 'text', text: JSON.stringify(data, null, 2) }],
   };

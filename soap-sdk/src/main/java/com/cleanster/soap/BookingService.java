@@ -45,7 +45,7 @@ public class BookingService {
     }
 
     public Booking createBooking(CreateBookingRequest request) {
-        JsonNode root = transport.post("/v1/bookings", request);
+        JsonNode root = transport.post("/v1/bookings/create", request);
         return transport.getObjectMapper().convertValue(transport.extractData(root), Booking.class);
     }
 
@@ -85,7 +85,7 @@ public class BookingService {
     public ApiResponse adjustHours(long bookingId, double hours) {
         Map<String, Object> body = new HashMap<>();
         body.put("hours", hours);
-        JsonNode root = transport.post("/v1/bookings/" + bookingId + "/adjust-hours", body);
+        JsonNode root = transport.post("/v1/bookings/" + bookingId + "/hours", body);
         int status = root.has("status") ? root.get("status").asInt(200) : 200;
         return new ApiResponse(status, "OK");
     }
@@ -93,7 +93,7 @@ public class BookingService {
     public ApiResponse payExpenses(long bookingId, long paymentMethodId) {
         Map<String, Object> body = new HashMap<>();
         body.put("payment_method_id", paymentMethodId);
-        JsonNode root = transport.post("/v1/bookings/" + bookingId + "/pay-expenses", body);
+        JsonNode root = transport.post("/v1/bookings/" + bookingId + "/expenses", body);
         int status = root.has("status") ? root.get("status").asInt(200) : 200;
         return new ApiResponse(status, "OK");
     }
@@ -103,13 +103,11 @@ public class BookingService {
     }
 
     public JsonNode getBookingInspectionDetails(long bookingId) {
-        return transport.extractData(transport.get("/v1/bookings/" + bookingId + "/inspection-details"));
+        return transport.extractData(transport.get("/v1/bookings/" + bookingId + "/inspection/details"));
     }
 
     public ApiResponse assignChecklistToBooking(long bookingId, long checklistId) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("checklist_id", checklistId);
-        JsonNode root = transport.put("/v1/bookings/" + bookingId + "/checklist", body);
+        JsonNode root = transport.put("/v1/bookings/" + bookingId + "/checklist/" + checklistId, null);
         int status = root.has("status") ? root.get("status").asInt(200) : 200;
         return new ApiResponse(status, "OK");
     }

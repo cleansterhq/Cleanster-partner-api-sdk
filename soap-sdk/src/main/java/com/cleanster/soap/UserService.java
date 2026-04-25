@@ -16,12 +16,12 @@ public class UserService {
     }
 
     public User createUser(CreateUserRequest request) {
-        JsonNode root = transport.post("/v1/user", request);
+        JsonNode root = transport.post("/v1/user/account", request);
         return transport.getObjectMapper().convertValue(transport.extractData(root), User.class);
     }
 
     public User fetchAccessToken(long userId) {
-        JsonNode root = transport.get("/v1/user/" + userId + "/access-token");
+        JsonNode root = transport.get("/v1/user/access-token/" + userId);
         return transport.getObjectMapper().convertValue(transport.extractData(root), User.class);
     }
 
