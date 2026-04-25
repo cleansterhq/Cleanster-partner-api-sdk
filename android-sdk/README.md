@@ -10,7 +10,7 @@
   <img src="https://img.shields.io/badge/Kotlin-1.9%2B-purple?logo=kotlin" alt="Kotlin 1.9+">
   <img src="https://img.shields.io/badge/Retrofit-2.9-blue?logo=square" alt="Retrofit 2.9">
   <img src="https://img.shields.io/badge/OkHttp-4.12-orange" alt="OkHttp 4.12">
-  <img src="https://img.shields.io/badge/tests-164%20passing-brightgreen" alt="164 passing">
+  <img src="https://img.shields.io/badge/tests-168%20passing-brightgreen" alt="168 passing">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
   <img src="https://img.shields.io/badge/API-Cleanster%20Partner-brightgreen" alt="Cleanster Partner API">
 </p>
@@ -1600,7 +1600,7 @@ cd android-sdk
 ./gradlew test
 ```
 
-All **164 tests** should pass.
+All **168 tests** should pass.
 
 To run a specific test class:
 
