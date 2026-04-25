@@ -10,12 +10,10 @@
  *       in auth/middleware.ts does not need to change; only this file.
  *
  * Scopes (for future use):
- *   bookings:read   — list_bookings, get_booking
- *   bookings:write  — create_booking, cancel_booking, reschedule_booking, assign_crew
- *   properties:read — list_properties, get_property
- *   cleaners:read   — list_cleaners
- *   payouts:read    — get_payout_records
- *   checklists:write — update_checklist
+ *   bookings:read    — list_bookings, get_booking
+ *   bookings:write   — create_booking, cancel_booking, reschedule_booking, assign_crew, assign_checklist
+ *   properties:read  — list_properties, get_property
+ *   cleaners:read    — list_cleaners, get_cleaner
  */
 
 export interface TokenInfo {
@@ -42,8 +40,6 @@ export function validateBearerToken(authHeader: string | undefined): TokenInfo |
       'bookings:write',
       'properties:read',
       'cleaners:read',
-      'payouts:read',
-      'checklists:write',
     ],
   };
 }

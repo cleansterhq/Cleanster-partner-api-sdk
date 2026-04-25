@@ -2,10 +2,7 @@
  * Cleanster REST API endpoint constants.
  *
  * All URLs are relative to CLEANSTER_API_BASE_URL.
- *
- * TODO: Confirm each path against the live Cleanster Partner API documentation
- *       at https://documenter.getpostman.com/view/26172658/2sAYdoF7ep before
- *       deploying to production. These are best-effort based on the SDK source.
+ * Verified against the Cleanster Partner API (Postman collection 2sAYdoF7ep).
  */
 
 export const ENDPOINTS = {
@@ -17,19 +14,18 @@ export const ENDPOINTS = {
   BOOKING_GET: (id: string) => `/v1/bookings/${id}`,
 
   /** POST → create a new booking */
-  BOOKING_CREATE: '/v1/bookings/create',
+  BOOKING_CREATE: '/v1/bookings',
 
   /** POST → cancel a booking */
   BOOKING_CANCEL: (id: string) => `/v1/bookings/${id}/cancel`,
 
-  /** POST → reschedule a booking */
+  /** POST → reschedule a booking to a new date/time */
   BOOKING_RESCHEDULE: (id: string) => `/v1/bookings/${id}/reschedule`,
 
-  /** POST → assign a cleaner to a booking */
+  /** POST → assign a single cleaner to a booking (body: { cleaner_id }) */
   BOOKING_ASSIGN_CREW: (id: string) => `/v1/bookings/${id}/cleaner`,
 
-  /** PUT  → update checklist items for a booking */
-  // TODO: Verify path — may require cleaner_id as query or path param
+  /** PUT  → assign an existing checklist to a booking (body: { checklist_id }) */
   BOOKING_CHECKLIST: (id: string) => `/v1/bookings/${id}/checklist`,
 
   // ── Properties ────────────────────────────────────────────────────────────
@@ -40,11 +36,9 @@ export const ENDPOINTS = {
   PROPERTY_GET: (id: string) => `/v1/properties/${id}`,
 
   // ── Cleaners ──────────────────────────────────────────────────────────────
-  /** GET  → list cleaners (query: region, available_on) */
+  /** GET  → list cleaners (query: status, search) */
   CLEANERS_LIST: '/v1/cleaners',
 
-  // ── Payouts ───────────────────────────────────────────────────────────────
-  // TODO: Confirm payout endpoint — not yet documented in public Postman collection
-  /** GET  → get payout records (query: cleaner_id, date_from, date_to) */
-  PAYOUTS_LIST: '/v1/payouts',
+  /** GET  → get a single cleaner by ID */
+  CLEANER_GET: (id: string) => `/v1/cleaners/${id}`,
 } as const;

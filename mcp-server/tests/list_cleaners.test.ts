@@ -36,20 +36,24 @@ describe('list_cleaners tool', () => {
     expect(mockApi.listCleaners).toHaveBeenCalledWith({});
   });
 
-  it('passes region filter to api', async () => {
-    const params = inputSchema.parse({ region: 'Atlanta' });
+  it('passes status filter to api', async () => {
+    const params = inputSchema.parse({ status: 'active' });
     await handler(params, mockApi as CleansterApiClient);
-    expect(mockApi.listCleaners).toHaveBeenCalledWith({ region: 'Atlanta' });
+    expect(mockApi.listCleaners).toHaveBeenCalledWith({ status: 'active' });
   });
 
-  it('passes available_on filter to api', async () => {
-    const params = inputSchema.parse({ available_on: '2025-07-15' });
+  it('passes search filter to api', async () => {
+    const params = inputSchema.parse({ search: 'Maria' });
     await handler(params, mockApi as CleansterApiClient);
-    expect(mockApi.listCleaners).toHaveBeenCalledWith({ available_on: '2025-07-15' });
+    expect(mockApi.listCleaners).toHaveBeenCalledWith({ search: 'Maria' });
+  });
+
+  it('rejects invalid status values', () => {
+    expect(() => inputSchema.parse({ status: 'unknown' })).toThrow();
   });
 
   it('returns serialised cleaner list', async () => {
-    const params = inputSchema.parse({ region: 'Atlanta' });
+    const params = inputSchema.parse({ status: 'active' });
     const result = await handler(params, mockApi as CleansterApiClient);
     const parsed = JSON.parse(result.content[0].text);
     expect(parsed.data[0].name).toBe('Maria S.');

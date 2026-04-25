@@ -15,12 +15,12 @@ import * as getBooking from './tools/get_booking.js';
 import * as listProperties from './tools/list_properties.js';
 import * as getProperty from './tools/get_property.js';
 import * as listCleaners from './tools/list_cleaners.js';
-import * as getPayoutRecords from './tools/get_payout_records.js';
+import * as getCleaner from './tools/get_cleaner.js';
 import * as createBooking from './tools/create_booking.js';
 import * as cancelBooking from './tools/cancel_booking.js';
 import * as rescheduleBooking from './tools/reschedule_booking.js';
 import * as assignCrew from './tools/assign_crew.js';
-import * as updateChecklist from './tools/update_checklist.js';
+import * as assignChecklist from './tools/update_checklist.js';
 
 /**
  * The contract every tool module must satisfy.
@@ -42,21 +42,24 @@ const TOOLS: ToolModule[] = [
   listProperties,
   getProperty,
   listCleaners,
-  getPayoutRecords,
+  getCleaner,
   createBooking,
   cancelBooking,
   rescheduleBooking,
   assignCrew,
-  updateChecklist,
+  assignChecklist,
 ] as ToolModule[];
 
 /**
- * Build and return a new McpServer instance with a dedicated API client for
- * the supplied bearer token. Create one server per connection so each client
- * gets its own isolated auth context.
+ * Build and return a new McpServer instance with a dedicated API client.
+ *
+ * @param accessKey  The Cleanster partner access key (CLEANSTER_ACCESS_KEY env var).
+ * @param token      Optional user-level auth token (per-session or CLEANSTER_TOKEN env var).
+ *
+ * Create one server per connection so each client gets its own isolated auth context.
  */
-export function buildMcpServer(token: string): McpServer {
-  const api = new CleansterApiClient(token);
+export function buildMcpServer(accessKey: string, token?: string): McpServer {
+  const api = new CleansterApiClient(accessKey, token);
   const server = new McpServer({
     name: 'cleanster',
     version: '1.0.0',

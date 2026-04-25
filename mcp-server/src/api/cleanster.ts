@@ -1,13 +1,13 @@
 /**
  * CleansterApiClient — thin axios wrapper over the Cleanster Partner REST API.
  *
- * Each method corresponds to one API operation. The token (API key or OAuth
- * access token) is injected at construction time and attached to every request
- * as a Bearer token.
+ * Authentication uses two headers per the Cleanster Partner API specification:
+ *   access-key : the partner API access key (constant per deployment)
+ *   token      : the user-level authorization token (per session)
  *
- * TODO: When OAuth 2.0 + PKCE is ready, swap the static token for a token
- *       refresher here. The tool handlers do not need to change — they all go
- *       through this client, so the auth upgrade is entirely contained here.
+ * Both credentials are injected at construction time and attached to every
+ * request. The tool handlers do not need to know about auth — it is entirely
+ * encapsulated here.
  */
 
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
@@ -34,28 +34,22 @@ export interface RescheduleBookingParams {
 }
 
 export interface AssignCrewParams {
-  cleaner_ids: string[];
-}
-
-export interface UpdateChecklistParams {
   cleaner_id: string;
-  checklist_items: Array<{ task: string; required: boolean }>;
 }
 
-export interface ListPayoutsParams {
-  cleaner_id?: string;
-  date_from: string;
-  date_to: string;
+export interface AssignChecklistParams {
+  checklist_id: string;
 }
 
 export class CleansterApiClient {
   private readonly http: AxiosInstance;
 
-  constructor(token: string, baseUrl?: string) {
+  constructor(accessKey: string, token?: string, baseUrl?: string) {
     this.http = axios.create({
       baseURL: baseUrl ?? process.env['CLEANSTER_API_BASE_URL'] ?? '',
       headers: {
-        Authorization: `Bearer ${token}`,
+        'access-key': accessKey,
+        'token': token ?? '',
         'Content-Type': 'application/json',
         Accept: 'application/json',
       },
@@ -95,7 +89,7 @@ export class CleansterApiClient {
     return res.data;
   }
 
-  async updateChecklist(bookingId: string, params: UpdateChecklistParams): Promise<unknown> {
+  async assignChecklist(bookingId: string, params: AssignChecklistParams): Promise<unknown> {
     const res: AxiosResponse = await this.http.put(ENDPOINTS.BOOKING_CHECKLIST(bookingId), params);
     return res.data;
   }
@@ -114,15 +108,13 @@ export class CleansterApiClient {
 
   // ── Cleaners ───────────────────────────────────────────────────────────────
 
-  async listCleaners(params: { region?: string; available_on?: string }): Promise<unknown> {
+  async listCleaners(params: { status?: string; search?: string }): Promise<unknown> {
     const res: AxiosResponse = await this.http.get(ENDPOINTS.CLEANERS_LIST, { params });
     return res.data;
   }
 
-  // ── Payouts ────────────────────────────────────────────────────────────────
-
-  async getPayoutRecords(params: ListPayoutsParams): Promise<unknown> {
-    const res: AxiosResponse = await this.http.get(ENDPOINTS.PAYOUTS_LIST, { params });
+  async getCleaner(id: string): Promise<unknown> {
+    const res: AxiosResponse = await this.http.get(ENDPOINTS.CLEANER_GET(id));
     return res.data;
   }
 }

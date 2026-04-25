@@ -18,7 +18,7 @@ public class OtherService {
     }
 
     public List<ServiceType> getServices() {
-        JsonNode root = transport.get("/v1/other/services");
+        JsonNode root = transport.get("/v1/services");
         JsonNode data = transport.extractData(root);
         List<ServiceType> list = new ArrayList<>();
         if (data.isArray()) {
@@ -31,31 +31,31 @@ public class OtherService {
 
     public JsonNode getPlans(long propertyId) {
         return transport.extractData(
-                transport.get("/v1/other/plans?property_id=" + propertyId));
+                transport.get("/v1/plans?propertyId=" + propertyId));
     }
 
     public JsonNode getRecommendedHours(long propertyId, int bathroomCount, int roomCount) {
         return transport.extractData(transport.get(
-                "/v1/other/recommended-hours?property_id=" + propertyId
-                + "&bathroom_count=" + bathroomCount
-                + "&room_count=" + roomCount));
+                "/v1/recommended-hours?propertyId=" + propertyId
+                + "&bathroomCount=" + bathroomCount
+                + "&roomCount=" + roomCount));
     }
 
     public JsonNode getCostEstimate(Map<String, Object> request) {
-        return transport.extractData(transport.post("/v1/other/calculate-cost", request));
+        return transport.extractData(transport.post("/v1/cost-estimate", request));
     }
 
     public JsonNode getCleaningExtras(long serviceId) {
         return transport.extractData(
-                transport.get("/v1/other/cleaning-extras?service_id=" + serviceId));
+                transport.get("/v1/cleaning-extras/" + serviceId));
     }
 
     public JsonNode getAvailableCleaners(Map<String, Object> request) {
-        return transport.extractData(transport.post("/v1/other/available-cleaners", request));
+        return transport.extractData(transport.post("/v1/available-cleaners", request));
     }
 
     public JsonNode getCoupons() {
-        return transport.extractData(transport.get("/v1/other/coupons"));
+        return transport.extractData(transport.get("/v1/coupons"));
     }
 
     public List<ChatMessage> getChat(long bookingId) {

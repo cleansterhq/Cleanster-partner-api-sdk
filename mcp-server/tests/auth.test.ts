@@ -46,8 +46,6 @@ describe('validateBearerToken', () => {
         'bookings:write',
         'properties:read',
         'cleaners:read',
-        'payouts:read',
-        'checklists:write',
       ]),
     );
   });

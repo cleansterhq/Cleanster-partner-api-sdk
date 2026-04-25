@@ -11,10 +11,10 @@ A production-ready [Model Context Protocol (MCP)](https://modelcontextprotocol.i
 | Protocol | MCP 1.0 (Model Context Protocol) |
 | Language | TypeScript (ESM, Node 20+) |
 | Transport | HTTP/SSE (default) or stdio (Claude Desktop) |
-| Auth | Bearer token (API key); OAuth 2.0 + PKCE seam included |
+| Auth | `access-key` + `token` headers; OAuth 2.0 + PKCE seam included |
 | Tools | 11 (6 read-only, 5 write) |
 | Rate Limit | 60 requests / minute / token |
-| Tests | 67 (Vitest — tools, auth, schema validation; no real API calls) |
+| Tests | 64 (Vitest — tools, auth, schema validation; no real API calls) |
 
 ---
 
@@ -28,8 +28,8 @@ A production-ready [Model Context Protocol (MCP)](https://modelcontextprotocol.i
 | `get_booking` | Get full details for a single booking |
 | `list_properties` | List registered properties, filter by type |
 | `get_property` | Get full property details including cleaners and iCal |
-| `list_cleaners` | List cleaners by region or availability date |
-| `get_payout_records` | Get payout records for a date range |
+| `list_cleaners` | List cleaners filtered by status (active/inactive/pending) or name search |
+| `get_cleaner` | Get full profile details for a single cleaner |
 
 ### Write operations
 
@@ -38,8 +38,8 @@ A production-ready [Model Context Protocol (MCP)](https://modelcontextprotocol.i
 | `create_booking` | Create a new cleaning booking |
 | `cancel_booking` | Cancel a booking with an optional reason |
 | `reschedule_booking` | Move a booking to a new date/time |
-| `assign_crew` | Assign one or more cleaners to a booking |
-| `update_checklist` | Set checklist items and required flags for a booking |
+| `assign_crew` | Assign a cleaner to a booking |
+| `assign_checklist` | Assign an existing saved checklist to a booking |
 
 ---
 
@@ -63,6 +63,13 @@ Edit `.env`:
 
 ```env
 CLEANSTER_API_BASE_URL=https://partner-sandbox-dot-official-tidyio-project.ue.r.appspot.com/public
+
+# Partner access key sent as 'access-key' header on every request
+CLEANSTER_ACCESS_KEY=your-partner-access-key-here
+
+# User-level auth token sent as 'token' header (stdio only; HTTP/SSE uses the per-request Bearer token)
+CLEANSTER_TOKEN=your-user-token-here
+
 MCP_SERVER_PORT=8000
 MCP_TRANSPORT=http
 LOG_LEVEL=info

@@ -29,11 +29,12 @@ const log = pino({
 // ── Stdio transport (Claude Desktop) ─────────────────────────────────────────
 
 async function startStdio(): Promise<void> {
-  const token = process.env['CLEANSTER_API_KEY'] ?? '';
-  if (!token) {
-    log.warn('CLEANSTER_API_KEY not set — requests to the Cleanster API will fail');
+  const accessKey = process.env['CLEANSTER_ACCESS_KEY'] ?? process.env['CLEANSTER_API_KEY'] ?? '';
+  const token = process.env['CLEANSTER_TOKEN'] ?? '';
+  if (!accessKey) {
+    log.warn('CLEANSTER_ACCESS_KEY not set — requests to the Cleanster API will fail');
   }
-  const server = buildMcpServer(token);
+  const server = buildMcpServer(accessKey, token);
   const transport = new StdioServerTransport();
   await server.connect(transport);
   log.info('Cleanster MCP server running on stdio');
@@ -76,8 +77,9 @@ async function startHttp(): Promise<void> {
 
   // ── SSE endpoint — establish MCP connection ────────────────────────────────
   app.get('/sse', requireAuth, (req, res) => {
+    const accessKey = process.env['CLEANSTER_ACCESS_KEY'] ?? process.env['CLEANSTER_API_KEY'] ?? '';
     const token = req.tokenInfo!.token;
-    const server = buildMcpServer(token);
+    const server = buildMcpServer(accessKey, token);
     const transport = new SSEServerTransport('/message', res);
 
     transports.set(transport.sessionId, transport);

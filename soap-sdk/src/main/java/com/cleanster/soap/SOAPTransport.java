@@ -91,7 +91,7 @@ public class SOAPTransport {
             conn.setRequestMethod(method);
             conn.setConnectTimeout(TIMEOUT_MS);
             conn.setReadTimeout(TIMEOUT_MS);
-            conn.setRequestProperty("Authorization", "Bearer " + apiKey);
+            conn.setRequestProperty("access-key", apiKey);
             conn.setRequestProperty("Accept", "application/json");
             conn.setRequestProperty("Content-Type", contentType);
 

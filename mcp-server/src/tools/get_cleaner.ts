@@ -1,18 +1,15 @@
 import { z } from 'zod';
 import type { CleansterApiClient } from '../api/cleanster.js';
 
-export const name = 'assign_crew';
+export const name = 'get_cleaner';
 
 export const description =
-  'Assign a cleaner to a booking. Replaces any previously assigned cleaner.';
+  'Get full profile details for a single cleaner by their ID.';
 
 export const inputSchema = z.object({
-  booking_id: z
-    .string()
-    .describe('ID of the booking to assign the cleaner to'),
   cleaner_id: z
     .string()
-    .describe('ID of the cleaner to assign to this booking'),
+    .describe('ID of the cleaner to retrieve'),
 });
 
 export type Input = z.infer<typeof inputSchema>;
@@ -21,9 +18,7 @@ export async function handler(
   params: Input,
   api: CleansterApiClient,
 ): Promise<{ content: Array<{ type: 'text'; text: string }> }> {
-  const data = await api.assignCrew(params.booking_id, {
-    cleaner_id: params.cleaner_id,
-  });
+  const data = await api.getCleaner(params.cleaner_id);
   return {
     content: [{ type: 'text', text: JSON.stringify(data, null, 2) }],
   };

@@ -4,17 +4,17 @@ import type { CleansterApiClient } from '../api/cleanster.js';
 export const name = 'list_cleaners';
 
 export const description =
-  'List available cleaners. Filter by region or check availability on a specific date.';
+  'List cleaners on the Cleanster platform. Optionally filter by status (active/inactive/pending) or search by name or email.';
 
 export const inputSchema = z.object({
-  region: z
+  status: z
+    .enum(['active', 'inactive', 'pending'])
+    .optional()
+    .describe("Filter by cleaner status: 'active', 'inactive', or 'pending'"),
+  search: z
     .string()
     .optional()
-    .describe('Filter cleaners by geographic region or city name'),
-  available_on: z
-    .string()
-    .optional()
-    .describe('Return only cleaners available on this date, ISO format YYYY-MM-DD'),
+    .describe('Partial match against cleaner name or email address'),
 });
 
 export type Input = z.infer<typeof inputSchema>;
