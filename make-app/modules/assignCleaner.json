@@ -4,7 +4,7 @@
   "description": "Assigns a specific cleaner to an existing booking.",
   "connection": "apikey",
   "actionType": "create",
-  "url": "/v1/bookings/{{parameters.booking_id}}/assign-cleaner",
+  "url": "/v1/bookings/{{parameters.booking_id}}/cleaner",
   "method": "POST",
   "headers": [],
   "qs": [],

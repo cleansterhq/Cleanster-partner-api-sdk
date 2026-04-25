@@ -182,18 +182,18 @@ class CleansterSOAPClientTest {
     // =========================================================================
 
     @Test
-    @DisplayName("assignCleaner calls POST /v1/bookings/{id}/assign-cleaner")
+    @DisplayName("assignCleaner calls POST /v1/bookings/{id}/cleaner")
     void assignCleanerCallsCorrectPath() {
-        when(transport.post(eq("/v1/bookings/16459/assign-cleaner"), any()))
+        when(transport.post(eq("/v1/bookings/16459/cleaner"), any()))
                 .thenReturn(bookingNode(16459L, "scheduled"));
         client.assignCleaner(16459, 789);
-        verify(transport).post(eq("/v1/bookings/16459/assign-cleaner"), any());
+        verify(transport).post(eq("/v1/bookings/16459/cleaner"), any());
     }
 
     @Test
     @DisplayName("assignCleaner returns booking with cleaner")
     void assignCleanerReturnsBooking() {
-        when(transport.post(eq("/v1/bookings/16459/assign-cleaner"), any()))
+        when(transport.post(eq("/v1/bookings/16459/cleaner"), any()))
                 .thenReturn(bookingNode(16459L, "scheduled"));
         Booking result = client.assignCleaner(16459, 789);
         assertNotNull(result);

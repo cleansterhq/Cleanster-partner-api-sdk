@@ -72,12 +72,12 @@ public class BookingService {
     public Booking assignCleaner(long bookingId, long cleanerId) {
         Map<String, Object> body = new HashMap<>();
         body.put("cleaner_id", cleanerId);
-        JsonNode root = transport.post("/v1/bookings/" + bookingId + "/cleaner-assignment", body);
+        JsonNode root = transport.post("/v1/bookings/" + bookingId + "/cleaner", body);
         return transport.getObjectMapper().convertValue(transport.extractData(root), Booking.class);
     }
 
     public ApiResponse removeAssignedCleaner(long bookingId) {
-        JsonNode root = transport.delete("/v1/bookings/" + bookingId + "/cleaner-assignment");
+        JsonNode root = transport.delete("/v1/bookings/" + bookingId + "/cleaner");
         int status = root.has("status") ? root.get("status").asInt(200) : 200;
         return new ApiResponse(status, "OK");
     }

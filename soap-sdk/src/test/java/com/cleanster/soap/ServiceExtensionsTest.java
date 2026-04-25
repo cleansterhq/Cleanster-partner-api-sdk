@@ -43,17 +43,17 @@ class ServiceExtensionsTest {
     // =========================================================================
 
     @Test
-    @DisplayName("removeAssignedCleaner calls DELETE /v1/bookings/{id}/cleaner-assignment")
+    @DisplayName("removeAssignedCleaner calls DELETE /v1/bookings/{id}/cleaner")
     void removeAssignedCleanerCallsCorrectPath() {
-        when(transport.delete("/v1/bookings/16459/cleaner-assignment")).thenReturn(okNode());
+        when(transport.delete("/v1/bookings/16459/cleaner")).thenReturn(okNode());
         client.removeAssignedCleaner(16459L);
-        verify(transport).delete("/v1/bookings/16459/cleaner-assignment");
+        verify(transport).delete("/v1/bookings/16459/cleaner");
     }
 
     @Test
     @DisplayName("removeAssignedCleaner returns success response")
     void removeAssignedCleanerReturnsSuccess() {
-        when(transport.delete("/v1/bookings/16459/cleaner-assignment")).thenReturn(okNode());
+        when(transport.delete("/v1/bookings/16459/cleaner")).thenReturn(okNode());
         assertTrue(client.removeAssignedCleaner(16459L).isSuccess());
     }
 

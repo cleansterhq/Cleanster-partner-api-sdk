@@ -125,6 +125,7 @@ Python3 script using `GITHUB_PERSONAL_ACCESS_TOKEN` env var. Owner: `cleansterhq
 - Java 11+ SOAP 1.1 (document/literal) bridge over REST
 - 6 test classes: CleansterSOAPClientTest (43), ServiceExtensionsTest (43), UserServiceTest (6), BlacklistServiceTest (6), PaymentMethodServiceTest (12), WebhookServiceTest (8)
 - **118 tests** (JUnit 5 + Mockito) — all passing
+- **Assign Cleaner endpoint fixed**: was `cleaner-assignment` → corrected to `cleaner` in BookingService.java, both test files, and README
 - NOT pushed to GitHub
 
 ### Android SDK (`android-sdk/`)
@@ -154,11 +155,17 @@ Production-ready Zapier app — NOT pushed to GitHub.
 
 - 3 Triggers: New Booking, Booking Status Changed, New Property
 - 6 Actions: Create/Cancel/Reschedule Booking, Create Property, Assign Cleaner, Send Chat Message
-- 2 Searches: Find Booking, Find Property
+- 4 Searches: Find Booking, Find Property, Find Cleaner, Get Available Services
+- 2 Search-or-Creates: Find or Create Booking, Find or Create Property
+- Auth: `Authorization: Bearer <api-key>` (single key, simpler than SDK dual-header model)
+- **Assign Cleaner endpoint fixed**: was `POST /v1/bookings/{id}/assign-cleaner` → corrected to `POST /v1/bookings/{id}/cleaner`
 
 ## Make.com Integration (`make-app/`)
 
 Production-ready Make.com custom app — NOT pushed to GitHub.
 
+- 18 modules total across triggers, actions, lookups, and generic API call
 - Triggers: Watch New Bookings, Watch Booking Status Changed, Watch New Properties
 - Actions: Full booking lifecycle, property management, cleaner assignment
+- RPCs: listProperties, listCleaners, listChecklists, listServices (dynamic dropdowns)
+- **Assign Cleaner endpoint fixed**: was `POST /v1/bookings/{id}/assign-cleaner` → corrected to `POST /v1/bookings/{id}/cleaner`

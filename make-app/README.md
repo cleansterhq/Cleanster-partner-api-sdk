@@ -269,7 +269,7 @@ In any trigger module JSON, change `typeId: 4` to `typeId: 1` and add:
 | `POST` | `/v1/bookings` | Create a Booking |
 | `POST` | `/v1/bookings/:id/cancel` | Cancel a Booking |
 | `POST` | `/v1/bookings/:id/reschedule` | Reschedule a Booking |
-| `POST` | `/v1/bookings/:id/assign-cleaner` | Assign Cleaner to Booking |
+| `POST` | `/v1/bookings/:id/cleaner` | Assign Cleaner to Booking |
 | `POST` | `/v1/bookings/:id/chat` | Send Chat Message |
 | `GET` | `/v1/properties` | Watch New Properties, Search Properties, listProperties RPC |
 | `GET` | `/v1/properties/:id` | Get a Property |

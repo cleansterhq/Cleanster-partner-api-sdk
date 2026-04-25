@@ -273,7 +273,7 @@ This app covers the following Cleanster API endpoints:
 | `POST` | `/v1/bookings` | Action: Create Booking |
 | `POST` | `/v1/bookings/:id/cancel` | Action: Cancel Booking |
 | `POST` | `/v1/bookings/:id/reschedule` | Action: Reschedule Booking |
-| `POST` | `/v1/bookings/:id/assign-cleaner` | Action: Assign Cleaner |
+| `POST` | `/v1/bookings/:id/cleaner` | Action: Assign Cleaner |
 | `POST` | `/v1/bookings/:id/chat` | Action: Send Message |
 | `GET` | `/v1/properties` | Trigger: New Property; Search: Find Property |
 | `GET` | `/v1/properties/:id` | Search: Find Property (by ID) |

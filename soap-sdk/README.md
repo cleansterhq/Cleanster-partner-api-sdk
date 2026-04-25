@@ -29,8 +29,8 @@ A Java SOAP SDK for the Cleanster Partner API. Provides a WSDL-defined, document
 | `CreateBooking` | POST | `/v1/bookings` | Create a new cleaning booking |
 | `CancelBooking` | POST | `/v1/bookings/{id}/cancel` | Cancel a booking |
 | `RescheduleBooking` | POST | `/v1/bookings/{id}/reschedule` | Reschedule to a new date/time |
-| `AssignCleaner` | POST | `/v1/bookings/{id}/cleaner-assignment` | Assign a cleaner to a booking |
-| `RemoveAssignedCleaner` | DELETE | `/v1/bookings/{id}/cleaner-assignment` | Remove the assigned cleaner |
+| `AssignCleaner` | POST | `/v1/bookings/{id}/cleaner` | Assign a cleaner to a booking |
+| `RemoveAssignedCleaner` | DELETE | `/v1/bookings/{id}/cleaner` | Remove the assigned cleaner |
 | `AdjustHours` | POST | `/v1/bookings/{id}/adjust-hours` | Adjust booking duration |
 | `PayExpenses` | POST | `/v1/bookings/{id}/pay-expenses` | Pay booking expenses |
 | `GetBookingInspection` | GET | `/v1/bookings/{id}/inspection` | Get inspection report |

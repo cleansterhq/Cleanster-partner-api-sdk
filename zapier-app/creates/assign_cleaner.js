@@ -4,7 +4,7 @@ const BASE_URL = "https://api.cleanster.com";
 
 const assignCleaner = async (z, bundle) => {
   const response = await z.request({
-    url: `${BASE_URL}/v1/bookings/${bundle.inputData.booking_id}/assign-cleaner`,
+    url: `${BASE_URL}/v1/bookings/${bundle.inputData.booking_id}/cleaner`,
     method: "POST",
     body: {
       cleaner_id: parseInt(bundle.inputData.cleaner_id, 10),
