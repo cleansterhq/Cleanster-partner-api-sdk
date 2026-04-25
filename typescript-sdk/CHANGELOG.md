@@ -31,5 +31,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Exception classes: `CleansterException`, `CleansterAuthException` (HTTP 401),
   `CleansterApiException` (HTTP 4xx/5xx).
 - Native `fetch`-based HTTP transport (Node 18+) with `AbortController` timeout support.
-- 100+ Jest unit tests — no network access required.
+- 87 Jest unit tests — no network access required.
 - Full TypeScript declaration files (`.d.ts`) included in published package.

@@ -17,7 +17,7 @@ export const ENDPOINTS = {
   BOOKING_GET: (id: string) => `/v1/bookings/${id}`,
 
   /** POST → create a new booking */
-  BOOKING_CREATE: '/v1/bookings',
+  BOOKING_CREATE: '/v1/bookings/create',
 
   /** POST → cancel a booking */
   BOOKING_CANCEL: (id: string) => `/v1/bookings/${id}/cancel`,
@@ -25,9 +25,8 @@ export const ENDPOINTS = {
   /** POST → reschedule a booking */
   BOOKING_RESCHEDULE: (id: string) => `/v1/bookings/${id}/reschedule`,
 
-  /** POST → assign cleaner(s) to a booking */
-  // TODO: Verify — may be POST /v1/bookings/{id}/cleaner-assignment
-  BOOKING_ASSIGN_CREW: (id: string) => `/v1/bookings/${id}/cleaner-assignment`,
+  /** POST → assign a cleaner to a booking */
+  BOOKING_ASSIGN_CREW: (id: string) => `/v1/bookings/${id}/cleaner`,
 
   /** PUT  → update checklist items for a booking */
   // TODO: Verify path — may require cleaner_id as query or path param
