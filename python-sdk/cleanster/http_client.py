@@ -1,5 +1,5 @@
 """
-Internal HTTP transport layer — wraps the requests library and handles
+Internal HTTP transport layer - wraps the requests library and handles
 authentication headers, JSON serialization, and error mapping.
 """
 
@@ -49,7 +49,7 @@ class HttpClient:
 
         if response.status_code == 401:
             raise CleansterAuthException(
-                "Unauthorized — invalid or missing access key or user token.",
+                "Unauthorized - invalid or missing access key or user token.",
                 body,
             )
         if not response.ok:
