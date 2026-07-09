@@ -1,4 +1,4 @@
-# Cleanster Partner API — XML SDK
+# Cleanster Partner API - XML SDK
 
 <p align="center">
   <img src="https://img.shields.io/badge/Language-Java%2017-orange" alt="Java 17">
@@ -118,8 +118,8 @@ Every request requires two HTTP headers:
 
 | Header | Description |
 |---|---|
-| `access-key` | Your static partner key — issued by Cleanster |
-| `token` | Per-user JWT — obtained via `fetchAccessToken(userId)` |
+| `access-key` | Your static partner key - issued by Cleanster |
+| `token` | Per-user JWT - obtained via `fetchAccessToken(userId)` |
 
 **Flow:**
 1. Call `POST /v1/user/account` to register a user in Cleanster.
@@ -158,7 +158,7 @@ XmlApiResponse<Booking> resp = client.bookings().getBooking(bookingId);
 
 resp.isSuccess();   // true / false
 resp.getMessage();  // "OK" or error description
-resp.getData();     // T — the payload
+resp.getData();     // T - the payload
 ```
 
 ---
@@ -988,4 +988,4 @@ public class CleansterBookingService {
 
 ## License
 
-MIT License — see [LICENSE](../LICENSE) for details.
+MIT License - see [LICENSE](../LICENSE) for details.
