@@ -224,4 +224,28 @@ public class BookingApi {
         return httpClient.delete("/v1/bookings/" + bookingId + "/chat/" + messageId,
                 new TypeReference<ApiResponse<Object>>() {});
     }
+
+    /**
+     * Update task quantities for a booking.
+     *
+     * @param bookingId The booking ID
+     * @param request   List of task IDs and updated quantities
+     * @return API response
+     */
+    public ApiResponse<Object> updateTask(int bookingId, UpdateTaskRequest request) {
+        return httpClient.post("/v1/bookings/" + bookingId + "/tasks", request,
+                new TypeReference<ApiResponse<Object>>() {});
+    }
+
+    /**
+     * Update the total square footage for a booking.
+     *
+     * @param bookingId The booking ID
+     * @param request   New total square footage value
+     * @return API response
+     */
+    public ApiResponse<Object> updateSqft(int bookingId, UpdateSqftRequest request) {
+        return httpClient.post("/v1/bookings/" + bookingId + "/sqft", request,
+                new TypeReference<ApiResponse<Object>>() {});
+    }
 }
