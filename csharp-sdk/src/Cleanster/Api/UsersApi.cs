@@ -13,7 +13,7 @@ public sealed class UsersApi
     /// <param name="email">User email address.</param>
     /// <param name="firstName">First name.</param>
     /// <param name="lastName">Last name.</param>
-    /// <param name="phone">Optional phone number — omitted from request if <see langword="null"/>.</param>
+    /// <param name="phone">Optional phone number - omitted from request if <see langword="null"/>.</param>
     public async Task<ApiResponse<User>> CreateUserAsync(
         string email, string firstName, string lastName,
         string? phone = null, CancellationToken ct = default)
