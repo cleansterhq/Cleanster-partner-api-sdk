@@ -1,12 +1,12 @@
 /**
- * CleansterApiClient — thin axios wrapper over the Cleanster Partner REST API.
+ * CleansterApiClient - thin axios wrapper over the Cleanster Partner REST API.
  *
  * Authentication uses two headers per the Cleanster Partner API specification:
  *   access-key : the partner API access key (constant per deployment)
  *   token      : the user-level authorization token (per session)
  *
  * Both credentials are injected at construction time and attached to every
- * request. The tool handlers do not need to know about auth — it is entirely
+ * request. The tool handlers do not need to know about auth - it is entirely
  * encapsulated here.
  */
 
