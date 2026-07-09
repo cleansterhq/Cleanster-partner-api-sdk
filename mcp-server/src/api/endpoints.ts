@@ -28,6 +28,12 @@ export const ENDPOINTS = {
   /** PUT  → assign an existing checklist to a booking (checklistId in URL path) */
   BOOKING_CHECKLIST: (bookingId: string, checklistId: string) => `/v1/bookings/${bookingId}/checklist/${checklistId}`,
 
+  /** POST → update task quantities for a booking (body: { tasks: [{ id, quantity }] }) */
+  BOOKING_TASKS: (id: string) => `/v1/bookings/${id}/tasks`,
+
+  /** POST → update total square footage for a booking (body: { totalSqFt }) */
+  BOOKING_SQFT: (id: string) => `/v1/bookings/${id}/sqft`,
+
   // ── Properties ────────────────────────────────────────────────────────────
   /** GET  → list properties (query: account_id, property_type) */
   PROPERTIES_LIST: '/v1/properties',
