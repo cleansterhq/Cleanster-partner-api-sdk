@@ -1,6 +1,6 @@
 """
 Comprehensive unit tests for the Cleanster Python SDK.
-Uses unittest.mock to simulate HTTP responses — no network access or API keys needed.
+Uses unittest.mock to simulate HTTP responses - no network access or API keys needed.
 """
 
 import json
