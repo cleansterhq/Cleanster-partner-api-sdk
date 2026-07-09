@@ -21,21 +21,29 @@ class OtherApi:
         raw = self._http.get("/v1/services")
         return ApiResponse.from_dict(raw)
 
-    def get_plans(self, property_id: int) -> ApiResponse:
+    def get_plans(self, property_id: int, subcat_id: Optional[int] = None) -> ApiResponse:
         """
         Return available booking plans for a given property.
 
         Args:
             property_id: The property ID.
+            subcat_id:   Optional service subcategory ID.
 
         Returns:
             ApiResponse with data as a list of plan dicts.
         """
-        raw = self._http.get("/v1/plans", params={"propertyId": property_id})
+        params: Dict[str, Any] = {"propertyId": property_id}
+        if subcat_id is not None:
+            params["subcatId"] = subcat_id
+        raw = self._http.get("/v1/plans", params=params)
         return ApiResponse.from_dict(raw)
 
     def get_recommended_hours(
-        self, property_id: int, bathroom_count: int, room_count: int
+        self,
+        property_id: int,
+        bathroom_count: int,
+        room_count: int,
+        subcat_id: Optional[int] = None,
     ) -> ApiResponse:
         """
         Get the system-recommended cleaning hours based on property size.
@@ -44,18 +52,19 @@ class OtherApi:
             property_id:     The property ID.
             bathroom_count:  Number of bathrooms.
             room_count:      Number of rooms/bedrooms.
+            subcat_id:       Optional service subcategory ID.
 
         Returns:
             ApiResponse with data containing the recommended hours.
         """
-        raw = self._http.get(
-            "/v1/recommended-hours",
-            params={
-                "propertyId": property_id,
-                "bathroomCount": bathroom_count,
-                "roomCount": room_count,
-            },
-        )
+        params: Dict[str, Any] = {
+            "propertyId": property_id,
+            "bathroomCount": bathroom_count,
+            "roomCount": room_count,
+        }
+        if subcat_id is not None:
+            params["subcatId"] = subcat_id
+        raw = self._http.get("/v1/recommended-hours", params=params)
         return ApiResponse.from_dict(raw)
 
     def get_cost_estimate(self, request: Dict[str, Any]) -> ApiResponse:
@@ -135,4 +144,44 @@ class OtherApi:
             ApiResponse with data as a cleaner dict.
         """
         raw = self._http.get(f"/v1/cleaners/{cleaner_id}")
+        return ApiResponse.from_dict(raw)
+
+    def get_tasks(
+        self,
+        property_id: int,
+        service_id: int,
+        page_no: Optional[int] = None,
+        page_size: Optional[int] = None,
+    ) -> ApiResponse:
+        """
+        List service tasks, filterable by property and service type.
+
+        Args:
+            property_id: The property ID.
+            service_id:  The service type ID.
+            page_no:     Optional page number.
+            page_size:   Optional page size.
+
+        Returns:
+            ApiResponse with data as a list of task dicts.
+        """
+        params: Dict[str, Any] = {"propertyId": property_id, "serviceId": service_id}
+        if page_no is not None:
+            params["pageNo"] = page_no
+        if page_size is not None:
+            params["pageSize"] = page_size
+        raw = self._http.get("/v1/tasks", params=params)
+        return ApiResponse.from_dict(raw)
+
+    def get_subcategories(self, service_id: int) -> ApiResponse:
+        """
+        Get the subcategories available under a given service type.
+
+        Args:
+            service_id: The service type ID.
+
+        Returns:
+            ApiResponse with data as a list of subcategory dicts.
+        """
+        raw = self._http.get(f"/v1/services/{service_id}/subcategories")
         return ApiResponse.from_dict(raw)
