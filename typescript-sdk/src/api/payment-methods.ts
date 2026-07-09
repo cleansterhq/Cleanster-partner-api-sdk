@@ -1,5 +1,5 @@
 /**
- * PaymentMethodsApi — manage Stripe and PayPal payment methods.
+ * PaymentMethodsApi - manage Stripe and PayPal payment methods.
  */
 
 import { HttpClient } from "../http-client";
