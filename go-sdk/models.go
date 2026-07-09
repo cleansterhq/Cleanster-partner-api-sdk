@@ -114,6 +114,22 @@ type SendMessageRequest struct {
         Message string `json:"message"`
 }
 
+// TaskQuantity holds a task ID and its updated quantity.
+type TaskQuantity struct {
+        ID       int `json:"id"`
+        Quantity int `json:"quantity"`
+}
+
+// UpdateTaskRequest holds the list of task quantity updates for a booking.
+type UpdateTaskRequest struct {
+        Tasks []TaskQuantity `json:"tasks"`
+}
+
+// UpdateSqftRequest holds the new total square footage for a booking.
+type UpdateSqftRequest struct {
+        TotalSqFt float64 `json:"totalSqFt"`
+}
+
 // GetBookingsParams holds optional filters for listing bookings.
 type GetBookingsParams struct {
         // PageNo is the page number (1-based). Pass nil for the first page.
