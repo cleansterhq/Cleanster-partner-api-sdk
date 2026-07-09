@@ -39,7 +39,7 @@ class CleansterClient private constructor(
         fun production(accessKey: String, engine: HttpEngine = OkHttpEngine()) =
             CleansterClient(accessKey = accessKey, baseUrl = PRODUCTION_URL, engine = engine)
 
-        /** Internal factory — used in tests to inject a mock engine. */
+        /** Internal factory - used in tests to inject a mock engine. */
         internal fun withEngine(accessKey: String, baseUrl: String, engine: HttpEngine) =
             CleansterClient(accessKey = accessKey, baseUrl = baseUrl, engine = engine)
     }
