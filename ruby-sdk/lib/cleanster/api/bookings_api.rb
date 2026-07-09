@@ -169,6 +169,26 @@ module Cleanster
         Models::ApiResponse.from_hash(raw)
       end
 
+      # Update task quantities for a booking.
+      #
+      # @param booking_id [Integer]
+      # @param tasks      [Array<Hash>] Each hash has :id and :quantity.
+      # @return [Models::ApiResponse]
+      def update_task(booking_id, tasks:)
+        raw = @http.post("/v1/bookings/#{booking_id}/tasks", body: { tasks: tasks })
+        Models::ApiResponse.from_hash(raw)
+      end
+
+      # Update the total square footage for a booking.
+      #
+      # @param booking_id  [Integer]
+      # @param total_sq_ft [Numeric]
+      # @return [Models::ApiResponse]
+      def update_sqft(booking_id, total_sq_ft:)
+        raw = @http.post("/v1/bookings/#{booking_id}/sqft", body: { totalSqFt: total_sq_ft })
+        Models::ApiResponse.from_hash(raw)
+      end
+
       private
 
       def camel_keys(hash)
