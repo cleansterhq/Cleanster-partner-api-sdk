@@ -9,7 +9,7 @@ namespace Cleanster\Models;
  *
  * @property int    $status  HTTP-style status code (e.g., 200).
  * @property string $message Human-readable status (e.g., "OK").
- * @property mixed  $data    Typed payload — a model object, array of models, or raw array.
+ * @property mixed  $data    Typed payload - a model object, array of models, or raw array.
  */
 final class ApiResponse
 {
