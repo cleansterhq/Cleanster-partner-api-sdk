@@ -1,6 +1,6 @@
 # Cleanster MCP Server
 
-A production-ready [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server for the Cleanster Partner API. Lets AI assistants like **Claude** interact with the Cleanster platform — booking jobs, managing properties, assigning cleaners, and more — through natural language.
+A production-ready [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server for the Cleanster Partner API. Lets AI assistants like **Claude** interact with the Cleanster platform - booking jobs, managing properties, assigning cleaners, and more - through natural language.
 
 ---
 
@@ -14,7 +14,7 @@ A production-ready [Model Context Protocol (MCP)](https://modelcontextprotocol.i
 | Auth | `access-key` + `token` headers; OAuth 2.0 + PKCE seam included |
 | Tools | 11 (6 read-only, 5 write) |
 | Rate Limit | 60 requests / minute / token |
-| Tests | 64 (Vitest — tools, auth, schema validation; no real API calls) |
+| Tests | 64 (Vitest - tools, auth, schema validation; no real API calls) |
 
 ---
 
@@ -114,13 +114,13 @@ npm start
 | `MCP_TRANSPORT` | `http` | `http` (Express/SSE) or `stdio` (Claude Desktop) |
 | `LOG_LEVEL` | `info` | Pino log level: `trace` `debug` `info` `warn` `error` |
 | `LOG_PRETTY` | `true` | Pretty-print logs (set `false` in production) |
-| `CLEANSTER_API_KEY` | — | Required when `MCP_TRANSPORT=stdio` |
+| `CLEANSTER_API_KEY` | - | Required when `MCP_TRANSPORT=stdio` |
 
 ---
 
 ## Connecting from Claude Desktop
 
-### Option A — stdio (recommended for local use)
+### Option A - stdio (recommended for local use)
 
 Add this to your `claude_desktop_config.json` (typically at `~/Library/Application Support/Claude/claude_desktop_config.json` on macOS):
 
@@ -146,7 +146,7 @@ Build the server first:
 npm run build
 ```
 
-### Option B — HTTP/SSE (remote or shared deployment)
+### Option B - HTTP/SSE (remote or shared deployment)
 
 ```json
 {
@@ -176,7 +176,7 @@ import type { CleansterApiClient } from '../api/cleanster.js';
 export const name = 'my_new_tool';
 
 export const description =
-  'One-line description of what this tool does — the AI reads this.';
+  'One-line description of what this tool does - the AI reads this.';
 
 export const inputSchema = z.object({
   some_param: z.string().describe('Description of this parameter'),
@@ -269,7 +269,7 @@ Claude / AI client
 │  src/auth/                               │
 │    token.ts      Bearer validation       │
 │    middleware.ts  Express requireAuth    │
-│    [OAuth 2.0 + PKCE seam — TODO]       │
+│    [OAuth 2.0 + PKCE seam - TODO]       │
 │                                          │
 │  src/api/cleanster.ts                    │
 │    CleansterApiClient (axios, 11 ops)    │
@@ -287,7 +287,7 @@ Each SSE connection triggers `buildMcpServer(token)`, creating a **new** `McpSer
 
 ### OAuth 2.0 seam
 
-The `TODO` marker in `src/auth/token.ts` shows exactly where the OAuth JWT verifier will plug in. All tool handlers receive the `CleansterApiClient` (already constructed with the validated token) — **no handler changes are needed** when OAuth is added.
+The `TODO` marker in `src/auth/token.ts` shows exactly where the OAuth JWT verifier will plug in. All tool handlers receive the `CleansterApiClient` (already constructed with the validated token) - **no handler changes are needed** when OAuth is added.
 
 ---
 
@@ -326,7 +326,7 @@ npm test
 | `tests/assign_crew.test.ts` | Min-length array validation, API delegation |
 | `tests/update_checklist.test.ts` | Nested object schema, required sub-fields |
 
-All tests mock the `CleansterApiClient` — **no real HTTP calls are made during testing**.
+All tests mock the `CleansterApiClient` - **no real HTTP calls are made during testing**.
 
 ---
 
@@ -354,7 +354,7 @@ mcp-server/
 │   │   ├── assign_crew.ts
 │   │   └── update_checklist.ts
 │   ├── server.ts              ← McpServer factory + tool registration loop
-│   └── index.ts               ← Entry point — transport selection
+│   └── index.ts               ← Entry point - transport selection
 ├── tests/
 │   ├── auth.test.ts           ← Auth module tests (12 cases)
 │   ├── list_bookings.test.ts
