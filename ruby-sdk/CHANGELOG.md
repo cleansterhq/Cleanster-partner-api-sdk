@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- `OtherApi` — `list_cleaners` (`GET /v1/cleaners`) and `get_cleaner` (`GET /v1/cleaners/{id}`) to list all cleaners and retrieve a single cleaner by ID.
+- `OtherApi` - `list_cleaners` (`GET /v1/cleaners`) and `get_cleaner` (`GET /v1/cleaners/{id}`) to list all cleaners and retrieve a single cleaner by ID.
 
 ## [1.0.0] - 2025-04-22
 
@@ -16,11 +16,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial release of the Cleanster Ruby SDK.
 - `Cleanster::Client` with `sandbox` and `production` factory methods.
 - `Cleanster::Config` and `Cleanster::Config::Builder` for custom configuration.
-- `Cleanster::HttpClient` using Ruby's built-in `Net::HTTP` — zero external HTTP dependencies.
+- `Cleanster::HttpClient` using Ruby's built-in `Net::HTTP` - zero external HTTP dependencies.
 - Full model classes: `Booking`, `User`, `Property`, `Checklist`, `ChecklistItem`, `PaymentMethod`.
 - `Cleanster::ApiResponse` generic response wrapper.
 - 8 API namespaces: `BookingsApi`, `UsersApi`, `PropertiesApi`, `ChecklistsApi`,
   `OtherApi`, `BlacklistApi`, `PaymentMethodsApi`, `WebhooksApi`.
 - Typed exception hierarchy: `CleansterError`, `AuthError`, `ApiError`.
-- 121 RSpec unit tests — all passing; no network access required.
+- 121 RSpec unit tests - all passing; no network access required.
 - Support for Ruby 2.7+.
