@@ -23,7 +23,7 @@ data class HttpResponse(
     val body:       String,
 )
 
-/** Abstraction over the HTTP transport layer — injectable for testing. */
+/** Abstraction over the HTTP transport layer - injectable for testing. */
 interface HttpEngine {
     suspend fun execute(request: HttpRequest): HttpResponse
 
