@@ -1,4 +1,4 @@
-"""Booking API — manage the full lifecycle of cleaning appointments."""
+"""Booking API - manage the full lifecycle of cleaning appointments."""
 
 from typing import Any, Dict, Optional
 
