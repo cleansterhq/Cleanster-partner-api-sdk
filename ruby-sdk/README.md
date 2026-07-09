@@ -2,7 +2,7 @@
 
 <p align="center">
   <strong>Official Ruby client library for the Cleanster Partner API</strong><br>
-  Automate residential and commercial cleaning operations — bookings, properties, cleaners, checklists, payments, and more.
+  Automate residential and commercial cleaning operations - bookings, properties, cleaners, checklists, payments, and more.
 </p>
 
 <p align="center">
@@ -47,23 +47,23 @@
 
 ## Overview
 
-The Cleanster Ruby SDK provides a clean, idiomatic Ruby interface for the [Cleanster Partner API](https://documenter.getpostman.com/view/26172658/2sAYdoF7ep). It uses Ruby's built-in `Net::HTTP` — zero external dependencies.
+The Cleanster Ruby SDK provides a clean, idiomatic Ruby interface for the [Cleanster Partner API](https://documenter.getpostman.com/view/26172658/2sAYdoF7ep). It uses Ruby's built-in `Net::HTTP` - zero external dependencies.
 
 Use it to:
-- **Create and manage bookings** — schedule, reschedule, cancel, adjust hours
-- **Manage properties** — CRUD, iCal sync, preferred cleaner lists
-- **Handle users** — create accounts and manage authorization tokens
-- **Configure checklists** — create task lists and assign to bookings
-- **Process payments** — Stripe and PayPal support
-- **Receive webhooks** — subscribe to booking lifecycle events
-- **Blacklist cleaners** — prevent specific cleaners from being assigned
+- **Create and manage bookings** - schedule, reschedule, cancel, adjust hours
+- **Manage properties** - CRUD, iCal sync, preferred cleaner lists
+- **Handle users** - create accounts and manage authorization tokens
+- **Configure checklists** - create task lists and assign to bookings
+- **Process payments** - Stripe and PayPal support
+- **Receive webhooks** - subscribe to booking lifecycle events
+- **Blacklist cleaners** - prevent specific cleaners from being assigned
 
 ---
 
 ## Requirements
 
 - **Ruby 2.7** or later
-- A Cleanster Partner account — contact [partner@cleanster.com](mailto:partner@cleanster.com) for access
+- A Cleanster Partner account - contact [partner@cleanster.com](mailto:partner@cleanster.com) for access
 
 ---
 
@@ -104,13 +104,13 @@ Every request requires two credentials sent as HTTP headers:
 | Header | Description |
 |---|---|
 | `access-key` | Your static partner key from Cleanster |
-| `token` | A per-user JWT — long-lived, from `users.fetch_access_token(user_id)` |
+| `token` | A per-user JWT - long-lived, from `users.fetch_access_token(user_id)` |
 
 ### 4-Step Setup
 
-**Step 1 — Contact Cleanster** to receive your `access-key`.
+**Step 1 - Contact Cleanster** to receive your `access-key`.
 
-**Step 2 — Create a user account** (one-time per end-user):
+**Step 2 - Create a user account** (one-time per end-user):
 
 ```ruby
 require 'cleanster'
@@ -126,14 +126,14 @@ resp = client.users.create_user(
 user_id = resp.data['userId']
 ```
 
-**Step 3 — Fetch the user's access token** (store it; it is long-lived):
+**Step 3 - Fetch the user's access token** (store it; it is long-lived):
 
 ```ruby
 resp = client.users.fetch_access_token(user_id)
 user_token = resp.data['token']
 ```
 
-**Step 4 — Build the client with both credentials**:
+**Step 4 - Build the client with both credentials**:
 
 ```ruby
 client = Cleanster::Client.new(
@@ -175,7 +175,7 @@ booking = client.bookings.create_booking(
   hours: 3.0,
   extra_supplies: false,
   payment_method_id: 10,
-  coupon_code: '20POFF'   # optional — 20% off in sandbox
+  coupon_code: '20POFF'   # optional - 20% off in sandbox
 )
 puts "Created booking: #{booking.data['id']}"
 
@@ -231,9 +231,9 @@ Status values: `OPEN` · `CLEANER_ASSIGNED` · `IN_PROGRESS` · `COMPLETED` · `
 ## API Reference
 
 All methods return a `Cleanster::ApiResponse` with:
-- `.status` — HTTP status code
-- `.message` — Human-readable result
-- `.data` — Response payload (Hash or Array)
+- `.status` - HTTP status code
+- `.message` - Human-readable result
+- `.data` - Response payload (Hash or Array)
 
 ---
 
@@ -1008,7 +1008,7 @@ end
 | HTTP Status | Meaning |
 |---|---|
 | 400 | Bad request |
-| 401 | Unauthorized — invalid credentials |
+| 401 | Unauthorized - invalid credentials |
 | 403 | Forbidden |
 | 404 | Not found |
 | 422 | Validation error |
@@ -1036,9 +1036,9 @@ Use in the **sandbox** environment only:
 
 | Booking State | Chat Available |
 |---|---|
-| `OPEN` — within 24 h of start | Yes |
-| `COMPLETED` — within 24 h of completion | Yes |
-| `IN_PROGRESS` (hanging state) | Yes — **no time restriction** |
+| `OPEN` - within 24 h of start | Yes |
+| `COMPLETED` - within 24 h of completion | Yes |
+| `IN_PROGRESS` (hanging state) | Yes - **no time restriction** |
 | `CANCELLED` | No |
 | Older than 24 h | No |
 
