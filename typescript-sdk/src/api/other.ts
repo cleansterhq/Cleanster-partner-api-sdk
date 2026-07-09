@@ -20,10 +20,11 @@ export interface AvailableCleanersRequest {
 }
 
 export interface GetTasksParams {
-  propertyId: number;
-  serviceId: number;
+  propertyId?: number;
+  serviceId?: number;
   pageNo?: number;
   pageSize?: number;
+  [key: string]: string | number | boolean | undefined;
 }
 
 export class OtherApi {
