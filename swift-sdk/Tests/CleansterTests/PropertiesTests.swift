@@ -230,25 +230,25 @@ final class PropertiesTests: XCTestCase {
 
     func testSetICalLink_sendsPUT() async throws {
         mock.succeedEmpty()
-        _ = try await client.properties.setICalLink(1004, icalLink: "https://airbnb.com/ical.ics")
+        _ = try await client.properties.setICalLink(1004, calendarLinks: ["https://airbnb.com/ical.ics"])
         XCTAssertEqual(mock.capturedMethod, "PUT")
     }
 
     func testSetICalLink_encodesLink() async throws {
         mock.succeedEmpty()
-        _ = try await client.properties.setICalLink(1004, icalLink: "https://airbnb.com/ical.ics")
-        XCTAssertEqual(mock.capturedBody?["icalLink"] as? String, "https://airbnb.com/ical.ics")
+        _ = try await client.properties.setICalLink(1004, calendarLinks: ["https://airbnb.com/ical.ics"])
+        XCTAssertEqual(mock.capturedBody?["calendarLinks"] as? [String], ["https://airbnb.com/ical.ics"])
     }
 
     func testGetICalLink_sendsGET() async throws {
-        mock.succeed(with: ["icalLink": "https://example.com/cal.ics"])
+        mock.succeedWithArray([["id": 36, "calendarLink": "https://example.com/cal.ics"]])
         _ = try await client.properties.getICalLink(1004)
         XCTAssertEqual(mock.capturedMethod, "GET")
     }
 
     func testDeleteICalLink_sendsDELETE() async throws {
         mock.succeedEmpty()
-        _ = try await client.properties.deleteICalLink(1004, icalLink: "https://airbnb.com/ical.ics")
+        _ = try await client.properties.deleteICalLink(1004, ids: [36])
         XCTAssertEqual(mock.capturedMethod, "DELETE")
     }
 

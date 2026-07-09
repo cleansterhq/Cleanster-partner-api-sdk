@@ -505,11 +505,11 @@ RSpec.describe Cleanster do
     end
 
     describe "#add_ical_link" do
-      it "PUTs icalLink" do
+      it "PUTs calendarLinks array" do
         allow(http).to receive(:put).with("/v1/properties/1040/ical",
-                                          body: { icalLink: "https://calendar.example.com/feed.ics" })
+                                          body: { calendarLinks: ["https://calendar.example.com/feed.ics"] })
                                     .and_return(ok_response)
-        api.add_ical_link(1040, ical_link: "https://calendar.example.com/feed.ics")
+        api.add_ical_link(1040, calendar_links: "https://calendar.example.com/feed.ics")
       end
     end
 
@@ -522,11 +522,11 @@ RSpec.describe Cleanster do
     end
 
     describe "#remove_ical_link" do
-      it "sends DELETE with icalLink body" do
+      it "sends DELETE with ids array" do
         allow(http).to receive(:delete).with("/v1/properties/1040/ical",
-                                             body: { icalLink: "https://calendar.example.com/feed.ics" })
+                                             body: { ids: [36] })
                                        .and_return(ok_response)
-        api.remove_ical_link(1040, ical_link: "https://calendar.example.com/feed.ics")
+        api.remove_ical_link(1040, ids: 36)
       end
     end
 

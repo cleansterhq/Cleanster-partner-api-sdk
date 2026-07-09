@@ -1348,28 +1348,39 @@ resp = client.properties.remove_cleaner_from_property(1004, cleaner_id=789)
 
 ---
 
-#### `PUT /v1/properties/{propertyId}/ical` - Set iCal Link
+#### `PUT /v1/properties/{propertyId}/ical` - Set iCal Links
 
-Sync a property's booking calendar with an external iCal feed (e.g. Airbnb, VRBO).
+Sync a property's booking calendar with one or more external iCal feeds (e.g. Airbnb, VRBO). Each URL must be a live, publicly fetchable `.ics` feed - the API validates the feed content, not just the URL shape.
 
 **Request body:**
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `icalLink` | string | yes | Full HTTPS URL of the iCal feed |
+| `calendarLinks` | string[] | yes | One or more full HTTPS URLs of live iCal feeds |
 
-#### `GET /v1/properties/{propertyId}/ical` - Get iCal Link
-#### `DELETE /v1/properties/{propertyId}/ical` - Remove iCal Link
+#### `GET /v1/properties/{propertyId}/ical` - Get iCal Links
+
+Returns `data: [{ "id": number, "calendarLink": string }, ...]` - an array of the calendar links currently attached to the property, each with a numeric ID.
+
+#### `DELETE /v1/properties/{propertyId}/ical` - Remove iCal Links
+
+Removes calendar links by numeric ID (from the GET response above), not by URL.
+
+**Request body:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `ids` | number[] | yes | Numeric IDs of the calendar links to remove |
 
 ```python
 # Set
-client.properties.set_ical_link(1004, ical_link="https://www.airbnb.com/calendar/ical/abc123.ics")
+client.properties.set_ical_link(1004, calendar_links=["https://www.airbnb.com/calendar/ical/abc123.ics"])
 
 # Get
 resp = client.properties.get_ical_link(1004)
 
-# Remove
-client.properties.delete_ical_link(1004, ical_link="https://www.airbnb.com/...")
+# Remove (by numeric link ID, from the GET response above)
+client.properties.delete_ical_link(1004, ids=[36])
 ```
 
 ---

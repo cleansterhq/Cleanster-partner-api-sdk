@@ -107,7 +107,8 @@ func (s *PropertiesService) UnassignCleanerFromProperty(ctx context.Context, pro
         return decode[map[string]interface{}](raw)
 }
 
-// AddICalLink sets an iCal feed URL on a property for calendar availability syncing.
+// AddICalLink adds one or more iCal feed URLs to a property for calendar availability syncing.
+// Each URL must be a live, publicly fetchable .ics feed.
 func (s *PropertiesService) AddICalLink(ctx context.Context, propertyID int, req ICalRequest) (APIResponse[map[string]interface{}], error) {
         raw, err := s.http.put(ctx, fmt.Sprintf("/v1/properties/%d/ical", propertyID), req)
         if err != nil {
@@ -116,17 +117,18 @@ func (s *PropertiesService) AddICalLink(ctx context.Context, propertyID int, req
         return decode[map[string]interface{}](raw)
 }
 
-// GetICalLink returns the current iCal feed URL for a property.
-func (s *PropertiesService) GetICalLink(ctx context.Context, propertyID int) (APIResponse[map[string]interface{}], error) {
+// GetICalLink returns the calendar links currently attached to a property.
+func (s *PropertiesService) GetICalLink(ctx context.Context, propertyID int) (APIResponse[[]CalendarLink], error) {
         raw, err := s.http.get(ctx, fmt.Sprintf("/v1/properties/%d/ical", propertyID), nil)
         if err != nil {
-                return APIResponse[map[string]interface{}]{}, err
+                return APIResponse[[]CalendarLink]{}, err
         }
-        return decode[map[string]interface{}](raw)
+        return decode[[]CalendarLink](raw)
 }
 
-// RemoveICalLink removes the iCal feed URL from a property.
-func (s *PropertiesService) RemoveICalLink(ctx context.Context, propertyID int, req ICalRequest) (APIResponse[map[string]interface{}], error) {
+// RemoveICalLink removes one or more calendar links from a property by numeric
+// link ID (from GetICalLink) - not by URL.
+func (s *PropertiesService) RemoveICalLink(ctx context.Context, propertyID int, req DeleteICalLinkRequest) (APIResponse[map[string]interface{}], error) {
         raw, err := s.http.delete(ctx, fmt.Sprintf("/v1/properties/%d/ical", propertyID), req)
         if err != nil {
                 return APIResponse[map[string]interface{}]{}, err

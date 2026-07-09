@@ -80,9 +80,10 @@ public final class PropertiesApi {
         )
     }
 
-    /// Set an iCal feed URL for calendar sync (e.g. Airbnb, VRBO).
-    public func setICalLink(_ propertyId: Int, icalLink: String) async throws -> ApiResponse<AnyCodable> {
-        let body = SetICalLinkRequest(icalLink: icalLink)
+    /// Add one or more iCal feed URLs for calendar sync (e.g. Airbnb, VRBO).
+    /// Each URL must be a live, publicly fetchable .ics feed.
+    public func setICalLink(_ propertyId: Int, calendarLinks: [String]) async throws -> ApiResponse<AnyCodable> {
+        let body = SetICalLinkRequest(calendarLinks: calendarLinks)
         return try await client.requestRaw(
             method: "PUT",
             path: "/v1/properties/\(propertyId)/ical",
@@ -90,14 +91,15 @@ public final class PropertiesApi {
         )
     }
 
-    /// Retrieve the current iCal feed URL for a property.
+    /// Retrieve the calendar links currently attached to a property.
     public func getICalLink(_ propertyId: Int) async throws -> ApiResponse<AnyCodable> {
         return try await client.requestRaw(method: "GET", path: "/v1/properties/\(propertyId)/ical")
     }
 
-    /// Remove the iCal feed link from a property.
-    public func deleteICalLink(_ propertyId: Int, icalLink: String) async throws -> ApiResponse<AnyCodable> {
-        let body = DeleteICalLinkRequest(icalLink: icalLink)
+    /// Remove one or more calendar links from a property, by numeric link ID
+    /// (from getICalLink) - not by URL.
+    public func deleteICalLink(_ propertyId: Int, ids: [Int]) async throws -> ApiResponse<AnyCodable> {
+        let body = DeleteICalLinkRequest(ids: ids)
         return try await client.requestRaw(
             method: "DELETE",
             path: "/v1/properties/\(propertyId)/ical",

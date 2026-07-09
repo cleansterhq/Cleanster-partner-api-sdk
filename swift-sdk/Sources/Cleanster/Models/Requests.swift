@@ -94,14 +94,26 @@ public struct AddPropertyCleanerRequest: Encodable {
     public init(cleanerId: Int) { self.cleanerId = cleanerId }
 }
 
+/// Request body for adding one or more iCal calendar links to a property.
+/// Each URL must be a live, publicly fetchable .ics feed - the API validates
+/// the feed content, not just the URL shape.
 public struct SetICalLinkRequest: Encodable {
-    public let icalLink: String
-    public init(icalLink: String) { self.icalLink = icalLink }
+    public let calendarLinks: [String]
+    public init(calendarLinks: [String]) { self.calendarLinks = calendarLinks }
+    public init(icalLink: String) { self.calendarLinks = [icalLink] }
 }
 
+/// A single calendar link attached to a property, as returned by getICalLink.
+public struct CalendarLink: Decodable {
+    public let id: Int
+    public let calendarLink: String
+}
+
+/// Request body for removing calendar links from a property, by numeric link ID.
 public struct DeleteICalLinkRequest: Encodable {
-    public let icalLink: String
-    public init(icalLink: String) { self.icalLink = icalLink }
+    public let ids: [Int]
+    public init(ids: [Int]) { self.ids = ids }
+    public init(id: Int) { self.ids = [id] }
 }
 
 public struct UpdateAdditionalInfoRequest: Encodable {

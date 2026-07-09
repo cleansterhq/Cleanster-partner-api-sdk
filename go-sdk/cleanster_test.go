@@ -784,14 +784,15 @@ func TestProperties_AddICalLink(t *testing.T) {
                 }
                 var body map[string]interface{}
                 json.NewDecoder(r.Body).Decode(&body)
-                if body["icalLink"] != "https://calendar.example.com/feed.ics" {
-                        t.Errorf("wrong icalLink: %v", body["icalLink"])
+                links, _ := body["calendarLinks"].([]interface{})
+                if len(links) != 1 || links[0] != "https://calendar.example.com/feed.ics" {
+                        t.Errorf("wrong calendarLinks: %v", body["calendarLinks"])
                 }
                 writeJSON(w, okResponse(map[string]interface{}{}))
         })
         client, cleanup := newTestClient(t, handler)
         defer cleanup()
-        _, _ = client.Properties.AddICalLink(context.Background(), 1040, cleanster.ICalRequest{ICalLink: "https://calendar.example.com/feed.ics"})
+        _, _ = client.Properties.AddICalLink(context.Background(), 1040, cleanster.ICalRequest{CalendarLinks: []string{"https://calendar.example.com/feed.ics"}})
 }
 
 func TestProperties_GetICalLink(t *testing.T) {
@@ -799,7 +800,7 @@ func TestProperties_GetICalLink(t *testing.T) {
                 if r.URL.Path != "/v1/properties/1040/ical" || r.Method != http.MethodGet {
                         t.Errorf("wrong method/path: %s %s", r.Method, r.URL.Path)
                 }
-                writeJSON(w, okResponse(map[string]interface{}{}))
+                writeJSON(w, okResponse([]map[string]interface{}{{"id": 36, "calendarLink": "https://calendar.example.com/feed.ics"}}))
         })
         client, cleanup := newTestClient(t, handler)
         defer cleanup()
@@ -811,11 +812,17 @@ func TestProperties_RemoveICalLink(t *testing.T) {
                 if r.Method != http.MethodDelete {
                         t.Errorf("expected DELETE, got %s", r.Method)
                 }
+                var body map[string]interface{}
+                json.NewDecoder(r.Body).Decode(&body)
+                ids, _ := body["ids"].([]interface{})
+                if len(ids) != 1 {
+                        t.Errorf("wrong ids: %v", body["ids"])
+                }
                 writeJSON(w, okResponse(map[string]interface{}{}))
         })
         client, cleanup := newTestClient(t, handler)
         defer cleanup()
-        _, _ = client.Properties.RemoveICalLink(context.Background(), 1040, cleanster.ICalRequest{ICalLink: "https://calendar.example.com/feed.ics"})
+        _, _ = client.Properties.RemoveICalLink(context.Background(), 1040, cleanster.DeleteICalLinkRequest{IDs: []int{36}})
 }
 
 func TestProperties_SetDefaultChecklist_True(t *testing.T) {

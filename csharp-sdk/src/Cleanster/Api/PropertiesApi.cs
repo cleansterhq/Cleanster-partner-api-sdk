@@ -149,26 +149,33 @@ public sealed class PropertiesApi
         return JsonHelper.ParseRaw(root);
     }
 
-    /// <summary>Set an iCal feed URL on a property for availability syncing.</summary>
+    /// <summary>
+    /// Add one or more iCal calendar links to a property for availability syncing.
+    /// Each URL must be a live, publicly fetchable .ics feed - the API validates
+    /// the feed content, not just the URL shape.
+    /// </summary>
     public async Task<ApiResponse<JsonElement>> AddICalLinkAsync(
-        int propertyId, string icalLink, CancellationToken ct = default)
+        int propertyId, IEnumerable<string> calendarLinks, CancellationToken ct = default)
     {
-        var root = await _http.PutAsync($"/v1/properties/{propertyId}/ical", new { icalLink }, ct);
+        var root = await _http.PutAsync($"/v1/properties/{propertyId}/ical", new { calendarLinks }, ct);
         return JsonHelper.ParseRaw(root);
     }
 
-    /// <summary>Return the current iCal feed URL for a property.</summary>
+    /// <summary>Return the calendar links currently attached to a property (id + calendarLink URL).</summary>
     public async Task<ApiResponse<JsonElement>> GetICalLinkAsync(int propertyId, CancellationToken ct = default)
     {
         var root = await _http.GetAsync($"/v1/properties/{propertyId}/ical", ct: ct);
         return JsonHelper.ParseRaw(root);
     }
 
-    /// <summary>Remove the iCal feed URL from a property.</summary>
+    /// <summary>
+    /// Remove one or more calendar links from a property, by numeric link ID
+    /// (from GetICalLinkAsync) - not by URL.
+    /// </summary>
     public async Task<ApiResponse<JsonElement>> RemoveICalLinkAsync(
-        int propertyId, string icalLink, CancellationToken ct = default)
+        int propertyId, IEnumerable<int> ids, CancellationToken ct = default)
     {
-        var root = await _http.DeleteAsync($"/v1/properties/{propertyId}/ical", new { icalLink }, ct);
+        var root = await _http.DeleteAsync($"/v1/properties/{propertyId}/ical", new { ids }, ct);
         return JsonHelper.ParseRaw(root);
     }
 

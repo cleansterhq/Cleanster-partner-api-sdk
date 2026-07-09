@@ -634,7 +634,7 @@ public class CleansterTests
         http.Setup(h => h.PutAsync("/v1/properties/1040/ical",
             It.IsAny<object?>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(MakeResponse("{}"));
-        await new PropertiesApi(http.Object).AddICalLinkAsync(1040, "https://cal.example.com/feed.ics");
+        await new PropertiesApi(http.Object).AddICalLinkAsync(1040, new[] { "https://cal.example.com/feed.ics" });
         http.VerifyAll();
     }
 
@@ -655,7 +655,7 @@ public class CleansterTests
         http.Setup(h => h.DeleteAsync("/v1/properties/1040/ical",
             It.IsAny<object?>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(MakeResponse("{}"));
-        await new PropertiesApi(http.Object).RemoveICalLinkAsync(1040, "https://cal.example.com/feed.ics");
+        await new PropertiesApi(http.Object).RemoveICalLinkAsync(1040, new[] { 36 });
         http.VerifyAll();
     }
 

@@ -755,24 +755,26 @@ client.properties.removeCleanerFromProperty(propertyId, cleanerId = 789)
 
 ---
 
-#### Set iCal Link
+#### Set iCal Links
 **`PUT /v1/properties/{propertyId}/ical`**
 
-Add an iCal feed for calendar sync (Airbnb, VRBO, Google Calendar, etc.).
+Add one or more iCal feeds for calendar sync (Airbnb, VRBO, Google Calendar, etc.). Each URL must be a live, publicly fetchable `.ics` feed.
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `icalLink` | String | Yes | Full iCal URL |
+| `calendarLinks` | List<String> | Yes | One or more full iCal URLs |
 
 ```kotlin
 client.properties.setICalLink(propertyId,
-    "https://www.airbnb.com/calendar/ical/12345.ics?s=abc")
+    listOf("https://www.airbnb.com/calendar/ical/12345.ics?s=abc"))
 ```
 
 ---
 
-#### Get iCal Link
+#### Get iCal Links
 **`GET /v1/properties/{propertyId}/ical`**
+
+Returns a list of `CalendarLink(id, calendarLink)` - each with a numeric ID.
 
 ```kotlin
 val ical = client.properties.getICalLink(propertyId)
@@ -780,16 +782,17 @@ val ical = client.properties.getICalLink(propertyId)
 
 ---
 
-#### Delete iCal Link
+#### Delete iCal Links
 **`DELETE /v1/properties/{propertyId}/ical`**
+
+Removes calendar links by numeric ID (from `getICalLink`), not by URL.
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `icalLink` | String | Yes | The iCal URL to remove |
+| `ids` | List<Int> | Yes | Numeric IDs of the calendar links to remove |
 
 ```kotlin
-client.properties.deleteICalLink(propertyId,
-    "https://www.airbnb.com/calendar/ical/12345.ics?s=abc")
+client.properties.deleteICalLink(propertyId, listOf(36))
 ```
 
 ---

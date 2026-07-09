@@ -345,9 +345,9 @@ Manage cleaning locations (homes, offices, etc.).
 | GET    | `/v1/properties/{id}/cleaners`                        | `getPropertyCleaners(int id)` |
 | POST   | `/v1/properties/{id}/cleaners`                        | `assignCleanerToProperty(int id, int cleanerId)` |
 | DELETE | `/v1/properties/{id}/cleaners/{cleanerId}`            | `unassignCleanerFromProperty(int id, int cleanerId)` |
-| PUT    | `/v1/properties/{id}/ical`                            | `addICalLink(int id, String icalUrl)` |
+| PUT    | `/v1/properties/{id}/ical`                            | `addICalLink(int id, List<String> calendarLinks)` |
 | GET    | `/v1/properties/{id}/ical`                            | `getICalLink(int id)` |
-| DELETE | `/v1/properties/{id}/ical`                            | `removeICalLink(int id, String icalUrl)` |
+| DELETE | `/v1/properties/{id}/ical`                            | `removeICalLink(int id, List<Integer> ids)` |
 | PUT    | `/v1/properties/{id}/checklist/{checklistId}`         | `setDefaultChecklist(int id, int checklistId, boolean updateUpcoming)` |
 
 #### Create a property

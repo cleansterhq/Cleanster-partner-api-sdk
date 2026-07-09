@@ -88,25 +88,34 @@ module Cleanster
         Models::ApiResponse.from_hash(raw)
       end
 
-      # Add an iCal calendar link to a property for availability syncing.
+      # Add one or more iCal calendar links to a property for availability syncing.
+      # Each URL must be a live, publicly fetchable .ics feed - the API validates
+      # the feed content, not just the URL shape.
       #
-      # @param property_id [Integer]
-      # @param ical_link   [String] The iCal feed URL.
+      # @param property_id    [Integer]
+      # @param calendar_links [Array<String>, String] One or more iCal feed URLs.
       # @return [Models::ApiResponse]
-      def add_ical_link(property_id, ical_link:)
-        raw = @http.put("/v1/properties/#{property_id}/ical", body: { icalLink: ical_link })
+      def add_ical_link(property_id, calendar_links:)
+        links = Array(calendar_links)
+        raw = @http.put("/v1/properties/#{property_id}/ical", body: { calendarLinks: links })
         Models::ApiResponse.from_hash(raw)
       end
 
-      # Get the current iCal link for a property.
+      # Get the calendar links currently attached to a property.
+      # Returns data as an array of { "id" => Integer, "calendarLink" => String }.
       def get_ical_link(property_id)
         raw = @http.get("/v1/properties/#{property_id}/ical")
         Models::ApiResponse.from_hash(raw)
       end
 
-      # Remove the iCal link from a property.
-      def remove_ical_link(property_id, ical_link:)
-        raw = @http.delete("/v1/properties/#{property_id}/ical", body: { icalLink: ical_link })
+      # Remove one or more calendar links from a property, by numeric link ID
+      # (from get_ical_link) - not by URL.
+      #
+      # @param property_id [Integer]
+      # @param ids         [Array<Integer>, Integer] The link ID(s) to remove.
+      def remove_ical_link(property_id, ids:)
+        link_ids = Array(ids)
+        raw = @http.delete("/v1/properties/#{property_id}/ical", body: { ids: link_ids })
         Models::ApiResponse.from_hash(raw)
       end
 

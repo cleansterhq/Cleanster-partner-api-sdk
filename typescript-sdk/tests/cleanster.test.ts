@@ -496,24 +496,34 @@ describe("PropertiesApi", () => {
     expect(http.delete).toHaveBeenCalledWith("/v1/properties/1040/cleaners/5");
   });
 
-  test("addICalLink() sends icalLink", async () => {
+  test("addICalLink() sends calendarLinks array", async () => {
     const http = mockHttp();
     http.put.mockResolvedValue(ok());
     const api = new PropertiesApi(http);
 
-    await api.addICalLink(1040, { icalLink: "https://cal.example.com/feed.ics" });
+    await api.addICalLink(1040, { calendarLinks: ["https://cal.example.com/feed.ics"] });
 
-    expect(http.put).toHaveBeenCalledWith("/v1/properties/1040/ical", { icalLink: "https://cal.example.com/feed.ics" });
+    expect(http.put).toHaveBeenCalledWith("/v1/properties/1040/ical", { calendarLinks: ["https://cal.example.com/feed.ics"] });
   });
 
   test("getICalLink() calls correct URL", async () => {
     const http = mockHttp();
-    http.get.mockResolvedValue(ok({}));
+    http.get.mockResolvedValue(ok([{ id: 36, calendarLink: "https://cal.example.com/feed.ics" }]));
     const api = new PropertiesApi(http);
 
     await api.getICalLink(1040);
 
     expect(http.get).toHaveBeenCalledWith("/v1/properties/1040/ical");
+  });
+
+  test("removeICalLink() sends ids array", async () => {
+    const http = mockHttp();
+    http.delete.mockResolvedValue(ok());
+    const api = new PropertiesApi(http);
+
+    await api.removeICalLink(1040, { ids: [36] });
+
+    expect(http.delete).toHaveBeenCalledWith("/v1/properties/1040/ical", { ids: [36] });
   });
 
   test("setDefaultChecklist() includes updateUpcomingBookings flag", async () => {

@@ -62,7 +62,7 @@ internal interface PropertiesService {
     @HTTP(method = "DELETE", path = "v1/properties/{propertyId}/ical", hasBody = true)
     suspend fun deleteICalLink(
         @Path("propertyId") propertyId: Int,
-        @Body body: ICalRequest,
+        @Body body: DeleteICalLinkRequest,
     ): ApiResponse<Any>
 
     @PUT("v1/properties/{propertyId}/checklist/{checklistId}")
@@ -106,14 +106,14 @@ class PropertiesApi(retrofit: Retrofit) {
     suspend fun removeCleanerFromProperty(propertyId: Int, cleanerId: Int) =
         wrap { service.removeCleanerFromProperty(propertyId, cleanerId) }
 
-    suspend fun setICalLink(propertyId: Int, icalLink: String) =
-        wrap { service.setICalLink(propertyId, ICalRequest(icalLink)) }
+    suspend fun setICalLink(propertyId: Int, calendarLinks: List<String>) =
+        wrap { service.setICalLink(propertyId, ICalRequest(calendarLinks)) }
 
     suspend fun getICalLink(propertyId: Int) =
         wrap { service.getICalLink(propertyId) }
 
-    suspend fun deleteICalLink(propertyId: Int, icalLink: String) =
-        wrap { service.deleteICalLink(propertyId, ICalRequest(icalLink)) }
+    suspend fun deleteICalLink(propertyId: Int, ids: List<Int>) =
+        wrap { service.deleteICalLink(propertyId, DeleteICalLinkRequest(ids)) }
 
     suspend fun setDefaultChecklist(
         propertyId: Int,

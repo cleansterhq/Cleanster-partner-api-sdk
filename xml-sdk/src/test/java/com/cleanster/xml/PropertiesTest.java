@@ -147,7 +147,7 @@ class PropertiesTest {
 
     @Test void addICalLink_callsPutWithPath() {
         doReturn(OK_JSON).when(http).put(eq("/v1/properties/1/ical"), any());
-        api.addICalLink(1, "https://cal.example.com/ical");
+        api.addICalLink(1, java.util.List.of("https://cal.example.com/ical"));
         verify(http).put(eq("/v1/properties/1/ical"), any());
     }
 
@@ -158,9 +158,9 @@ class PropertiesTest {
     }
 
     @Test void removeICalLink_callsDeleteWithPath() {
-        doReturn(OK_JSON).when(http).delete("/v1/properties/1/ical");
-        api.removeICalLink(1, null);
-        verify(http).delete("/v1/properties/1/ical");
+        doReturn(OK_JSON).when(http).delete(eq("/v1/properties/1/ical"), any());
+        api.removeICalLink(1, java.util.List.of(36));
+        verify(http).delete(eq("/v1/properties/1/ical"), any());
     }
 
     // ── setDefaultChecklist ────────────────────────────────────────────────────

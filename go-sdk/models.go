@@ -237,9 +237,24 @@ type AssignCleanerToPropertyRequest struct {
         CleanerID int `json:"cleanerId"`
 }
 
-// ICalRequest holds an iCal feed URL for a property.
+// ICalRequest holds one or more iCal feed URLs to add to a property. Each URL
+// must be a live, publicly fetchable .ics feed - the API validates the feed
+// content, not just the URL shape.
 type ICalRequest struct {
-        ICalLink string `json:"icalLink"`
+        CalendarLinks []string `json:"calendarLinks"`
+}
+
+// CalendarLink is a single calendar link attached to a property, as returned
+// by GetICalLink.
+type CalendarLink struct {
+        ID           int    `json:"id"`
+        CalendarLink string `json:"calendarLink"`
+}
+
+// DeleteICalLinkRequest holds the numeric link IDs (from GetICalLink) to
+// remove from a property - not URLs.
+type DeleteICalLinkRequest struct {
+        IDs []int `json:"ids"`
 }
 
 // ---------------------------------------------------------------------------

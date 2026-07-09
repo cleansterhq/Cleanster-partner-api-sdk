@@ -163,25 +163,25 @@ class PropertiesTest {
 
     @Test fun `setICalLink sends PUT`() = runTest {
         mock.succeedEmpty()
-        client.properties.setICalLink(1004, "https://airbnb.com/cal.ics")
+        client.properties.setICalLink(1004, listOf("https://airbnb.com/cal.ics"))
         assertEquals("PUT", mock.capturedMethod)
     }
 
     @Test fun `setICalLink encodes link`() = runTest {
         mock.succeedEmpty()
-        client.properties.setICalLink(1004, "https://airbnb.com/cal.ics")
-        assertEquals("https://airbnb.com/cal.ics", mock.capturedBody?.get("icalLink"))
+        client.properties.setICalLink(1004, listOf("https://airbnb.com/cal.ics"))
+        assertEquals(listOf("https://airbnb.com/cal.ics"), mock.capturedBody?.get("calendarLinks"))
     }
 
     @Test fun `getICalLink sends GET`() = runTest {
-        mock.succeed(mapOf("icalLink" to "https://x.com/cal.ics"))
+        mock.succeedList(listOf(mapOf("id" to 36, "calendarLink" to "https://x.com/cal.ics")))
         client.properties.getICalLink(1004)
         assertEquals("GET", mock.capturedMethod)
     }
 
     @Test fun `deleteICalLink sends DELETE`() = runTest {
         mock.succeedEmpty()
-        client.properties.deleteICalLink(1004, "https://airbnb.com/cal.ics")
+        client.properties.deleteICalLink(1004, listOf(36))
         assertEquals("DELETE", mock.capturedMethod)
     }
 

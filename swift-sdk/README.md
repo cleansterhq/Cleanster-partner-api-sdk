@@ -718,24 +718,26 @@ try await client.properties.removeCleanerFromProperty(propertyId, cleanerId: 789
 
 ---
 
-#### Set iCal Link
+#### Set iCal Links
 **`PUT /v1/properties/{propertyId}/ical`**
 
-Add an iCal feed for calendar sync (Airbnb, VRBO, Google Calendar, etc.).
+Add one or more iCal feeds for calendar sync (Airbnb, VRBO, Google Calendar, etc.). Each URL must be a live, publicly fetchable `.ics` feed.
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `icalLink` | String | Yes | Full iCal URL |
+| `calendarLinks` | [String] | Yes | One or more full iCal URLs |
 
 ```swift
 try await client.properties.setICalLink(propertyId,
-    icalLink: "https://www.airbnb.com/calendar/ical/12345.ics?s=abc")
+    calendarLinks: ["https://www.airbnb.com/calendar/ical/12345.ics?s=abc"])
 ```
 
 ---
 
-#### Get iCal Link
+#### Get iCal Links
 **`GET /v1/properties/{propertyId}/ical`**
+
+Returns an array of `CalendarLink(id, calendarLink)` - each with a numeric ID.
 
 ```swift
 let ical = try await client.properties.getICalLink(propertyId)
@@ -743,16 +745,17 @@ let ical = try await client.properties.getICalLink(propertyId)
 
 ---
 
-#### Delete iCal Link
+#### Delete iCal Links
 **`DELETE /v1/properties/{propertyId}/ical`**
+
+Removes calendar links by numeric ID (from `getICalLink`), not by URL.
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `icalLink` | String | Yes | The iCal URL to remove |
+| `ids` | [Int] | Yes | Numeric IDs of the calendar links to remove |
 
 ```swift
-try await client.properties.deleteICalLink(propertyId,
-    icalLink: "https://www.airbnb.com/calendar/ical/12345.ics?s=abc")
+try await client.properties.deleteICalLink(propertyId, ids: [36])
 ```
 
 ---

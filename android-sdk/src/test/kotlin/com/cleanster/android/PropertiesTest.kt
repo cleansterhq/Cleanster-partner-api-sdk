@@ -186,7 +186,7 @@ class PropertiesTest {
     // ─── setICalLink ──────────────────────────────────────────────────────────
     @Test fun `setICalLink sends PUT with link`() = runTest {
         enqueue("""{"status":200,"message":"OK","data":null}""")
-        client.properties.setICalLink(1004, "https://airbnb.com/ical/12345.ics")
+        client.properties.setICalLink(1004, listOf("https://airbnb.com/ical/12345.ics"))
         val req = server.takeRequest()
         assertEquals("PUT", req.method)
         assert(req.body.readUtf8().contains("airbnb"))
@@ -194,14 +194,14 @@ class PropertiesTest {
 
     @Test fun `setICalLink hits correct path`() = runTest {
         enqueue("""{"status":200,"message":"OK","data":null}""")
-        client.properties.setICalLink(1004, "https://airbnb.com/ical/12345.ics")
+        client.properties.setICalLink(1004, listOf("https://airbnb.com/ical/12345.ics"))
         val req = server.takeRequest()
         assert(req.path!!.contains("v1/properties/1004/ical"))
     }
 
     // ─── getICalLink ──────────────────────────────────────────────────────────
     @Test fun `getICalLink sends GET`() = runTest {
-        enqueue("""{"status":200,"message":"OK","data":{"icalLink":"https://airbnb.com/ical/12345.ics"}}""")
+        enqueue("""{"status":200,"message":"OK","data":[{"id":36,"calendarLink":"https://airbnb.com/ical/12345.ics"}]}""")
         client.properties.getICalLink(1004)
         val req = server.takeRequest()
         assertEquals("GET", req.method)
@@ -210,10 +210,10 @@ class PropertiesTest {
     // ─── deleteICalLink ───────────────────────────────────────────────────────
     @Test fun `deleteICalLink sends DELETE with body`() = runTest {
         enqueue("""{"status":200,"message":"OK","data":null}""")
-        client.properties.deleteICalLink(1004, "https://airbnb.com/ical/12345.ics")
+        client.properties.deleteICalLink(1004, listOf(36))
         val req = server.takeRequest()
         assertEquals("DELETE", req.method)
-        assert(req.body.readUtf8().contains("airbnb"))
+        assert(req.body.readUtf8().contains("36"))
     }
 
     // ─── setDefaultChecklist ──────────────────────────────────────────────────

@@ -9,6 +9,8 @@ import {
   EnableDisablePropertyRequest,
   AssignCleanerToPropertyRequest,
   ICalRequest,
+  CalendarLink,
+  DeleteICalLinkRequest,
 } from "../models/property";
 import { ApiResponse } from "../models/response";
 
@@ -102,28 +104,30 @@ export class PropertiesApi {
   }
 
   /**
-   * Add an iCal calendar link for availability syncing (Airbnb, VRBO, etc.).
+   * Add one or more iCal calendar links for availability syncing (Airbnb, VRBO, etc.).
+   * Each URL must be a live, publicly fetchable .ics feed.
    * @param propertyId  The property ID.
-   * @param request     The iCal feed URL.
+   * @param request     The iCal feed URL(s).
    */
   addICalLink(propertyId: number, request: ICalRequest): Promise<ApiResponse<unknown>> {
     return this.http.put(`/v1/properties/${propertyId}/ical`, request);
   }
 
   /**
-   * Get the current iCal link for a property.
+   * Get the calendar links currently attached to a property.
    * @param propertyId  The property ID.
    */
-  getICalLink(propertyId: number): Promise<ApiResponse<unknown>> {
+  getICalLink(propertyId: number): Promise<ApiResponse<CalendarLink[]>> {
     return this.http.get(`/v1/properties/${propertyId}/ical`);
   }
 
   /**
-   * Remove the iCal calendar link from a property.
+   * Remove one or more calendar links from a property, by numeric link ID
+   * (from getICalLink) - not by URL.
    * @param propertyId  The property ID.
-   * @param request     The iCal feed URL to remove.
+   * @param request     The link ID(s) to remove.
    */
-  removeICalLink(propertyId: number, request: ICalRequest): Promise<ApiResponse<unknown>> {
+  removeICalLink(propertyId: number, request: DeleteICalLinkRequest): Promise<ApiResponse<unknown>> {
     return this.http.delete(`/v1/properties/${propertyId}/ical`, request);
   }
 

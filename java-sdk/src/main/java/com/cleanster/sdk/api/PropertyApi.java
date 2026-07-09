@@ -135,10 +135,12 @@ public class PropertyApi {
     // ---- iCal ----
 
     /**
-     * Add an iCal link to a property.
+     * Add one or more iCal calendar links to a property. Each URL must be a live,
+     * publicly fetchable .ics feed - the API validates the feed content, not just
+     * the URL shape, and rejects unreachable/invalid feeds.
      *
      * @param propertyId The property ID
-     * @param request    iCal URL
+     * @param request    Calendar link URL(s) to add
      * @return API response
      */
     public ApiResponse<Object> addICalLink(int propertyId, ICalRequest request) {
@@ -147,24 +149,25 @@ public class PropertyApi {
     }
 
     /**
-     * Retrieve the iCal link for a property.
+     * Retrieve the calendar links currently attached to a property.
      *
      * @param propertyId The property ID
-     * @return API response with iCal URL
+     * @return API response with a list of {@link CalendarLink} (id + calendarLink URL)
      */
-    public ApiResponse<Object> getICalLink(int propertyId) {
+    public ApiResponse<java.util.List<CalendarLink>> getICalLink(int propertyId) {
         return httpClient.get("/v1/properties/" + propertyId + "/ical",
-                new TypeReference<ApiResponse<Object>>() {});
+                new TypeReference<ApiResponse<java.util.List<CalendarLink>>>() {});
     }
 
     /**
-     * Remove the iCal link from a property.
+     * Remove one or more calendar links from a property, by their numeric link ID
+     * (from {@link #getICalLink}) - not by URL.
      *
      * @param propertyId The property ID
-     * @param request    iCal link to remove
+     * @param request    The link ID(s) to remove
      * @return API response
      */
-    public ApiResponse<Object> removeICalLink(int propertyId, ICalRequest request) {
+    public ApiResponse<Object> removeICalLink(int propertyId, DeleteICalLinkRequest request) {
         return httpClient.delete("/v1/properties/" + propertyId + "/ical", request,
                 new TypeReference<ApiResponse<Object>>() {});
     }

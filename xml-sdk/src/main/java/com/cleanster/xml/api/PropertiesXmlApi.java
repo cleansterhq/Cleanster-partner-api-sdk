@@ -125,25 +125,32 @@ public class PropertiesXmlApi {
         return http.fromJson(json, XmlApiResponse.class);
     }
 
-    /** Add an iCal calendar link to a property for availability syncing. */
+    /**
+     * Add one or more iCal calendar links to a property for availability syncing.
+     * Each URL must be a live, publicly fetchable .ics feed - the API validates
+     * the feed content, not just the URL shape.
+     */
     @SuppressWarnings("rawtypes")
-    public XmlApiResponse addICalLink(int propertyId, String icalUrl) {
+    public XmlApiResponse addICalLink(int propertyId, java.util.List<String> calendarLinks) {
         String json = http.put("/v1/properties/" + propertyId + "/ical",
-                Map.of("icalLink", icalUrl));
+                Map.of("calendarLinks", calendarLinks));
         return http.fromJson(json, XmlApiResponse.class);
     }
 
-    /** Retrieve the current iCal link for a property. */
+    /** Retrieve the calendar links currently attached to a property (each with numeric id + calendarLink URL). */
     @SuppressWarnings("rawtypes")
     public XmlApiResponse getICalLink(int propertyId) {
         String json = http.get("/v1/properties/" + propertyId + "/ical");
         return http.fromJson(json, XmlApiResponse.class);
     }
 
-    /** Remove the iCal calendar link from a property. */
+    /**
+     * Remove one or more calendar links from a property, by numeric link ID
+     * (from getICalLink) - not by URL.
+     */
     @SuppressWarnings("rawtypes")
-    public XmlApiResponse removeICalLink(int propertyId, String icalUrl) {
-        String json = http.delete("/v1/properties/" + propertyId + "/ical");
+    public XmlApiResponse removeICalLink(int propertyId, java.util.List<Integer> ids) {
+        String json = http.delete("/v1/properties/" + propertyId + "/ical", Map.of("ids", ids));
         return http.fromJson(json, XmlApiResponse.class);
     }
 

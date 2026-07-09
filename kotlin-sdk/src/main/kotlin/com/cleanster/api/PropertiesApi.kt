@@ -75,24 +75,24 @@ class PropertiesApi internal constructor(private val client: CleansterClient) {
         path   = "/v1/properties/$propertyId/cleaners/$cleanerId",
     )
 
-    /** Set an iCal feed URL for calendar sync (e.g. Airbnb, VRBO). */
-    suspend fun setICalLink(propertyId: Int, icalLink: String): ApiResponse<Map<String, Any>> = client.request(
+    /** Add one or more iCal feed URLs for calendar sync (e.g. Airbnb, VRBO). Each URL must be a live, publicly fetchable .ics feed. */
+    suspend fun setICalLink(propertyId: Int, calendarLinks: List<String>): ApiResponse<Map<String, Any>> = client.request(
         method = "PUT",
         path   = "/v1/properties/$propertyId/ical",
-        body   = SetICalLinkRequest(icalLink = icalLink),
+        body   = SetICalLinkRequest(calendarLinks = calendarLinks),
     )
 
-    /** Retrieve the current iCal feed URL for a property. */
+    /** Retrieve the calendar links currently attached to a property. */
     suspend fun getICalLink(propertyId: Int): ApiResponse<Map<String, Any>> = client.request(
         method = "GET",
         path   = "/v1/properties/$propertyId/ical",
     )
 
-    /** Remove the iCal feed link from a property. */
-    suspend fun deleteICalLink(propertyId: Int, icalLink: String): ApiResponse<Map<String, Any>> = client.request(
+    /** Remove one or more calendar links from a property, by numeric link ID (from getICalLink) - not by URL. */
+    suspend fun deleteICalLink(propertyId: Int, ids: List<Int>): ApiResponse<Map<String, Any>> = client.request(
         method = "DELETE",
         path   = "/v1/properties/$propertyId/ical",
-        body   = DeleteICalLinkRequest(icalLink = icalLink),
+        body   = DeleteICalLinkRequest(ids = ids),
     )
 
     /**

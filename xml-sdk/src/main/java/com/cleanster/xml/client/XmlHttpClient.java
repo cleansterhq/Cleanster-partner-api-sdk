@@ -64,6 +64,12 @@ public class XmlHttpClient {
         return execute(req);
     }
 
+    public String delete(String path, Object body) {
+        String json = gson.toJson(body);
+        Request req = baseRequest(path).delete(RequestBody.create(json, JSON)).build();
+        return execute(req);
+    }
+
     public String postMultipart(String path, byte[] fileData, String fileName) {
         String ext  = fileName.contains(".") ? fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase() : "jpg";
         String mime = ext.equals("png") ? "image/png" : ext.equals("gif") ? "image/gif" : "image/jpeg";

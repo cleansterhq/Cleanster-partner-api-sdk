@@ -544,7 +544,37 @@ class CleansterClientTest {
 
         ArgumentCaptor<Object> bodyCaptor = ArgumentCaptor.forClass(Object.class);
         verify(mockHttp).put(eq("/v1/properties/1004/ical"), bodyCaptor.capture(), any(TypeReference.class));
-        assertEquals("https://calendar.example.com/feed.ics", ((ICalRequest) bodyCaptor.getValue()).getIcalLink());
+        assertEquals(java.util.List.of("https://calendar.example.com/feed.ics"),
+                ((ICalRequest) bodyCaptor.getValue()).getCalendarLinks());
+    }
+
+    @Test
+    @DisplayName("getICalLink calls GET /v1/properties/{id}/ical")
+    void getICalLink() {
+        HttpClient mockHttp = mock(HttpClient.class);
+        PropertyApi api = new PropertyApi(mockHttp);
+        when(mockHttp.get(eq("/v1/properties/1004/ical"), any(TypeReference.class)))
+                .thenReturn(new ApiResponse<>());
+
+        api.getICalLink(1004);
+
+        verify(mockHttp).get(eq("/v1/properties/1004/ical"), any(TypeReference.class));
+    }
+
+    @Test
+    @DisplayName("removeICalLink calls DELETE /v1/properties/{id}/ical with ids")
+    void removeICalLink() {
+        HttpClient mockHttp = mock(HttpClient.class);
+        PropertyApi api = new PropertyApi(mockHttp);
+        when(mockHttp.delete(eq("/v1/properties/1004/ical"), any(), any(TypeReference.class)))
+                .thenReturn(new ApiResponse<>());
+
+        DeleteICalLinkRequest req = new DeleteICalLinkRequest(36);
+        api.removeICalLink(1004, req);
+
+        ArgumentCaptor<Object> bodyCaptor = ArgumentCaptor.forClass(Object.class);
+        verify(mockHttp).delete(eq("/v1/properties/1004/ical"), bodyCaptor.capture(), any(TypeReference.class));
+        assertEquals(java.util.List.of(36), ((DeleteICalLinkRequest) bodyCaptor.getValue()).getIds());
     }
 
     @Test
@@ -1102,9 +1132,16 @@ class CleansterClientTest {
     }
 
     @Test
-    @DisplayName("ICalRequest stores icalLink")
+    @DisplayName("ICalRequest stores calendarLinks")
     void icalRequestFields() {
         ICalRequest req = new ICalRequest("https://cal.example.com/ical.ics");
-        assertEquals("https://cal.example.com/ical.ics", req.getIcalLink());
+        assertEquals(java.util.List.of("https://cal.example.com/ical.ics"), req.getCalendarLinks());
+    }
+
+    @Test
+    @DisplayName("DeleteICalLinkRequest stores ids")
+    void deleteIcalRequestFields() {
+        DeleteICalLinkRequest req = new DeleteICalLinkRequest(36);
+        assertEquals(java.util.List.of(36), req.getIds());
     }
 }

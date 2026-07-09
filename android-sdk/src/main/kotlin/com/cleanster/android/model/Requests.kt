@@ -100,8 +100,24 @@ data class AddCleanerToPropertyRequest(
     @SerializedName("cleanerId") val cleanerId: Int,
 )
 
+/**
+ * Request body for adding one or more iCal calendar links to a property.
+ * Each URL must be a live, publicly fetchable .ics feed - the API validates
+ * the feed content, not just the URL shape.
+ */
 data class ICalRequest(
-    @SerializedName("icalLink") val icalLink: String,
+    @SerializedName("calendarLinks") val calendarLinks: List<String>,
+)
+
+/** A single calendar link attached to a property, as returned by getICalLink. */
+data class CalendarLink(
+    @SerializedName("id") val id: Int,
+    @SerializedName("calendarLink") val calendarLink: String,
+)
+
+/** Request body for removing calendar links from a property, by numeric link ID. */
+data class DeleteICalLinkRequest(
+    @SerializedName("ids") val ids: List<Int>,
 )
 
 data class CreateChecklistRequest(

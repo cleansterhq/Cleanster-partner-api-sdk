@@ -662,7 +662,7 @@ class CleansterTest extends TestCase
         $http = $this->mockHttp();
         $http->expects($this->once())
              ->method('put')
-             ->with('/v1/properties/1040/ical', ['icalLink' => 'https://cal.example.com/feed.ics'])
+             ->with('/v1/properties/1040/ical', ['calendarLinks' => ['https://cal.example.com/feed.ics']])
              ->willReturn($this->ok([]));
 
         (new PropertiesApi($http))->addICalLink(1040, 'https://cal.example.com/feed.ics');
@@ -674,7 +674,7 @@ class CleansterTest extends TestCase
         $http->expects($this->once())
              ->method('get')
              ->with('/v1/properties/1040/ical')
-             ->willReturn($this->ok([]));
+             ->willReturn($this->ok([['id' => 36, 'calendarLink' => 'https://cal.example.com/feed.ics']]));
 
         (new PropertiesApi($http))->getICalLink(1040);
     }
@@ -684,10 +684,10 @@ class CleansterTest extends TestCase
         $http = $this->mockHttp();
         $http->expects($this->once())
              ->method('delete')
-             ->with('/v1/properties/1040/ical', ['icalLink' => 'https://cal.example.com/feed.ics'])
+             ->with('/v1/properties/1040/ical', ['ids' => [36]])
              ->willReturn($this->ok([]));
 
-        (new PropertiesApi($http))->removeICalLink(1040, 'https://cal.example.com/feed.ics');
+        (new PropertiesApi($http))->removeICalLink(1040, 36);
     }
 
     public function testSetDefaultChecklistTrue(): void

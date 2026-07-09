@@ -107,24 +107,37 @@ final class PropertiesApi
         return new ApiResponse($raw['status'] ?? 200, $raw['message'] ?? 'OK', $raw['data'] ?? []);
     }
 
-    /** Set an iCal feed URL on a property for calendar availability syncing. */
-    public function addICalLink(int $propertyId, string $icalLink): ApiResponse
+    /**
+     * Add one or more iCal calendar links to a property for availability syncing.
+     * Each URL must be a live, publicly fetchable .ics feed - the API validates
+     * the feed content, not just the URL shape.
+     *
+     * @param string[]|string $calendarLinks One or more iCal feed URLs.
+     */
+    public function addICalLink(int $propertyId, array|string $calendarLinks): ApiResponse
     {
-        $raw = $this->http->put("/v1/properties/{$propertyId}/ical", ['icalLink' => $icalLink]);
+        $links = is_array($calendarLinks) ? $calendarLinks : [$calendarLinks];
+        $raw = $this->http->put("/v1/properties/{$propertyId}/ical", ['calendarLinks' => $links]);
         return new ApiResponse($raw['status'] ?? 200, $raw['message'] ?? 'OK', $raw['data'] ?? []);
     }
 
-    /** Return the current iCal feed URL for a property. */
+    /** Return the calendar links currently attached to a property, as a list of ['id' => int, 'calendarLink' => string]. */
     public function getICalLink(int $propertyId): ApiResponse
     {
         $raw = $this->http->get("/v1/properties/{$propertyId}/ical");
         return new ApiResponse($raw['status'] ?? 200, $raw['message'] ?? 'OK', $raw['data'] ?? []);
     }
 
-    /** Remove the iCal feed URL from a property. */
-    public function removeICalLink(int $propertyId, string $icalLink): ApiResponse
+    /**
+     * Remove one or more calendar links from a property, by numeric link ID
+     * (from getICalLink) - not by URL.
+     *
+     * @param int[]|int $ids The link ID(s) to remove.
+     */
+    public function removeICalLink(int $propertyId, array|int $ids): ApiResponse
     {
-        $raw = $this->http->delete("/v1/properties/{$propertyId}/ical", ['icalLink' => $icalLink]);
+        $linkIds = is_array($ids) ? $ids : [$ids];
+        $raw = $this->http->delete("/v1/properties/{$propertyId}/ical", ['ids' => $linkIds]);
         return new ApiResponse($raw['status'] ?? 200, $raw['message'] ?? 'OK', $raw['data'] ?? []);
     }
 
