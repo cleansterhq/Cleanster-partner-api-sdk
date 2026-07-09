@@ -8,13 +8,13 @@ import com.google.gson.reflect.TypeToken;
 import java.util.*;
 
 /**
- * Blacklist API — manage the cleaner blacklist.
+ * Blacklist API - prevent specific cleaners from being assigned to your properties.
  *
  * <h3>Endpoints (3)</h3>
  * <ol>
- *   <li>GET    /blacklist           — list blacklisted users</li>
- *   <li>POST   /blacklist           — add user to blacklist</li>
- *   <li>DELETE /blacklist/{userId}  — remove user from blacklist</li>
+ *   <li>GET    /v1/blacklist/cleaner - list blacklisted cleaners</li>
+ *   <li>POST   /v1/blacklist/cleaner - add cleaner to blacklist</li>
+ *   <li>DELETE /v1/blacklist/cleaner - remove cleaner from blacklist</li>
  * </ol>
  */
 public class BlacklistXmlApi {
@@ -23,21 +23,34 @@ public class BlacklistXmlApi {
 
     public BlacklistXmlApi(XmlHttpClient http) { this.http = http; }
 
+    /** Return all blacklisted cleaners for the partner account. */
     public XmlApiResponse<List<BlacklistEntry>> listBlacklist() {
-        String json = http.get("/blacklist");
+        String json = http.get("/v1/blacklist/cleaner");
         return http.fromJson(json, new TypeToken<XmlApiResponse<List<BlacklistEntry>>>(){}.getType());
     }
 
-    public XmlApiResponse<BlacklistEntry> addToBlacklist(int userId, String reason) {
+    /**
+     * Add a cleaner to the blacklist.
+     *
+     * @param cleanerId  The cleaner's user ID.
+     * @param reason     Optional reason for blacklisting.
+     */
+    public XmlApiResponse<BlacklistEntry> addToBlacklist(int cleanerId, String reason) {
         Map<String, Object> body = new LinkedHashMap<>();
-        body.put("userId", userId);
+        body.put("cleanerId", cleanerId);
         if (reason != null) body.put("reason", reason);
-        String json = http.post("/blacklist", body);
+        String json = http.post("/v1/blacklist/cleaner", body);
         return http.fromJson(json, new TypeToken<XmlApiResponse<BlacklistEntry>>(){}.getType());
     }
 
-    public XmlApiResponse<BlacklistEntry> removeFromBlacklist(int userId) {
-        String json = http.delete("/blacklist/" + userId);
-        return http.fromJson(json, new TypeToken<XmlApiResponse<BlacklistEntry>>(){}.getType());
+    /**
+     * Remove a cleaner from the blacklist.
+     *
+     * @param cleanerId  The cleaner's user ID.
+     */
+    @SuppressWarnings("rawtypes")
+    public XmlApiResponse removeFromBlacklist(int cleanerId) {
+        String json = http.delete("/v1/blacklist/cleaner");
+        return http.fromJson(json, XmlApiResponse.class);
     }
 }
