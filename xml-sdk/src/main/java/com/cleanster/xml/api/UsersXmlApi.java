@@ -9,13 +9,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Users API — authenticate and manage user profiles.
+ * Users API - create partner-managed users and issue access tokens.
  *
  * <h3>Endpoints (3)</h3>
  * <ul>
- *   <li>POST /users/{userId}/token — fetch access token</li>
- *   <li>GET  /users/{userId}       — get user profile</li>
- *   <li>PUT  /users/{userId}       — update user profile</li>
+ *   <li>POST /v1/user/account                - create user account</li>
+ *   <li>GET  /v1/user/access-token/{userId}  - fetch access token</li>
+ *   <li>POST /v1/user/verify-jwt             - verify a JWT token</li>
  * </ul>
  */
 public class UsersXmlApi {
@@ -25,46 +25,47 @@ public class UsersXmlApi {
     public UsersXmlApi(XmlHttpClient http) { this.http = http; }
 
     /**
-     * Fetch an access token for the given user.  The returned token should be
-     * stored via {@code CleansterXmlClient.setToken()} before calling any other endpoint.
+     * Create a new user account on behalf of your platform.
      *
-     * @param userId numeric user ID
-     * @return response containing a {@link User} with the token field populated
+     * @param request  Map with keys: email, firstName, lastName, phone (optional).
+     * @return response containing a {@link User} with the new user's ID.
+     */
+    public XmlApiResponse<User> createUser(Map<String, Object> request) {
+        String json = http.post("/v1/user/account", request);
+        return http.fromJson(json, new TypeToken<XmlApiResponse<User>>(){}.getType());
+    }
+
+    /** Convenience overload for creating a user with the most common fields. */
+    public XmlApiResponse<User> createUser(String email, String firstName, String lastName) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("email",     email);
+        body.put("firstName", firstName);
+        body.put("lastName",  lastName);
+        return createUser(body);
+    }
+
+    /**
+     * Fetch a long-lived JWT access token for the given user.
+     * Store the returned token via {@code CleansterXmlClient.setToken()} and pass it
+     * as the {@code token} header on all subsequent calls made on behalf of this user.
+     *
+     * @param userId  Numeric user ID (returned by {@link #createUser}).
+     * @return response containing a {@link User} with the token field populated.
      */
     public XmlApiResponse<User> fetchAccessToken(int userId) {
-        String json = http.post("/users/" + userId + "/token", Map.of());
+        String json = http.get("/v1/user/access-token/" + userId);
         return http.fromJson(json, new TypeToken<XmlApiResponse<User>>(){}.getType());
     }
 
     /**
-     * Retrieve a user's full profile.
+     * Verify that a JWT token is valid and not expired.
      *
-     * @param userId numeric user ID
-     * @return response containing the {@link User}
+     * @param token  The JWT string to verify.
+     * @return response indicating whether the token is valid.
      */
-    public XmlApiResponse<User> getUserProfile(int userId) {
-        String json = http.get("/users/" + userId);
-        return http.fromJson(json, new TypeToken<XmlApiResponse<User>>(){}.getType());
-    }
-
-    /**
-     * Update a user's profile fields.
-     *
-     * @param userId    numeric user ID
-     * @param firstName updated first name (nullable — omit by passing null)
-     * @param lastName  updated last name (nullable)
-     * @param phone     updated phone (nullable)
-     * @return response containing the updated {@link User}
-     */
-    public XmlApiResponse<User> updateUserProfile(int userId,
-                                                   String firstName,
-                                                   String lastName,
-                                                   String phone) {
-        Map<String, Object> body = new HashMap<>();
-        if (firstName != null) body.put("firstName", firstName);
-        if (lastName  != null) body.put("lastName",  lastName);
-        if (phone     != null) body.put("phone",      phone);
-        String json = http.put("/users/" + userId, body);
-        return http.fromJson(json, new TypeToken<XmlApiResponse<User>>(){}.getType());
+    @SuppressWarnings("rawtypes")
+    public XmlApiResponse verifyJwt(String token) {
+        String json = http.post("/v1/user/verify-jwt", Map.of("token", token));
+        return http.fromJson(json, XmlApiResponse.class);
     }
 }
