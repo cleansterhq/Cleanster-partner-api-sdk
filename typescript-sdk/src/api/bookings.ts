@@ -14,6 +14,8 @@ import {
   FeedbackRequest,
   TipRequest,
   SendMessageRequest,
+  UpdateTaskRequest,
+  UpdateSqftRequest,
 } from "../models/booking";
 import { ApiResponse } from "../models/response";
 
@@ -169,5 +171,23 @@ export class BookingsApi {
    */
   deleteMessage(bookingId: number, messageId: string): Promise<ApiResponse<unknown>> {
     return this.http.delete(`/v1/bookings/${bookingId}/chat/${messageId}`);
+  }
+
+  /**
+   * Update the task quantities for a booking (e.g. number of rooms/items to clean).
+   * @param bookingId  The booking ID.
+   * @param request    List of task IDs and their updated quantities.
+   */
+  updateTask(bookingId: number, request: UpdateTaskRequest): Promise<ApiResponse<unknown>> {
+    return this.http.post(`/v1/bookings/${bookingId}/tasks`, request);
+  }
+
+  /**
+   * Update the total square footage for a booking.
+   * @param bookingId  The booking ID.
+   * @param request    New total square footage value.
+   */
+  updateSqft(bookingId: number, request: UpdateSqftRequest): Promise<ApiResponse<unknown>> {
+    return this.http.post(`/v1/bookings/${bookingId}/sqft`, request);
   }
 }
