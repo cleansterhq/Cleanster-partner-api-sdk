@@ -1,5 +1,5 @@
 /**
- * WebhooksApi — manage real-time event notification endpoints.
+ * WebhooksApi - manage real-time event notification endpoints.
  */
 
 import { HttpClient } from "../http-client";
