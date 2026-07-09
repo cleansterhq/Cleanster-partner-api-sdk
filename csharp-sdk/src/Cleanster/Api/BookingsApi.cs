@@ -200,4 +200,26 @@ public sealed class BookingsApi
         var root = await _http.DeleteAsync($"/v1/bookings/{bookingId}/chat/{messageId}", ct: ct);
         return JsonHelper.ParseRaw(root);
     }
+
+    /// <summary>Update task quantities for a booking.</summary>
+    /// <param name="tasks">List of (id, quantity) tuples.</param>
+    public async Task<ApiResponse<JsonElement>> UpdateTaskAsync(
+        int bookingId, IEnumerable<(int Id, int Quantity)> tasks, CancellationToken ct = default)
+    {
+        var body = new
+        {
+            tasks = tasks.Select(t => new { id = t.Id, quantity = t.Quantity }).ToArray(),
+        };
+        var root = await _http.PostAsync($"/v1/bookings/{bookingId}/tasks", body, ct);
+        return JsonHelper.ParseRaw(root);
+    }
+
+    /// <summary>Update the total square footage for a booking.</summary>
+    public async Task<ApiResponse<JsonElement>> UpdateSqftAsync(
+        int bookingId, double totalSqFt, CancellationToken ct = default)
+    {
+        var root = await _http.PostAsync($"/v1/bookings/{bookingId}/sqft",
+            new { totalSqFt }, ct);
+        return JsonHelper.ParseRaw(root);
+    }
 }
