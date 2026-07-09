@@ -1,5 +1,5 @@
 /**
- * Checklist models — cleaning task lists.
+ * Checklist models - cleaning task lists.
  */
 
 export interface ChecklistItem {
