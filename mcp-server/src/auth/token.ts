@@ -1,19 +1,19 @@
 /**
  * Token validation and scope enforcement.
  *
- * v1: Simple bearer token (API key) validation — checks that the header is
+ * v1: Simple bearer token (API key) validation - checks that the header is
  * present and non-empty. No cryptographic verification at this layer; the
  * Cleanster API rejects invalid keys with 401.
  *
- * TODO: OAuth 2.0 + PKCE seam — replace `validateBearerToken` with a JWT
+ * TODO: OAuth 2.0 + PKCE seam - replace `validateBearerToken` with a JWT
  *       verifier that checks signature, expiry, and scopes. The middleware
  *       in auth/middleware.ts does not need to change; only this file.
  *
  * Scopes (for future use):
- *   bookings:read    — list_bookings, get_booking
- *   bookings:write   — create_booking, cancel_booking, reschedule_booking, assign_crew, assign_checklist
- *   properties:read  — list_properties, get_property
- *   cleaners:read    — list_cleaners, get_cleaner
+ *   bookings:read    - list_bookings, get_booking
+ *   bookings:write   - create_booking, cancel_booking, reschedule_booking, assign_crew, assign_checklist
+ *   properties:read  - list_properties, get_property
+ *   cleaners:read    - list_cleaners, get_cleaner
  */
 
 export interface TokenInfo {
@@ -34,7 +34,7 @@ export function validateBearerToken(authHeader: string | undefined): TokenInfo |
   if (!token) return null;
   return {
     token,
-    // v1: all tokens get all scopes — OAuth will enforce granular scopes
+    // v1: all tokens get all scopes - OAuth will enforce granular scopes
     scopes: [
       'bookings:read',
       'bookings:write',
