@@ -1,5 +1,5 @@
 /**
- * Booking model — represents a single cleaning appointment.
+ * Booking model - represents a single cleaning appointment.
  */
 export interface Booking {
   id: number;
@@ -20,17 +20,17 @@ export interface Booking {
 
 /** Request body for creating a new booking. */
 export interface CreateBookingRequest {
-  date: string;           // Required — YYYY-MM-DD
-  time: string;           // Required — HH:mm (24-hour)
+  date: string;           // Required - YYYY-MM-DD
+  time: string;           // Required - HH:mm (24-hour)
   propertyId: number;     // Required
   roomCount: number;      // Required
   bathroomCount: number;  // Required
-  planId: number;         // Required — from getPlans()
-  hours: number;          // Required — from getRecommendedHours()
+  planId: number;         // Required - from getPlans()
+  hours: number;          // Required - from getRecommendedHours()
   extraSupplies: boolean; // Required
   paymentMethodId: number; // Required
   couponCode?: string;    // Optional
-  extras?: number[];      // Optional — extra service IDs
+  extras?: number[];      // Optional - extra service IDs
 }
 
 /** Request body for cancelling a booking. */
