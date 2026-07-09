@@ -266,3 +266,37 @@ class BookingsApi:
         """
         raw = self._http.delete(f"/v1/bookings/{booking_id}/chat/{message_id}")
         return ApiResponse.from_dict(raw)
+
+    def update_task(self, booking_id: int, tasks: list) -> ApiResponse:
+        """
+        Update task quantities for a booking.
+
+        Args:
+            booking_id: The booking ID.
+            tasks:      List of dicts with keys 'id' and 'quantity'.
+
+        Returns:
+            ApiResponse.
+        """
+        raw = self._http.post(
+            f"/v1/bookings/{booking_id}/tasks",
+            body={"tasks": tasks},
+        )
+        return ApiResponse.from_dict(raw)
+
+    def update_sqft(self, booking_id: int, total_sq_ft: float) -> ApiResponse:
+        """
+        Update the total square footage for a booking.
+
+        Args:
+            booking_id:   The booking ID.
+            total_sq_ft:  New total square footage value.
+
+        Returns:
+            ApiResponse.
+        """
+        raw = self._http.post(
+            f"/v1/bookings/{booking_id}/sqft",
+            body={"totalSqFt": total_sq_ft},
+        )
+        return ApiResponse.from_dict(raw)
