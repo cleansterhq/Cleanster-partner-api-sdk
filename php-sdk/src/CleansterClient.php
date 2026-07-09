@@ -44,7 +44,7 @@ final class CleansterClient
 
     /**
      * @param Config          $config     SDK configuration.
-     * @param HttpClient|null $httpClient Optional custom HTTP client — used in tests.
+     * @param HttpClient|null $httpClient Optional custom HTTP client - used in tests.
      */
     public function __construct(Config $config, ?HttpClient $httpClient = null)
     {
