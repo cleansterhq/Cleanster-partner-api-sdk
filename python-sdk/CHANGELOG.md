@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- `OtherApi` — `list_cleaners` (`GET /v1/cleaners`) and `get_cleaner` (`GET /v1/cleaners/{id}`) to list all cleaners and retrieve a single cleaner by ID.
+- `OtherApi` - `list_cleaners` (`GET /v1/cleaners`) and `get_cleaner` (`GET /v1/cleaners/{id}`) to list all cleaners and retrieve a single cleaner by ID.
 
 ## [1.0.0] - 2025-04-22
 
@@ -16,24 +16,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial release of the Cleanster Python SDK.
 - `CleansterClient` with `sandbox()` and `production()` factory methods.
 - `CleansterConfig` with builder pattern support for custom timeout and base URL.
-- **BookingsApi** — full booking lifecycle: create, get, cancel, reschedule, cleaner
+- **BookingsApi** - full booking lifecycle: create, get, cancel, reschedule, cleaner
   assignment, hours adjustment, expenses, inspection, checklist assignment, feedback,
   tip, and chat (get/send/delete messages).
-- **UsersApi** — create user, fetch access token, verify JWT.
-- **PropertiesApi** — CRUD, enable/disable, cleaner assignment, iCal sync,
+- **UsersApi** - create user, fetch access token, verify JWT.
+- **PropertiesApi** - CRUD, enable/disable, cleaner assignment, iCal sync,
   checklist association.
-- **ChecklistsApi** — list, get, create, update, delete checklists.
-- **OtherApi** — services, plans, recommended hours, cost estimate, cleaning extras,
+- **ChecklistsApi** - list, get, create, update, delete checklists.
+- **OtherApi** - services, plans, recommended hours, cost estimate, cleaning extras,
   available cleaners, coupons.
-- **BlacklistApi** — list, add, remove blacklisted cleaners.
-- **PaymentMethodsApi** — Stripe setup intent, PayPal client token, add/list/delete
+- **BlacklistApi** - list, add, remove blacklisted cleaners.
+- **PaymentMethodsApi** - Stripe setup intent, PayPal client token, add/list/delete
   payment methods, set default.
-- **WebhooksApi** — list, create, update, delete webhook endpoints.
+- **WebhooksApi** - list, create, update, delete webhook endpoints.
 - Typed model classes: `Booking`, `User`, `Property`, `Checklist`, `ChecklistItem`,
   `PaymentMethod`, `ApiResponse`.
 - Exception hierarchy: `CleansterException` → `CleansterAuthException` (HTTP 401),
   `CleansterApiException` (HTTP 4xx/5xx).
-- 100+ unit tests using `unittest.mock` — no network access required.
+- 100+ unit tests using `unittest.mock` - no network access required.
 - `requests`-based HTTP transport with session keep-alive.
 - Full type annotations throughout.
 - Comprehensive README with per-endpoint code examples.
