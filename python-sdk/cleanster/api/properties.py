@@ -1,4 +1,4 @@
-"""Properties API — CRUD for cleaning locations, plus cleaners, iCal, and checklists."""
+"""Properties API - CRUD for cleaning locations, plus cleaners, iCal, and checklists."""
 
 from typing import Any, Dict, Optional
 
