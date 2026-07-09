@@ -10,7 +10,7 @@ sealed class CleansterError(message: String, cause: Throwable? = null) : Excepti
         CleansterError("API error $statusCode: $message")
 
     /** The `access-key` or `token` header was rejected (HTTP 401). */
-    class Unauthorized(override val message: String = "Unauthorized — check your access-key and token.") :
+    class Unauthorized(override val message: String = "Unauthorized - check your access-key and token.") :
         CleansterError(message)
 
     /** The requested resource was not found (HTTP 404). */
