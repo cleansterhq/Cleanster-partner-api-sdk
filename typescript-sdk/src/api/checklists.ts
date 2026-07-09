@@ -1,5 +1,5 @@
 /**
- * ChecklistsApi — create and manage cleaning task lists.
+ * ChecklistsApi - create and manage cleaning task lists.
  */
 
 import { HttpClient } from "../http-client";
