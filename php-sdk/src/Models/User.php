@@ -12,7 +12,7 @@ final class User
     public readonly string  $firstName;
     public readonly string  $lastName;
     public readonly ?string $phone;
-    /** Bearer token — only present after fetchAccessToken(). */
+    /** Bearer token - only present after fetchAccessToken(). */
     public readonly ?string $token;
     /** The original raw array returned by the API. */
     public readonly array   $raw;
