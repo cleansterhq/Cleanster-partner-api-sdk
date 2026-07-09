@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Initial release of the Cleanster XML SDK.
-- `CleansterXmlClient` — main entry point with `sandbox()` and `production()` factory methods.
+- `CleansterXmlClient` - main entry point with `sandbox()` and `production()` factory methods.
 - `CleansterXmlConfig` for custom base URL and timeout configuration.
 - JAXB 4.0 XML marshalling/unmarshalling for all request and response types.
 - OkHttp 4.x HTTP transport with `application/xml` content negotiation.
@@ -19,5 +19,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `ChecklistItem`, `PaymentMethod`, `XmlApiResponse<T>`.
 - Exception hierarchy: `CleansterXmlException`, `CleansterXmlAuthException` (401),
   `CleansterXmlApiException` (4xx/5xx).
-- 164 JUnit 5 unit tests using MockWebServer — all passing; no real network access.
+- 164 JUnit 5 unit tests using MockWebServer - all passing; no real network access.
 - Maven packaging: `cleanster-xml-sdk` artifact, Java 17+ required.
