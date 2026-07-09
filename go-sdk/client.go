@@ -41,13 +41,13 @@ type Client struct {
 }
 
 // NewSandboxClient creates a Client configured for the sandbox environment.
-// Use this for development and testing — no real charges or cleaners.
+// Use this for development and testing - no real charges or cleaners.
 func NewSandboxClient(accessKey string) (*Client, error) {
 	return NewClient(NewSandboxConfig(accessKey))
 }
 
 // NewProductionClient creates a Client configured for the production environment.
-// Use this for live traffic — real cleaners will be dispatched and charges applied.
+// Use this for live traffic - real cleaners will be dispatched and charges applied.
 func NewProductionClient(accessKey string) (*Client, error) {
 	return NewClient(NewProductionConfig(accessKey))
 }
