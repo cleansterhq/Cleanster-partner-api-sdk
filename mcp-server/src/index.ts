@@ -1,5 +1,5 @@
 /**
- * Cleanster MCP Server — entry point.
+ * Cleanster MCP Server - entry point.
  *
  * Transport selection:
  *   MCP_TRANSPORT=stdio  →  StdioServerTransport (Claude Desktop, direct pipe)
@@ -32,7 +32,7 @@ async function startStdio(): Promise<void> {
   const accessKey = process.env['CLEANSTER_ACCESS_KEY'] ?? process.env['CLEANSTER_API_KEY'] ?? '';
   const token = process.env['CLEANSTER_TOKEN'] ?? '';
   if (!accessKey) {
-    log.warn('CLEANSTER_ACCESS_KEY not set — requests to the Cleanster API will fail');
+    log.warn('CLEANSTER_ACCESS_KEY not set - requests to the Cleanster API will fail');
   }
   const server = buildMcpServer(accessKey, token);
   const transport = new StdioServerTransport();
@@ -48,7 +48,7 @@ async function startHttp(): Promise<void> {
 
   app.use(express.json());
 
-  // ── Rate limiter — 60 requests per minute per bearer token ────────────────
+  // ── Rate limiter - 60 requests per minute per bearer token ────────────────
   const limiter = rateLimit({
     windowMs: 60 * 1000,
     max: 60,
@@ -75,7 +75,7 @@ async function startHttp(): Promise<void> {
   // ── Active SSE transports, keyed by sessionId ─────────────────────────────
   const transports = new Map<string, SSEServerTransport>();
 
-  // ── SSE endpoint — establish MCP connection ────────────────────────────────
+  // ── SSE endpoint - establish MCP connection ────────────────────────────────
   app.get('/sse', requireAuth, (req, res) => {
     const accessKey = process.env['CLEANSTER_ACCESS_KEY'] ?? process.env['CLEANSTER_API_KEY'] ?? '';
     const token = req.tokenInfo!.token;
@@ -95,7 +95,7 @@ async function startHttp(): Promise<void> {
     });
   });
 
-  // ── Message endpoint — receive tool call POSTs ────────────────────────────
+  // ── Message endpoint - receive tool call POSTs ────────────────────────────
   app.post('/message', requireAuth, async (req, res) => {
     const sessionId = req.query['sessionId'] as string | undefined;
     if (!sessionId) {
