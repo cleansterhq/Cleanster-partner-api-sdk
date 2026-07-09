@@ -50,7 +50,7 @@ export class HttpClient {
 
     if (response.status === 401) {
       throw new CleansterAuthException(
-        "Unauthorized — invalid or missing access key or user token.",
+        "Unauthorized - invalid or missing access key or user token.",
         body,
       );
     }
