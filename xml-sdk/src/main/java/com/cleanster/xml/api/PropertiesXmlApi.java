@@ -8,24 +8,24 @@ import com.google.gson.reflect.TypeToken;
 import java.util.*;
 
 /**
- * Properties API — manage cleaning locations (homes, offices, etc.).
+ * Properties API - manage cleaning locations (homes, offices, etc.).
  *
  * <h3>Endpoints (14)</h3>
  * <ol>
- *   <li>GET    /properties              — list properties</li>
- *   <li>GET    /properties/{id}         — get property</li>
- *   <li>POST   /properties              — create property</li>
- *   <li>PUT    /properties/{id}         — update property</li>
- *   <li>DELETE /properties/{id}         — delete property</li>
- *   <li>GET    /properties/{id}/bookings — property bookings</li>
- *   <li>GET    /properties/{id}/checklists — property checklists</li>
- *   <li>POST   /properties/{id}/archive  — archive property</li>
- *   <li>POST   /properties/{id}/restore  — restore property</li>
- *   <li>GET    /properties/active        — active properties</li>
- *   <li>GET    /properties/archived      — archived properties</li>
- *   <li>POST   /properties/{id}/duplicate — duplicate property</li>
- *   <li>GET    /properties/{id}/access-info — access instructions</li>
- *   <li>PUT    /properties/{id}/access-info — update access instructions</li>
+ *   <li>GET    /v1/properties                                          - list properties</li>
+ *   <li>POST   /v1/properties                                          - create property</li>
+ *   <li>GET    /v1/properties/{id}                                     - get property</li>
+ *   <li>PUT    /v1/properties/{id}                                     - update property</li>
+ *   <li>DELETE /v1/properties/{id}                                     - delete property</li>
+ *   <li>PUT    /v1/properties/{id}/additional-information              - update additional info</li>
+ *   <li>POST   /v1/properties/{id}/enable-disable                      - enable/disable property</li>
+ *   <li>GET    /v1/properties/{id}/cleaners                            - list property cleaners</li>
+ *   <li>POST   /v1/properties/{id}/cleaners                            - assign cleaner</li>
+ *   <li>DELETE /v1/properties/{id}/cleaners/{cleanerId}                - remove cleaner</li>
+ *   <li>PUT    /v1/properties/{id}/ical                                - add iCal link</li>
+ *   <li>GET    /v1/properties/{id}/ical                                - get iCal link</li>
+ *   <li>DELETE /v1/properties/{id}/ical                                - remove iCal link</li>
+ *   <li>PUT    /v1/properties/{id}/checklist/{checklistId}             - set default checklist</li>
  * </ol>
  */
 public class PropertiesXmlApi {
@@ -34,93 +34,132 @@ public class PropertiesXmlApi {
 
     public PropertiesXmlApi(XmlHttpClient http) { this.http = http; }
 
-    public XmlApiResponse<List<Property>> listProperties() {
-        String json = http.get("/properties");
+    /** List all properties, optionally filtered by service type. */
+    public XmlApiResponse<List<Property>> listProperties(Integer serviceId) {
+        String path = serviceId != null
+                ? "/v1/properties?serviceId=" + serviceId
+                : "/v1/properties";
+        String json = http.get(path);
         return http.fromJson(json, new TypeToken<XmlApiResponse<List<Property>>>(){}.getType());
     }
 
-    public XmlApiResponse<Property> getProperty(int propertyId) {
-        String json = http.get("/properties/" + propertyId);
-        return http.fromJson(json, new TypeToken<XmlApiResponse<Property>>(){}.getType());
+    /** List all properties (no filter). */
+    public XmlApiResponse<List<Property>> listProperties() {
+        return listProperties(null);
     }
 
+    /** Create a new property. */
     public XmlApiResponse<Property> createProperty(Map<String, Object> body) {
-        String json = http.post("/properties", body);
+        String json = http.post("/v1/properties", body);
         return http.fromJson(json, new TypeToken<XmlApiResponse<Property>>(){}.getType());
     }
 
+    /** Convenience overload - build the body from typed parameters. */
     public XmlApiResponse<Property> createProperty(String name, String address, String city,
-                                                    String state, String zipCode, String country,
-                                                    int roomCount, int bathroomCount) {
+                                                    String country, int roomCount,
+                                                    int bathroomCount, int serviceId) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("name",          name);
         body.put("address",       address);
         body.put("city",          city);
-        body.put("state",         state);
-        body.put("zipCode",       zipCode);
         body.put("country",       country);
         body.put("roomCount",     roomCount);
         body.put("bathroomCount", bathroomCount);
+        body.put("serviceId",     serviceId);
         return createProperty(body);
     }
 
+    /** Get details of a specific property. */
+    public XmlApiResponse<Property> getProperty(int propertyId) {
+        String json = http.get("/v1/properties/" + propertyId);
+        return http.fromJson(json, new TypeToken<XmlApiResponse<Property>>(){}.getType());
+    }
+
+    /** Update an existing property's details. */
     public XmlApiResponse<Property> updateProperty(int propertyId, Map<String, Object> body) {
-        String json = http.put("/properties/" + propertyId, body);
+        String json = http.put("/v1/properties/" + propertyId, body);
         return http.fromJson(json, new TypeToken<XmlApiResponse<Property>>(){}.getType());
     }
 
-    public XmlApiResponse<Property> deleteProperty(int propertyId) {
-        String json = http.delete("/properties/" + propertyId);
-        return http.fromJson(json, new TypeToken<XmlApiResponse<Property>>(){}.getType());
-    }
-
+    /** Permanently delete a property. */
     @SuppressWarnings("rawtypes")
-    public XmlApiResponse getPropertyBookings(int propertyId) {
-        String json = http.get("/properties/" + propertyId + "/bookings");
+    public XmlApiResponse deleteProperty(int propertyId) {
+        String json = http.delete("/v1/properties/" + propertyId);
         return http.fromJson(json, XmlApiResponse.class);
     }
 
+    /** Update additional/supplemental information fields for a property. */
     @SuppressWarnings("rawtypes")
-    public XmlApiResponse getPropertyChecklists(int propertyId) {
-        String json = http.get("/properties/" + propertyId + "/checklists");
+    public XmlApiResponse updateAdditionalInformation(int propertyId, Map<String, Object> data) {
+        String json = http.put("/v1/properties/" + propertyId + "/additional-information", data);
         return http.fromJson(json, XmlApiResponse.class);
     }
 
-    public XmlApiResponse<Property> archiveProperty(int propertyId) {
-        String json = http.post("/properties/" + propertyId + "/archive", Map.of());
-        return http.fromJson(json, new TypeToken<XmlApiResponse<Property>>(){}.getType());
-    }
-
-    public XmlApiResponse<Property> restoreProperty(int propertyId) {
-        String json = http.post("/properties/" + propertyId + "/restore", Map.of());
-        return http.fromJson(json, new TypeToken<XmlApiResponse<Property>>(){}.getType());
-    }
-
-    public XmlApiResponse<List<Property>> listActiveProperties() {
-        String json = http.get("/properties/active");
-        return http.fromJson(json, new TypeToken<XmlApiResponse<List<Property>>>(){}.getType());
-    }
-
-    public XmlApiResponse<List<Property>> listArchivedProperties() {
-        String json = http.get("/properties/archived");
-        return http.fromJson(json, new TypeToken<XmlApiResponse<List<Property>>>(){}.getType());
-    }
-
-    public XmlApiResponse<Property> duplicateProperty(int propertyId) {
-        String json = http.post("/properties/" + propertyId + "/duplicate", Map.of());
-        return http.fromJson(json, new TypeToken<XmlApiResponse<Property>>(){}.getType());
-    }
-
+    /** Enable or disable a property. */
     @SuppressWarnings("rawtypes")
-    public XmlApiResponse getAccessInfo(int propertyId) {
-        String json = http.get("/properties/" + propertyId + "/access-info");
+    public XmlApiResponse enableOrDisableProperty(int propertyId, boolean enabled) {
+        String json = http.post("/v1/properties/" + propertyId + "/enable-disable",
+                Map.of("enabled", enabled));
         return http.fromJson(json, XmlApiResponse.class);
     }
 
+    /** Get the list of cleaners assigned to a property. */
     @SuppressWarnings("rawtypes")
-    public XmlApiResponse updateAccessInfo(int propertyId, String instructions) {
-        String json = http.put("/properties/" + propertyId + "/access-info",
-                Map.of("accessInstructions", instructions));
+    public XmlApiResponse getPropertyCleaners(int propertyId) {
+        String json = http.get("/v1/properties/" + propertyId + "/cleaners");
+        return http.fromJson(json, XmlApiResponse.class);
+    }
+
+    /** Assign a cleaner to a property's default cleaner pool. */
+    @SuppressWarnings("rawtypes")
+    public XmlApiResponse assignCleanerToProperty(int propertyId, int cleanerId) {
+        String json = http.post("/v1/properties/" + propertyId + "/cleaners",
+                Map.of("cleanerId", cleanerId));
+        return http.fromJson(json, XmlApiResponse.class);
+    }
+
+    /** Remove a cleaner from a property's default cleaner pool. */
+    @SuppressWarnings("rawtypes")
+    public XmlApiResponse unassignCleanerFromProperty(int propertyId, int cleanerId) {
+        String json = http.delete("/v1/properties/" + propertyId + "/cleaners/" + cleanerId);
+        return http.fromJson(json, XmlApiResponse.class);
+    }
+
+    /** Add an iCal calendar link to a property for availability syncing. */
+    @SuppressWarnings("rawtypes")
+    public XmlApiResponse addICalLink(int propertyId, String icalUrl) {
+        String json = http.put("/v1/properties/" + propertyId + "/ical",
+                Map.of("icalLink", icalUrl));
+        return http.fromJson(json, XmlApiResponse.class);
+    }
+
+    /** Retrieve the current iCal link for a property. */
+    @SuppressWarnings("rawtypes")
+    public XmlApiResponse getICalLink(int propertyId) {
+        String json = http.get("/v1/properties/" + propertyId + "/ical");
+        return http.fromJson(json, XmlApiResponse.class);
+    }
+
+    /** Remove the iCal calendar link from a property. */
+    @SuppressWarnings("rawtypes")
+    public XmlApiResponse removeICalLink(int propertyId, String icalUrl) {
+        String json = http.delete("/v1/properties/" + propertyId + "/ical");
+        return http.fromJson(json, XmlApiResponse.class);
+    }
+
+    /**
+     * Set a default checklist for a property.
+     *
+     * @param propertyId              The property ID.
+     * @param checklistId             The checklist ID.
+     * @param updateUpcomingBookings  If true, applies to all upcoming bookings too.
+     */
+    @SuppressWarnings("rawtypes")
+    public XmlApiResponse setDefaultChecklist(int propertyId, int checklistId,
+                                               boolean updateUpcomingBookings) {
+        String path = "/v1/properties/" + propertyId + "/checklist/" + checklistId
+                + "?updateUpcomingBookings=" + updateUpcomingBookings;
+        String json = http.put(path, null);
         return http.fromJson(json, XmlApiResponse.class);
     }
 }
