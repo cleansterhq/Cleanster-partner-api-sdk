@@ -37,6 +37,10 @@ export interface AssignCrewParams {
   cleaner_id: string;
 }
 
+export interface UpdateTaskParams {
+  tasks: Array<{ id: string; quantity: number }>;
+}
+
 
 export class CleansterApiClient {
   private readonly http: AxiosInstance;
@@ -88,6 +92,16 @@ export class CleansterApiClient {
 
   async assignChecklist(bookingId: string, checklistId: string): Promise<unknown> {
     const res: AxiosResponse = await this.http.put(ENDPOINTS.BOOKING_CHECKLIST(bookingId, checklistId));
+    return res.data;
+  }
+
+  async updateTask(bookingId: string, params: UpdateTaskParams): Promise<unknown> {
+    const res: AxiosResponse = await this.http.post(ENDPOINTS.BOOKING_TASKS(bookingId), params);
+    return res.data;
+  }
+
+  async updateSqft(bookingId: string, totalSqFt: number): Promise<unknown> {
+    const res: AxiosResponse = await this.http.post(ENDPOINTS.BOOKING_SQFT(bookingId), { totalSqFt });
     return res.data;
   }
 
