@@ -1,6 +1,6 @@
 module Cleanster
   module Api
-    # UsersApi — manage end-user accounts and authentication tokens.
+    # UsersApi - manage end-user accounts and authentication tokens.
     class UsersApi
       def initialize(http)
         @http = http
