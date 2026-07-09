@@ -62,6 +62,19 @@ data class SendMessageRequest(
     @SerializedName("message") val message: String,
 )
 
+data class TaskQuantity(
+    @SerializedName("id")       val id: Int,
+    @SerializedName("quantity") val quantity: Int,
+)
+
+data class UpdateTaskRequest(
+    @SerializedName("tasks") val tasks: List<TaskQuantity>,
+)
+
+data class UpdateSqftRequest(
+    @SerializedName("totalSqFt") val totalSqFt: Double,
+)
+
 data class CreatePropertyRequest(
     @SerializedName("name")          val name: String,
     @SerializedName("address")       val address: String,
