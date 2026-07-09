@@ -45,28 +45,28 @@ class CleansterClient private constructor(
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
 
-    /** Bookings — schedule, reschedule, cancel, assign cleaners, pay, feedback, chat */
+    /** Bookings - schedule, reschedule, cancel, assign cleaners, pay, feedback, chat */
     val bookings = BookingsApi(retrofit)
 
-    /** Users — create accounts and manage JWTs */
+    /** Users - create accounts and manage JWTs */
     val users = UsersApi(retrofit)
 
-    /** Properties — CRUD, iCal sync, cleaner lists, checklists */
+    /** Properties - CRUD, iCal sync, cleaner lists, checklists */
     val properties = PropertiesApi(retrofit)
 
-    /** Checklists — create and manage reusable task lists */
+    /** Checklists - create and manage reusable task lists */
     val checklists = ChecklistsApi(retrofit)
 
-    /** Other — services, plans, cost estimates, extras, available cleaners, coupons */
+    /** Other - services, plans, cost estimates, extras, available cleaners, coupons */
     val other = OtherApi(retrofit)
 
-    /** Blacklist — block specific cleaners from your properties */
+    /** Blacklist - block specific cleaners from your properties */
     val blacklist = BlacklistApi(retrofit)
 
-    /** Payment Methods — Stripe and PayPal payment method management */
+    /** Payment Methods - Stripe and PayPal payment method management */
     val paymentMethods = PaymentMethodsApi(retrofit)
 
-    /** Webhooks — subscribe to booking lifecycle events */
+    /** Webhooks - subscribe to booking lifecycle events */
     val webhooks = WebhooksApi(retrofit)
 
     /** Set the user-scoped JWT token. Call after fetchAccessToken(). */
