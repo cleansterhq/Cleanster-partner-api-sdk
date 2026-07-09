@@ -1,5 +1,5 @@
 /**
- * OtherApi — utility endpoints for services, plans, cost estimates, extras, and coupons.
+ * OtherApi - utility endpoints for services, plans, cost estimates, extras, and coupons.
  */
 
 import { HttpClient } from "../http-client";
