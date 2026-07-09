@@ -113,7 +113,7 @@ func TestNewProductionClient(t *testing.T) {
 }
 
 // ---------------------------------------------------------------------------
-// Client — services and token management
+// Client - services and token management
 // ---------------------------------------------------------------------------
 
 func TestClient_AllServicesExposed(t *testing.T) {
