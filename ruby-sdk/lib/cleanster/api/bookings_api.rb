@@ -1,6 +1,6 @@
 module Cleanster
   module Api
-    # BookingsApi — manage the full lifecycle of cleaning appointments.
+    # BookingsApi - manage the full lifecycle of cleaning appointments.
     class BookingsApi
       def initialize(http)
         @http = http
