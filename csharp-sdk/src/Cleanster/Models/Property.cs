@@ -13,6 +13,6 @@ public sealed record Property
     [JsonPropertyName("roomCount")]     public int    RoomCount     { get; init; }
     [JsonPropertyName("bathroomCount")] public int    BathroomCount { get; init; }
     [JsonPropertyName("serviceId")]     public int    ServiceId     { get; init; }
-    /// <summary>Active state — <see langword="null"/> when not returned by this endpoint.</summary>
+    /// <summary>Active state - <see langword="null"/> when not returned by this endpoint.</summary>
     [JsonPropertyName("isEnabled")]     public bool?  IsEnabled     { get; init; }
 }
