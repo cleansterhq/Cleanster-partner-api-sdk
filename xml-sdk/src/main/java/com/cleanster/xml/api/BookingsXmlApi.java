@@ -8,29 +8,29 @@ import com.google.gson.reflect.TypeToken;
 import java.util.*;
 
 /**
- * Bookings API — full lifecycle management for cleaning appointments.
+ * Bookings API - full lifecycle management for cleaning appointments.
  *
  * <h3>Endpoints (19)</h3>
  * <ol>
- *   <li>GET    /v1/bookings                                — list bookings</li>
- *   <li>POST   /v1/bookings/create                         — create booking</li>
- *   <li>GET    /v1/bookings/{id}                           — get booking</li>
- *   <li>POST   /v1/bookings/{id}/cancel                    — cancel booking</li>
- *   <li>POST   /v1/bookings/{id}/reschedule                — reschedule booking</li>
- *   <li>POST   /v1/bookings/{id}/cleaner                   — assign cleaner</li>
- *   <li>DELETE /v1/bookings/{id}/cleaner                   — remove cleaner</li>
- *   <li>POST   /v1/bookings/{id}/hours                     — adjust hours</li>
- *   <li>POST   /v1/bookings/{id}/expenses                  — pay expenses</li>
- *   <li>GET    /v1/bookings/{id}/inspection                — get inspection</li>
- *   <li>GET    /v1/bookings/{id}/inspection/details        — get inspection details</li>
- *   <li>PUT    /v1/bookings/{id}/checklist/{checklistId}   — assign checklist</li>
- *   <li>POST   /v1/bookings/{id}/feedback                  — submit feedback</li>
- *   <li>POST   /v1/bookings/{id}/tip                       — add tip</li>
- *   <li>GET    /v1/bookings/{id}/chat                      — get chat messages</li>
- *   <li>POST   /v1/bookings/{id}/chat                      — send chat message</li>
- *   <li>DELETE /v1/bookings/{id}/chat/{messageId}          — delete chat message</li>
- *   <li>POST   /v1/bookings/{id}/tasks                     — update task quantities</li>
- *   <li>POST   /v1/bookings/{id}/sqft                      — update total square footage</li>
+ *   <li>GET    /v1/bookings                                - list bookings</li>
+ *   <li>POST   /v1/bookings/create                         - create booking</li>
+ *   <li>GET    /v1/bookings/{id}                           - get booking</li>
+ *   <li>POST   /v1/bookings/{id}/cancel                    - cancel booking</li>
+ *   <li>POST   /v1/bookings/{id}/reschedule                - reschedule booking</li>
+ *   <li>POST   /v1/bookings/{id}/cleaner                   - assign cleaner</li>
+ *   <li>DELETE /v1/bookings/{id}/cleaner                   - remove cleaner</li>
+ *   <li>POST   /v1/bookings/{id}/hours                     - adjust hours</li>
+ *   <li>POST   /v1/bookings/{id}/expenses                  - pay expenses</li>
+ *   <li>GET    /v1/bookings/{id}/inspection                - get inspection</li>
+ *   <li>GET    /v1/bookings/{id}/inspection/details        - get inspection details</li>
+ *   <li>PUT    /v1/bookings/{id}/checklist/{checklistId}   - assign checklist</li>
+ *   <li>POST   /v1/bookings/{id}/feedback                  - submit feedback</li>
+ *   <li>POST   /v1/bookings/{id}/tip                       - add tip</li>
+ *   <li>GET    /v1/bookings/{id}/chat                      - get chat messages</li>
+ *   <li>POST   /v1/bookings/{id}/chat                      - send chat message</li>
+ *   <li>DELETE /v1/bookings/{id}/chat/{messageId}          - delete chat message</li>
+ *   <li>POST   /v1/bookings/{id}/tasks                     - update task quantities</li>
+ *   <li>POST   /v1/bookings/{id}/sqft                      - update total square footage</li>
  * </ol>
  */
 public class BookingsXmlApi {
