@@ -8,27 +8,29 @@ import com.google.gson.reflect.TypeToken;
 import java.util.*;
 
 /**
- * Bookings API — full lifecycle management for cleaning bookings.
+ * Bookings API — full lifecycle management for cleaning appointments.
  *
- * <h3>Endpoints (17)</h3>
+ * <h3>Endpoints (19)</h3>
  * <ol>
- *   <li>GET    /bookings                          — list bookings</li>
- *   <li>GET    /bookings/{id}                     — get booking</li>
- *   <li>POST   /bookings                          — create booking</li>
- *   <li>PUT    /bookings/{id}                     — update booking</li>
- *   <li>DELETE /bookings/{id}                     — cancel booking</li>
- *   <li>POST   /bookings/{id}/reschedule          — reschedule booking</li>
- *   <li>POST   /bookings/{id}/confirm             — confirm booking</li>
- *   <li>POST   /bookings/{id}/complete            — mark complete</li>
- *   <li>POST   /bookings/{id}/dispute             — dispute booking</li>
- *   <li>POST   /bookings/{id}/tip                 — add tip</li>
- *   <li>GET    /bookings/{id}/receipt             — get receipt</li>
- *   <li>POST   /bookings/{id}/review              — leave review</li>
- *   <li>GET    /bookings/upcoming                 — upcoming bookings</li>
- *   <li>GET    /bookings/past                     — past bookings</li>
- *   <li>POST   /bookings/{id}/apply-coupon        — apply coupon</li>
- *   <li>POST   /bookings/{id}/notify-cleaner      — notify cleaner</li>
- *   <li>GET    /bookings/{id}/checklist           — booking checklist</li>
+ *   <li>GET    /v1/bookings                                — list bookings</li>
+ *   <li>POST   /v1/bookings/create                         — create booking</li>
+ *   <li>GET    /v1/bookings/{id}                           — get booking</li>
+ *   <li>POST   /v1/bookings/{id}/cancel                    — cancel booking</li>
+ *   <li>POST   /v1/bookings/{id}/reschedule                — reschedule booking</li>
+ *   <li>POST   /v1/bookings/{id}/cleaner                   — assign cleaner</li>
+ *   <li>DELETE /v1/bookings/{id}/cleaner                   — remove cleaner</li>
+ *   <li>POST   /v1/bookings/{id}/hours                     — adjust hours</li>
+ *   <li>POST   /v1/bookings/{id}/expenses                  — pay expenses</li>
+ *   <li>GET    /v1/bookings/{id}/inspection                — get inspection</li>
+ *   <li>GET    /v1/bookings/{id}/inspection/details        — get inspection details</li>
+ *   <li>PUT    /v1/bookings/{id}/checklist/{checklistId}   — assign checklist</li>
+ *   <li>POST   /v1/bookings/{id}/feedback                  — submit feedback</li>
+ *   <li>POST   /v1/bookings/{id}/tip                       — add tip</li>
+ *   <li>GET    /v1/bookings/{id}/chat                      — get chat messages</li>
+ *   <li>POST   /v1/bookings/{id}/chat                      — send chat message</li>
+ *   <li>DELETE /v1/bookings/{id}/chat/{messageId}          — delete chat message</li>
+ *   <li>POST   /v1/bookings/{id}/tasks                     — update task quantities</li>
+ *   <li>POST   /v1/bookings/{id}/sqft                      — update total square footage</li>
  * </ol>
  */
 public class BookingsXmlApi {
@@ -37,25 +39,35 @@ public class BookingsXmlApi {
 
     public BookingsXmlApi(XmlHttpClient http) { this.http = http; }
 
-    /** List all bookings for the authenticated user. */
-    public XmlApiResponse<List<Booking>> listBookings() {
-        String json = http.get("/bookings");
+    /** List all bookings with optional page and status filters. */
+    public XmlApiResponse<List<Booking>> listBookings(Integer pageNo, String status) {
+        StringBuilder path = new StringBuilder("/v1/bookings");
+        List<String> params = new ArrayList<>();
+        if (pageNo != null) params.add("pageNo=" + pageNo);
+        if (status != null && !status.isBlank()) params.add("status=" + status);
+        if (!params.isEmpty()) path.append("?").append(String.join("&", params));
+        String json = http.get(path.toString());
         return http.fromJson(json, new TypeToken<XmlApiResponse<List<Booking>>>(){}.getType());
     }
 
-    /** Retrieve a single booking by ID. */
-    public XmlApiResponse<Booking> getBooking(int bookingId) {
-        String json = http.get("/bookings/" + bookingId);
-        return http.fromJson(json, new TypeToken<XmlApiResponse<Booking>>(){}.getType());
+    /** List all bookings (no filters). */
+    public XmlApiResponse<List<Booking>> listBookings() {
+        return listBookings(null, null);
     }
 
-    /** Create a new booking. */
-    public XmlApiResponse<Booking> createBooking(Map<String, Object> body) {
-        String json = http.post("/bookings", body);
-        return http.fromJson(json, new TypeToken<XmlApiResponse<Booking>>(){}.getType());
-    }
-
-    /** Convenience overload — build the request map from typed parameters. */
+    /**
+     * Schedule a new cleaning appointment.
+     *
+     * @param date             YYYY-MM-DD
+     * @param time             HH:mm (24-hour)
+     * @param propertyId       Property ID
+     * @param planId           Plan ID (from getPlans)
+     * @param hours            Duration in hours
+     * @param roomCount        Number of rooms
+     * @param bathroomCount    Number of bathrooms
+     * @param extraSupplies    Include cleaning supplies?
+     * @param paymentMethodId  Payment method ID
+     */
     public XmlApiResponse<Booking> createBooking(String date, String time, int propertyId,
                                                   int planId, double hours,
                                                   int roomCount, int bathroomCount,
@@ -70,107 +82,151 @@ public class BookingsXmlApi {
         body.put("bathroomCount",   bathroomCount);
         body.put("extraSupplies",   extraSupplies);
         body.put("paymentMethodId", paymentMethodId);
-        return createBooking(body);
-    }
-
-    /** Update a booking's mutable fields. */
-    public XmlApiResponse<Booking> updateBooking(int bookingId, Map<String, Object> body) {
-        String json = http.put("/bookings/" + bookingId, body);
+        String json = http.post("/v1/bookings/create", body);
         return http.fromJson(json, new TypeToken<XmlApiResponse<Booking>>(){}.getType());
     }
 
-    /** Cancel a booking. */
-    public XmlApiResponse<Booking> cancelBooking(int bookingId) {
-        String json = http.delete("/bookings/" + bookingId);
+    /** Retrieve a single booking by ID. */
+    public XmlApiResponse<Booking> getBooking(int bookingId) {
+        String json = http.get("/v1/bookings/" + bookingId);
         return http.fromJson(json, new TypeToken<XmlApiResponse<Booking>>(){}.getType());
     }
 
-    /** Cancel a booking with a reason. */
+    /** Cancel a booking with an optional reason. */
     public XmlApiResponse<Booking> cancelBooking(int bookingId, String reason) {
-        Map<String, Object> body = reason != null ? Map.of("reason", reason) : Map.of();
-        String json = http.post("/bookings/" + bookingId + "/cancel", body);
+        Map<String, Object> body = (reason != null && !reason.isBlank())
+                ? Map.of("reason", reason) : Map.of();
+        String json = http.post("/v1/bookings/" + bookingId + "/cancel", body);
         return http.fromJson(json, new TypeToken<XmlApiResponse<Booking>>(){}.getType());
     }
 
-    /** Reschedule a booking to a new date/time. */
+    /** Cancel a booking (no reason). */
+    public XmlApiResponse<Booking> cancelBooking(int bookingId) {
+        return cancelBooking(bookingId, null);
+    }
+
+    /** Reschedule a booking to a new date and time. */
     public XmlApiResponse<Booking> rescheduleBooking(int bookingId, String newDate, String newTime) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("date", newDate);
         body.put("time", newTime);
-        String json = http.post("/bookings/" + bookingId + "/reschedule", body);
+        String json = http.post("/v1/bookings/" + bookingId + "/reschedule", body);
         return http.fromJson(json, new TypeToken<XmlApiResponse<Booking>>(){}.getType());
     }
 
-    /** Confirm a booking. */
-    public XmlApiResponse<Booking> confirmBooking(int bookingId) {
-        String json = http.post("/bookings/" + bookingId + "/confirm", Map.of());
-        return http.fromJson(json, new TypeToken<XmlApiResponse<Booking>>(){}.getType());
-    }
-
-    /** Mark a booking as complete. */
-    public XmlApiResponse<Booking> completeBooking(int bookingId) {
-        String json = http.post("/bookings/" + bookingId + "/complete", Map.of());
-        return http.fromJson(json, new TypeToken<XmlApiResponse<Booking>>(){}.getType());
-    }
-
-    /** Dispute a booking. */
-    public XmlApiResponse<Booking> disputeBooking(int bookingId, String reason) {
-        String json = http.post("/bookings/" + bookingId + "/dispute", Map.of("reason", reason));
-        return http.fromJson(json, new TypeToken<XmlApiResponse<Booking>>(){}.getType());
-    }
-
-    /** Add a tip to a completed booking. */
-    public XmlApiResponse<Booking> addTip(int bookingId, double tipAmount) {
-        String json = http.post("/bookings/" + bookingId + "/tip", Map.of("amount", tipAmount));
-        return http.fromJson(json, new TypeToken<XmlApiResponse<Booking>>(){}.getType());
-    }
-
-    /** Retrieve the receipt for a booking. */
+    /** Manually assign a specific cleaner to a booking. */
     @SuppressWarnings("rawtypes")
-    public XmlApiResponse getReceipt(int bookingId) {
-        String json = http.get("/bookings/" + bookingId + "/receipt");
+    public XmlApiResponse assignCleaner(int bookingId, int cleanerId) {
+        String json = http.post("/v1/bookings/" + bookingId + "/cleaner",
+                Map.of("cleanerId", cleanerId));
         return http.fromJson(json, XmlApiResponse.class);
     }
 
-    /** Leave a review for a completed booking. */
-    public XmlApiResponse<Booking> leaveReview(int bookingId, int rating, String comment) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("rating",  rating);
-        body.put("comment", comment);
-        String json = http.post("/bookings/" + bookingId + "/review", body);
-        return http.fromJson(json, new TypeToken<XmlApiResponse<Booking>>(){}.getType());
-    }
-
-    /** List upcoming bookings. */
-    public XmlApiResponse<List<Booking>> listUpcomingBookings() {
-        String json = http.get("/bookings/upcoming");
-        return http.fromJson(json, new TypeToken<XmlApiResponse<List<Booking>>>(){}.getType());
-    }
-
-    /** List past bookings. */
-    public XmlApiResponse<List<Booking>> listPastBookings() {
-        String json = http.get("/bookings/past");
-        return http.fromJson(json, new TypeToken<XmlApiResponse<List<Booking>>>(){}.getType());
-    }
-
-    /** Apply a coupon code to a booking. */
-    public XmlApiResponse<Booking> applyCoupon(int bookingId, String couponCode) {
-        String json = http.post("/bookings/" + bookingId + "/apply-coupon",
-                Map.of("couponCode", couponCode));
-        return http.fromJson(json, new TypeToken<XmlApiResponse<Booking>>(){}.getType());
-    }
-
-    /** Send a notification to the assigned cleaner. */
-    public XmlApiResponse<Booking> notifyCleaner(int bookingId, String message) {
-        String json = http.post("/bookings/" + bookingId + "/notify-cleaner",
-                Map.of("message", message));
-        return http.fromJson(json, new TypeToken<XmlApiResponse<Booking>>(){}.getType());
-    }
-
-    /** Retrieve the checklist for a specific booking. */
+    /** Remove the currently assigned cleaner from a booking. */
     @SuppressWarnings("rawtypes")
-    public XmlApiResponse getBookingChecklist(int bookingId) {
-        String json = http.get("/bookings/" + bookingId + "/checklist");
+    public XmlApiResponse removeAssignedCleaner(int bookingId) {
+        String json = http.delete("/v1/bookings/" + bookingId + "/cleaner");
+        return http.fromJson(json, XmlApiResponse.class);
+    }
+
+    /** Change the number of hours for a booking. */
+    @SuppressWarnings("rawtypes")
+    public XmlApiResponse adjustHours(int bookingId, double hours) {
+        String json = http.post("/v1/bookings/" + bookingId + "/hours",
+                Map.of("hours", hours));
+        return http.fromJson(json, XmlApiResponse.class);
+    }
+
+    /** Pay outstanding expenses for a completed booking (within 72h of completion). */
+    @SuppressWarnings("rawtypes")
+    public XmlApiResponse payExpenses(int bookingId, int paymentMethodId) {
+        String json = http.post("/v1/bookings/" + bookingId + "/expenses",
+                Map.of("paymentMethodId", paymentMethodId));
+        return http.fromJson(json, XmlApiResponse.class);
+    }
+
+    /** Get the inspection report for a completed booking. */
+    @SuppressWarnings("rawtypes")
+    public XmlApiResponse getBookingInspection(int bookingId) {
+        String json = http.get("/v1/bookings/" + bookingId + "/inspection");
+        return http.fromJson(json, XmlApiResponse.class);
+    }
+
+    /** Get detailed inspection information for a completed booking. */
+    @SuppressWarnings("rawtypes")
+    public XmlApiResponse getBookingInspectionDetails(int bookingId) {
+        String json = http.get("/v1/bookings/" + bookingId + "/inspection/details");
+        return http.fromJson(json, XmlApiResponse.class);
+    }
+
+    /** Attach a checklist to a booking (overrides the property default). */
+    @SuppressWarnings("rawtypes")
+    public XmlApiResponse assignChecklistToBooking(int bookingId, int checklistId) {
+        String json = http.put("/v1/bookings/" + bookingId + "/checklist/" + checklistId, null);
+        return http.fromJson(json, XmlApiResponse.class);
+    }
+
+    /** Submit a star rating and optional comment after a booking completes. */
+    @SuppressWarnings("rawtypes")
+    public XmlApiResponse submitFeedback(int bookingId, int rating, String comment) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("rating", rating);
+        if (comment != null) body.put("comment", comment);
+        String json = http.post("/v1/bookings/" + bookingId + "/feedback", body);
+        return http.fromJson(json, XmlApiResponse.class);
+    }
+
+    /** Add a tip for the cleaner (within 72h of booking completion). */
+    @SuppressWarnings("rawtypes")
+    public XmlApiResponse addTip(int bookingId, double amount, int paymentMethodId) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("amount",          amount);
+        body.put("paymentMethodId", paymentMethodId);
+        String json = http.post("/v1/bookings/" + bookingId + "/tip", body);
+        return http.fromJson(json, XmlApiResponse.class);
+    }
+
+    /** Retrieve all chat messages for a booking thread. */
+    @SuppressWarnings("rawtypes")
+    public XmlApiResponse getChat(int bookingId) {
+        String json = http.get("/v1/bookings/" + bookingId + "/chat");
+        return http.fromJson(json, XmlApiResponse.class);
+    }
+
+    /** Post a chat message in a booking thread. */
+    @SuppressWarnings("rawtypes")
+    public XmlApiResponse sendMessage(int bookingId, String message) {
+        String json = http.post("/v1/bookings/" + bookingId + "/chat",
+                Map.of("message", message));
+        return http.fromJson(json, XmlApiResponse.class);
+    }
+
+    /** Delete a specific chat message. */
+    @SuppressWarnings("rawtypes")
+    public XmlApiResponse deleteMessage(int bookingId, String messageId) {
+        String json = http.delete("/v1/bookings/" + bookingId + "/chat/" + messageId);
+        return http.fromJson(json, XmlApiResponse.class);
+    }
+
+    /**
+     * Update task quantities for a booking.
+     *
+     * @param bookingId  The booking ID.
+     * @param tasks      List of maps, each with keys: id, quantity.
+     */
+    @SuppressWarnings("rawtypes")
+    public XmlApiResponse updateTask(int bookingId, List<Map<String, Object>> tasks) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("tasks", tasks);
+        String json = http.post("/v1/bookings/" + bookingId + "/tasks", body);
+        return http.fromJson(json, XmlApiResponse.class);
+    }
+
+    /** Update the total square footage for a booking. */
+    @SuppressWarnings("rawtypes")
+    public XmlApiResponse updateSqft(int bookingId, double totalSqFt) {
+        String json = http.post("/v1/bookings/" + bookingId + "/sqft",
+                Map.of("totalSqFt", totalSqFt));
         return http.fromJson(json, XmlApiResponse.class);
     }
 }
