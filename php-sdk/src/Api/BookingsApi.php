@@ -221,6 +221,25 @@ final class BookingsApi
         return $this->wrapRaw($raw);
     }
 
+    /**
+     * Update task quantities for a booking.
+     *
+     * @param int   $bookingId Booking ID.
+     * @param array $tasks     List of ['id' => int, 'quantity' => int] entries.
+     */
+    public function updateTask(int $bookingId, array $tasks): ApiResponse
+    {
+        $raw = $this->http->post("/v1/bookings/{$bookingId}/tasks", ['tasks' => $tasks]);
+        return $this->wrapRaw($raw);
+    }
+
+    /** Update the total square footage for a booking. */
+    public function updateSqft(int $bookingId, float $totalSqFt): ApiResponse
+    {
+        $raw = $this->http->post("/v1/bookings/{$bookingId}/sqft", ['totalSqFt' => $totalSqFt]);
+        return $this->wrapRaw($raw);
+    }
+
     // -------------------------------------------------------------------------
     // Private helpers
     // -------------------------------------------------------------------------
