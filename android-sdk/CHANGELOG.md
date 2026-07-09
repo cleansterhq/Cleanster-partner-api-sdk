@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- `OtherApi` — `listCleaners` (`GET /v1/cleaners`) and `getCleaner` (`GET /v1/cleaners/{id}`) to list all cleaners and retrieve a single cleaner by ID.
+- `OtherApi` - `listCleaners` (`GET /v1/cleaners`) and `getCleaner` (`GET /v1/cleaners/{id}`) to list all cleaners and retrieve a single cleaner by ID.
 
 ## [1.0.0] - 2025-04-22
 
@@ -16,13 +16,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial release of the Cleanster Android SDK.
 - `CleansterClient` with `sandbox()` and `production()` companion-object factory methods.
 - `CleansterConfig` with custom base URL, API key, and timeout support.
-- `CleansterApi` — Retrofit 2.9 interface annotating all 60 endpoints across 8 resource types.
-- `AuthInterceptor` — OkHttp interceptor attaching `access-key` and `token` headers to every request.
+- `CleansterApi` - Retrofit 2.9 interface annotating all 60 endpoints across 8 resource types.
+- `AuthInterceptor` - OkHttp interceptor attaching `access-key` and `token` headers to every request.
 - Full Kotlin data-class models: `Booking`, `User`, `Property`, `Checklist`, `ChecklistItem`, `PaymentMethod`.
-- `ApiResponse<T>` generic wrapper — statically typed `data` field on every response.
+- `ApiResponse<T>` generic wrapper - statically typed `data` field on every response.
 - 8 API service classes: `BookingsApi`, `UsersApi`, `PropertiesApi`, `ChecklistsApi`,
   `OtherApi`, `BlacklistApi`, `PaymentMethodsApi`, `WebhooksApi`.
-- All API methods are `suspend` functions — fully compatible with Kotlin Coroutines.
+- All API methods are `suspend` functions - fully compatible with Kotlin Coroutines.
 - `CleansterError` sealed class: `Unauthorized` (401), `ApiError(statusCode, body)` (4xx/5xx).
-- 164 unit tests using MockWebServer (OkHttp) — all passing; no real network access.
+- 164 unit tests using MockWebServer (OkHttp) - all passing; no real network access.
 - Requires Android API 26+ (Android 8.0 Oreo), Kotlin 1.9+, JVM 11.
