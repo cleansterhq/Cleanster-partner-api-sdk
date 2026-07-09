@@ -177,7 +177,7 @@ func TestClient_AuthHeadersSent(t *testing.T) {
         var gotAccessKey, gotToken string
         handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
                 gotAccessKey = r.Header.Get("access-key")
-                gotToken = r.Header.Get("token")
+                gotToken = strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
                 writeJSON(w, okResponse([]interface{}{}))
         })
         client, cleanup := newTestClient(t, handler)

@@ -1,9 +1,14 @@
 /**
  * CleansterApiClient - thin axios wrapper over the Cleanster Partner REST API.
  *
- * Authentication uses two headers per the Cleanster Partner API specification:
- *   access-key : the partner API access key (constant per deployment)
- *   token      : the user-level authorization token (per session)
+ * Authentication uses two headers, confirmed against the live sandbox API:
+ *   access-key    : the partner API access key (constant per deployment)
+ *   Authorization : `Bearer <jwt>` - the user-level authorization token (per session)
+ *
+ * Note: earlier versions of this client (and the documented SDK contract) sent
+ * the user token as a bare `token` header. The real API rejects that with
+ * "Required header 'Authorization' is not present" - it must be sent as a
+ * standard `Authorization: Bearer <token>` header instead.
  *
  * Both credentials are injected at construction time and attached to every
  * request. The tool handlers do not need to know about auth - it is entirely
@@ -14,11 +19,8 @@ import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
 import { ENDPOINTS } from './endpoints.js';
 
 export interface ListBookingsParams {
-  property_id?: string;
-  status?: string;
-  date_from?: string;
-  date_to?: string;
-  limit?: number;
+  status: 'COMPLETED' | 'CANCELLED' | 'UPCOMING';
+  pageNo?: number;
 }
 
 export interface CreateBookingParams {
@@ -56,7 +58,7 @@ export class CleansterApiClient {
       baseURL: baseUrl ?? process.env['CLEANSTER_API_BASE_URL'] ?? '',
       headers: {
         'access-key': accessKey,
-        'token': token ?? '',
+        Authorization: `Bearer ${token ?? ''}`,
         'Content-Type': 'application/json',
         Accept: 'application/json',
       },

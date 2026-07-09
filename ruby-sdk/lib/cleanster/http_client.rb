@@ -44,7 +44,7 @@ module Cleanster
       request = Net::HTTP::Post.new(uri)
       request["Content-Type"]  = "multipart/form-data; boundary=#{boundary}"
       request["access-key"]    = @config.access_key
-      request["token"]         = @bearer_token.to_s
+      request["Authorization"] = "Bearer #{@bearer_token}"
       request.body             = body
 
       perform(uri, request)
@@ -82,7 +82,7 @@ module Cleanster
     def attach_headers(request)
       request["Content-Type"] = "application/json"
       request["access-key"]   = @config.access_key
-      request["token"]        = @bearer_token.to_s
+      request["Authorization"] = "Bearer #{@bearer_token}"
     end
 
     def perform(uri, request)

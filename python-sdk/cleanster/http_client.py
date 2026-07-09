@@ -34,7 +34,7 @@ class HttpClient:
         return {
             "Content-Type": "application/json",
             "access-key": self._config.access_key,
-            "token": self._bearer_token or "",
+            "Authorization": f"Bearer {self._bearer_token or ''}",
         }
 
     def _url(self, path: str) -> str:
@@ -108,7 +108,7 @@ class HttpClient:
                 self._url(path),
                 headers={
                     "access-key": self._config.access_key,
-                    "token": self._bearer_token or "",
+                    "Authorization": f"Bearer {self._bearer_token or ''}",
                 },
                 files={"file": (file_name, image_bytes, "image/*")},
                 timeout=self._config.timeout,

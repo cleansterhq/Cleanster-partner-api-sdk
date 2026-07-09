@@ -91,10 +91,8 @@ public class XmlHttpClient {
     private Request.Builder baseRequest(String path) {
         Request.Builder b = new Request.Builder()
                 .url(baseUrl + path)
-                .header("access-key", accessKey);
-        if (token != null && !token.isEmpty()) {
-            b.header("token", token);
-        }
+                .header("access-key", accessKey)
+                .header("Authorization", "Bearer " + (token != null ? token : ""));
         return b;
     }
 

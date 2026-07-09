@@ -71,7 +71,7 @@ internal sealed class CleansterHttpClient : ICleansterHttpClient
             Content = content,
         };
         req.Headers.Add("access-key", _config.AccessKey);
-        req.Headers.Add("token", GetToken());
+        req.Headers.Add("Authorization", $"Bearer {GetToken()}");
         req.Headers.Add("Accept", "application/json");
 
         HttpResponseMessage resp;
@@ -125,7 +125,7 @@ internal sealed class CleansterHttpClient : ICleansterHttpClient
         using var req = new HttpRequestMessage(method, path.TrimStart('/'));
 
         req.Headers.Add("access-key", _config.AccessKey);
-        req.Headers.Add("token", GetToken());
+        req.Headers.Add("Authorization", $"Bearer {GetToken()}");
         req.Headers.Add("Accept", "application/json");
 
         if (body is not null)

@@ -24,7 +24,7 @@ export class HttpClient {
     return {
       "Content-Type": "application/json",
       "access-key": this.config.accessKey,
-      "token": this._bearerToken ?? "",
+      "Authorization": `Bearer ${this._bearerToken ?? ""}`,
     };
   }
 
@@ -136,7 +136,7 @@ export class HttpClient {
       formData.append("file", blob, fileName);
       const headers: Record<string, string> = {
         "access-key": this.config.accessKey,
-        "token": this._bearerToken ?? "",
+        "Authorization": `Bearer ${this._bearerToken ?? ""}`,
       };
       const response = await fetch(this.config.baseUrl + path, {
         method: "POST",

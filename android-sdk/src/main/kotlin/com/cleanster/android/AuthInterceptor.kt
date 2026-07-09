@@ -10,9 +10,7 @@ internal class AuthInterceptor(
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request().newBuilder()
             .addHeader("access-key", accessKey)
-            .also { builder ->
-                tokenProvider()?.let { builder.addHeader("token", it) }
-            }
+            .addHeader("Authorization", "Bearer ${tokenProvider() ?: ""}")
             .build()
         return chain.proceed(request)
     }

@@ -87,7 +87,7 @@ public final class CleansterClient {
         var req = URLRequest(url: url)
         req.httpMethod = method
         req.setValue(accessKey, forHTTPHeaderField: "access-key")
-        req.setValue(token, forHTTPHeaderField: "token")
+        req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")
         req.setValue("application/json", forHTTPHeaderField: "Accept")
 
@@ -145,7 +145,7 @@ public final class CleansterClient {
         req.httpMethod = "POST"
         req.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
         req.setValue(accessKey, forHTTPHeaderField: "access-key")
-        req.setValue(token,     forHTTPHeaderField: "token")
+        req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         req.setValue("application/json", forHTTPHeaderField: "Accept")
         req.httpBody = body
 

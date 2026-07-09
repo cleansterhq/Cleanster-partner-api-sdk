@@ -123,7 +123,7 @@ class HttpClient
             CURLOPT_HTTPHEADER     => [
                 'Content-Type: multipart/form-data; boundary=' . $boundary,
                 'access-key: ' . $this->config->accessKey,
-                'token: ' . $this->bearerToken,
+                'Authorization: Bearer ' . $this->bearerToken,
                 'Accept: application/json',
             ],
         ]);
@@ -166,7 +166,7 @@ class HttpClient
 
         $headers = [
             'access-key: ' . $this->config->accessKey,
-            'token: ' . $this->bearerToken,
+            'Authorization: Bearer ' . $this->bearerToken,
             'Accept: application/json',
         ];
 

@@ -69,7 +69,7 @@ public class HttpClient {
                 .url(url(path))
                 .addHeader("Content-Type", "application/json")
                 .addHeader("access-key", config.getAccessKey())
-                .addHeader("token", bearerToken != null ? bearerToken : "")
+                .addHeader("Authorization", "Bearer " + (bearerToken != null ? bearerToken : ""))
                 .get()
                 .build();
         return execute(request, type);
@@ -84,7 +84,7 @@ public class HttpClient {
                 .url(url(path))
                 .addHeader("Content-Type", "application/json")
                 .addHeader("access-key", config.getAccessKey())
-                .addHeader("token", bearerToken != null ? bearerToken : "")
+                .addHeader("Authorization", "Bearer " + (bearerToken != null ? bearerToken : ""))
                 .post(RequestBody.create(json, JSON))
                 .build();
         return execute(request, type);
@@ -99,7 +99,7 @@ public class HttpClient {
                 .url(url(path))
                 .addHeader("Content-Type", "application/json")
                 .addHeader("access-key", config.getAccessKey())
-                .addHeader("token", bearerToken != null ? bearerToken : "")
+                .addHeader("Authorization", "Bearer " + (bearerToken != null ? bearerToken : ""))
                 .put(RequestBody.create(json, JSON))
                 .build();
         return execute(request, type);
@@ -113,7 +113,7 @@ public class HttpClient {
                 .url(url(path))
                 .addHeader("Content-Type", "application/json")
                 .addHeader("access-key", config.getAccessKey())
-                .addHeader("token", bearerToken != null ? bearerToken : "")
+                .addHeader("Authorization", "Bearer " + (bearerToken != null ? bearerToken : ""))
                 .delete()
                 .build();
         return execute(request, type);
@@ -136,7 +136,7 @@ public class HttpClient {
         Request request = new Request.Builder()
                 .url(url(path))
                 .addHeader("access-key", config.getAccessKey())
-                .addHeader("token", bearerToken != null ? bearerToken : "")
+                .addHeader("Authorization", "Bearer " + (bearerToken != null ? bearerToken : ""))
                 .post(requestBody)
                 .build();
         return execute(request, type);
@@ -151,7 +151,7 @@ public class HttpClient {
                 .url(url(path))
                 .addHeader("Content-Type", "application/json")
                 .addHeader("access-key", config.getAccessKey())
-                .addHeader("token", bearerToken != null ? bearerToken : "")
+                .addHeader("Authorization", "Bearer " + (bearerToken != null ? bearerToken : ""))
                 .delete(RequestBody.create(json, JSON))
                 .build();
         return execute(request, type);

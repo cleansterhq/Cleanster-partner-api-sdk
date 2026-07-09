@@ -129,14 +129,15 @@ Every request to the API requires **two** HTTP headers:
 | Header | Type | Description |
 |---|---|---|
 | `access-key` | Static string | Your partner key - issued by Cleanster, never changes |
-| `token` | JWT string | A per-user bearer token - fetched per user via the Users API |
+| `Authorization` | `Bearer <jwt>` | A per-user bearer token - fetched per user via the Users API |
+
+> **Note:** the user-level credential is sent as a standard `Authorization: Bearer <jwt>` header, **not** a bare `token` header. All 12 SDKs and the MCP server send it this way.
 
 **Flow:**
 1. Cleanster issues you a single `access-key` for your platform.
-2. When a user signs up in your platform, call `POST /v1/user/account` to create their Cleanster account.
-3. Call `GET /v1/user/access-token/{userId}` to get a long-lived JWT for that user.
-4. Store the JWT securely in your backend. Pass it as the `token` header on all subsequent calls made on behalf of that user.
-5. The JWT can be validated at any time with `POST /v1/user/verify-jwt`.
+2. When a user signs up in your platform, call `POST /v1/user/account` to create their Cleanster account. This returns `{ userId, accessToken }`, where `accessToken` is already prefixed with `"Bearer "`.
+3. Store the JWT securely in your backend. Pass it as the `Authorization: Bearer <jwt>` header on all subsequent calls made on behalf of that user.
+4. The JWT can be validated at any time with `POST /v1/user/verify-jwt`.
 
 Contact [partner@cleanster.com](mailto:partner@cleanster.com) to obtain your `access-key`.
 
@@ -924,6 +925,8 @@ Manage end-user accounts and issue authentication tokens.
 
 Create a new user account on behalf of one of your customers.
 
+> **Confirmed against the live sandbox API:** this call only needs the `access-key` header (no `Authorization` header is required, since the user doesn't have a token yet). The request also requires an undocumented `customerId` field, and the response shape is `{ userId, accessToken }`, not the flat user profile previously documented here.
+
 **Request body:**
 
 | Field | Type | Required | Description |
@@ -932,16 +935,14 @@ Create a new user account on behalf of one of your customers.
 | `firstName` | string | yes | First name |
 | `lastName` | string | yes | Last name |
 | `phone` | string | no | Phone number (E.164 format recommended) |
+| `customerId` | string | yes | Your own internal customer/user ID for this person - required by the sandbox even though it isn't in the original spec |
 
 **Response `data`:**
 
 | Field | Type | Description |
 |---|---|---|
-| `id` | integer | Cleanster user ID - save this |
-| `email` | string | Email address |
-| `firstName` | string | First name |
-| `lastName` | string | Last name |
-| `phone` | string | Phone number |
+| `userId` | integer | Cleanster user ID - save this |
+| `accessToken` | string | Per-user JWT, **already prefixed with `"Bearer "`**. Strip the prefix before storing if your SDK's `Authorization` header logic adds it again, or store the full string and pass it through as-is. |
 
 **Examples:**
 
@@ -1401,19 +1402,32 @@ Manage the full lifecycle of cleaning appointments.
 
 #### `GET /v1/bookings` - List Bookings
 
+> **Confirmed against the live sandbox API:** `status` is **required**, not optional - there is no "all statuses" call. The real status enum is `COMPLETED`, `CANCELLED`, `UPCOMING` (not `OPEN`/`CLEANER_ASSIGNED`/`REMOVED`). The response is a Spring-style page object, not a flat array - see below.
+
 **Query parameters:**
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `pageNo` | integer | no | Page number, 1-based. Defaults to 1. |
-| `status` | string | no | Filter: `OPEN`, `CLEANER_ASSIGNED`, `COMPLETED`, `CANCELLED`, `REMOVED` |
+| `status` | string | **yes** | Filter: `COMPLETED`, `CANCELLED`, `UPCOMING` |
 
-**Response `data`:** Array of booking objects.
+**Response `data`:** a page object, not a flat array.
+
+| Field | Type | Description |
+|---|---|---|
+| `number` | integer | Current page number |
+| `size` | integer | Page size |
+| `numberOfElements` | integer | Number of items on this page |
+| `totalPages` | integer | Total number of pages |
+| `totalElements` | integer | Total number of bookings matching the filter |
+| `content` | array | The booking objects for this page (fields below) |
+
+**Booking object (`content[]`):**
 
 | Field | Type | Description |
 |---|---|---|
 | `id` | integer | Booking ID |
-| `status` | string | Current status |
+| `status` | string | `COMPLETED`, `CANCELLED`, or `UPCOMING` |
 | `date` | string | Service date (`YYYY-MM-DD`) |
 | `time` | string | Start time (`HH:mm`) |
 | `hours` | number | Duration in hours |
@@ -2137,6 +2151,8 @@ await client.PaymentMethods.DeletePaymentMethodAsync(55);
 
 Subscribe to real-time events for booking lifecycle changes. When a subscribed event fires, Cleanster sends an HTTP POST to your endpoint with a JSON payload.
 
+> **Sandbox note:** as of this audit, `GET /v1/webhooks` returns `404 No static resource` in the live sandbox even with fully correct auth. This may mean the endpoint isn't deployed to sandbox, or requires a precondition (e.g. at least one webhook already created) that we haven't found. The SDK methods are implemented per the original spec and will work once the endpoint is available - treat this as a known sandbox limitation, not an SDK bug. Confirm with `partner@cleanster.com` before relying on it in production.
+
 ---
 
 #### `GET /v1/webhooks` - List Webhooks
@@ -2410,9 +2426,11 @@ console.log('Total:', estimate.data.total);
 
 Returns available add-on services for a given service type (e.g., inside oven, inside fridge, laundry).
 
+> **Confirmed against the live sandbox API:** each extra is priced in `hours`, not a flat `price`. Cost is derived the same way as the base booking (`hours × your plan rate`), there is no separate dollar amount on the extra itself.
+
 ```java
 ApiResponse<Object> extras = client.other().getCleaningExtras(1);
-// Each extra: { "id": 3, "name": "Oven Cleaning", "price": 25 }
+// Each extra: { "id": 3, "name": "Oven Cleaning", "hours": 0.5 }
 ```
 
 ---
@@ -2464,6 +2482,8 @@ for coupon in resp.data:
 #### `GET /v1/cleaners` - List Cleaners
 
 Returns all cleaners on the partner account. Supports optional `status` and `search` query parameters.
+
+> **Sandbox note:** as of this audit, `GET /v1/cleaners` returns `404 No static resource` in the live sandbox even with fully correct auth, the same behavior seen on `GET /v1/webhooks`. Treat this as a known sandbox limitation rather than an SDK bug - the SDK methods are implemented per the original spec. Confirm with `partner@cleanster.com` before relying on it in production.
 
 ```python
 resp = client.other.list_cleaners(status="active", search="Jane")

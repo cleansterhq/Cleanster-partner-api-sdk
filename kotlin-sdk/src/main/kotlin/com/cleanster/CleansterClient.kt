@@ -80,10 +80,10 @@ class CleansterClient private constructor(
             method  = method,
             url     = url,
             headers = mapOf(
-                "access-key"   to accessKey,
-                "token"        to token,
-                "Content-Type" to "application/json",
-                "Accept"       to "application/json",
+                "access-key"    to accessKey,
+                "Authorization" to "Bearer $token",
+                "Content-Type"  to "application/json",
+                "Accept"        to "application/json",
             ),
             body = requestBody,
         )
@@ -114,9 +114,9 @@ class CleansterClient private constructor(
     internal suspend fun requestMultipart(path: String, imageData: ByteArray, fileName: String): ApiResponse<Map<String, Any>> {
         val url = buildUrl(path, emptyMap())
         val headers = mapOf(
-            "access-key" to accessKey,
-            "token"      to token,
-            "Accept"     to "application/json",
+            "access-key"    to accessKey,
+            "Authorization" to "Bearer $token",
+            "Accept"        to "application/json",
         )
         val response = try {
             engine.executeMultipart(url, headers, imageData, fileName)

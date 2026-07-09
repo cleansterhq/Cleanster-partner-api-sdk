@@ -110,7 +110,7 @@ func (h *httpClient) withBody(ctx context.Context, method, path string, body int
 
 func (h *httpClient) do(req *http.Request) (rawAPIResponse, error) {
         req.Header.Set("access-key", h.accessKey)
-        req.Header.Set("token", h.getToken())
+        req.Header.Set("Authorization", "Bearer "+h.getToken())
 
         resp, err := h.client.Do(req)
         if err != nil {
