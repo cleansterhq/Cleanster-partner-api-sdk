@@ -9,14 +9,29 @@ internal interface OtherService {
     suspend fun getServices(): ApiResponse<List<Any>>
 
     @GET("v1/plans")
-    suspend fun getPlans(@Query("propertyId") propertyId: Int): ApiResponse<List<Any>>
+    suspend fun getPlans(
+        @Query("propertyId") propertyId: Int,
+        @Query("subcatId") subcatId: Int? = null,
+    ): ApiResponse<List<Any>>
 
     @GET("v1/recommended-hours")
     suspend fun getRecommendedHours(
         @Query("propertyId")    propertyId: Int,
         @Query("roomCount")     roomCount: Int,
         @Query("bathroomCount") bathroomCount: Int,
+        @Query("subcatId")      subcatId: Int? = null,
     ): ApiResponse<Any>
+
+    @GET("v1/tasks")
+    suspend fun getTasks(
+        @Query("propertyId") propertyId: Int,
+        @Query("serviceId")  serviceId: Int,
+        @Query("pageNo")     pageNo: Int? = null,
+        @Query("pageSize")   pageSize: Int? = null,
+    ): ApiResponse<List<Any>>
+
+    @GET("v1/services/{id}/subcategories")
+    suspend fun getSubcategories(@Path("id") serviceId: Int): ApiResponse<List<Any>>
 
     @POST("v1/cost-estimate")
     suspend fun getCostEstimate(@Body body: CostEstimateRequest): ApiResponse<CostEstimate>
@@ -45,13 +60,20 @@ class OtherApi(retrofit: Retrofit) {
 
     suspend fun getServices() = wrap { service.getServices() }
 
-    suspend fun getPlans(propertyId: Int) = wrap { service.getPlans(propertyId) }
+    suspend fun getPlans(propertyId: Int, subcatId: Int? = null) =
+        wrap { service.getPlans(propertyId, subcatId) }
 
     suspend fun getRecommendedHours(
         propertyId: Int,
         roomCount: Int,
         bathroomCount: Int,
-    ) = wrap { service.getRecommendedHours(propertyId, roomCount, bathroomCount) }
+        subcatId: Int? = null,
+    ) = wrap { service.getRecommendedHours(propertyId, roomCount, bathroomCount, subcatId) }
+
+    suspend fun getTasks(propertyId: Int, serviceId: Int, pageNo: Int? = null, pageSize: Int? = null) =
+        wrap { service.getTasks(propertyId, serviceId, pageNo, pageSize) }
+
+    suspend fun getSubcategories(serviceId: Int) = wrap { service.getSubcategories(serviceId) }
 
     suspend fun getCostEstimate(request: CostEstimateRequest) =
         wrap { service.getCostEstimate(request) }
