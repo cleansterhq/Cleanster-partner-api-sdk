@@ -1,4 +1,4 @@
-"""Checklists API — create and manage cleaning task lists."""
+"""Checklists API - create and manage cleaning task lists."""
 
 from typing import Any, Dict, List
 
