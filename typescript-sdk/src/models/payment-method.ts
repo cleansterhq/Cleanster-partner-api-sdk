@@ -1,5 +1,5 @@
 /**
- * PaymentMethod model — saved card or PayPal account.
+ * PaymentMethod model - saved card or PayPal account.
  */
 export interface PaymentMethod {
   id: number;
