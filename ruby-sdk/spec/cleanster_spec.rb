@@ -156,7 +156,7 @@ RSpec.describe Cleanster do
   end
 
   # ---------------------------------------------------------------------------
-  # Shared test setup — stub the HTTP client
+  # Shared test setup - stub the HTTP client
   # ---------------------------------------------------------------------------
   def build_api(api_class)
     http = instance_double(Cleanster::HttpClient)
