@@ -3,7 +3,7 @@ package com.cleanster.api
 import com.cleanster.CleansterClient
 import com.cleanster.model.*
 
-/** API methods for reference data — services, plans, pricing, extras, and cleaners. */
+/** API methods for reference data - services, plans, pricing, extras, and cleaners. */
 class OtherApi internal constructor(private val client: CleansterClient) {
 
     /** Get all cleaning service types available on the partner account. */
