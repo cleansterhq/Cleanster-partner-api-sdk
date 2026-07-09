@@ -88,6 +88,18 @@ internal interface BookingsService {
         @Path("bookingId") bookingId: Int,
         @Path("messageId") messageId: String,
     ): ApiResponse<Any>
+
+    @POST("v1/bookings/{bookingId}/tasks")
+    suspend fun updateTask(
+        @Path("bookingId") bookingId: Int,
+        @Body body: UpdateTaskRequest,
+    ): ApiResponse<Any>
+
+    @POST("v1/bookings/{bookingId}/sqft")
+    suspend fun updateSqft(
+        @Path("bookingId") bookingId: Int,
+        @Body body: UpdateSqftRequest,
+    ): ApiResponse<Any>
 }
 
 class BookingsApi(retrofit: Retrofit) {
@@ -143,4 +155,10 @@ class BookingsApi(retrofit: Retrofit) {
 
     suspend fun deleteMessage(bookingId: Int, messageId: String) =
         wrap { service.deleteMessage(bookingId, messageId) }
+
+    suspend fun updateTask(bookingId: Int, tasks: List<TaskQuantity>) =
+        wrap { service.updateTask(bookingId, UpdateTaskRequest(tasks)) }
+
+    suspend fun updateSqft(bookingId: Int, totalSqFt: Double) =
+        wrap { service.updateSqft(bookingId, UpdateSqftRequest(totalSqFt)) }
 }
