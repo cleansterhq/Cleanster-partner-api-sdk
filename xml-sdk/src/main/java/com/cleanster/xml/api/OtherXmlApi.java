@@ -7,21 +7,21 @@ import com.google.gson.reflect.TypeToken;
 import java.util.*;
 
 /**
- * Other / Utilities API — reference data used in booking flows.
+ * Other / Utilities API - reference data used in booking flows.
  *
  * <h3>Endpoints (11)</h3>
  * <ol>
- *   <li>GET  /v1/services               — list service types</li>
- *   <li>GET  /v1/plans                  — list plans for a property</li>
- *   <li>GET  /v1/recommended-hours      — recommended cleaning hours</li>
- *   <li>POST /v1/cost-estimate          — cost estimate</li>
- *   <li>GET  /v1/cleaning-extras/{id}   — cleaning extras for a service</li>
- *   <li>POST /v1/available-cleaners     — find available cleaners</li>
- *   <li>GET  /v1/coupons                — list valid coupons</li>
- *   <li>GET  /v1/cleaners               — list cleaners</li>
- *   <li>GET  /v1/cleaners/{id}          — get a cleaner</li>
- *   <li>GET  /v1/tasks                  — list tasks</li>
- *   <li>GET  /v1/services/{id}/subcategories — list subcategories for a service</li>
+ *   <li>GET  /v1/services               - list service types</li>
+ *   <li>GET  /v1/plans                  - list plans for a property</li>
+ *   <li>GET  /v1/recommended-hours      - recommended cleaning hours</li>
+ *   <li>POST /v1/cost-estimate          - cost estimate</li>
+ *   <li>GET  /v1/cleaning-extras/{id}   - cleaning extras for a service</li>
+ *   <li>POST /v1/available-cleaners     - find available cleaners</li>
+ *   <li>GET  /v1/coupons                - list valid coupons</li>
+ *   <li>GET  /v1/cleaners               - list cleaners</li>
+ *   <li>GET  /v1/cleaners/{id}          - get a cleaner</li>
+ *   <li>GET  /v1/tasks                  - list tasks</li>
+ *   <li>GET  /v1/services/{id}/subcategories - list subcategories for a service</li>
  * </ol>
  */
 public class OtherXmlApi {
