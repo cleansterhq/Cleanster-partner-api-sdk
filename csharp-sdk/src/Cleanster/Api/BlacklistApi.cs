@@ -18,7 +18,7 @@ public sealed class BlacklistApi
 
     /// <summary>Prevent a cleaner from being auto-assigned to bookings.</summary>
     /// <param name="cleanerId">Cleaner to blacklist.</param>
-    /// <param name="reason">Optional reason — omitted from request if <see langword="null"/>.</param>
+    /// <param name="reason">Optional reason - omitted from request if <see langword="null"/>.</param>
     public async Task<ApiResponse<JsonElement>> AddToBlacklistAsync(
         int cleanerId, string? reason = null, CancellationToken ct = default)
     {
