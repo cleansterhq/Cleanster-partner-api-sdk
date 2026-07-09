@@ -1,4 +1,4 @@
-"""User API — manage end-user accounts and authentication tokens."""
+"""User API - manage end-user accounts and authentication tokens."""
 
 from typing import Any, Dict, Optional
 
