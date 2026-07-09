@@ -4,9 +4,10 @@ import type { CleansterApiClient } from '../api/cleanster.js';
 export const name = 'list_services';
 
 export const description =
-  'List all cleaning service types available on the partner account (e.g. Residential, Airbnb, Office). ' +
-  'Service types are account-specific, not a fixed set - use this to discover valid service IDs before ' +
-  'looking up plans or subcategories. No authentication required.';
+  'List all cleaning service types available on the partner account (e.g. Home, Airbnb, Office, Chores, ' +
+  'Commercial, Handyman). Each item includes serviceId, name, publicName, description, and img. Service ' +
+  'types are account-specific, not a fixed set - use this to discover valid serviceId values before ' +
+  'looking up plans or subcategories.';
 
 export const inputSchema = z.object({});
 

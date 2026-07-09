@@ -30,7 +30,7 @@ A production-ready [Model Context Protocol (MCP)](https://modelcontextprotocol.i
 | `get_property` | Get full property details including cleaners and iCal |
 | `list_cleaners` | List cleaners filtered by status (active/inactive/pending) or name search |
 | `get_cleaner` | Get full profile details for a single cleaner |
-| `list_services` | List all cleaning service types available on the account (e.g. Residential, Airbnb, Office) - account-specific, not a fixed set |
+| `list_services` | List all cleaning service types available on the account (e.g. Home, Airbnb, Office, Chores, Commercial, Handyman) - each item has `serviceId`, `name`, `publicName`, `description`, `img`; account-specific, not a fixed set |
 
 ### Write operations
 

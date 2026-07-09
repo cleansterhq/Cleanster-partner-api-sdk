@@ -2258,12 +2258,14 @@ Fetch the lookup data required to build booking flows - service types, plans, pr
 
 #### `GET /v1/services` - Get Service Types
 
-Returns all cleaning service types available on your partner account (e.g., Residential, Airbnb, Office).
+Returns all cleaning service types available on your partner account (e.g., Home, Airbnb, Office, Chores, Commercial, Handyman). No authentication scoping beyond the bearer token is required.
 
 ```python
 services = client.other.get_services()
-# Each item: { "id": 1, "name": "Residential" }
+# Each item: { "serviceId": 1, "name": "Home", "publicName": "House", "description": "Homeowners and renters needing a clean home", "img": "https://..." }
 ```
+
+Use `serviceId` (not `id`) when passing a service type into `planId` lookups, `GET /v1/services/{id}/subcategories`, or cleaning-extras calls.
 
 ---
 

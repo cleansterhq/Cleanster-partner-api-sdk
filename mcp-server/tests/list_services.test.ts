@@ -5,9 +5,27 @@ import type { CleansterApiClient } from '../src/api/cleanster.js';
 const MOCK_SERVICES = {
   status: 200,
   data: [
-    { id: 1, name: 'Residential' },
-    { id: 2, name: 'Airbnb' },
-    { id: 3, name: 'Office' },
+    {
+      serviceId: 1,
+      name: 'Home',
+      publicName: 'House',
+      description: 'Homeowners and renters needing a clean home',
+      img: 'https://example.com/ic_house.png',
+    },
+    {
+      serviceId: 2,
+      name: 'Airbnb',
+      publicName: 'Short-Term Rentals',
+      description: 'Airbnb and vacation rental turnovers',
+      img: 'https://example.com/ic_short_term_rentals.png',
+    },
+    {
+      serviceId: 3,
+      name: 'Office',
+      publicName: 'Office/Common Area',
+      description: 'Offices and shared building spaces',
+      img: 'https://example.com/ic_commercial_office_spaces.png',
+    },
   ],
 };
 
@@ -31,7 +49,13 @@ describe('list_services tool', () => {
     const result = await handler(params, mockApi as CleansterApiClient);
     const parsed = JSON.parse(result.content[0].text);
     expect(parsed.data).toHaveLength(3);
-    expect(parsed.data[0]).toEqual({ id: 1, name: 'Residential' });
+    expect(parsed.data[0]).toEqual({
+      serviceId: 1,
+      name: 'Home',
+      publicName: 'House',
+      description: 'Homeowners and renters needing a clean home',
+      img: 'https://example.com/ic_house.png',
+    });
   });
 
   it('accepts an empty params object', () => {
