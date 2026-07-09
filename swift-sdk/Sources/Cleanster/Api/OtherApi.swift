@@ -1,6 +1,6 @@
 import Foundation
 
-/// API methods for reference data — services, plans, pricing, extras, and cleaners.
+/// API methods for reference data - services, plans, pricing, extras, and cleaners.
 public final class OtherApi {
     private let client: CleansterClient
     init(client: CleansterClient) { self.client = client }
