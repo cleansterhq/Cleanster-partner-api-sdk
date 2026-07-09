@@ -98,6 +98,19 @@ data class SendMessageRequest(
     val message: String,
 )
 
+data class TaskQuantity(
+    val id:       Int,
+    val quantity: Int,
+)
+
+data class UpdateTaskRequest(
+    val tasks: List<TaskQuantity>,
+)
+
+data class UpdateSqftRequest(
+    val totalSqFt: Double,
+)
+
 // ── Checklists ────────────────────────────────────────────────────────────────
 
 data class CreateChecklistRequest(
