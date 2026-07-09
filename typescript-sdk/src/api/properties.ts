@@ -1,5 +1,5 @@
 /**
- * PropertiesApi — CRUD for cleaning locations, plus cleaner assignment, iCal sync, and checklists.
+ * PropertiesApi - CRUD for cleaning locations, plus cleaner assignment, iCal sync, and checklists.
  */
 
 import { HttpClient } from "../http-client";
