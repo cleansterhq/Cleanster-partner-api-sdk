@@ -1,5 +1,5 @@
 /**
- * UsersApi — manage end-user accounts and authentication tokens.
+ * UsersApi - manage end-user accounts and authentication tokens.
  */
 
 import { HttpClient } from "../http-client";
