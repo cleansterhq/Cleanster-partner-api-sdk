@@ -8,14 +8,14 @@ import com.google.gson.reflect.TypeToken;
 import java.util.*;
 
 /**
- * Webhooks API — register and manage webhook endpoints.
+ * Webhooks API - register and manage webhook endpoints for real-time events.
  *
  * <h3>Endpoints (4)</h3>
  * <ol>
- *   <li>GET    /webhooks       — list webhooks</li>
- *   <li>GET    /webhooks/{id}  — get webhook</li>
- *   <li>POST   /webhooks       — create webhook</li>
- *   <li>DELETE /webhooks/{id}  — delete webhook</li>
+ *   <li>GET    /v1/webhooks       - list webhooks</li>
+ *   <li>POST   /v1/webhooks       - create webhook</li>
+ *   <li>PUT    /v1/webhooks/{id}  - update webhook</li>
+ *   <li>DELETE /v1/webhooks/{id}  - delete webhook</li>
  * </ol>
  */
 public class WebhooksXmlApi {
@@ -24,26 +24,49 @@ public class WebhooksXmlApi {
 
     public WebhooksXmlApi(XmlHttpClient http) { this.http = http; }
 
+    /** Return all registered webhooks for the partner account. */
     public XmlApiResponse<List<Webhook>> listWebhooks() {
-        String json = http.get("/webhooks");
+        String json = http.get("/v1/webhooks");
         return http.fromJson(json, new TypeToken<XmlApiResponse<List<Webhook>>>(){}.getType());
     }
 
-    public XmlApiResponse<Webhook> getWebhook(int webhookId) {
-        String json = http.get("/webhooks/" + webhookId);
-        return http.fromJson(json, new TypeToken<XmlApiResponse<Webhook>>(){}.getType());
-    }
-
-    public XmlApiResponse<Webhook> createWebhook(String url, List<String> events) {
+    /**
+     * Register a new webhook.
+     *
+     * @param url    The endpoint URL that will receive POST requests.
+     * @param event  The event type to subscribe to (e.g. {@code "booking.completed"}).
+     */
+    public XmlApiResponse<Webhook> createWebhook(String url, String event) {
         Map<String, Object> body = new LinkedHashMap<>();
-        body.put("url",    url);
-        body.put("events", events != null ? events : List.of());
-        String json = http.post("/webhooks", body);
+        body.put("url",   url);
+        body.put("event", event);
+        String json = http.post("/v1/webhooks", body);
         return http.fromJson(json, new TypeToken<XmlApiResponse<Webhook>>(){}.getType());
     }
 
-    public XmlApiResponse<Webhook> deleteWebhook(int webhookId) {
-        String json = http.delete("/webhooks/" + webhookId);
+    /**
+     * Update an existing webhook's URL or event subscription.
+     *
+     * @param webhookId  The webhook ID.
+     * @param url        New endpoint URL.
+     * @param event      New event type.
+     */
+    public XmlApiResponse<Webhook> updateWebhook(int webhookId, String url, String event) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("url",   url);
+        body.put("event", event);
+        String json = http.put("/v1/webhooks/" + webhookId, body);
         return http.fromJson(json, new TypeToken<XmlApiResponse<Webhook>>(){}.getType());
+    }
+
+    /**
+     * Delete a webhook registration.
+     *
+     * @param webhookId  The webhook ID.
+     */
+    @SuppressWarnings("rawtypes")
+    public XmlApiResponse deleteWebhook(int webhookId) {
+        String json = http.delete("/v1/webhooks/" + webhookId);
+        return http.fromJson(json, XmlApiResponse.class);
     }
 }
