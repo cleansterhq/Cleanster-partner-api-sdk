@@ -2,7 +2,7 @@
 
 <p align="center">
   <strong>Official .NET client library for the Cleanster Partner API</strong><br>
-  Automate residential and commercial cleaning operations — bookings, properties, cleaners, checklists, payments, and more.
+  Automate residential and commercial cleaning operations - bookings, properties, cleaners, checklists, payments, and more.
 </p>
 
 <p align="center">
@@ -49,23 +49,23 @@
 
 ## Overview
 
-The Cleanster C# SDK provides a fully-typed, async/await interface for the [Cleanster Partner API](https://documenter.getpostman.com/view/26172658/2sAYdoF7ep). It uses only `System.Net.Http` and `System.Text.Json` from the .NET BCL — zero external NuGet dependencies.
+The Cleanster C# SDK provides a fully-typed, async/await interface for the [Cleanster Partner API](https://documenter.getpostman.com/view/26172658/2sAYdoF7ep). It uses only `System.Net.Http` and `System.Text.Json` from the .NET BCL - zero external NuGet dependencies.
 
 Use it to:
-- **Create and manage bookings** — schedule, reschedule, cancel, adjust hours
-- **Manage properties** — CRUD, iCal calendar sync, preferred cleaner lists
-- **Handle users** — create accounts and manage authorization tokens
-- **Configure checklists** — create task lists and assign to bookings
-- **Process payments** — Stripe and PayPal support
-- **Receive webhooks** — subscribe to booking lifecycle events
-- **Blacklist cleaners** — prevent specific cleaners from being assigned
+- **Create and manage bookings** - schedule, reschedule, cancel, adjust hours
+- **Manage properties** - CRUD, iCal calendar sync, preferred cleaner lists
+- **Handle users** - create accounts and manage authorization tokens
+- **Configure checklists** - create task lists and assign to bookings
+- **Process payments** - Stripe and PayPal support
+- **Receive webhooks** - subscribe to booking lifecycle events
+- **Blacklist cleaners** - prevent specific cleaners from being assigned
 
 ---
 
 ## Requirements
 
 - **.NET 8.0** or later
-- A Cleanster Partner account — contact [partner@cleanster.com](mailto:partner@cleanster.com) for access
+- A Cleanster Partner account - contact [partner@cleanster.com](mailto:partner@cleanster.com) for access
 
 ---
 
@@ -106,13 +106,13 @@ Every request requires two credentials sent as HTTP headers:
 | Header | Description |
 |---|---|
 | `access-key` | Your static partner key from Cleanster |
-| `token` | A per-user JWT — long-lived, from `Users.FetchAccessTokenAsync(userId)` |
+| `token` | A per-user JWT - long-lived, from `Users.FetchAccessTokenAsync(userId)` |
 
 ### 4-Step Setup
 
-**Step 1 — Contact Cleanster** to receive your `access-key`.
+**Step 1 - Contact Cleanster** to receive your `access-key`.
 
-**Step 2 — Create a user account** (one-time per end-user):
+**Step 2 - Create a user account** (one-time per end-user):
 
 ```csharp
 using Cleanster;
@@ -128,14 +128,14 @@ var resp = await client.Users.CreateUserAsync(
 int userId = ((JsonElement)resp.Data!).GetProperty("userId").GetInt32();
 ```
 
-**Step 3 — Fetch the user's access token** (store it; it is long-lived):
+**Step 3 - Fetch the user's access token** (store it; it is long-lived):
 
 ```csharp
 var tokenResp = await client.Users.FetchAccessTokenAsync(userId);
 string userToken = ((JsonElement)tokenResp.Data!).GetProperty("token").GetString()!;
 ```
 
-**Step 4 — Build the client with both credentials**:
+**Step 4 - Build the client with both credentials**:
 
 ```csharp
 var client = new CleansterClient("your-access-key", userToken);
@@ -173,7 +173,7 @@ var booking = await client.Bookings.CreateBookingAsync(new CreateBookingRequest
     Hours           = 3.0,
     ExtraSupplies   = false,
     PaymentMethodId = 10,
-    CouponCode      = "20POFF"   // optional — 20% off in sandbox
+    CouponCode      = "20POFF"   // optional - 20% off in sandbox
 });
 Console.WriteLine($"Created booking: {booking.Data}");
 
@@ -225,9 +225,9 @@ Status values: `OPEN` · `CLEANER_ASSIGNED` · `IN_PROGRESS` · `COMPLETED` · `
 ## API Reference
 
 All methods return `Task<ApiResponse<T>>` with:
-- `.Status` — HTTP status code
-- `.Message` — Human-readable result
-- `.Data` — Typed response payload
+- `.Status` - HTTP status code
+- `.Message` - Human-readable result
+- `.Data` - Typed response payload
 
 ---
 
@@ -1022,9 +1022,9 @@ catch (CleansterApiException ex)
 
 | HTTP Status | Meaning |
 |---|---|
-| 400 | Bad request — malformed parameters |
-| 401 | Unauthorized — invalid or missing credentials |
-| 403 | Forbidden — insufficient permissions |
+| 400 | Bad request - malformed parameters |
+| 401 | Unauthorized - invalid or missing credentials |
+| 403 | Forbidden - insufficient permissions |
 | 404 | Not found |
 | 422 | Validation error |
 | 429 | Rate limit exceeded |
@@ -1087,9 +1087,9 @@ Use in the **sandbox** environment only:
 
 | Booking State | Chat Available |
 |---|---|
-| `OPEN` — within 24 h of start | Yes |
-| `COMPLETED` — within 24 h of completion | Yes |
-| `IN_PROGRESS` (hanging state) | Yes — **no time restriction** |
+| `OPEN` - within 24 h of start | Yes |
+| `COMPLETED` - within 24 h of completion | Yes |
+| `IN_PROGRESS` (hanging state) | Yes - **no time restriction** |
 | `CANCELLED` | No |
 | Older than 24 h | No |
 
