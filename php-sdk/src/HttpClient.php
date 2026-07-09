@@ -11,7 +11,7 @@ use Cleanster\Exceptions\CleansterException;
 /**
  * Low-level HTTP transport layer.
  *
- * Uses PHP's built-in cURL extension — no external HTTP dependencies.
+ * Uses PHP's built-in cURL extension - no external HTTP dependencies.
  * Attaches "access-key" and "token" auth headers on every request.
  * Maps HTTP error responses to typed SDK exceptions.
  */
