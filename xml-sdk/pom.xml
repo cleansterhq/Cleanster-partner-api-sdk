@@ -10,7 +10,7 @@
   <version>1.0.0</version>
   <packaging>jar</packaging>
   <name>Cleanster XML SDK</name>
-  <description>Official XML SDK for the Cleanster Partner API — JAXB-annotated models, full endpoint coverage, XmlConverter utility</description>
+  <description>Official XML SDK for the Cleanster Partner API - JAXB-annotated models, full endpoint coverage, XmlConverter utility</description>
   <url>https://github.com/cleansterhq/Cleanster-partner-api-sdk</url>
 
   <licenses>
