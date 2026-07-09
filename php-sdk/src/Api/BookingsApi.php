@@ -45,13 +45,13 @@ final class BookingsApi
      * Schedule a new cleaning appointment.
      *
      * @param array $request {
-     *   @type string $date            Required — YYYY-MM-DD
-     *   @type string $time            Required — HH:mm (24-hour)
+     *   @type string $date            Required - YYYY-MM-DD
+     *   @type string $time            Required - HH:mm (24-hour)
      *   @type int    $propertyId      Required
      *   @type int    $roomCount       Required
      *   @type int    $bathroomCount   Required
-     *   @type int    $planId          Required — from getPlans()
-     *   @type float  $hours           Required — from getRecommendedHours()
+     *   @type int    $planId          Required - from getPlans()
+     *   @type float  $hours           Required - from getRecommendedHours()
      *   @type bool   $extraSupplies   Required
      *   @type int    $paymentMethodId Required
      *   @type string $couponCode      Optional
