@@ -2,7 +2,7 @@
 
 <p align="center">
   <strong>Official Swift client library for the Cleanster Partner API</strong><br>
-  Automate residential and commercial cleaning operations — bookings, properties, cleaners, checklists, payments, and more.
+  Automate residential and commercial cleaning operations - bookings, properties, cleaners, checklists, payments, and more.
 </p>
 
 <p align="center">
@@ -48,16 +48,16 @@
 
 ## Overview
 
-The Cleanster Swift SDK provides a modern async/await interface for the [Cleanster Partner API](https://documenter.getpostman.com/view/26172658/2sAYdoF7ep). It uses Swift's native `URLSession` and `Codable` — zero third-party dependencies.
+The Cleanster Swift SDK provides a modern async/await interface for the [Cleanster Partner API](https://documenter.getpostman.com/view/26172658/2sAYdoF7ep). It uses Swift's native `URLSession` and `Codable` - zero third-party dependencies.
 
 Use it to:
-- **Create and manage bookings** — schedule, reschedule, cancel, adjust hours
-- **Manage properties** — CRUD, iCal calendar sync, preferred cleaner lists
-- **Handle users** — create accounts and manage authorization tokens
-- **Configure checklists** — create reusable task lists and assign to bookings
-- **Process payments** — Stripe and PayPal support
-- **Receive webhooks** — subscribe to booking lifecycle events
-- **Blacklist cleaners** — block specific cleaners from your properties
+- **Create and manage bookings** - schedule, reschedule, cancel, adjust hours
+- **Manage properties** - CRUD, iCal calendar sync, preferred cleaner lists
+- **Handle users** - create accounts and manage authorization tokens
+- **Configure checklists** - create reusable task lists and assign to bookings
+- **Process payments** - Stripe and PayPal support
+- **Receive webhooks** - subscribe to booking lifecycle events
+- **Blacklist cleaners** - block specific cleaners from your properties
 
 ---
 
@@ -106,14 +106,14 @@ Every request requires two credentials sent as HTTP headers:
 
 | Header | Description |
 |---|---|
-| `access-key` | Your static partner key — passed at client construction |
-| `token` | A per-user JWT — long-lived, obtained via `fetchAccessToken(_:)` |
+| `access-key` | Your static partner key - passed at client construction |
+| `token` | A per-user JWT - long-lived, obtained via `fetchAccessToken(_:)` |
 
 ### 4-Step Setup
 
-**Step 1 — Contact Cleanster** to receive your `access-key`.
+**Step 1 - Contact Cleanster** to receive your `access-key`.
 
-**Step 2 — Create a user account** (one-time per end-user):
+**Step 2 - Create a user account** (one-time per end-user):
 
 ```swift
 import Cleanster
@@ -129,14 +129,14 @@ let user = try await client.users.createUser(
 let userId = user.data?.id ?? 0
 ```
 
-**Step 3 — Fetch the user's JWT** (long-lived; store it):
+**Step 3 - Fetch the user's JWT** (long-lived; store it):
 
 ```swift
 let tokenResp = try await client.users.fetchAccessToken(userId)
 let jwt = tokenResp.data?.token ?? ""
 ```
 
-**Step 4 — Set the token on the client**:
+**Step 4 - Set the token on the client**:
 
 ```swift
 client.setToken(jwt)
@@ -1292,7 +1292,7 @@ do {
     let booking = try await client.bookings.getBookingDetails(99999)
     print("Status:", booking.data?.status as Any)
 } catch CleansterError.unauthorized {
-    print("Invalid access-key or token — refresh your credentials")
+    print("Invalid access-key or token - refresh your credentials")
 } catch CleansterError.apiError(let statusCode, let message) {
     print("API error \(statusCode): \(message)")
 } catch CleansterError.networkError(let underlying) {
@@ -1308,8 +1308,8 @@ do {
 |---|---|---|
 | `.unauthorized` | 401 | Missing or invalid `access-key` or `token` |
 | `.apiError(statusCode, message)` | 400, 403, 404, 500 | Business rule violation, not found, server error |
-| `.networkError(Error)` | — | No internet, DNS failure, timeout |
-| `.decodingError(Error)` | — | Unexpected response format |
+| `.networkError(Error)` | - | No internet, DNS failure, timeout |
+| `.decodingError(Error)` | - | Unexpected response format |
 
 ---
 
@@ -1323,7 +1323,7 @@ do {
 | `200OFF` | $200 off |
 | `100OFF` | $100 off |
 
-> `75POFF` is **expired** and will return an error — use it to test coupon validation.
+> `75POFF` is **expired** and will return an error - use it to test coupon validation.
 
 ---
 
@@ -1441,4 +1441,4 @@ swift-sdk/
 
 ## License
 
-MIT License — see [LICENSE](../LICENSE) for details.
+MIT License - see [LICENSE](../LICENSE) for details.
