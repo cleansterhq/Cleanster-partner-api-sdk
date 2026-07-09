@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- `OtherApi` — `listCleaners` (`GET /v1/cleaners`) and `getCleaner` (`GET /v1/cleaners/{id}`) to list all cleaners and retrieve a single cleaner by ID.
+- `OtherApi` - `listCleaners` (`GET /v1/cleaners`) and `getCleaner` (`GET /v1/cleaners/{id}`) to list all cleaners and retrieve a single cleaner by ID.
 
 ## [1.0.0] - 2025-04-22
 
@@ -18,11 +18,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `CleansterConfig` with custom base URL and timeout support.
 - `HttpEngine` using OkHttp 4.12 + Gson 2.10 for HTTP transport.
 - Full Kotlin data-class models: `Booking`, `User`, `Property`, `Checklist`, `ChecklistItem`, `PaymentMethod`.
-- `ApiResponse<T>` generic wrapper — statically typed `data` field on every response.
+- `ApiResponse<T>` generic wrapper - statically typed `data` field on every response.
 - 8 API service classes: `BookingsApi`, `UsersApi`, `PropertiesApi`, `ChecklistsApi`,
   `OtherApi`, `BlacklistApi`, `PaymentMethodsApi`, `WebhooksApi`.
-- All API methods are `suspend` functions — fully compatible with Kotlin Coroutines.
+- All API methods are `suspend` functions - fully compatible with Kotlin Coroutines.
 - `CleansterError` sealed class hierarchy: `Unauthorized` (401), `ApiError(statusCode, body)` (4xx/5xx).
-- Gradle (Kotlin DSL) build — compatible with JVM 11+ and Android.
-- 166 unit tests using in-memory `MockHttpEngine` — all passing; no network access required.
+- Gradle (Kotlin DSL) build - compatible with JVM 11+ and Android.
+- 166 unit tests using in-memory `MockHttpEngine` - all passing; no network access required.
 - Kotlin 1.9+ required; JVM 11+ target.
