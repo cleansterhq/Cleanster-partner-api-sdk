@@ -18,7 +18,7 @@ public enum CleansterError: Error, LocalizedError {
     /// The server response could not be decoded.
     case decodingError(Error)
 
-    /// An invalid URL was constructed — usually a programming error.
+    /// An invalid URL was constructed - usually a programming error.
     case invalidURL(String)
 
     /// The response was not an HTTP response.
@@ -27,7 +27,7 @@ public enum CleansterError: Error, LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .apiError(let code, let msg):   return "API error \(code): \(msg)"
-        case .unauthorized:                  return "Unauthorized — check your access-key and token."
+        case .unauthorized:                  return "Unauthorized - check your access-key and token."
         case .notFound:                      return "Resource not found."
         case .networkError(let e):           return "Network error: \(e.localizedDescription)"
         case .decodingError(let e):          return "Decoding error: \(e.localizedDescription)"
