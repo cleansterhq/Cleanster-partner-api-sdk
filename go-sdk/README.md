@@ -2,7 +2,7 @@
 
 <p align="center">
   <strong>Official Go client library for the Cleanster Partner API</strong><br>
-  Automate residential and commercial cleaning operations — bookings, properties, cleaners, checklists, payments, and more.
+  Automate residential and commercial cleaning operations - bookings, properties, cleaners, checklists, payments, and more.
 </p>
 
 <p align="center">
@@ -46,23 +46,23 @@
 
 ## Overview
 
-The Cleanster Go SDK provides a clean, idiomatic Go interface for the [Cleanster Partner API](https://documenter.getpostman.com/view/26172658/2sAYdoF7ep). It targets Go 1.21+ and uses only Go's standard library — zero external dependencies.
+The Cleanster Go SDK provides a clean, idiomatic Go interface for the [Cleanster Partner API](https://documenter.getpostman.com/view/26172658/2sAYdoF7ep). It targets Go 1.21+ and uses only Go's standard library - zero external dependencies.
 
 Use it to:
-- **Create and manage bookings** — schedule, reschedule, cancel, adjust hours
-- **Manage properties** — CRUD, iCal calendar sync, preferred cleaner lists
-- **Handle users** — create accounts and manage authorization tokens
-- **Configure checklists** — create task lists and assign to bookings
-- **Process payments** — Stripe and PayPal support
-- **Receive webhooks** — subscribe to booking lifecycle events
-- **Blacklist cleaners** — prevent specific cleaners from being assigned
+- **Create and manage bookings** - schedule, reschedule, cancel, adjust hours
+- **Manage properties** - CRUD, iCal calendar sync, preferred cleaner lists
+- **Handle users** - create accounts and manage authorization tokens
+- **Configure checklists** - create task lists and assign to bookings
+- **Process payments** - Stripe and PayPal support
+- **Receive webhooks** - subscribe to booking lifecycle events
+- **Blacklist cleaners** - prevent specific cleaners from being assigned
 
 ---
 
 ## Requirements
 
 - **Go 1.21** or later
-- A Cleanster Partner account — contact [partner@cleanster.com](mailto:partner@cleanster.com) for access
+- A Cleanster Partner account - contact [partner@cleanster.com](mailto:partner@cleanster.com) for access
 
 ---
 
@@ -81,13 +81,13 @@ Every request requires two credentials sent as HTTP headers:
 | Header | Description |
 |---|---|
 | `access-key` | Your static partner key from Cleanster |
-| `token` | A per-user JWT — long-lived, from `Users.FetchAccessToken(ctx, userID)` |
+| `token` | A per-user JWT - long-lived, from `Users.FetchAccessToken(ctx, userID)` |
 
 ### 4-Step Setup
 
-**Step 1 — Contact Cleanster** to receive your `access-key`.
+**Step 1 - Contact Cleanster** to receive your `access-key`.
 
-**Step 2 — Create a user account** (one-time per end-user):
+**Step 2 - Create a user account** (one-time per end-user):
 
 ```go
 import (
@@ -112,7 +112,7 @@ if err != nil {
 userID := int(resp.Data["userId"].(float64))
 ```
 
-**Step 3 — Fetch the user's access token** (store it; it is long-lived):
+**Step 3 - Fetch the user's access token** (store it; it is long-lived):
 
 ```go
 tokenResp, err := client.Users.FetchAccessToken(context.Background(), userID)
@@ -122,7 +122,7 @@ if err != nil {
 userToken := tokenResp.Data["token"].(string)
 ```
 
-**Step 4 — Set the token on the client**:
+**Step 4 - Set the token on the client**:
 
 ```go
 client.SetAccessToken(userToken)
@@ -170,7 +170,7 @@ func main() {
         Hours:           3.0,
         ExtraSupplies:   false,
         PaymentMethodID: 10,
-        CouponCode:      "20POFF", // optional — 20% off in sandbox
+        CouponCode:      "20POFF", // optional - 20% off in sandbox
     })
     if err != nil {
         log.Fatal(err)
@@ -239,9 +239,9 @@ Status values: `OPEN` · `CLEANER_ASSIGNED` · `IN_PROGRESS` · `COMPLETED` · `
 All methods return `(APIResponse[T], error)`.
 
 `APIResponse[T]` has:
-- `.Status` — HTTP status code
-- `.Message` — Human-readable result
-- `.Data` — Typed payload
+- `.Status` - HTTP status code
+- `.Message` - Human-readable result
+- `.Data` - Typed payload
 
 ---
 
@@ -996,7 +996,7 @@ if err != nil {
 | HTTP Status | Meaning |
 |---|---|
 | 400 | Bad request |
-| 401 | Unauthorized — invalid credentials |
+| 401 | Unauthorized - invalid credentials |
 | 403 | Forbidden |
 | 404 | Not found |
 | 422 | Validation error |
@@ -1024,9 +1024,9 @@ Use in the **sandbox** environment only:
 
 | Booking State | Chat Available |
 |---|---|
-| `OPEN` — within 24 h of start | Yes |
-| `COMPLETED` — within 24 h of completion | Yes |
-| `IN_PROGRESS` (hanging state) | Yes — **no time restriction** |
+| `OPEN` - within 24 h of start | Yes |
+| `COMPLETED` - within 24 h of completion | Yes |
+| `IN_PROGRESS` (hanging state) | Yes - **no time restriction** |
 | `CANCELLED` | No |
 | Older than 24 h | No |
 
