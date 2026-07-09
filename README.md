@@ -1,4 +1,4 @@
-# Cleanster Partner API — Official SDKs
+# Cleanster Partner API - Official SDKs
 
 <p align="center">
   <strong>Multi-language SDKs for the Cleanster Partner API</strong><br>
@@ -86,7 +86,7 @@
 
 ## What the API Does
 
-The Cleanster Partner API is a white-label backend for cleaning service platforms. It lets you embed fully-managed cleaning operations — booking scheduling, cleaner dispatch, payment processing, chat, inspections, and webhooks — into your own product without building any of that infrastructure yourself.
+The Cleanster Partner API is a white-label backend for cleaning service platforms. It lets you embed fully-managed cleaning operations - booking scheduling, cleaner dispatch, payment processing, chat, inspections, and webhooks - into your own product without building any of that infrastructure yourself.
 
 **Core capabilities:**
 
@@ -116,7 +116,7 @@ All SDKs target **sandbox** by default. You explicitly select production at clie
 
 **Sandbox behaviour:**
 - All bookings and users are isolated from production data
-- Payments are simulated — no real charges
+- Payments are simulated - no real charges
 - Use the [test coupon codes](#test-coupon-codes) to validate discount logic
 - Webhooks fire in real time against sandbox events
 
@@ -128,8 +128,8 @@ Every request to the API requires **two** HTTP headers:
 
 | Header | Type | Description |
 |---|---|---|
-| `access-key` | Static string | Your partner key — issued by Cleanster, never changes |
-| `token` | JWT string | A per-user bearer token — fetched per user via the Users API |
+| `access-key` | Static string | Your partner key - issued by Cleanster, never changes |
+| `token` | JWT string | A per-user bearer token - fetched per user via the Users API |
 
 **Flow:**
 1. Cleanster issues you a single `access-key` for your platform.
@@ -716,7 +716,7 @@ val hook = client.webhooks.createWebhook(
 
 ## MCP Server
 
-Connect Claude (or any MCP-compatible AI assistant) directly to the Cleanster Partner API. The MCP server exposes 11 tools covering bookings, properties, cleaners, payouts, and checklists — all controlled by natural language.
+Connect Claude (or any MCP-compatible AI assistant) directly to the Cleanster Partner API. The MCP server exposes 11 tools covering bookings, properties, cleaners, payouts, and checklists - all controlled by natural language.
 
 ### Quick Start
 
@@ -728,7 +728,7 @@ npm install
 cp .env.example .env   # fill in CLEANSTER_API_BASE_URL
 ```
 
-**Run (HTTP/SSE mode — for remote or shared access):**
+**Run (HTTP/SSE mode - for remote or shared access):**
 
 ```bash
 MCP_SERVER_PORT=8000 npm run dev
@@ -736,7 +736,7 @@ MCP_SERVER_PORT=8000 npm run dev
 # SSE:    http://localhost:8000/sse  (Authorization: Bearer <key>)
 ```
 
-**Claude Desktop (stdio mode — for local direct connection):**
+**Claude Desktop (stdio mode - for local direct connection):**
 
 1. Build: `npm run build`
 2. Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
@@ -757,7 +757,7 @@ MCP_SERVER_PORT=8000 npm run dev
 }
 ```
 
-3. Restart Claude Desktop — you'll see Cleanster tools available.
+3. Restart Claude Desktop - you'll see Cleanster tools available.
 
 **Example conversation with Claude:**
 
@@ -765,7 +765,7 @@ MCP_SERVER_PORT=8000 npm run dev
 
 > "Create a booking for property prop_99, house cleaning, July 15th at 10am. Notes: focus on kitchen."
 
-> "Cancel booking bk_001 — guest checked out early."
+> "Cancel booking bk_001 - guest checked out early."
 
 ### Available Tools
 
@@ -789,7 +789,7 @@ MCP_SERVER_PORT=8000 npm run dev
 
 ## Standard Response Format
 
-Every API response — success or failure — uses the same envelope:
+Every API response - success or failure - uses the same envelope:
 
 ```json
 {
@@ -920,7 +920,7 @@ Manage end-user accounts and issue authentication tokens.
 
 ---
 
-#### `POST /v1/user/account` — Create User
+#### `POST /v1/user/account` - Create User
 
 Create a new user account on behalf of one of your customers.
 
@@ -937,7 +937,7 @@ Create a new user account on behalf of one of your customers.
 
 | Field | Type | Description |
 |---|---|---|
-| `id` | integer | Cleanster user ID — save this |
+| `id` | integer | Cleanster user ID - save this |
 | `email` | string | Email address |
 | `firstName` | string | First name |
 | `lastName` | string | Last name |
@@ -1023,11 +1023,11 @@ val userId = resp.data?.id ?: 0
 
 ---
 
-#### `GET /v1/user/access-token/{userId}` — Fetch User Token
+#### `GET /v1/user/access-token/{userId}` - Fetch User Token
 
 Retrieve the long-lived JWT for a specific user. Store it securely and pass it as the `token` header on all calls made on behalf of this user.
 
-**Path parameter:** `userId` — integer user ID from Create User.
+**Path parameter:** `userId` - integer user ID from Create User.
 
 **Response `data`:**
 
@@ -1077,7 +1077,7 @@ client.setToken(resp.data?.token ?: "")
 
 ---
 
-#### `POST /v1/user/verify-jwt` — Verify JWT
+#### `POST /v1/user/verify-jwt` - Verify JWT
 
 Check whether a JWT is valid and has not expired.
 
@@ -1118,7 +1118,7 @@ Manage the physical locations where cleaning services are delivered.
 
 ---
 
-#### `GET /v1/properties` — List Properties
+#### `GET /v1/properties` - List Properties
 
 **Query parameters:**
 
@@ -1160,7 +1160,7 @@ const filtered = await client.properties.listProperties(1);
 
 ---
 
-#### `POST /v1/properties` — Add Property
+#### `POST /v1/properties` - Add Property
 
 **Request body:**
 
@@ -1262,9 +1262,9 @@ var resp = await client.Properties.AddPropertyAsync(
 
 ---
 
-#### `GET /v1/properties/{propertyId}` — Get Property
-#### `PUT /v1/properties/{propertyId}` — Update Property
-#### `DELETE /v1/properties/{propertyId}` — Delete Property
+#### `GET /v1/properties/{propertyId}` - Get Property
+#### `PUT /v1/properties/{propertyId}` - Update Property
+#### `DELETE /v1/properties/{propertyId}` - Delete Property
 
 Update and delete use the same fields as Add Property. Delete is permanent.
 
@@ -1289,7 +1289,7 @@ resp = client.properties.delete_property(1004)
 
 ---
 
-#### `PUT /v1/properties/{propertyId}/additional-information` — Update Additional Information
+#### `PUT /v1/properties/{propertyId}/additional-information` - Update Additional Information
 
 Update freeform supplemental fields on a property.
 
@@ -1302,7 +1302,7 @@ await client.properties.updateAdditionalInformation(1004, {
 
 ---
 
-#### `POST /v1/properties/{propertyId}/enable-disable` — Toggle Property
+#### `POST /v1/properties/{propertyId}/enable-disable` - Toggle Property
 
 Enable or disable a property. Disabled properties cannot receive new bookings.
 
@@ -1322,17 +1322,17 @@ client.properties.enable_or_disable_property(1004, enabled=False)
 
 ---
 
-#### `GET /v1/properties/{propertyId}/cleaners` — List Property Cleaners
+#### `GET /v1/properties/{propertyId}/cleaners` - List Property Cleaners
 
 Returns the pool of cleaners associated with this property.
 
-#### `POST /v1/properties/{propertyId}/cleaners` — Add Cleaner to Property
+#### `POST /v1/properties/{propertyId}/cleaners` - Add Cleaner to Property
 
 Add a cleaner to a property's preferred pool.
 
 **Request body:** `{ "cleanerId": 789 }`
 
-#### `DELETE /v1/properties/{propertyId}/cleaners/{cleanerId}` — Remove Cleaner from Property
+#### `DELETE /v1/properties/{propertyId}/cleaners/{cleanerId}` - Remove Cleaner from Property
 
 ```python
 # List
@@ -1347,7 +1347,7 @@ resp = client.properties.remove_cleaner_from_property(1004, cleaner_id=789)
 
 ---
 
-#### `PUT /v1/properties/{propertyId}/ical` — Set iCal Link
+#### `PUT /v1/properties/{propertyId}/ical` - Set iCal Link
 
 Sync a property's booking calendar with an external iCal feed (e.g. Airbnb, VRBO).
 
@@ -1357,8 +1357,8 @@ Sync a property's booking calendar with an external iCal feed (e.g. Airbnb, VRBO
 |---|---|---|---|
 | `icalLink` | string | yes | Full HTTPS URL of the iCal feed |
 
-#### `GET /v1/properties/{propertyId}/ical` — Get iCal Link
-#### `DELETE /v1/properties/{propertyId}/ical` — Remove iCal Link
+#### `GET /v1/properties/{propertyId}/ical` - Get iCal Link
+#### `DELETE /v1/properties/{propertyId}/ical` - Remove iCal Link
 
 ```python
 # Set
@@ -1373,11 +1373,11 @@ client.properties.delete_ical_link(1004, ical_link="https://www.airbnb.com/...")
 
 ---
 
-#### `PUT /v1/properties/{propertyId}/checklist/{checklistId}` — Set Default Checklist
+#### `PUT /v1/properties/{propertyId}/checklist/{checklistId}` - Set Default Checklist
 
 Assign a checklist as the default for all future bookings on this property.
 
-**Query parameter:** `updateUpcomingBookings` — boolean. Set to `true` to also update already-scheduled (not yet completed) bookings.
+**Query parameter:** `updateUpcomingBookings` - boolean. Set to `true` to also update already-scheduled (not yet completed) bookings.
 
 ```java
 client.properties().setDefaultChecklist(1004, 77, true);
@@ -1399,7 +1399,7 @@ Manage the full lifecycle of cleaning appointments.
 
 ---
 
-#### `GET /v1/bookings` — List Bookings
+#### `GET /v1/bookings` - List Bookings
 
 **Query parameters:**
 
@@ -1475,7 +1475,7 @@ val p2   = client.bookings.getBookings(pageNo = 2, status = "COMPLETED")
 
 ---
 
-#### `POST /v1/bookings/create` — Create Booking
+#### `POST /v1/bookings/create` - Create Booking
 
 Schedule a new cleaning appointment.
 
@@ -1601,7 +1601,7 @@ val bookingId = resp.data?.id ?: 0
 
 ---
 
-#### `GET /v1/bookings/{bookingId}` — Get Booking Details
+#### `GET /v1/bookings/{bookingId}` - Get Booking Details
 
 Returns the full booking object. Same fields as listed in [List Bookings](#get-v1bookings--list-bookings).
 
@@ -1612,7 +1612,7 @@ print(resp.data["status"])  # "CLEANER_ASSIGNED"
 
 ---
 
-#### `POST /v1/bookings/{bookingId}/cancel` — Cancel Booking
+#### `POST /v1/bookings/{bookingId}/cancel` - Cancel Booking
 
 **Request body:**
 
@@ -1632,7 +1632,7 @@ client.bookings.cancel_booking(16459, reason="Customer rescheduled")
 
 ---
 
-#### `POST /v1/bookings/{bookingId}/reschedule` — Reschedule Booking
+#### `POST /v1/bookings/{bookingId}/reschedule` - Reschedule Booking
 
 Move the booking to a new date and time.
 
@@ -1659,13 +1659,13 @@ _, err = client.Bookings.RescheduleBooking(ctx, 16459, cleanster.RescheduleBooki
 
 ---
 
-#### `POST /v1/bookings/{bookingId}/cleaner` — Assign Cleaner
+#### `POST /v1/bookings/{bookingId}/cleaner` - Assign Cleaner
 
 Manually assign a specific cleaner to a booking. The cleaner must be in the property's cleaner pool.
 
 **Request body:** `{ "cleanerId": 789 }`
 
-#### `DELETE /v1/bookings/{bookingId}/cleaner` — Remove Assigned Cleaner
+#### `DELETE /v1/bookings/{bookingId}/cleaner` - Remove Assigned Cleaner
 
 Unassign the current cleaner; the booking returns to `OPEN` status.
 
@@ -1679,7 +1679,7 @@ client.bookings.remove_assigned_cleaner(16459)
 
 ---
 
-#### `POST /v1/bookings/{bookingId}/tasks` — Update Task Quantity
+#### `POST /v1/bookings/{bookingId}/tasks` - Update Task Quantity
 
 Update the quantity of one or more tasks on an existing booking.
 
@@ -1707,7 +1707,7 @@ client.bookings().updateTask(16459, req);
 
 ---
 
-#### `POST /v1/bookings/{bookingId}/sqft` — Update Total Square Footage
+#### `POST /v1/bookings/{bookingId}/sqft` - Update Total Square Footage
 
 Update the total square footage recorded for a booking.
 
@@ -1723,7 +1723,7 @@ await client.bookings.updateSqft(16459, { totalSqFt: 1500 });
 
 ---
 
-#### `POST /v1/bookings/{bookingId}/hours` — Adjust Hours
+#### `POST /v1/bookings/{bookingId}/hours` - Adjust Hours
 
 Change the duration of a booking.
 
@@ -1735,7 +1735,7 @@ await client.Bookings.AdjustHoursAsync(16459, hours: 4.5);
 
 ---
 
-#### `POST /v1/bookings/{bookingId}/expenses` — Pay Expenses
+#### `POST /v1/bookings/{bookingId}/expenses` - Pay Expenses
 
 Pay outstanding balance-on-completion charges. Can be called before the booking completes and up to 72 hours after.
 
@@ -1749,8 +1749,8 @@ client.bookings().payExpenses(16459, req);
 
 ---
 
-#### `GET /v1/bookings/{bookingId}/inspection` — Get Inspection Report
-#### `GET /v1/bookings/{bookingId}/inspection/details` — Get Detailed Inspection
+#### `GET /v1/bookings/{bookingId}/inspection` - Get Inspection Report
+#### `GET /v1/bookings/{bookingId}/inspection/details` - Get Detailed Inspection
 
 Retrieve photos, notes, and scores from the post-booking inspection.
 
@@ -1761,7 +1761,7 @@ details = client.bookings.get_booking_inspection_details(16459)
 
 ---
 
-#### `PUT /v1/bookings/{bookingId}/checklist/{checklistId}` — Assign Checklist to Booking
+#### `PUT /v1/bookings/{bookingId}/checklist/{checklistId}` - Assign Checklist to Booking
 
 Override the property's default checklist for this specific booking only.
 
@@ -1775,7 +1775,7 @@ _, err = client.Bookings.AssignChecklistToBooking(ctx, 16459, 77)
 
 ---
 
-#### `POST /v1/bookings/{bookingId}/feedback` — Submit Feedback
+#### `POST /v1/bookings/{bookingId}/feedback` - Submit Feedback
 
 Submit a star rating and optional written comment after a booking completes.
 
@@ -1787,7 +1787,7 @@ Submit a star rating and optional written comment after a booking completes.
 | `comment` | string | no | Written feedback |
 
 ```python
-client.bookings.submit_feedback(16459, rating=5, comment="Spotless — great job!")
+client.bookings.submit_feedback(16459, rating=5, comment="Spotless - great job!")
 ```
 
 ```csharp
@@ -1796,7 +1796,7 @@ await client.Bookings.SubmitFeedbackAsync(16459, rating: 5, comment: "Spotless!"
 
 ---
 
-#### `POST /v1/bookings/{bookingId}/tip` — Add Tip
+#### `POST /v1/bookings/{bookingId}/tip` - Add Tip
 
 Add a gratuity for the cleaner. Must be called within 72 hours of booking completion.
 
@@ -1816,7 +1816,7 @@ await client.bookings.addTip(16459, {
 
 ---
 
-#### `GET /v1/bookings/{bookingId}/chat` — Get Chat Messages
+#### `GET /v1/bookings/{bookingId}/chat` - Get Chat Messages
 
 Retrieve the chat thread for a booking. Chat is available within ±24 hours of the booking start time. For bookings in an indefinitely-hanging state, there is no time restriction.
 
@@ -1830,11 +1830,11 @@ Retrieve the chat thread for a booking. Chat is available within ±24 hours of t
 | `sentAt` | string | ISO 8601 timestamp |
 | `isDeleted` | boolean | Whether this message has been deleted |
 
-#### `POST /v1/bookings/{bookingId}/chat` — Send Chat Message
+#### `POST /v1/bookings/{bookingId}/chat` - Send Chat Message
 
 **Request body:** `{ "message": "Your cleaner is on the way!" }`
 
-#### `DELETE /v1/bookings/{bookingId}/chat/{messageId}` — Delete Chat Message
+#### `DELETE /v1/bookings/{bookingId}/chat/{messageId}` - Delete Chat Message
 
 ```java
 // Get
@@ -1868,11 +1868,11 @@ Create and manage reusable cleaning task lists that can be assigned per-property
 
 ---
 
-#### `GET /v1/checklist` — List Checklists
+#### `GET /v1/checklist` - List Checklists
 
 Returns all checklists in the partner account.
 
-#### `GET /v1/checklist/{checklistId}` — Get Checklist
+#### `GET /v1/checklist/{checklistId}` - Get Checklist
 
 **Response `data`:**
 
@@ -1893,7 +1893,7 @@ Returns all checklists in the partner account.
 
 ---
 
-#### `POST /v1/checklist` — Create Checklist
+#### `POST /v1/checklist` - Create Checklist
 
 **Request body:**
 
@@ -1961,11 +1961,11 @@ resp = client.checklists.create_checklist(
 
 ---
 
-#### `PUT /v1/checklist/{checklistId}` — Update Checklist
+#### `PUT /v1/checklist/{checklistId}` - Update Checklist
 
 Same body as Create Checklist. Replaces the entire checklist.
 
-#### `DELETE /v1/checklist/{checklistId}` — Delete Checklist
+#### `DELETE /v1/checklist/{checklistId}` - Delete Checklist
 
 ```python
 # Update
@@ -1975,7 +1975,7 @@ client.checklists.update_checklist(77, name="Deep Clean v2", items=["Vacuum", "M
 client.checklists.delete_checklist(77)
 ```
 
-#### `POST /v1/checklist/upload-image` — Upload Checklist Image
+#### `POST /v1/checklist/upload-image` - Upload Checklist Image
 
 Upload an image. The image is sent as `multipart/form-data` in the `file` field.
 
@@ -2015,7 +2015,7 @@ Manage Stripe card and PayPal payment methods for a user. Payment methods are at
 
 ---
 
-#### `GET /v1/payment-methods/setup-intent-details` — Get Stripe Setup Intent
+#### `GET /v1/payment-methods/setup-intent-details` - Get Stripe Setup Intent
 
 Returns the Stripe client secret needed to tokenize a card in your frontend using Stripe.js.
 
@@ -2051,7 +2051,7 @@ client.payment_methods.add_payment_method({"paymentMethodId": "pm_xxxxx"})
 
 ---
 
-#### `GET /v1/payment-methods/paypal-client-token` — Get PayPal Client Token
+#### `GET /v1/payment-methods/paypal-client-token` - Get PayPal Client Token
 
 Returns a one-time token for the Braintree/PayPal JS SDK to authorize PayPal Vault.
 
@@ -2063,7 +2063,7 @@ Returns a one-time token for the Braintree/PayPal JS SDK to authorize PayPal Vau
 
 ---
 
-#### `POST /v1/payment-methods` — Save Payment Method
+#### `POST /v1/payment-methods` - Save Payment Method
 
 Save a tokenized payment method to the user's profile.
 
@@ -2087,7 +2087,7 @@ resp, err := client.PaymentMethods.AddPaymentMethod(ctx, cleanster.AddPaymentMet
 
 ---
 
-#### `GET /v1/payment-methods` — List Payment Methods
+#### `GET /v1/payment-methods` - List Payment Methods
 
 Returns all saved payment methods for the current user.
 
@@ -2103,11 +2103,11 @@ Returns all saved payment methods for the current user.
 
 ---
 
-#### `PUT /v1/payment-methods/{paymentMethodId}/default` — Set Default Payment Method
+#### `PUT /v1/payment-methods/{paymentMethodId}/default` - Set Default Payment Method
 
 Mark a payment method as the default for this user.
 
-#### `DELETE /v1/payment-methods/{paymentMethodId}` — Delete Payment Method
+#### `DELETE /v1/payment-methods/{paymentMethodId}` - Delete Payment Method
 
 ```python
 # List
@@ -2139,11 +2139,11 @@ Subscribe to real-time events for booking lifecycle changes. When a subscribed e
 
 ---
 
-#### `GET /v1/webhooks` — List Webhooks
+#### `GET /v1/webhooks` - List Webhooks
 
 Returns all registered webhook endpoints.
 
-#### `POST /v1/webhooks` — Create Webhook
+#### `POST /v1/webhooks` - Create Webhook
 
 **Request body:**
 
@@ -2152,11 +2152,11 @@ Returns all registered webhook endpoints.
 | `url` | string | yes | HTTPS URL to receive the POST |
 | `event` | string | yes | Event name to subscribe to (see [Webhook Events](#webhook-events)) |
 
-#### `PUT /v1/webhooks/{webhookId}` — Update Webhook
+#### `PUT /v1/webhooks/{webhookId}` - Update Webhook
 
 Same body as Create Webhook.
 
-#### `DELETE /v1/webhooks/{webhookId}` — Delete Webhook
+#### `DELETE /v1/webhooks/{webhookId}` - Delete Webhook
 
 **Examples:**
 
@@ -2203,8 +2203,8 @@ Prevent specific cleaners from being assigned to any of your bookings. Blacklist
 
 ---
 
-#### `GET /v1/blacklist/cleaner` — List Blacklisted Cleaners
-#### `POST /v1/blacklist/cleaner` — Add to Blacklist
+#### `GET /v1/blacklist/cleaner` - List Blacklisted Cleaners
+#### `POST /v1/blacklist/cleaner` - Add to Blacklist
 
 **Request body:**
 
@@ -2213,7 +2213,7 @@ Prevent specific cleaners from being assigned to any of your bookings. Blacklist
 | `cleanerId` | integer | yes | The cleaner's user ID |
 | `reason` | string | no | Internal reason for blacklisting |
 
-#### `DELETE /v1/blacklist/cleaner` — Remove from Blacklist
+#### `DELETE /v1/blacklist/cleaner` - Remove from Blacklist
 
 **Request body:** `{ "cleanerId": 789 }`
 
@@ -2252,11 +2252,11 @@ await client.blacklist.removeFromBlacklist({ cleanerId: 789 });
 
 ### Reference Data API
 
-Fetch the lookup data required to build booking flows — service types, plans, pricing estimates, cleaning extras, and available cleaners.
+Fetch the lookup data required to build booking flows - service types, plans, pricing estimates, cleaning extras, and available cleaners.
 
 ---
 
-#### `GET /v1/services` — Get Service Types
+#### `GET /v1/services` - Get Service Types
 
 Returns all cleaning service types available on your partner account (e.g., Residential, Airbnb, Office).
 
@@ -2267,7 +2267,7 @@ services = client.other.get_services()
 
 ---
 
-#### `GET /v1/plans` — Get Plans
+#### `GET /v1/plans` - Get Plans
 
 Returns available booking plans (e.g., Regular, Deep Clean, Move-In/Out) for a given property.
 
@@ -2288,7 +2288,7 @@ const filteredPlans = await client.other.getPlans(1004, { subcatId: 7 });
 
 ---
 
-#### `GET /v1/recommended-hours` — Get Recommended Hours
+#### `GET /v1/recommended-hours` - Get Recommended Hours
 
 Get the system-recommended number of cleaning hours based on property size. Use this value as the `hours` field when creating a booking.
 
@@ -2319,11 +2319,11 @@ resp, err := client.Other.GetRecommendedHours(ctx, 1004, 1, 2)
 
 ---
 
-#### `GET /v1/services/{id}/subcategories` — Get Service Subcategories
+#### `GET /v1/services/{id}/subcategories` - Get Service Subcategories
 
 Returns the subcategories available under a given service type. No authentication required.
 
-**Path parameter:** `id` — integer service ID.
+**Path parameter:** `id` - integer service ID.
 
 ```python
 subcats = client.other.get_subcategories(service_id=1)
@@ -2336,7 +2336,7 @@ const subcats = await client.other.getSubcategories(1);
 
 ---
 
-#### `GET /v1/tasks` — Get Tasks
+#### `GET /v1/tasks` - Get Tasks
 
 Returns cleaning tasks available for a property/service combination, with pagination. No authentication required.
 
@@ -2359,7 +2359,7 @@ const tasks = await client.other.getTasks({ propertyId: 1004, serviceId: 1 });
 
 ---
 
-#### `POST /v1/cost-estimate` — Get Cost Estimate
+#### `POST /v1/cost-estimate` - Get Cost Estimate
 
 Calculate the total price for a potential booking before creating it.
 
@@ -2404,7 +2404,7 @@ console.log('Total:', estimate.data.total);
 
 ---
 
-#### `GET /v1/cleaning-extras/{serviceId}` — Get Cleaning Extras
+#### `GET /v1/cleaning-extras/{serviceId}` - Get Cleaning Extras
 
 Returns available add-on services for a given service type (e.g., inside oven, inside fridge, laundry).
 
@@ -2415,7 +2415,7 @@ ApiResponse<Object> extras = client.other().getCleaningExtras(1);
 
 ---
 
-#### `POST /v1/available-cleaners` — Get Available Cleaners
+#### `POST /v1/available-cleaners` - Get Available Cleaners
 
 Find cleaners available for a specific property, date, and time slot. Use the results to offer manual cleaner selection to your users.
 
@@ -2447,7 +2447,7 @@ const resp = await client.other.getAvailableCleaners({
 
 ---
 
-#### `GET /v1/coupons` — Get Coupon Codes
+#### `GET /v1/coupons` - Get Coupon Codes
 
 Returns all valid coupon codes available for use at booking creation.
 
@@ -2459,7 +2459,7 @@ for coupon in resp.data:
 
 ---
 
-#### `GET /v1/cleaners` — List Cleaners
+#### `GET /v1/cleaners` - List Cleaners
 
 Returns all cleaners on the partner account. Supports optional `status` and `search` query parameters.
 
@@ -2469,7 +2469,7 @@ resp = client.other.list_cleaners(status="active", search="Jane")
 
 ---
 
-#### `GET /v1/cleaners/{cleanerId}` — Get Cleaner
+#### `GET /v1/cleaners/{cleanerId}` - Get Cleaner
 
 Returns a single cleaner by their ID.
 
@@ -2528,7 +2528,7 @@ The chat thread for a booking is only accessible during a time window around the
 | Outside window | API returns `400 Bad Request` |
 
 ```python
-# Python — only call inside the window
+# Python - only call inside the window
 chat = client.bookings.get_chat(booking_id)
 client.bookings.send_message(booking_id, message="Please bring extra supplies.")
 ```
@@ -2622,7 +2622,7 @@ Use these in the **sandbox** environment to test discount logic. These codes are
 
 | Code | Discount Type | Value |
 |---|---|---|
-| `100POFF` | Percentage | 100% off — makes booking free |
+| `100POFF` | Percentage | 100% off - makes booking free |
 | `50POFF` | Percentage | 50% off |
 | `20POFF` | Percentage | 20% off |
 | `200OFF` | Fixed amount | $200 off |
@@ -2743,7 +2743,7 @@ Cleanster-partner-api-sdk/
 │
 ├── soap-sdk/                 Java 11+ SOAP 1.1 (document/literal) bridge over REST
 │   ├── wsdl/
-│   │   ├── cleanster.wsdl    Full WSDL — 66 operations across 9 services
+│   │   ├── cleanster.wsdl    Full WSDL - 66 operations across 9 services
 │   │   └── cleanster-types.xsd  XML Schema for all types
 │   ├── examples/             Ready-to-use SOAP envelope XML files
 │   ├── src/main/java/com/cleanster/soap/
@@ -2783,7 +2783,7 @@ Cleanster-partner-api-sdk/
 │   ├── settings.gradle.kts
 │   └── README.md                   Full Android SDK documentation
 │
-├── mcp-server/               MCP server — TypeScript/Node.js 20+, two transports
+├── mcp-server/               MCP server - TypeScript/Node.js 20+, two transports
 │   ├── src/
 │   │   ├── api/
 │   │   │   ├── cleanster.ts  Cleanster REST API client (axios)
@@ -2795,7 +2795,7 @@ Cleanster-partner-api-sdk/
 │   │   │   ├── list_bookings.ts, get_booking.ts, create_booking.ts, ...
 │   │   │   └── update_checklist.ts
 │   │   ├── server.ts         McpServer factory + tool registration loop
-│   │   └── index.ts          Entry point — stdio or HTTP/SSE transport
+│   │   └── index.ts          Entry point - stdio or HTTP/SSE transport
 │   ├── tests/                64 unit tests (Vitest, mocked API)
 │   ├── .env.example
 │   ├── package.json
@@ -2822,4 +2822,4 @@ Each SDK is self-contained with its own dependency management, build configurati
 
 ## License
 
-MIT License — see [LICENSE](LICENSE) for details.
+MIT License - see [LICENSE](LICENSE) for details.
