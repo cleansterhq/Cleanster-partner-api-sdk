@@ -9,7 +9,7 @@ class UsersApi internal constructor(private val client: CleansterClient) {
     /**
      * Create a new end-user account.
      *
-     * Save the returned `data.id` — you will need it to fetch the user's JWT.
+     * Save the returned `data.id` - you will need it to fetch the user's JWT.
      */
     suspend fun createUser(
         email:     String,
