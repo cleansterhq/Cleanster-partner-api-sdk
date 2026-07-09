@@ -16,11 +16,13 @@ public sealed class OtherApi
         return JsonHelper.ParseRaw(root);
     }
 
-    /// <summary>Return all available booking plans for a given property.</summary>
-    public async Task<ApiResponse<JsonElement>> GetPlansAsync(int propertyId, CancellationToken ct = default)
+    /// <summary>Return all available booking plans for a given property, optionally filtered by subcategory.</summary>
+    public async Task<ApiResponse<JsonElement>> GetPlansAsync(
+        int propertyId, int? subcatId = null, CancellationToken ct = default)
     {
-        var root = await _http.GetAsync("/v1/plans",
-            new Dictionary<string, string> { ["propertyId"] = propertyId.ToString() }, ct);
+        var query = new Dictionary<string, string> { ["propertyId"] = propertyId.ToString() };
+        if (subcatId.HasValue) query["subcatId"] = subcatId.Value.ToString();
+        var root = await _http.GetAsync("/v1/plans", query, ct);
         return JsonHelper.ParseRaw(root);
     }
 
@@ -29,7 +31,7 @@ public sealed class OtherApi
     /// Use the result to pre-fill <c>hours</c> in <c>Bookings.CreateBookingAsync</c>.
     /// </summary>
     public async Task<ApiResponse<JsonElement>> GetRecommendedHoursAsync(
-        int propertyId, int bathroomCount, int roomCount, CancellationToken ct = default)
+        int propertyId, int bathroomCount, int roomCount, int? subcatId = null, CancellationToken ct = default)
     {
         var query = new Dictionary<string, string>
         {
@@ -37,6 +39,7 @@ public sealed class OtherApi
             ["bathroomCount"] = bathroomCount.ToString(),
             ["roomCount"]     = roomCount.ToString(),
         };
+        if (subcatId.HasValue) query["subcatId"] = subcatId.Value.ToString();
         var root = await _http.GetAsync("/v1/recommended-hours", query, ct);
         return JsonHelper.ParseRaw(root);
     }
@@ -102,6 +105,28 @@ public sealed class OtherApi
     public async Task<ApiResponse<JsonElement>> GetCleanerAsync(int cleanerId, CancellationToken ct = default)
     {
         var root = await _http.GetAsync($"/v1/cleaners/{cleanerId}", ct: ct);
+        return JsonHelper.ParseRaw(root);
+    }
+
+    /// <summary>List service tasks, filterable by property and service type. Supports pagination.</summary>
+    public async Task<ApiResponse<JsonElement>> GetTasksAsync(
+        int propertyId, int serviceId, int? pageNo = null, int? pageSize = null, CancellationToken ct = default)
+    {
+        var query = new Dictionary<string, string>
+        {
+            ["propertyId"] = propertyId.ToString(),
+            ["serviceId"]  = serviceId.ToString(),
+        };
+        if (pageNo.HasValue) query["pageNo"] = pageNo.Value.ToString();
+        if (pageSize.HasValue) query["pageSize"] = pageSize.Value.ToString();
+        var root = await _http.GetAsync("/v1/tasks", query, ct);
+        return JsonHelper.ParseRaw(root);
+    }
+
+    /// <summary>Return the subcategories available under a given service type.</summary>
+    public async Task<ApiResponse<JsonElement>> GetSubcategoriesAsync(int serviceId, CancellationToken ct = default)
+    {
+        var root = await _http.GetAsync($"/v1/services/{serviceId}/subcategories", ct: ct);
         return JsonHelper.ParseRaw(root);
     }
 }
