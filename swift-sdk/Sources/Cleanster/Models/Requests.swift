@@ -217,6 +217,22 @@ public struct SendMessageRequest: Encodable {
     public init(message: String) { self.message = message }
 }
 
+public struct TaskQuantity: Encodable {
+    public let id: Int
+    public let quantity: Int
+    public init(id: Int, quantity: Int) { self.id = id; self.quantity = quantity }
+}
+
+public struct UpdateTaskRequest: Encodable {
+    public let tasks: [TaskQuantity]
+    public init(tasks: [TaskQuantity]) { self.tasks = tasks }
+}
+
+public struct UpdateSqftRequest: Encodable {
+    public let totalSqFt: Double
+    public init(totalSqFt: Double) { self.totalSqFt = totalSqFt }
+}
+
 // MARK: - Checklist Requests
 
 public struct CreateChecklistRequest: Encodable {
