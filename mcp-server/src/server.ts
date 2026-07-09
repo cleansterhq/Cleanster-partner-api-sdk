@@ -2,7 +2,7 @@
  * MCP Server bootstrap.
  *
  * Builds a fully-configured McpServer instance with all 13 Cleanster tools
- * registered. The server is transport-agnostic — the caller (index.ts) wires
+ * registered. The server is transport-agnostic - the caller (index.ts) wires
  * it to either StdioServerTransport or SSEServerTransport.
  */
 
