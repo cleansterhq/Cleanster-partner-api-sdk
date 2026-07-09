@@ -1,6 +1,6 @@
 module Cleanster
   module Api
-    # PaymentMethodsApi — manage Stripe and PayPal payment methods.
+    # PaymentMethodsApi - manage Stripe and PayPal payment methods.
     class PaymentMethodsApi
       def initialize(http)
         @http = http
