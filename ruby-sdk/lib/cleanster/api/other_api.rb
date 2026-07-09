@@ -16,8 +16,8 @@ module Cleanster
       #
       # @param property_id [Integer]
       # @return [Models::ApiResponse]
-      def get_plans(property_id)
-        raw = @http.get("/v1/plans", params: { propertyId: property_id })
+      def get_plans(property_id, subcat_id: nil)
+        raw = @http.get("/v1/plans", params: { propertyId: property_id, subcatId: subcat_id })
         Models::ApiResponse.from_hash(raw)
       end
 
@@ -26,10 +26,12 @@ module Cleanster
       # @param property_id    [Integer]
       # @param bathroom_count [Integer]
       # @param room_count     [Integer]
+      # @param subcat_id      [Integer, nil]
       # @return [Models::ApiResponse]
-      def get_recommended_hours(property_id, bathroom_count:, room_count:)
+      def get_recommended_hours(property_id, bathroom_count:, room_count:, subcat_id: nil)
         raw = @http.get("/v1/recommended-hours",
-                        params: { propertyId: property_id, bathroomCount: bathroom_count, roomCount: room_count })
+                        params: { propertyId: property_id, bathroomCount: bathroom_count,
+                                   roomCount: room_count, subcatId: subcat_id })
         Models::ApiResponse.from_hash(raw)
       end
 
@@ -78,6 +80,25 @@ module Cleanster
       # @param cleaner_id [Integer] The cleaner's unique ID.
       def get_cleaner(cleaner_id)
         raw = @http.get("/v1/cleaners/#{cleaner_id}")
+        Models::ApiResponse.from_hash(raw)
+      end
+
+      # List service tasks, filterable by property and service type.
+      # @param property_id [Integer]
+      # @param service_id  [Integer]
+      # @param page_no     [Integer, nil]
+      # @param page_size   [Integer, nil]
+      def get_tasks(property_id, service_id:, page_no: nil, page_size: nil)
+        raw = @http.get("/v1/tasks",
+                        params: { propertyId: property_id, serviceId: service_id,
+                                   pageNo: page_no, pageSize: page_size })
+        Models::ApiResponse.from_hash(raw)
+      end
+
+      # Get the subcategories available under a given service type.
+      # @param service_id [Integer]
+      def get_subcategories(service_id)
+        raw = @http.get("/v1/services/#{service_id}/subcategories")
         Models::ApiResponse.from_hash(raw)
       end
 
