@@ -76,7 +76,7 @@ public sealed class CleansterClient : IDisposable
     /// Set the user bearer token for all subsequent requests.
     ///
     /// Call this after <see cref="UsersApi.FetchAccessTokenAsync"/> returns a token.
-    /// The token is long-lived — store it and reuse it across requests.
+    /// The token is long-lived - store it and reuse it across requests.
     /// </summary>
     public void SetAccessToken(string token) => _http.SetToken(token);
 
