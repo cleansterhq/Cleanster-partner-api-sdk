@@ -75,3 +75,19 @@ export interface TipRequest {
 export interface SendMessageRequest {
   message: string;
 }
+
+/** A single task quantity update within UpdateTaskRequest. */
+export interface TaskQuantity {
+  id: number;
+  quantity: number;
+}
+
+/** Request body for updating booking tasks. */
+export interface UpdateTaskRequest {
+  tasks: TaskQuantity[];
+}
+
+/** Request body for updating a booking's total square footage. */
+export interface UpdateSqftRequest {
+  totalSqFt: number;
+}
