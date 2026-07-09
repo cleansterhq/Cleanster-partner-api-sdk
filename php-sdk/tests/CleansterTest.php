@@ -109,7 +109,7 @@ class CleansterTest extends TestCase
     }
 
     // =========================================================================
-    // CleansterClient — factory and services
+    // CleansterClient - factory and services
     // =========================================================================
 
     public function testSandboxClientCreation(): void
