@@ -1,5 +1,5 @@
 /**
- * Property model — represents a physical location where cleanings take place.
+ * Property model - represents a physical location where cleanings take place.
  */
 export interface Property {
   id: number;
