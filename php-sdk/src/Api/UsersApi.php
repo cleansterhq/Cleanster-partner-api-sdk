@@ -47,7 +47,7 @@ final class UsersApi
      * Fetch the long-lived bearer token for a user.
      *
      * Pass the returned token to CleansterClient::setAccessToken() for all subsequent requests.
-     * The token is long-lived — store it in your database and reuse across sessions.
+     * The token is long-lived - store it in your database and reuse across sessions.
      *
      * @return ApiResponse<User>  User object with the ->token field populated.
      */
