@@ -19,6 +19,13 @@ export interface AvailableCleanersRequest {
   time: string;  // HH:mm
 }
 
+export interface GetTasksParams {
+  propertyId: number;
+  serviceId: number;
+  pageNo?: number;
+  pageSize?: number;
+}
+
 export class OtherApi {
   constructor(private readonly http: HttpClient) {}
 
@@ -33,8 +40,8 @@ export class OtherApi {
    * Return available booking plans for a given property.
    * @param propertyId  The property ID.
    */
-  getPlans(propertyId: number): Promise<ApiResponse<unknown>> {
-    return this.http.get("/v1/plans", { propertyId });
+  getPlans(propertyId: number, subcatId?: number): Promise<ApiResponse<unknown>> {
+    return this.http.get("/v1/plans", { propertyId, subcatId });
   }
 
   /**
@@ -43,9 +50,15 @@ export class OtherApi {
    * @param propertyId     The property ID.
    * @param bathroomCount  Number of bathrooms.
    * @param roomCount      Number of rooms/bedrooms.
+   * @param subcatId       Optional service subcategory ID.
    */
-  getRecommendedHours(propertyId: number, bathroomCount: number, roomCount: number): Promise<ApiResponse<unknown>> {
-    return this.http.get("/v1/recommended-hours", { propertyId, bathroomCount, roomCount });
+  getRecommendedHours(
+    propertyId: number,
+    bathroomCount: number,
+    roomCount: number,
+    subcatId?: number
+  ): Promise<ApiResponse<unknown>> {
+    return this.http.get("/v1/recommended-hours", { propertyId, bathroomCount, roomCount, subcatId });
   }
 
   /**
@@ -95,5 +108,21 @@ export class OtherApi {
    */
   getCleaner(cleanerId: number): Promise<ApiResponse<unknown>> {
     return this.http.get(`/v1/cleaners/${cleanerId}`);
+  }
+
+  /**
+   * List service tasks, filterable by property and service type. Supports pagination.
+   * @param params  propertyId, serviceId, and optional pageNo / pageSize.
+   */
+  getTasks(params: GetTasksParams): Promise<ApiResponse<unknown>> {
+    return this.http.get("/v1/tasks", params);
+  }
+
+  /**
+   * Get the subcategories available under a given service type.
+   * @param serviceId  The service type ID (from getServices).
+   */
+  getSubcategories(serviceId: number): Promise<ApiResponse<unknown>> {
+    return this.http.get(`/v1/services/${serviceId}/subcategories`);
   }
 }
