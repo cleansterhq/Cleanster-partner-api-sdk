@@ -21,10 +21,14 @@ final class OtherApi
         return new ApiResponse($raw['status'] ?? 200, $raw['message'] ?? 'OK', $raw['data'] ?? []);
     }
 
-    /** Return all available booking plans for a given property. */
-    public function getPlans(int $propertyId): ApiResponse
+    /** Return all available booking plans for a given property, optionally filtered by subcategory. */
+    public function getPlans(int $propertyId, ?int $subcatId = null): ApiResponse
     {
-        $raw = $this->http->get('/v1/plans', ['propertyId' => $propertyId]);
+        $query = ['propertyId' => $propertyId];
+        if ($subcatId !== null) {
+            $query['subcatId'] = $subcatId;
+        }
+        $raw = $this->http->get('/v1/plans', $query);
         return new ApiResponse($raw['status'] ?? 200, $raw['message'] ?? 'OK', $raw['data'] ?? []);
     }
 
@@ -33,17 +37,22 @@ final class OtherApi
      *
      * Use the result to pre-fill the 'hours' field in createBooking().
      *
-     * @param int $propertyId   Property to check.
-     * @param int $bathroomCount Number of bathrooms.
-     * @param int $roomCount    Number of rooms.
+     * @param int      $propertyId    Property to check.
+     * @param int      $bathroomCount Number of bathrooms.
+     * @param int      $roomCount     Number of rooms.
+     * @param int|null $subcatId      Optional service subcategory ID.
      */
-    public function getRecommendedHours(int $propertyId, int $bathroomCount, int $roomCount): ApiResponse
+    public function getRecommendedHours(int $propertyId, int $bathroomCount, int $roomCount, ?int $subcatId = null): ApiResponse
     {
-        $raw = $this->http->get('/v1/recommended-hours', [
+        $query = [
             'propertyId'    => $propertyId,
             'bathroomCount' => $bathroomCount,
             'roomCount'     => $roomCount,
-        ]);
+        ];
+        if ($subcatId !== null) {
+            $query['subcatId'] = $subcatId;
+        }
+        $raw = $this->http->get('/v1/recommended-hours', $query);
         return new ApiResponse($raw['status'] ?? 200, $raw['message'] ?? 'OK', $raw['data'] ?? []);
     }
 
@@ -118,6 +127,34 @@ final class OtherApi
     public function getCleaner(int $cleanerId): ApiResponse
     {
         $raw = $this->http->get("/v1/cleaners/{$cleanerId}");
+        return new ApiResponse($raw['status'] ?? 200, $raw['message'] ?? 'OK', $raw['data'] ?? []);
+    }
+
+    /**
+     * List service tasks, filterable by property and service type. Supports pagination.
+     *
+     * @param int      $propertyId Property to check.
+     * @param int      $serviceId  Service type ID.
+     * @param int|null $pageNo     Optional page number.
+     * @param int|null $pageSize   Optional page size.
+     */
+    public function getTasks(int $propertyId, int $serviceId, ?int $pageNo = null, ?int $pageSize = null): ApiResponse
+    {
+        $query = ['propertyId' => $propertyId, 'serviceId' => $serviceId];
+        if ($pageNo !== null) {
+            $query['pageNo'] = $pageNo;
+        }
+        if ($pageSize !== null) {
+            $query['pageSize'] = $pageSize;
+        }
+        $raw = $this->http->get('/v1/tasks', $query);
+        return new ApiResponse($raw['status'] ?? 200, $raw['message'] ?? 'OK', $raw['data'] ?? []);
+    }
+
+    /** Return the subcategories available under a given service type. */
+    public function getSubcategories(int $serviceId): ApiResponse
+    {
+        $raw = $this->http->get("/v1/services/{$serviceId}/subcategories");
         return new ApiResponse($raw['status'] ?? 200, $raw['message'] ?? 'OK', $raw['data'] ?? []);
     }
 }
