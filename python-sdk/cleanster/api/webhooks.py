@@ -1,4 +1,4 @@
-"""Webhooks API — manage real-time event notifications."""
+"""Webhooks API - manage real-time event notifications."""
 
 from typing import Any, Dict
 
