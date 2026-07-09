@@ -1,6 +1,6 @@
 module Cleanster
   module Api
-    # BlacklistApi — prevent specific cleaners from being assigned to your bookings.
+    # BlacklistApi - prevent specific cleaners from being assigned to your bookings.
     class BlacklistApi
       def initialize(http)
         @http = http
