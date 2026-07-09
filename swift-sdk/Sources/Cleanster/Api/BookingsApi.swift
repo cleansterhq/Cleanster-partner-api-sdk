@@ -162,4 +162,24 @@ public final class BookingsApi {
             path: "/v1/bookings/\(bookingId)/chat/\(messageId)"
         )
     }
+
+    /// Update task quantities for a booking.
+    public func updateTask(_ bookingId: Int, tasks: [TaskQuantity]) async throws -> ApiResponse<AnyCodable> {
+        let body = UpdateTaskRequest(tasks: tasks)
+        return try await client.requestRaw(
+            method: "POST",
+            path: "/v1/bookings/\(bookingId)/tasks",
+            body: body
+        )
+    }
+
+    /// Update the total square footage for a booking.
+    public func updateSqft(_ bookingId: Int, totalSqFt: Double) async throws -> ApiResponse<AnyCodable> {
+        let body = UpdateSqftRequest(totalSqFt: totalSqFt)
+        return try await client.requestRaw(
+            method: "POST",
+            path: "/v1/bookings/\(bookingId)/sqft",
+            body: body
+        )
+    }
 }
