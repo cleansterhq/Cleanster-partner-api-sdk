@@ -2,7 +2,7 @@
 
 <p align="center">
   <strong>Official PHP client library for the Cleanster Partner API</strong><br>
-  Automate residential and commercial cleaning operations — bookings, properties, cleaners, checklists, payments, and more.
+  Automate residential and commercial cleaning operations - bookings, properties, cleaners, checklists, payments, and more.
 </p>
 
 <p align="center">
@@ -47,16 +47,16 @@
 
 ## Overview
 
-The Cleanster PHP SDK provides a clean, idiomatic PHP interface for the [Cleanster Partner API](https://documenter.getpostman.com/view/26172658/2sAYdoF7ep). It requires only PHP's built-in `ext-curl` and `ext-json` extensions — zero Composer runtime dependencies.
+The Cleanster PHP SDK provides a clean, idiomatic PHP interface for the [Cleanster Partner API](https://documenter.getpostman.com/view/26172658/2sAYdoF7ep). It requires only PHP's built-in `ext-curl` and `ext-json` extensions - zero Composer runtime dependencies.
 
 Use it to:
-- **Create and manage bookings** — schedule, reschedule, cancel, adjust hours
-- **Manage properties** — CRUD, iCal calendar sync, preferred cleaner lists
-- **Handle users** — create accounts and manage authorization tokens
-- **Configure checklists** — create task lists and assign to bookings
-- **Process payments** — Stripe and PayPal support
-- **Receive webhooks** — subscribe to booking lifecycle events
-- **Blacklist cleaners** — prevent specific cleaners from being assigned
+- **Create and manage bookings** - schedule, reschedule, cancel, adjust hours
+- **Manage properties** - CRUD, iCal calendar sync, preferred cleaner lists
+- **Handle users** - create accounts and manage authorization tokens
+- **Configure checklists** - create task lists and assign to bookings
+- **Process payments** - Stripe and PayPal support
+- **Receive webhooks** - subscribe to booking lifecycle events
+- **Blacklist cleaners** - prevent specific cleaners from being assigned
 
 ---
 
@@ -65,7 +65,7 @@ Use it to:
 - **PHP 8.1** or later
 - Extensions: `ext-curl`, `ext-json`
 - **Composer** (for installation)
-- A Cleanster Partner account — contact [partner@cleanster.com](mailto:partner@cleanster.com) for access
+- A Cleanster Partner account - contact [partner@cleanster.com](mailto:partner@cleanster.com) for access
 
 ---
 
@@ -92,13 +92,13 @@ Every request requires two credentials sent as HTTP headers:
 | Header | Description |
 |---|---|
 | `access-key` | Your static partner key from Cleanster |
-| `token` | A per-user JWT — long-lived, from `$client->users()->fetchAccessToken($userId)` |
+| `token` | A per-user JWT - long-lived, from `$client->users()->fetchAccessToken($userId)` |
 
 ### 4-Step Setup
 
-**Step 1 — Contact Cleanster** to receive your `access-key`.
+**Step 1 - Contact Cleanster** to receive your `access-key`.
 
-**Step 2 — Create a user account** (one-time per end-user):
+**Step 2 - Create a user account** (one-time per end-user):
 
 ```php
 use Cleanster\CleansterClient;
@@ -114,14 +114,14 @@ $resp = $client->users()->createUser(
 $userId = $resp->getData()['userId'];
 ```
 
-**Step 3 — Fetch the user's access token** (store it; it is long-lived):
+**Step 3 - Fetch the user's access token** (store it; it is long-lived):
 
 ```php
 $tokenResp = $client->users()->fetchAccessToken($userId);
 $userToken = $tokenResp->getData()['token'];
 ```
 
-**Step 4 — Build the client with both credentials**:
+**Step 4 - Build the client with both credentials**:
 
 ```php
 $client = new CleansterClient('your-access-key', $userToken);
@@ -153,7 +153,7 @@ $booking = $client->bookings()->createBooking([
     'hours'           => 3.0,
     'extraSupplies'   => false,
     'paymentMethodId' => 10,
-    'couponCode'      => '20POFF',  // optional — 20% off in sandbox
+    'couponCode'      => '20POFF',  // optional - 20% off in sandbox
 ]);
 echo "Created booking: " . $booking->getData()['id'] . "\n";
 
@@ -205,9 +205,9 @@ Status values: `OPEN` · `CLEANER_ASSIGNED` · `IN_PROGRESS` · `COMPLETED` · `
 ## API Reference
 
 All methods return a `Cleanster\ApiResponse` with:
-- `->getStatus()` — HTTP status code
-- `->getMessage()` — Human-readable result
-- `->getData()` — Response payload (array)
+- `->getStatus()` - HTTP status code
+- `->getMessage()` - Human-readable result
+- `->getData()` - Response payload (array)
 
 ---
 
@@ -968,7 +968,7 @@ try {
 | HTTP Status | Meaning |
 |---|---|
 | 400 | Bad request |
-| 401 | Unauthorized — invalid credentials |
+| 401 | Unauthorized - invalid credentials |
 | 403 | Forbidden |
 | 404 | Not found |
 | 422 | Validation error |
@@ -996,9 +996,9 @@ Use in the **sandbox** environment only:
 
 | Booking State | Chat Available |
 |---|---|
-| `OPEN` — within 24 h of start | Yes |
-| `COMPLETED` — within 24 h of completion | Yes |
-| `IN_PROGRESS` (hanging state) | Yes — **no time restriction** |
+| `OPEN` - within 24 h of start | Yes |
+| `COMPLETED` - within 24 h of completion | Yes |
+| `IN_PROGRESS` (hanging state) | Yes - **no time restriction** |
 | `CANCELLED` | No |
 | Older than 24 h | No |
 
