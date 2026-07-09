@@ -8,7 +8,7 @@ module Cleanster
   class AuthError < CleansterError
     attr_reader :status_code, :response_body
 
-    def initialize(message = "Unauthorized — invalid or missing access key or user token.", response_body: "")
+    def initialize(message = "Unauthorized - invalid or missing access key or user token.", response_body: "")
       super(message)
       @status_code   = 401
       @response_body = response_body
