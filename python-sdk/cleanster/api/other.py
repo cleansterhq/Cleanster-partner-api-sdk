@@ -1,4 +1,4 @@
-"""Other / Utilities API — services, plans, cost, extras, cleaners, coupons."""
+"""Other / Utilities API - services, plans, cost, extras, cleaners, coupons."""
 
 from typing import Any, Dict, Optional
 
