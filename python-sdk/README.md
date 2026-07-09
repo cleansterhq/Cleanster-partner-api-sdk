@@ -2,7 +2,7 @@
 
 <p align="center">
   <strong>Official Python client library for the Cleanster Partner API</strong><br>
-  Automate residential and commercial cleaning operations — bookings, properties, cleaners, checklists, payments, and more.
+  Automate residential and commercial cleaning operations - bookings, properties, cleaners, checklists, payments, and more.
 </p>
 
 <p align="center">
@@ -47,23 +47,23 @@
 
 ## Overview
 
-The Cleanster Python SDK provides a clean, Pythonic interface for the [Cleanster Partner API](https://documenter.getpostman.com/view/26172658/2sAYdoF7ep). It uses only Python's built-in `urllib` — zero external dependencies.
+The Cleanster Python SDK provides a clean, Pythonic interface for the [Cleanster Partner API](https://documenter.getpostman.com/view/26172658/2sAYdoF7ep). It uses only Python's built-in `urllib` - zero external dependencies.
 
 Use it to:
-- **Create and manage bookings** — schedule, reschedule, cancel, adjust hours
-- **Manage properties** — CRUD, iCal sync, preferred cleaner lists
-- **Handle users** — create accounts and fetch authorization tokens
-- **Configure checklists** — create reusable task lists and assign to bookings
-- **Process payments** — Stripe and PayPal support
-- **Receive webhooks** — subscribe to booking lifecycle events
-- **Blacklist cleaners** — block specific cleaners from your properties
+- **Create and manage bookings** - schedule, reschedule, cancel, adjust hours
+- **Manage properties** - CRUD, iCal sync, preferred cleaner lists
+- **Handle users** - create accounts and fetch authorization tokens
+- **Configure checklists** - create reusable task lists and assign to bookings
+- **Process payments** - Stripe and PayPal support
+- **Receive webhooks** - subscribe to booking lifecycle events
+- **Blacklist cleaners** - block specific cleaners from your properties
 
 ---
 
 ## Requirements
 
 - **Python 3.8** or later
-- A Cleanster Partner account — contact [partner@cleanster.com](mailto:partner@cleanster.com) for access
+- A Cleanster Partner account - contact [partner@cleanster.com](mailto:partner@cleanster.com) for access
 
 ---
 
@@ -90,13 +90,13 @@ Every request requires two credentials sent as HTTP headers:
 | Header | Description |
 |---|---|
 | `access-key` | Your static partner key from Cleanster |
-| `token` | A per-user JWT — long-lived, obtained via `fetch_access_token(user_id)` |
+| `token` | A per-user JWT - long-lived, obtained via `fetch_access_token(user_id)` |
 
 ### 4-Step Setup
 
-**Step 1 — Contact Cleanster** to receive your `access-key`.
+**Step 1 - Contact Cleanster** to receive your `access-key`.
 
-**Step 2 — Create a user account** (one-time per end-user):
+**Step 2 - Create a user account** (one-time per end-user):
 
 ```python
 from cleanster import CleansterClient
@@ -112,14 +112,14 @@ resp = client.users.create_user(
 user_id = resp.data["userId"]
 ```
 
-**Step 3 — Fetch the user's access token** (store it; it is long-lived):
+**Step 3 - Fetch the user's access token** (store it; it is long-lived):
 
 ```python
 resp = client.users.fetch_access_token(user_id)
 user_token = resp.data["token"]
 ```
 
-**Step 4 — Build the client with both credentials**:
+**Step 4 - Build the client with both credentials**:
 
 ```python
 client = CleansterClient(
@@ -162,7 +162,7 @@ booking = client.bookings.create_booking(
     hours=3.0,
     extra_supplies=False,
     payment_method_id=10,
-    coupon_code="20POFF"  # optional — 20% off in sandbox
+    coupon_code="20POFF"  # optional - 20% off in sandbox
 )
 print("Created booking:", booking.data["id"])
 
@@ -218,9 +218,9 @@ Booking status values: `OPEN` · `CLEANER_ASSIGNED` · `IN_PROGRESS` · `COMPLET
 ## API Reference
 
 All methods return an `ApiResponse` with:
-- `.status` — HTTP status code
-- `.message` — Human-readable result
-- `.data` — Response payload (dict or list)
+- `.status` - HTTP status code
+- `.message` - Human-readable result
+- `.data` - Response payload (dict or list)
 
 ---
 
@@ -1086,11 +1086,11 @@ except CleansterApiError as e:
 
 | HTTP Status | Meaning |
 |---|---|
-| 400 | Bad request — malformed parameters |
-| 401 | Unauthorized — invalid or missing credentials |
-| 403 | Forbidden — insufficient permissions |
+| 400 | Bad request - malformed parameters |
+| 401 | Unauthorized - invalid or missing credentials |
+| 403 | Forbidden - insufficient permissions |
 | 404 | Not found |
-| 422 | Unprocessable entity — validation failed |
+| 422 | Unprocessable entity - validation failed |
 | 429 | Rate limit exceeded |
 | 500 | Internal server error |
 
@@ -1115,9 +1115,9 @@ Use in the **sandbox** environment only:
 
 | Booking State | Chat Available |
 |---|---|
-| `OPEN` — within 24 h of start | Yes |
-| `COMPLETED` — within 24 h of completion | Yes |
-| `IN_PROGRESS` (hanging state) | Yes — **no time restriction** |
+| `OPEN` - within 24 h of start | Yes |
+| `COMPLETED` - within 24 h of completion | Yes |
+| `IN_PROGRESS` (hanging state) | Yes - **no time restriction** |
 | `CANCELLED` | No |
 | Older than 24 h | No |
 
