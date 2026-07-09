@@ -1,5 +1,5 @@
 /**
- * BlacklistApi — prevent specific cleaners from being assigned to your bookings.
+ * BlacklistApi - prevent specific cleaners from being assigned to your bookings.
  */
 
 import { HttpClient } from "../http-client";
