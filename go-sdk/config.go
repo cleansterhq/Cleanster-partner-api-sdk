@@ -8,11 +8,11 @@ import (
 
 const (
 	// SandboxBaseURL is the base URL for the Cleanster sandbox environment.
-	// Use this for development and testing — no real charges or cleaners.
+	// Use this for development and testing - no real charges or cleaners.
 	SandboxBaseURL = "https://partner-sandbox-dot-official-tidyio-project.ue.r.appspot.com/public"
 
 	// ProductionBaseURL is the base URL for the Cleanster production environment.
-	// Use this for live traffic — real cleaners will be dispatched and charges applied.
+	// Use this for live traffic - real cleaners will be dispatched and charges applied.
 	ProductionBaseURL = "https://partner-dot-official-tidyio-project.ue.r.appspot.com/public"
 
 	// DefaultTimeout is the default HTTP request timeout.
