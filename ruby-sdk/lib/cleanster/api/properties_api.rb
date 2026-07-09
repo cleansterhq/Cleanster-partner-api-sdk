@@ -1,6 +1,6 @@
 module Cleanster
   module Api
-    # PropertiesApi — CRUD for cleaning locations, plus cleaners, iCal, and checklists.
+    # PropertiesApi - CRUD for cleaning locations, plus cleaners, iCal, and checklists.
     class PropertiesApi
       def initialize(http)
         @http = http
