@@ -152,12 +152,8 @@ func main() {
     }
     client.SetAccessToken("user-jwt-token")
 
-    // Get recommended cleaning hours
-    hoursResp, err := client.Other.GetRecommendedHours(ctx, cleanster.RecommendedHoursParams{
-        PropertyID:     1004,
-        BathroomCount:  2,
-        RoomCount:      3,
-    })
+    // Get recommended cleaning hours (last arg is optional subcatId; pass 0 to omit)
+    hoursResp, err := client.Other.GetRecommendedHours(ctx, 1004, 2, 3, 0)
     if err != nil {
         log.Fatal(err)
     }
@@ -714,10 +710,11 @@ resp, err := client.Other.GetServices(ctx)
 ---
 
 #### Get Plans
-**`GET /v1/plans?propertyId={propertyId}`**
+**`GET /v1/plans?propertyId={propertyId}&subcatId={subcatId}`**
 
 ```go
-resp, err := client.Other.GetPlans(ctx, 1004)
+// subcatId is optional; pass 0 to omit it
+resp, err := client.Other.GetPlans(ctx, 1004, 0)
 ```
 
 ---
@@ -732,14 +729,11 @@ resp, err := client.Other.GetCleaningExtras(ctx, 1)
 ---
 
 #### Get Recommended Hours
-**`GET /v1/recommended-hours?propertyId={n}&bathroomCount={n}&roomCount={n}`**
+**`GET /v1/recommended-hours?propertyId={n}&bathroomCount={n}&roomCount={n}&subcatId={n}`**
 
 ```go
-resp, err := client.Other.GetRecommendedHours(ctx, cleanster.RecommendedHoursParams{
-    PropertyID:    1004,
-    BathroomCount: 2,
-    RoomCount:     3,
-})
+// subcatId is optional; pass 0 to omit it
+resp, err := client.Other.GetRecommendedHours(ctx, 1004, 2, 3, 0)
 ```
 
 ---
