@@ -32,8 +32,20 @@ public class OtherApi {
      * @return API response with list of plans
      */
     public ApiResponse<Object> getPlans(int propertyId) {
-        return httpClient.get("/v1/plans?propertyId=" + propertyId,
-                new TypeReference<ApiResponse<Object>>() {});
+        return getPlans(propertyId, null);
+    }
+
+    /**
+     * Get available booking plans for a property, optionally filtered by subcategory.
+     *
+     * @param propertyId The property ID
+     * @param subcatId   Optional service subcategory ID (pass null to omit)
+     * @return API response with list of plans
+     */
+    public ApiResponse<Object> getPlans(int propertyId, Integer subcatId) {
+        String url = "/v1/plans?propertyId=" + propertyId;
+        if (subcatId != null) url += "&subcatId=" + subcatId;
+        return httpClient.get(url, new TypeReference<ApiResponse<Object>>() {});
     }
 
     /**
@@ -45,11 +57,24 @@ public class OtherApi {
      * @return API response with recommended hours
      */
     public ApiResponse<Object> getRecommendedHours(int propertyId, int bathroomCount, int roomCount) {
-        return httpClient.get(
-                "/v1/recommended-hours?propertyId=" + propertyId
-                        + "&bathroomCount=" + bathroomCount
-                        + "&roomCount=" + roomCount,
-                new TypeReference<ApiResponse<Object>>() {});
+        return getRecommendedHours(propertyId, bathroomCount, roomCount, null);
+    }
+
+    /**
+     * Get recommended cleaning hours based on property attributes, optionally filtered by subcategory.
+     *
+     * @param propertyId     The property ID
+     * @param bathroomCount  Number of bathrooms
+     * @param roomCount      Number of rooms
+     * @param subcatId       Optional service subcategory ID (pass null to omit)
+     * @return API response with recommended hours
+     */
+    public ApiResponse<Object> getRecommendedHours(int propertyId, int bathroomCount, int roomCount, Integer subcatId) {
+        String url = "/v1/recommended-hours?propertyId=" + propertyId
+                + "&bathroomCount=" + bathroomCount
+                + "&roomCount=" + roomCount;
+        if (subcatId != null) url += "&subcatId=" + subcatId;
+        return httpClient.get(url, new TypeReference<ApiResponse<Object>>() {});
     }
 
     /**
@@ -117,5 +142,32 @@ public class OtherApi {
      */
     public ApiResponse<Object> getCleaner(int cleanerId) {
         return httpClient.get("/v1/cleaners/" + cleanerId, new TypeReference<ApiResponse<Object>>() {});
+    }
+
+    /**
+     * List service tasks, filterable by property and service type. Supports pagination.
+     *
+     * @param propertyId The property ID
+     * @param serviceId  The service type ID
+     * @param pageNo     Optional page number (pass null to omit)
+     * @param pageSize   Optional page size (pass null to omit)
+     * @return API response with list of tasks
+     */
+    public ApiResponse<Object> getTasks(int propertyId, int serviceId, Integer pageNo, Integer pageSize) {
+        String url = "/v1/tasks?propertyId=" + propertyId + "&serviceId=" + serviceId;
+        if (pageNo != null) url += "&pageNo=" + pageNo;
+        if (pageSize != null) url += "&pageSize=" + pageSize;
+        return httpClient.get(url, new TypeReference<ApiResponse<Object>>() {});
+    }
+
+    /**
+     * Get the subcategories available under a given service type.
+     *
+     * @param serviceId The service type ID
+     * @return API response with list of subcategories
+     */
+    public ApiResponse<Object> getSubcategories(int serviceId) {
+        return httpClient.get("/v1/services/" + serviceId + "/subcategories",
+                new TypeReference<ApiResponse<Object>>() {});
     }
 }
