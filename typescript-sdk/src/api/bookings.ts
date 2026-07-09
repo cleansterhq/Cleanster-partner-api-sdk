@@ -1,5 +1,5 @@
 /**
- * BookingsApi — manage the full lifecycle of cleaning appointments.
+ * BookingsApi - manage the full lifecycle of cleaning appointments.
  */
 
 import { HttpClient } from "../http-client";
