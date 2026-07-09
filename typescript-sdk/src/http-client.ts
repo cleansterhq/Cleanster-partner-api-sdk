@@ -132,7 +132,7 @@ export class HttpClient {
     const timeoutId = setTimeout(() => controller.abort(), this.config.timeoutMs);
     try {
       const formData = new FormData();
-      const blob = new Blob([imageData], { type: "image/*" });
+      const blob = new Blob([new Uint8Array(imageData)], { type: "image/*" });
       formData.append("file", blob, fileName);
       const headers: Record<string, string> = {
         "access-key": this.config.accessKey,
