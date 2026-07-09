@@ -30,30 +30,30 @@ class BookingsTest {
 
     // ─── getBookings ──────────────────────────────────────────────────────────
     @Test fun `getBookings returns list`() = runTest {
-        enqueue("""{"status":200,"message":"OK","data":[{"id":1,"status":"OPEN"},{"id":2,"status":"COMPLETED"}]}""")
-        val resp = client.bookings.getBookings()
+        enqueue("""{"status":200,"message":"OK","data":{"content":[{"id":1,"status":"UPCOMING"},{"id":2,"status":"COMPLETED"}]}}""")
+        val resp = client.bookings.getBookings(status = "UPCOMING")
         assertEquals(200, resp.status)
-        assertEquals(2, resp.data?.size)
+        assertEquals(2, resp.data?.content?.size)
     }
 
     @Test fun `getBookings with status filter sends query param`() = runTest {
-        enqueue("""{"status":200,"message":"OK","data":[{"id":1,"status":"OPEN"}]}""")
-        client.bookings.getBookings(status = "OPEN")
+        enqueue("""{"status":200,"message":"OK","data":{"content":[{"id":1,"status":"UPCOMING"}]}}""")
+        client.bookings.getBookings(status = "UPCOMING")
         val req = server.takeRequest()
-        assert(req.path!!.contains("status=OPEN"))
+        assert(req.path!!.contains("status=UPCOMING"))
     }
 
     @Test fun `getBookings with pageNo sends query param`() = runTest {
-        enqueue("""{"status":200,"message":"OK","data":[]}""")
-        client.bookings.getBookings(pageNo = 3)
+        enqueue("""{"status":200,"message":"OK","data":{"content":[]}}""")
+        client.bookings.getBookings(status = "COMPLETED", pageNo = 3)
         val req = server.takeRequest()
         assert(req.path!!.contains("pageNo=3"))
     }
 
     @Test fun `getBookings empty data returns empty list`() = runTest {
-        enqueue("""{"status":200,"message":"OK","data":[]}""")
-        val resp = client.bookings.getBookings()
-        assertEquals(0, resp.data?.size)
+        enqueue("""{"status":200,"message":"OK","data":{"content":[]}}""")
+        val resp = client.bookings.getBookings(status = "CANCELLED")
+        assertEquals(0, resp.data?.content?.size)
     }
 
     // ─── getBookingDetails ───────────────────────────────────────────────────
@@ -262,23 +262,23 @@ class BookingsTest {
 
     // ─── auth headers ─────────────────────────────────────────────────────────
     @Test fun `request includes access-key header`() = runTest {
-        enqueue("""{"status":200,"message":"OK","data":[]}""")
-        client.bookings.getBookings()
+        enqueue("""{"status":200,"message":"OK","data":{"content":[]}}""")
+        client.bookings.getBookings(status = "UPCOMING")
         val req = server.takeRequest()
         assertEquals("test-key", req.getHeader("access-key"))
     }
 
     @Test fun `request includes token header`() = runTest {
-        enqueue("""{"status":200,"message":"OK","data":[]}""")
-        client.bookings.getBookings()
+        enqueue("""{"status":200,"message":"OK","data":{"content":[]}}""")
+        client.bookings.getBookings(status = "UPCOMING")
         val req = server.takeRequest()
         assertEquals("test-token", req.getHeader("token"))
     }
 
     // ─── additional coverage ──────────────────────────────────────────────────
     @Test fun `getBookings sends GET method`() = runTest {
-        enqueue("""{"status":200,"message":"OK","data":[]}""")
-        client.bookings.getBookings()
+        enqueue("""{"status":200,"message":"OK","data":{"content":[]}}""")
+        client.bookings.getBookings(status = "UPCOMING")
         assertEquals("GET", server.takeRequest().method)
     }
 

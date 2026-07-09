@@ -24,7 +24,7 @@ from cleanster.models.checklist import Checklist, ChecklistItem
 from cleanster.models.payment_method import PaymentMethod
 from cleanster.models.property import Property
 from cleanster.models.response import ApiResponse
-from cleanster.models.user import User
+from cleanster.models.user import CreateUserResponse, User
 
 
 # ---------------------------------------------------------------------------
@@ -136,22 +136,22 @@ class TestCleansterClient(unittest.TestCase):
 
 class TestBookingsApi(unittest.TestCase):
 
-    def test_get_bookings_no_params(self):
+    def test_get_bookings_status_only(self):
         http = make_http()
-        http.get.return_value = ok([])
+        http.get.return_value = ok({"number": 1, "content": []})
         api = BookingsApi(http)
 
-        result = api.get_bookings()
+        result = api.get_bookings(status="UPCOMING")
 
-        http.get.assert_called_once_with("/v1/bookings", params=None)
+        http.get.assert_called_once_with("/v1/bookings", params={"status": "UPCOMING"})
         self.assertEqual(200, result.status)
 
     def test_get_bookings_with_page_no(self):
         http = make_http()
-        http.get.return_value = ok([])
+        http.get.return_value = ok({"number": 2, "content": []})
         api = BookingsApi(http)
 
-        api.get_bookings(page_no=2)
+        api.get_bookings(status="COMPLETED", page_no=2)
 
         args, kwargs = http.get.call_args
         self.assertEqual("/v1/bookings", args[0])
@@ -159,7 +159,7 @@ class TestBookingsApi(unittest.TestCase):
 
     def test_get_bookings_with_status(self):
         http = make_http()
-        http.get.return_value = ok([])
+        http.get.return_value = ok({"content": []})
         api = BookingsApi(http)
 
         api.get_bookings(status="COMPLETED")
@@ -169,14 +169,14 @@ class TestBookingsApi(unittest.TestCase):
 
     def test_get_bookings_with_both_params(self):
         http = make_http()
-        http.get.return_value = ok([])
+        http.get.return_value = ok({"content": []})
         api = BookingsApi(http)
 
-        api.get_bookings(page_no=1, status="OPEN")
+        api.get_bookings(status="CANCELLED", page_no=1)
 
         args, kwargs = http.get.call_args
         self.assertEqual(1, kwargs["params"]["pageNo"])
-        self.assertEqual("OPEN", kwargs["params"]["status"])
+        self.assertEqual("CANCELLED", kwargs["params"]["status"])
 
     def test_create_booking(self):
         http = make_http()
@@ -393,27 +393,31 @@ class TestUsersApi(unittest.TestCase):
 
     def test_create_user(self):
         http = make_http()
-        http.post.return_value = ok({"id": 42, "email": "jane@example.com",
-                                     "firstName": "Jane", "lastName": "Smith"})
+        http.post.return_value = ok({"userId": 42, "accessToken": "Bearer abc.def.ghi"})
         api = UsersApi(http)
 
-        result = api.create_user("jane@example.com", "Jane", "Smith")
+        result = api.create_user("jane@example.com", "Jane", "Smith", customer_id="cust-1")
 
         http.post.assert_called_once_with(
             "/v1/user/account",
-            body={"email": "jane@example.com", "firstName": "Jane", "lastName": "Smith"},
+            body={
+                "email": "jane@example.com",
+                "firstName": "Jane",
+                "lastName": "Smith",
+                "customerId": "cust-1",
+            },
         )
-        self.assertIsInstance(result.data, User)
-        self.assertEqual(42, result.data.id)
-        self.assertEqual("jane@example.com", result.data.email)
-        self.assertEqual("Jane", result.data.first_name)
+        self.assertIsInstance(result.data, CreateUserResponse)
+        self.assertEqual(42, result.data.user_id)
+        self.assertEqual("Bearer abc.def.ghi", result.data.access_token)
+        self.assertEqual("abc.def.ghi", result.data.access_token_without_prefix)
 
     def test_create_user_with_phone(self):
         http = make_http()
-        http.post.return_value = ok({"id": 43})
+        http.post.return_value = ok({"userId": 43, "accessToken": "Bearer xyz"})
         api = UsersApi(http)
 
-        api.create_user("a@b.com", "A", "B", phone="+15551234567")
+        api.create_user("a@b.com", "A", "B", customer_id="cust-2", phone="+15551234567")
 
         args, kwargs = http.post.call_args
         self.assertEqual("+15551234567", kwargs["body"]["phone"])
@@ -959,7 +963,7 @@ class TestExceptions(unittest.TestCase):
         api = BookingsApi(http)
 
         with self.assertRaises(CleansterAuthException):
-            api.get_bookings()
+            api.get_bookings(status="UPCOMING")
 
     def test_api_exception_propagates(self):
         http = make_http()

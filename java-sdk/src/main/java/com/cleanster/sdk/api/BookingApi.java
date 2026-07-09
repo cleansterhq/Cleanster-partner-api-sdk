@@ -22,9 +22,14 @@ public class BookingApi {
     /**
      * Get upcoming and past bookings with optional filters.
      *
+     * <p>Confirmed against the live sandbox API: {@code status} is required, not optional -
+     * there is no "all statuses" call. The response {@code data} is a Spring-style page object
+     * ({@code number, size, numberOfElements, totalPages, totalElements, content: []}}), not a
+     * flat array - {@code content} holds the booking objects.</p>
+     *
      * @param pageNo  Page number (starts at 1), or null for page 1
-     * @param status  Filter by status: OPEN, CLEANER_ASSIGNED, COMPLETED, CANCELLED, REMOVED, or null for all
-     * @return API response containing list of bookings
+     * @param status  Filter by status: COMPLETED, CANCELLED, or UPCOMING (required by the live API)
+     * @return API response containing a page object with a {@code content} array of bookings
      */
     public ApiResponse<Object> getBookings(Integer pageNo, String status) {
         StringBuilder path = new StringBuilder("/v1/bookings?");

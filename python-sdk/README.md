@@ -107,16 +107,20 @@ resp = client.users.create_user(
     email="jane@example.com",
     first_name="Jane",
     last_name="Doe",
+    customer_id="your-internal-customer-id",
     phone="+15551234567"
 )
 user_id = resp.data["userId"]
+user_token = resp.data["accessToken"]
 ```
 
-**Step 3 - Fetch the user's access token** (store it; it is long-lived):
+**Step 3 - Use the access token from create_user** (store it; it is long-lived):
 
 ```python
-resp = client.users.fetch_access_token(user_id)
-user_token = resp.data["token"]
+client = CleansterClient(
+    access_key="your-access-key",
+    token=user_token
+)
 ```
 
 **Step 4 - Build the client with both credentials**:
@@ -166,9 +170,9 @@ booking = client.bookings.create_booking(
 )
 print("Created booking:", booking.data["id"])
 
-# List open bookings
-bookings = client.bookings.list_bookings(page_no=1, status="OPEN")
-print("Open bookings:", len(bookings.data["bookings"]))
+# List upcoming bookings
+bookings = client.bookings.get_bookings(status="UPCOMING", page_no=1)
+print("Upcoming bookings:", len(bookings.data["content"]))
 ```
 
 ---
@@ -233,12 +237,12 @@ Retrieve a paginated list of bookings, optionally filtered by status.
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `page_no` | int | Yes | Page number (1-based) |
-| `status` | str | No | `OPEN`, `CLEANER_ASSIGNED`, `COMPLETED`, `CANCELLED`, `REMOVED` |
+| `status` | str | Yes | `COMPLETED`, `CANCELLED`, or `UPCOMING` |
+| `page_no` | int | No | Page number (1-based) |
 
 ```python
-resp = client.bookings.list_bookings(page_no=1, status="OPEN")
-for booking in resp.data["bookings"]:
+resp = client.bookings.get_bookings(status="UPCOMING", page_no=1)
+for booking in resp.data["content"]:
     print(booking["id"], booking["status"])
 ```
 
@@ -494,16 +498,19 @@ resp = client.bookings.delete_message(
 | `email` | str | Yes | Email address |
 | `first_name` | str | Yes | First name |
 | `last_name` | str | Yes | Last name |
-| `phone` | str | Yes | Phone in E.164 format |
+| `customer_id` | str | Yes | Your internal customer/account ID |
+| `phone` | str | No | Phone in E.164 format |
 
 ```python
 resp = client.users.create_user(
     email="jane@example.com",
     first_name="Jane",
     last_name="Doe",
+    customer_id="your-internal-customer-id",
     phone="+15551234567"
 )
 user_id = resp.data["userId"]
+access_token = resp.data["accessToken"]
 ```
 
 ---

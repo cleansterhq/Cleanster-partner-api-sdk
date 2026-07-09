@@ -4,6 +4,7 @@ import com.cleanster.xml.api.BookingsXmlApi;
 import com.cleanster.xml.client.XmlConverter;
 import com.cleanster.xml.client.XmlHttpClient;
 import com.cleanster.xml.model.Booking;
+import com.cleanster.xml.model.PagedBookings;
 import com.cleanster.xml.model.XmlApiResponse;
 import org.junit.jupiter.api.*;
 
@@ -19,7 +20,7 @@ class BookingsTest {
     private BookingsXmlApi api;
 
     private static final String LIST_JSON = "{\"success\":true,\"message\":\"OK\","
-            + "\"data\":[{\"id\":100,\"status\":\"scheduled\"}]}";
+            + "\"data\":{\"content\":[{\"id\":100,\"status\":\"UPCOMING\"}]}}";
     private static final String BK_JSON   = "{\"success\":true,\"message\":\"OK\","
             + "\"data\":{\"id\":100,\"status\":\"scheduled\"}}";
     private static final String OK_JSON   = "{\"success\":true,\"message\":\"OK\",\"data\":{}}";
@@ -32,30 +33,30 @@ class BookingsTest {
 
     // ── listBookings ───────────────────────────────────────────────────────────
 
-    @Test void listBookings_noFilters_callsGet() {
-        doReturn(LIST_JSON).when(http).get("/v1/bookings");
-        api.listBookings();
-        verify(http).get("/v1/bookings");
+    @Test void listBookings_requiresStatus_callsGet() {
+        doReturn(LIST_JSON).when(http).get("/v1/bookings?status=UPCOMING");
+        api.listBookings("UPCOMING");
+        verify(http).get("/v1/bookings?status=UPCOMING");
     }
 
     @Test void listBookings_withPageNo_callsGetWithParam() {
-        doReturn(LIST_JSON).when(http).get("/v1/bookings?pageNo=2");
-        api.listBookings(2, null);
-        verify(http).get("/v1/bookings?pageNo=2");
+        doReturn(LIST_JSON).when(http).get("/v1/bookings?status=CANCELLED&pageNo=2");
+        api.listBookings("CANCELLED", 2);
+        verify(http).get("/v1/bookings?status=CANCELLED&pageNo=2");
     }
 
     @Test void listBookings_withStatus_callsGetWithParam() {
-        doReturn(LIST_JSON).when(http).get("/v1/bookings?status=scheduled");
-        api.listBookings(null, "scheduled");
-        verify(http).get("/v1/bookings?status=scheduled");
+        doReturn(LIST_JSON).when(http).get("/v1/bookings?status=COMPLETED");
+        api.listBookings("COMPLETED");
+        verify(http).get("/v1/bookings?status=COMPLETED");
     }
 
     @Test void listBookings_returnsList() {
-        doReturn(LIST_JSON).when(http).get("/v1/bookings");
-        XmlApiResponse<List<Booking>> resp = api.listBookings();
+        doReturn(LIST_JSON).when(http).get("/v1/bookings?status=UPCOMING");
+        XmlApiResponse<PagedBookings> resp = api.listBookings("UPCOMING");
         assertTrue(resp.isSuccess());
-        assertEquals(1, resp.getData().size());
-        assertEquals(100, (int) resp.getData().get(0).getId());
+        assertEquals(1, resp.getData().getContent().size());
+        assertEquals(100, (int) resp.getData().getContent().get(0).getId());
     }
 
     // ── createBooking ──────────────────────────────────────────────────────────

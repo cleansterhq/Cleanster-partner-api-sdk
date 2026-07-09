@@ -31,6 +31,12 @@ public class CleansterTests
         return MakeResponse($$"""{"id":{{id}},"email":"jane@example.com","firstName":"Jane","lastName":"Smith"{{tok}}}""");
     }
 
+    private static JsonElement CreateUserResponseJson(int userId = 42, string accessToken = "Bearer abc.def.ghi") =>
+        MakeResponse($$"""{"userId":{{userId}},"accessToken":"{{accessToken}}"}""");
+
+    private static JsonElement PagedBookingsJson(string content = "[]") =>
+        MakeResponse($$"""{"content":{{content}}}""");
+
     private static JsonElement PropertyJson(int id = 1040) =>
         MakeResponse($$"""{"id":{{id}},"name":"Beach House","address":"123 St","city":"Miami","country":"USA","roomCount":3,"bathroomCount":2,"serviceId":1}""");
 
@@ -210,9 +216,10 @@ public class CleansterTests
     public async Task Bookings_GetBookings_NoParams()
     {
         var http = MockHttp();
-        http.Setup(h => h.GetAsync("/v1/bookings", null, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(MakeResponse("[]"));
-        var resp = await new BookingsApi(http.Object).GetBookingsAsync();
+        http.Setup(h => h.GetAsync("/v1/bookings",
+            It.Is<IDictionary<string, string>?>(q => q != null && q["status"] == "UPCOMING"),
+            It.IsAny<CancellationToken>())).ReturnsAsync(PagedBookingsJson());
+        var resp = await new BookingsApi(http.Object).GetBookingsAsync("UPCOMING");
         Assert.Equal(200, resp.Status);
         Assert.Empty(resp.Data);
     }
@@ -222,9 +229,9 @@ public class CleansterTests
     {
         var http = MockHttp();
         http.Setup(h => h.GetAsync("/v1/bookings",
-            It.Is<IDictionary<string, string>?>(q => q != null && q["status"] == "OPEN"),
-            It.IsAny<CancellationToken>())).ReturnsAsync(MakeResponse("[]"));
-        await new BookingsApi(http.Object).GetBookingsAsync(status: "OPEN");
+            It.Is<IDictionary<string, string>?>(q => q != null && q["status"] == "COMPLETED"),
+            It.IsAny<CancellationToken>())).ReturnsAsync(PagedBookingsJson());
+        await new BookingsApi(http.Object).GetBookingsAsync(status: "COMPLETED");
         http.VerifyAll();
     }
 
@@ -233,9 +240,9 @@ public class CleansterTests
     {
         var http = MockHttp();
         http.Setup(h => h.GetAsync("/v1/bookings",
-            It.Is<IDictionary<string, string>?>(q => q != null && q["pageNo"] == "2"),
-            It.IsAny<CancellationToken>())).ReturnsAsync(MakeResponse("[]"));
-        await new BookingsApi(http.Object).GetBookingsAsync(pageNo: 2);
+            It.Is<IDictionary<string, string>?>(q => q != null && q["pageNo"] == "2" && q["status"] == "CANCELLED"),
+            It.IsAny<CancellationToken>())).ReturnsAsync(PagedBookingsJson());
+        await new BookingsApi(http.Object).GetBookingsAsync(status: "CANCELLED", pageNo: 2);
         http.VerifyAll();
     }
 
@@ -446,10 +453,10 @@ public class CleansterTests
     {
         var http = MockHttp();
         http.Setup(h => h.PostAsync("/v1/user/account", It.IsAny<object?>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(UserJson(42));
-        var resp = await new UsersApi(http.Object).CreateUserAsync("jane@example.com", "Jane", "Smith");
-        Assert.Equal(42, resp.Data.Id);
-        Assert.Equal("jane@example.com", resp.Data.Email);
+            .ReturnsAsync(CreateUserResponseJson(42));
+        var resp = await new UsersApi(http.Object).CreateUserAsync("jane@example.com", "Jane", "Smith", "cust-1");
+        Assert.Equal(42, resp.Data.UserId);
+        Assert.Equal("Bearer abc.def.ghi", resp.Data.AccessToken);
     }
 
     [Fact]
@@ -459,8 +466,8 @@ public class CleansterTests
         object? capturedBody = null;
         http.Setup(h => h.PostAsync("/v1/user/account", It.IsAny<object?>(), It.IsAny<CancellationToken>()))
             .Callback<string, object?, CancellationToken>((_, b, _) => capturedBody = b)
-            .ReturnsAsync(UserJson());
-        await new UsersApi(http.Object).CreateUserAsync("a@b.com", "A", "B", "+15551234567");
+            .ReturnsAsync(CreateUserResponseJson());
+        await new UsersApi(http.Object).CreateUserAsync("a@b.com", "A", "B", "cust-2", "+15551234567");
         var json = JsonSerializer.Serialize(capturedBody);
         Assert.Contains("phone", json);
     }
@@ -472,8 +479,8 @@ public class CleansterTests
         object? capturedBody = null;
         http.Setup(h => h.PostAsync("/v1/user/account", It.IsAny<object?>(), It.IsAny<CancellationToken>()))
             .Callback<string, object?, CancellationToken>((_, b, _) => capturedBody = b)
-            .ReturnsAsync(UserJson());
-        await new UsersApi(http.Object).CreateUserAsync("a@b.com", "A", "B");
+            .ReturnsAsync(CreateUserResponseJson());
+        await new UsersApi(http.Object).CreateUserAsync("a@b.com", "A", "B", "cust-3");
         var json = JsonSerializer.Serialize(capturedBody);
         Assert.DoesNotContain("phone", json);
     }
@@ -1085,7 +1092,7 @@ public class CleansterTests
         http.Setup(h => h.GetAsync(It.IsAny<string>(), It.IsAny<IDictionary<string, string>?>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new AuthException(401, "Unauthorized"));
         await Assert.ThrowsAsync<AuthException>(() =>
-            new BookingsApi(http.Object).GetBookingsAsync());
+            new BookingsApi(http.Object).GetBookingsAsync("UPCOMING"));
     }
 
     [Fact]
@@ -1105,7 +1112,7 @@ public class CleansterTests
         http.Setup(h => h.GetAsync(It.IsAny<string>(), It.IsAny<IDictionary<string, string>?>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new CleansterException("Connection refused"));
         await Assert.ThrowsAsync<CleansterException>(() =>
-            new BookingsApi(http.Object).GetBookingsAsync());
+            new BookingsApi(http.Object).GetBookingsAsync("UPCOMING"));
     }
 
     // =========================================================================

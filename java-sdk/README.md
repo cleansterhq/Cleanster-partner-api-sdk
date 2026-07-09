@@ -118,22 +118,23 @@ Every request to the Cleanster API requires two credentials sent as HTTP headers
 ```java
 CleansterClient client = new CleansterClient("your-access-key");
 
-ApiResponse<Object> resp = client.users().createUser(
-    "jane@example.com",   // email
-    "Jane",               // first name
-    "Doe",                // last name
-    "+15551234567"        // phone
-);
-// resp.getData() contains userId and account details
+CreateUserRequest req = new CreateUserRequest();
+req.setEmail("jane@example.com");
+req.setFirstName("Jane");
+req.setLastName("Doe");
+req.setPhone("+15551234567");
+req.setCustomerId("your-internal-customer-id"); // required by the live API
+
+ApiResponse<CreateUserResponse> resp = client.users().createUser(req);
+int userId = resp.getData().getUserId();
+String accessToken = resp.getData().getAccessToken();
 ```
 
-**Step 3 - Fetch the user's access token** (store it; it is long-lived):
+**Step 3 - Use the access token from create-user** (store it; it is long-lived):
 
 ```java
-int userId = 42; // from the createUser response
-ApiResponse<Object> tokenResp = client.users().fetchAccessToken(userId);
-Map<?, ?> data = (Map<?, ?>) tokenResp.getData();
-String userToken = (String) data.get("token");
+CleansterClient client = new CleansterClient("your-access-key", accessToken);
+// All subsequent calls automatically include both headers
 ```
 
 **Step 4 - Build the client with both credentials**:
@@ -183,12 +184,12 @@ public class QuickStart {
         ApiResponse<Booking> booking = client.bookings().createBooking(req);
         System.out.println("Created booking: " + booking.getData().getId());
 
-        // 5. List open bookings
+        // 5. List upcoming bookings
         GetBookingsParams params = new GetBookingsParams();
+        params.setStatus("UPCOMING"); // required: COMPLETED, CANCELLED, or UPCOMING
         params.setPageNo(1);
-        params.setStatus("OPEN");
         ApiResponse<BookingList> list = client.bookings().getBookings(params);
-        System.out.println("Open bookings: " + list.getData().getBookings().size());
+        System.out.println("Upcoming bookings: " + list.getData().getBookings().size());
     }
 }
 ```
@@ -257,12 +258,12 @@ Retrieve a paginated list of bookings, optionally filtered by status.
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `pageNo` | int | Yes | Page number (1-based) |
-| `status` | String | No | Filter: `OPEN`, `CLEANER_ASSIGNED`, `COMPLETED`, `CANCELLED`, `REMOVED` |
+| `status` | String | Yes | Filter: `COMPLETED`, `CANCELLED`, or `UPCOMING` |
 
 ```java
 GetBookingsParams params = new GetBookingsParams();
+params.setStatus("UPCOMING"); // required
 params.setPageNo(1);
-params.setStatus("OPEN"); // optional
 
 ApiResponse<BookingList> resp = client.bookings().getBookings(params);
 List<Booking> bookings = resp.getData().getBookings();
@@ -548,14 +549,20 @@ Register a new user account. Call this once per end-user of your platform.
 | `email` | String | Yes | User's email address |
 | `firstName` | String | Yes | First name |
 | `lastName` | String | Yes | Last name |
-| `phone` | String | Yes | Phone number in E.164 format |
+| `customerId` | String | Yes | Your internal customer/account ID |
+| `phone` | String | No | Phone number in E.164 format |
 
 ```java
-ApiResponse<Object> resp = client.users().createUser(
-    "jane@example.com", "Jane", "Doe", "+15551234567"
-);
-Map<?, ?> data = (Map<?, ?>) resp.getData();
-int userId = ((Number) data.get("userId")).intValue();
+CreateUserRequest req = new CreateUserRequest();
+req.setEmail("jane@example.com");
+req.setFirstName("Jane");
+req.setLastName("Doe");
+req.setCustomerId("your-internal-customer-id");
+req.setPhone("+15551234567");
+
+ApiResponse<CreateUserResponse> resp = client.users().createUser(req);
+int userId = resp.getData().getUserId();
+String accessToken = resp.getData().getAccessToken();
 ```
 
 ---

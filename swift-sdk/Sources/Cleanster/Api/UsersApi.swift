@@ -11,16 +11,18 @@ public final class UsersApi {
     ///   - email: User's email address.
     ///   - firstName: User's first name.
     ///   - lastName: User's last name.
+    ///   - customerId: Your own unique customer identifier.
     ///   - phone: Optional phone number (E.164 format recommended).
-    /// - Returns: `ApiResponse<User>` - save the returned `data.id` for future token lookups.
+    /// - Returns: `ApiResponse<CreateUserResponse>` - save the returned `data.userId` for future token lookups.
     public func createUser(
         email: String,
         firstName: String,
         lastName: String,
+        customerId: String,
         phone: String? = nil
-    ) async throws -> ApiResponse<User> {
+    ) async throws -> ApiResponse<CreateUserResponse> {
         let body = CreateUserRequest(email: email, firstName: firstName,
-                                     lastName: lastName, phone: phone)
+                                     lastName: lastName, customerId: customerId, phone: phone)
         return try await client.request(method: "POST", path: "/v1/user/account", body: body)
     }
 

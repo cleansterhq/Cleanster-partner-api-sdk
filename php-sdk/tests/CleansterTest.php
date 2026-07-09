@@ -21,6 +21,7 @@ use Cleanster\HttpClient;
 use Cleanster\Models\Booking;
 use Cleanster\Models\Checklist;
 use Cleanster\Models\ChecklistItem;
+use Cleanster\Models\CreateUserResponse;
 use Cleanster\Models\PaymentMethod;
 use Cleanster\Models\Property;
 use Cleanster\Models\User;
@@ -197,11 +198,11 @@ class CleansterTest extends TestCase
         $http = $this->mockHttp();
         $http->expects($this->once())
              ->method('get')
-             ->with('/v1/bookings', [])
-             ->willReturn($this->ok([]));
+             ->with('/v1/bookings', ['status' => 'UPCOMING'])
+             ->willReturn($this->ok(['content' => []]));
 
         $api  = new BookingsApi($http);
-        $resp = $api->getBookings();
+        $resp = $api->getBookings('UPCOMING');
         $this->assertSame(200, $resp->status);
         $this->assertIsArray($resp->data);
     }
@@ -211,10 +212,10 @@ class CleansterTest extends TestCase
         $http = $this->mockHttp();
         $http->expects($this->once())
              ->method('get')
-             ->with('/v1/bookings', ['status' => 'OPEN'])
-             ->willReturn($this->ok([]));
+             ->with('/v1/bookings', ['status' => 'COMPLETED'])
+             ->willReturn($this->ok(['content' => []]));
 
-        (new BookingsApi($http))->getBookings(status: 'OPEN');
+        (new BookingsApi($http))->getBookings(status: 'COMPLETED');
     }
 
     public function testGetBookingsWithPageNo(): void
@@ -222,10 +223,10 @@ class CleansterTest extends TestCase
         $http = $this->mockHttp();
         $http->expects($this->once())
              ->method('get')
-             ->with('/v1/bookings', ['pageNo' => 2])
-             ->willReturn($this->ok([]));
+             ->with('/v1/bookings', ['status' => 'CANCELLED', 'pageNo' => 2])
+             ->willReturn($this->ok(['content' => []]));
 
-        (new BookingsApi($http))->getBookings(pageNo: 2);
+        (new BookingsApi($http))->getBookings(status: 'CANCELLED', pageNo: 2);
     }
 
     public function testGetBookingsWithBothParams(): void
@@ -233,10 +234,10 @@ class CleansterTest extends TestCase
         $http = $this->mockHttp();
         $http->expects($this->once())
              ->method('get')
-             ->with('/v1/bookings', ['pageNo' => 3, 'status' => 'COMPLETED'])
-             ->willReturn($this->ok([]));
+             ->with('/v1/bookings', ['status' => 'COMPLETED', 'pageNo' => 3])
+             ->willReturn($this->ok(['content' => []]));
 
-        (new BookingsApi($http))->getBookings(pageNo: 3, status: 'COMPLETED');
+        (new BookingsApi($http))->getBookings(status: 'COMPLETED', pageNo: 3);
     }
 
     public function testCreateBooking(): void
@@ -464,13 +465,13 @@ class CleansterTest extends TestCase
         $http = $this->mockHttp();
         $http->expects($this->once())
              ->method('post')
-             ->with('/v1/user/account', ['email' => 'jane@example.com', 'firstName' => 'Jane', 'lastName' => 'Smith'])
-             ->willReturn($this->ok(['id' => 42, 'email' => 'jane@example.com', 'firstName' => 'Jane', 'lastName' => 'Smith']));
+             ->with('/v1/user/account', ['email' => 'jane@example.com', 'firstName' => 'Jane', 'lastName' => 'Smith', 'customerId' => 'cust-1'])
+             ->willReturn($this->ok(['userId' => 42, 'accessToken' => 'Bearer abc.def.ghi']));
 
-        $resp = (new UsersApi($http))->createUser('jane@example.com', 'Jane', 'Smith');
-        $this->assertInstanceOf(User::class, $resp->data);
-        $this->assertSame('jane@example.com', $resp->data->email);
-        $this->assertSame(42, $resp->data->id);
+        $resp = (new UsersApi($http))->createUser('jane@example.com', 'Jane', 'Smith', 'cust-1');
+        $this->assertInstanceOf(CreateUserResponse::class, $resp->data);
+        $this->assertSame(42, $resp->data->userId);
+        $this->assertSame('Bearer abc.def.ghi', $resp->data->accessToken);
     }
 
     public function testCreateUserWithPhone(): void
@@ -478,10 +479,10 @@ class CleansterTest extends TestCase
         $http = $this->mockHttp();
         $http->expects($this->once())
              ->method('post')
-             ->with('/v1/user/account', ['email' => 'a@b.com', 'firstName' => 'A', 'lastName' => 'B', 'phone' => '+15551234567'])
-             ->willReturn($this->ok(['id' => 1, 'email' => 'a@b.com', 'firstName' => 'A', 'lastName' => 'B']));
+             ->with('/v1/user/account', ['email' => 'a@b.com', 'firstName' => 'A', 'lastName' => 'B', 'customerId' => 'cust-2', 'phone' => '+15551234567'])
+             ->willReturn($this->ok(['userId' => 1, 'accessToken' => 'Bearer xyz']));
 
-        (new UsersApi($http))->createUser('a@b.com', 'A', 'B', '+15551234567');
+        (new UsersApi($http))->createUser('a@b.com', 'A', 'B', 'cust-2', '+15551234567');
     }
 
     public function testCreateUserOmitsEmptyPhone(): void
@@ -490,9 +491,9 @@ class CleansterTest extends TestCase
         $http->expects($this->once())
              ->method('post')
              ->with('/v1/user/account', $this->callback(fn($b) => !array_key_exists('phone', $b)))
-             ->willReturn($this->ok(['id' => 1, 'email' => 'a@b.com', 'firstName' => 'A', 'lastName' => 'B']));
+             ->willReturn($this->ok(['userId' => 1, 'accessToken' => 'Bearer xyz']));
 
-        (new UsersApi($http))->createUser('a@b.com', 'A', 'B');
+        (new UsersApi($http))->createUser('a@b.com', 'A', 'B', 'cust-3');
     }
 
     public function testFetchAccessToken(): void
@@ -1138,7 +1139,7 @@ class CleansterTest extends TestCase
              ->willThrowException(new AuthException(401, '{"message":"Unauthorized"}'));
 
         $this->expectException(AuthException::class);
-        (new BookingsApi($http))->getBookings();
+        (new BookingsApi($http))->getBookings('UPCOMING');
     }
 
     public function testHttpClientThrowsApiExceptionOn404(): void
@@ -1168,7 +1169,7 @@ class CleansterTest extends TestCase
              ->willThrowException(new CleansterException('Connection refused'));
 
         $this->expectException(CleansterException::class);
-        (new BookingsApi($http))->getBookings();
+        (new BookingsApi($http))->getBookings('UPCOMING');
     }
 
     // =========================================================================
@@ -1209,6 +1210,13 @@ class CleansterTest extends TestCase
         $this->assertSame('jane@example.com', $u->email);
         $this->assertNull($u->phone);
         $this->assertSame('bearer-jwt', $u->token);
+    }
+
+    public function testCreateUserResponseModelFieldMapping(): void
+    {
+        $r = new CreateUserResponse(['userId' => 42, 'accessToken' => 'Bearer abc.def.ghi']);
+        $this->assertSame(42, $r->userId);
+        $this->assertSame('Bearer abc.def.ghi', $r->accessToken);
     }
 
     public function testPropertyModelFieldMapping(): void
@@ -1255,7 +1263,7 @@ class CleansterTest extends TestCase
         $http->method('get')
              ->willReturn(['status' => 200, 'message' => 'OK', 'data' => []]);
 
-        $resp = (new BookingsApi($http))->getBookings();
+        $resp = (new BookingsApi($http))->getBookings('UPCOMING');
         $this->assertSame(200, $resp->status);
         $this->assertSame('OK', $resp->message);
     }

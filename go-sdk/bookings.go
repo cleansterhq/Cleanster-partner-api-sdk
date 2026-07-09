@@ -13,20 +13,21 @@ type BookingsService struct {
 }
 
 // GetBookings retrieves a paginated list of bookings.
-// All filter parameters are optional.
-func (s *BookingsService) GetBookings(ctx context.Context, params GetBookingsParams) (APIResponse[[]Booking], error) {
+//
+// Confirmed against the live sandbox API: params.Status is required, not
+// optional - there is no "all statuses" call. The response data is a
+// Spring-style page object, not a flat array; see BookingPage.Content.
+func (s *BookingsService) GetBookings(ctx context.Context, params GetBookingsParams) (APIResponse[BookingPage], error) {
         q := url.Values{}
+        q.Set("status", params.Status)
         if params.PageNo != nil {
                 q.Set("pageNo", strconv.Itoa(*params.PageNo))
         }
-        if params.Status != "" {
-                q.Set("status", params.Status)
-        }
         raw, err := s.http.get(ctx, "/v1/bookings", q)
         if err != nil {
-                return APIResponse[[]Booking]{}, err
+                return APIResponse[BookingPage]{}, err
         }
-        return decode[[]Booking](raw)
+        return decode[BookingPage](raw)
 }
 
 // CreateBooking schedules a new cleaning appointment.

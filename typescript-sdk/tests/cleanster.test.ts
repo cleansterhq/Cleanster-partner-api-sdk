@@ -138,34 +138,34 @@ describe("CleansterClient", () => {
 // ---------------------------------------------------------------------------
 
 describe("BookingsApi", () => {
-  test("getBookings() with no params calls correct URL", async () => {
+  test("getBookings() with status only calls correct URL", async () => {
     const http = mockHttp();
-    http.get.mockResolvedValue(ok([]));
+    http.get.mockResolvedValue(ok({ content: [] }));
     const api = new BookingsApi(http);
 
-    await api.getBookings();
+    await api.getBookings("UPCOMING");
 
-    expect(http.get).toHaveBeenCalledWith("/v1/bookings", { pageNo: undefined, status: undefined });
+    expect(http.get).toHaveBeenCalledWith("/v1/bookings", { status: "UPCOMING", pageNo: undefined });
   });
 
   test("getBookings() passes pageNo", async () => {
     const http = mockHttp();
-    http.get.mockResolvedValue(ok([]));
+    http.get.mockResolvedValue(ok({ content: [] }));
     const api = new BookingsApi(http);
 
-    await api.getBookings(2);
+    await api.getBookings("COMPLETED", 2);
 
-    expect(http.get).toHaveBeenCalledWith("/v1/bookings", { pageNo: 2, status: undefined });
+    expect(http.get).toHaveBeenCalledWith("/v1/bookings", { status: "COMPLETED", pageNo: 2 });
   });
 
   test("getBookings() passes status", async () => {
     const http = mockHttp();
-    http.get.mockResolvedValue(ok([]));
+    http.get.mockResolvedValue(ok({ content: [] }));
     const api = new BookingsApi(http);
 
-    await api.getBookings(undefined, "COMPLETED");
+    await api.getBookings("COMPLETED");
 
-    expect(http.get).toHaveBeenCalledWith("/v1/bookings", { pageNo: undefined, status: "COMPLETED" });
+    expect(http.get).toHaveBeenCalledWith("/v1/bookings", { status: "COMPLETED", pageNo: undefined });
   });
 
   test("createBooking() posts to correct endpoint", async () => {
@@ -354,24 +354,23 @@ describe("BookingsApi", () => {
 describe("UsersApi", () => {
   test("createUser() posts to correct endpoint", async () => {
     const http = mockHttp();
-    http.post.mockResolvedValue(ok({ id: 42, email: "jane@example.com", firstName: "Jane", lastName: "Smith" }));
+    http.post.mockResolvedValue(ok({ userId: 42, accessToken: "Bearer abc.def.ghi" }));
     const api = new UsersApi(http);
 
-    const req = { email: "jane@example.com", firstName: "Jane", lastName: "Smith" };
+    const req = { email: "jane@example.com", firstName: "Jane", lastName: "Smith", customerId: "cust-1" };
     const result = await api.createUser(req);
 
     expect(http.post).toHaveBeenCalledWith("/v1/user/account", req);
-    expect(result.data.id).toBe(42);
-    expect(result.data.email).toBe("jane@example.com");
-    expect(result.data.firstName).toBe("Jane");
+    expect(result.data.userId).toBe(42);
+    expect(result.data.accessToken).toBe("Bearer abc.def.ghi");
   });
 
   test("createUser() with phone includes phone field", async () => {
     const http = mockHttp();
-    http.post.mockResolvedValue(ok({ id: 43 }));
+    http.post.mockResolvedValue(ok({ userId: 43, accessToken: "Bearer xyz" }));
     const api = new UsersApi(http);
 
-    await api.createUser({ email: "a@b.com", firstName: "A", lastName: "B", phone: "+15551234567" });
+    await api.createUser({ email: "a@b.com", firstName: "A", lastName: "B", customerId: "cust-2", phone: "+15551234567" });
 
     const calledWith = http.post.mock.calls[0][1] as Record<string, unknown>;
     expect(calledWith.phone).toBe("+15551234567");
@@ -901,7 +900,7 @@ describe("Exceptions", () => {
     http.get.mockRejectedValue(new CleansterAuthException("Unauthorized"));
     const api = new BookingsApi(http);
 
-    await expect(api.getBookings()).rejects.toBeInstanceOf(CleansterAuthException);
+    await expect(api.getBookings("UPCOMING")).rejects.toBeInstanceOf(CleansterAuthException);
   });
 
   test("propagates CleansterApiException with status code", async () => {

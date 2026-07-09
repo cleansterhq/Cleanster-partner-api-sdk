@@ -22,20 +22,17 @@ final class BookingsApi
     /**
      * Retrieve a paginated list of bookings.
      *
-     * @param int|null    $pageNo Optional page number (1-based).
-     * @param string|null $status Optional status filter.
-     *                            One of: OPEN | CLEANER_ASSIGNED | COMPLETED | CANCELLED | REMOVED
+     * @param string   $status Required status filter.
+     *                         One of: COMPLETED | CANCELLED | UPCOMING
+     * @param int|null $pageNo Optional page number (1-based).
      *
      * @return ApiResponse<Booking[]>
      */
-    public function getBookings(?int $pageNo = null, ?string $status = null): ApiResponse
+    public function getBookings(string $status, ?int $pageNo = null): ApiResponse
     {
-        $query = [];
+        $query = ['status' => $status];
         if ($pageNo !== null) {
             $query['pageNo'] = $pageNo;
-        }
-        if ($status !== null) {
-            $query['status'] = $status;
         }
         $raw = $this->http->get('/v1/bookings', $query);
         return $this->wrapList($raw, Booking::class);
@@ -255,7 +252,9 @@ final class BookingsApi
 
     private function wrapList(array $raw, string $class): ApiResponse
     {
-        $items = array_map(fn(array $item) => new $class($item), $raw['data'] ?? []);
+        $data = $raw['data'] ?? [];
+        $content = $data['content'] ?? $data;
+        $items = array_map(fn(array $item) => new $class($item), $content);
         return new ApiResponse($raw['status'] ?? 200, $raw['message'] ?? 'OK', $items);
     }
 

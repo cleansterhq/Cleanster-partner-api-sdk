@@ -3,10 +3,11 @@ package com.cleanster.android.model
 import com.google.gson.annotations.SerializedName
 
 data class CreateUserRequest(
-    @SerializedName("email")     val email: String,
-    @SerializedName("firstName") val firstName: String,
-    @SerializedName("lastName")  val lastName: String,
-    @SerializedName("phone")     val phone: String? = null,
+    @SerializedName("email")      val email: String,
+    @SerializedName("firstName")  val firstName: String,
+    @SerializedName("lastName")   val lastName: String,
+    @SerializedName("customerId") val customerId: String,
+    @SerializedName("phone")      val phone: String? = null,
 )
 
 data class VerifyJwtRequest(

@@ -12,15 +12,16 @@ class UsersApi internal constructor(private val client: CleansterClient) {
      * Save the returned `data.id` - you will need it to fetch the user's JWT.
      */
     suspend fun createUser(
-        email:     String,
-        firstName: String,
-        lastName:  String,
-        phone:     String? = null,
-    ): ApiResponse<User> = client.request(
+        email:      String,
+        firstName:  String,
+        lastName:   String,
+        customerId: String,
+        phone:      String? = null,
+    ): ApiResponse<CreateUserResponse> = client.request(
         method = "POST",
         path   = "/v1/user/account",
         body   = CreateUserRequest(email = email, firstName = firstName,
-                                   lastName = lastName, phone = phone),
+                                   lastName = lastName, customerId = customerId, phone = phone),
     )
 
     /**

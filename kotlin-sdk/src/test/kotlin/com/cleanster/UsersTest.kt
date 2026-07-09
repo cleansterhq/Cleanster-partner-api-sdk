@@ -18,50 +18,51 @@ class UsersTest {
 
     @Test fun `createUser sends POST`() = runTest {
         mock.succeed(mapOf("id" to 1, "email" to "a@b.com"))
-        client.users.createUser("a@b.com", "A", "B")
+        client.users.createUser("a@b.com", "A", "B", customerId = "cust-1")
         assertEquals("POST", mock.capturedMethod)
     }
 
     @Test fun `createUser sends correct path`() = runTest {
         mock.succeed(mapOf("id" to 1))
-        client.users.createUser("a@b.com", "A", "B")
+        client.users.createUser("a@b.com", "A", "B", customerId = "cust-1")
         assertTrue(mock.capturedUrl?.endsWith("/v1/user/account") == true)
     }
 
     @Test fun `createUser sends access-key header`() = runTest {
         mock.succeed(mapOf("id" to 1))
-        client.users.createUser("a@b.com", "A", "B")
+        client.users.createUser("a@b.com", "A", "B", customerId = "cust-1")
         assertEquals("test-key", mock.capturedHeaders?.get("access-key"))
     }
 
     @Test fun `createUser encodes email`() = runTest {
         mock.succeed(mapOf("id" to 1))
-        client.users.createUser("alice@example.com", "Alice", "Smith")
+        client.users.createUser("alice@example.com", "Alice", "Smith", customerId = "cust-2")
         assertEquals("alice@example.com", mock.capturedBody?.get("email"))
     }
 
     @Test fun `createUser encodes firstName`() = runTest {
         mock.succeed(mapOf("id" to 1))
-        client.users.createUser("a@b.com", "Alice", "Smith")
+        client.users.createUser("a@b.com", "Alice", "Smith", customerId = "cust-3")
         assertEquals("Alice", mock.capturedBody?.get("firstName"))
     }
 
     @Test fun `createUser encodes lastName`() = runTest {
         mock.succeed(mapOf("id" to 1))
-        client.users.createUser("a@b.com", "Alice", "Smith")
+        client.users.createUser("a@b.com", "Alice", "Smith", customerId = "cust-3")
         assertEquals("Smith", mock.capturedBody?.get("lastName"))
     }
 
     @Test fun `createUser encodes optional phone`() = runTest {
         mock.succeed(mapOf("id" to 1))
-        client.users.createUser("a@b.com", "A", "B", phone = "+14155551234")
+        client.users.createUser("a@b.com", "A", "B", customerId = "cust-4", phone = "+14155551234")
         assertEquals("+14155551234", mock.capturedBody?.get("phone"))
     }
 
     @Test fun `createUser decodes response id`() = runTest {
-        mock.succeed(mapOf("id" to 42.0, "email" to "a@b.com"))
-        val resp = client.users.createUser("a@b.com", "A", "B")
-        assertEquals(42, resp.data?.id)
+        mock.succeed(mapOf("userId" to 42.0, "accessToken" to "Bearer abc.def.ghi"))
+        val resp = client.users.createUser("a@b.com", "A", "B", customerId = "cust-1")
+        assertEquals(42, resp.data?.userId)
+        assertEquals("Bearer abc.def.ghi", resp.data?.accessToken)
     }
 
     @Test fun `fetchAccessToken sends GET`() = runTest {
@@ -114,7 +115,7 @@ class UsersTest {
     @Test fun `token is sent as header`() = runTest {
         client.setToken("user-jwt-123")
         mock.succeed(mapOf("id" to 1))
-        client.users.createUser("a@b.com", "A", "B")
+        client.users.createUser("a@b.com", "A", "B", customerId = "cust-1")
         assertEquals("user-jwt-123", mock.capturedHeaders?.get("token"))
     }
 }

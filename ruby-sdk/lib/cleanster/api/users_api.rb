@@ -8,16 +8,21 @@ module Cleanster
 
       # Create a new user account under your partner.
       #
-      # @param email      [String] Required.
-      # @param first_name [String] Required.
-      # @param last_name  [String] Required.
-      # @param phone      [String, nil] Optional.
-      # @return [Models::ApiResponse<Models::User>]
-      def create_user(email:, first_name:, last_name:, phone: nil)
-        body = { email: email, firstName: first_name, lastName: last_name }
+      # Confirmed against the live sandbox API: this requires an undocumented
+      # +customer_id+ field, and the response is +{userId, accessToken}+, not a
+      # full user profile.
+      #
+      # @param email       [String] Required.
+      # @param first_name  [String] Required.
+      # @param last_name   [String] Required.
+      # @param customer_id [String] Required. Your own internal customer/user ID.
+      # @param phone       [String, nil] Optional.
+      # @return [Models::ApiResponse<Models::CreateUserResponse>]
+      def create_user(email:, first_name:, last_name:, customer_id:, phone: nil)
+        body = { email: email, firstName: first_name, lastName: last_name, customerId: customer_id }
         body[:phone] = phone if phone
         raw = @http.post("/v1/user/account", body: body)
-        Models::ApiResponse.from_hash(raw, model_class: Models::User)
+        Models::ApiResponse.from_hash(raw, model_class: Models::CreateUserResponse)
       end
 
       # Fetch the long-lived bearer token for a user.

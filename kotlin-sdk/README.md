@@ -138,26 +138,21 @@ import com.cleanster.CleansterClient
 val client = CleansterClient.sandbox("your-access-key")
 
 val user = client.users.createUser(
-    email     = "alice@example.com",
-    firstName = "Alice",
-    lastName  = "Smith",
-    phone     = "+14155551234",   // optional
+    email      = "alice@example.com",
+    firstName  = "Alice",
+    lastName   = "Smith",
+    customerId = "your-internal-customer-id",
+    phone      = "+14155551234",   // optional
 )
-val userId = user.data?.id ?: error("User creation failed")
+val userId = user.data?.userId ?: error("User creation failed")
+val userToken = user.data?.accessToken ?: error("No access token returned")
 ```
 
-**Step 3 - Fetch the user's JWT** (long-lived; store it):
+**Step 3 - Set the access token on the client** (long-lived; store it):
 
 ```kotlin
-val tokenResp = client.users.fetchAccessToken(userId)
-val jwt = tokenResp.data?.token ?: error("No token returned")
-```
-
-**Step 4 - Set the token on the client**:
-
-```kotlin
-client.setToken(jwt)
-// All subsequent calls now include this JWT
+client.setToken(userToken)
+// All subsequent calls now include this token
 ```
 
 > **Token lifecycle:** Only refresh when the API returns HTTP 401 on a user-scoped endpoint.
@@ -204,9 +199,9 @@ val booking = client.bookings.createBooking(
 )
 println("Created booking: ${booking.data?.id}")
 
-// 6. List open bookings
-val open = client.bookings.getBookings(status = "OPEN")
-println("Open bookings: ${open.data}")
+// 6. List upcoming bookings
+val upcoming = client.bookings.getBookings(status = "UPCOMING")
+println("Upcoming bookings: ${upcoming.data}")
 ```
 
 All API calls are `suspend` functions - call them from a coroutine scope:
@@ -214,17 +209,17 @@ All API calls are `suspend` functions - call them from a coroutine scope:
 ```kotlin
 // Android ViewModel
 viewModelScope.launch {
-    val bookings = client.bookings.getBookings(status = "OPEN")
+    val bookings = client.bookings.getBookings(status = "UPCOMING")
 }
 
 // Kotlin/JVM with runBlocking
 runBlocking {
-    val bookings = client.bookings.getBookings()
+    val bookings = client.bookings.getBookings(status = "UPCOMING")
 }
 
 // In tests
 runTest {
-    val bookings = client.bookings.getBookings()
+    val bookings = client.bookings.getBookings(status = "UPCOMING")
 }
 ```
 
@@ -290,13 +285,12 @@ Retrieve a paginated list of bookings, optionally filtered by status.
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
+| `status` | String | Yes | `COMPLETED`, `CANCELLED`, `UPCOMING` |
 | `pageNo` | Int | No | Page number (1-based) |
-| `status` | String | No | `OPEN`, `CLEANER_ASSIGNED`, `COMPLETED`, `CANCELLED`, `REMOVED` |
 
 ```kotlin
-val all       = client.bookings.getBookings()
-val open      = client.bookings.getBookings(status = "OPEN")
-val completed = client.bookings.getBookings(pageNo = 2, status = "COMPLETED")
+val upcoming  = client.bookings.getBookings(status = "UPCOMING")
+val completed = client.bookings.getBookings(status = "COMPLETED", pageNo = 2)
 ```
 
 ---
@@ -562,16 +556,19 @@ Create a new user account. Each end-user in your system needs one account.
 | `email` | String | Yes | Email address |
 | `firstName` | String | Yes | First name |
 | `lastName` | String | Yes | Last name |
+| `customerId` | String | Yes | Your own unique customer identifier |
 | `phone` | String? | No | Phone in E.164 format (e.g. `+14155551234`) |
 
 ```kotlin
 val user = client.users.createUser(
-    email     = "alice@example.com",
-    firstName = "Alice",
-    lastName  = "Smith",
-    phone     = "+14155551234",
+    email      = "alice@example.com",
+    firstName  = "Alice",
+    lastName   = "Smith",
+    customerId = "your-internal-customer-id",
+    phone      = "+14155551234",
 )
-val userId = user.data?.id ?: 0
+val userId = user.data?.userId ?: 0
+val accessToken = user.data?.accessToken ?: ""
 ```
 
 ---

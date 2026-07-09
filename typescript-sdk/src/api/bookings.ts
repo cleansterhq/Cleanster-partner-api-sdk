@@ -5,6 +5,8 @@
 import { HttpClient } from "../http-client";
 import {
   Booking,
+  BookingListStatus,
+  BookingPage,
   CreateBookingRequest,
   CancelBookingRequest,
   RescheduleBookingRequest,
@@ -24,13 +26,17 @@ export class BookingsApi {
 
   /**
    * List upcoming and past bookings.
+   *
+   * Confirmed against the live sandbox API: `status` is required, not optional -
+   * there is no "all statuses" call. The response is a Spring-style page object
+   * (`content`, `number`, `totalPages`, etc.), not a flat array.
+   * @param status   Filter by status: COMPLETED | CANCELLED | UPCOMING (required).
    * @param pageNo   Page number (1-based). Omit to use default.
-   * @param status   Filter by status: OPEN | CLEANER_ASSIGNED | COMPLETED | CANCELLED | REMOVED
    */
-  getBookings(pageNo?: number, status?: string): Promise<ApiResponse<unknown>> {
-    return this.http.get("/v1/bookings", {
-      pageNo,
+  getBookings(status: BookingListStatus, pageNo?: number): Promise<ApiResponse<BookingPage>> {
+    return this.http.get<BookingPage>("/v1/bookings", {
       status,
+      pageNo,
     });
   }
 

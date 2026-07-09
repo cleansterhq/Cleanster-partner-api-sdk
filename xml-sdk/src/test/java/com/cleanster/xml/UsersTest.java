@@ -3,6 +3,7 @@ package com.cleanster.xml;
 import com.cleanster.xml.api.UsersXmlApi;
 import com.cleanster.xml.client.XmlConverter;
 import com.cleanster.xml.client.XmlHttpClient;
+import com.cleanster.xml.model.CreateUserResponse;
 import com.cleanster.xml.model.User;
 import com.cleanster.xml.model.XmlApiResponse;
 import org.junit.jupiter.api.*;
@@ -19,7 +20,7 @@ class UsersTest {
     private UsersXmlApi   api;
 
     private static final String USER_JSON = "{\"success\":true,\"message\":\"OK\","
-            + "\"data\":{\"id\":42,\"email\":\"alice@example.com\",\"firstName\":\"Alice\"}}";
+            + "\"data\":{\"userId\":42,\"accessToken\":\"Bearer abc.def.ghi\"}}";
     private static final String TOKEN_JSON = "{\"success\":true,\"message\":\"OK\","
             + "\"data\":{\"id\":42,\"token\":\"jwt-abc-123\"}}";
     private static final String VERIFY_JSON = "{\"success\":true,\"message\":\"valid\",\"data\":{}}";
@@ -34,15 +35,16 @@ class UsersTest {
 
     @Test void createUser_callsPost_v1UserAccount() {
         doReturn(USER_JSON).when(http).post(eq("/v1/user/account"), any());
-        api.createUser("alice@example.com", "Alice", "Smith");
+        api.createUser("alice@example.com", "Alice", "Smith", "cust-1");
         verify(http).post(eq("/v1/user/account"), any());
     }
 
     @Test void createUser_returnsParsedUser() {
         doReturn(USER_JSON).when(http).post(eq("/v1/user/account"), any());
-        XmlApiResponse<User> resp = api.createUser("alice@example.com", "Alice", "Smith");
+        XmlApiResponse<CreateUserResponse> resp = api.createUser("alice@example.com", "Alice", "Smith", "cust-1");
         assertTrue(resp.isSuccess());
-        assertEquals(42, (int) resp.getData().getId());
+        assertEquals(42, (int) resp.getData().getUserId());
+        assertEquals("Bearer abc.def.ghi", resp.getData().getAccessToken());
     }
 
     @Test void createUser_mapOverload_callsPost() {

@@ -2,6 +2,7 @@ package com.cleanster.xml.api;
 
 import com.cleanster.xml.client.XmlHttpClient;
 import com.cleanster.xml.model.Booking;
+import com.cleanster.xml.model.PagedBookings;
 import com.cleanster.xml.model.XmlApiResponse;
 import com.google.gson.reflect.TypeToken;
 
@@ -39,20 +40,25 @@ public class BookingsXmlApi {
 
     public BookingsXmlApi(XmlHttpClient http) { this.http = http; }
 
-    /** List all bookings with optional page and status filters. */
-    public XmlApiResponse<List<Booking>> listBookings(Integer pageNo, String status) {
+    /**
+     * List all bookings, filtered by required status, with optional pagination.
+     *
+     * @param status  Required. One of {@code COMPLETED}, {@code CANCELLED}, {@code UPCOMING}.
+     * @param pageNo  1-based page number (optional).
+     */
+    public XmlApiResponse<PagedBookings> listBookings(String status, Integer pageNo) {
         StringBuilder path = new StringBuilder("/v1/bookings");
         List<String> params = new ArrayList<>();
+        params.add("status=" + status);
         if (pageNo != null) params.add("pageNo=" + pageNo);
-        if (status != null && !status.isBlank()) params.add("status=" + status);
-        if (!params.isEmpty()) path.append("?").append(String.join("&", params));
+        path.append("?").append(String.join("&", params));
         String json = http.get(path.toString());
-        return http.fromJson(json, new TypeToken<XmlApiResponse<List<Booking>>>(){}.getType());
+        return http.fromJson(json, new TypeToken<XmlApiResponse<PagedBookings>>(){}.getType());
     }
 
-    /** List all bookings (no filters). */
-    public XmlApiResponse<List<Booking>> listBookings() {
-        return listBookings(null, null);
+    /** List all bookings with a required status filter (no pagination). */
+    public XmlApiResponse<PagedBookings> listBookings(String status) {
+        return listBookings(status, null);
     }
 
     /**

@@ -9,6 +9,15 @@ data class User(
     val token:     String? = null,
 )
 
+data class CreateUserResponse(
+    val userId:      Int?    = null,
+    val accessToken: String? = null,
+)
+
+data class PagedBookings(
+    val content: List<Booking>? = null,
+)
+
 data class Property(
     val id:            Int?     = null,
     val name:          String?  = null,

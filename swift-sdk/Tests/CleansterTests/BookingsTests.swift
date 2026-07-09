@@ -14,32 +14,32 @@ final class BookingsTests: XCTestCase {
     // MARK: - getBookings
 
     func testGetBookings_sendsGET() async throws {
-        mock.succeedWithArray([])
-        _ = try await client.bookings.getBookings()
+        mock.succeed(with: ["content": []])
+        _ = try await client.bookings.getBookings(status: "UPCOMING")
         XCTAssertEqual(mock.capturedMethod, "GET")
     }
 
     func testGetBookings_correctPath() async throws {
-        mock.succeedWithArray([])
-        _ = try await client.bookings.getBookings()
+        mock.succeed(with: ["content": []])
+        _ = try await client.bookings.getBookings(status: "UPCOMING")
         XCTAssertTrue(mock.capturedURL?.contains("/v1/bookings") == true)
     }
 
     func testGetBookings_withStatus() async throws {
-        mock.succeedWithArray([])
-        _ = try await client.bookings.getBookings(status: "OPEN")
-        XCTAssertTrue(mock.capturedURL?.contains("status=OPEN") == true)
+        mock.succeed(with: ["content": []])
+        _ = try await client.bookings.getBookings(status: "COMPLETED")
+        XCTAssertTrue(mock.capturedURL?.contains("status=COMPLETED") == true)
     }
 
     func testGetBookings_withPageNo() async throws {
-        mock.succeedWithArray([])
-        _ = try await client.bookings.getBookings(pageNo: 2)
+        mock.succeed(with: ["content": []])
+        _ = try await client.bookings.getBookings(status: "CANCELLED", pageNo: 2)
         XCTAssertTrue(mock.capturedURL?.contains("pageNo=2") == true)
     }
 
     func testGetBookings_withStatusAndPage() async throws {
-        mock.succeedWithArray([])
-        _ = try await client.bookings.getBookings(pageNo: 3, status: "COMPLETED")
+        mock.succeed(with: ["content": []])
+        _ = try await client.bookings.getBookings(status: "COMPLETED", pageNo: 3)
         XCTAssertTrue(mock.capturedURL?.contains("COMPLETED") == true)
         XCTAssertTrue(mock.capturedURL?.contains("pageNo=3") == true)
     }

@@ -101,21 +101,23 @@ if err != nil {
 }
 
 resp, err := client.Users.CreateUser(context.Background(), cleanster.CreateUserRequest{
-    Email:     "jane@example.com",
-    FirstName: "Jane",
-    LastName:  "Doe",
-    Phone:     "+15551234567",
+    Email:      "jane@example.com",
+    FirstName:  "Jane",
+    LastName:   "Doe",
+    CustomerID: "your-internal-customer-id",
+    Phone:      "+15551234567",
 })
 if err != nil {
     log.Fatal(err)
 }
-userID := int(resp.Data["userId"].(float64))
+userID := resp.Data.UserID
+userToken := resp.Data.AccessToken
 ```
 
-**Step 3 - Fetch the user's access token** (store it; it is long-lived):
+**Step 3 - Use the access token from CreateUser** (store it; it is long-lived):
 
 ```go
-tokenResp, err := client.Users.FetchAccessToken(context.Background(), userID)
+client, err := cleanster.NewSandboxClient("your-access-key", cleanster.WithToken(userToken))
 if err != nil {
     log.Fatal(err)
 }
@@ -177,16 +179,16 @@ func main() {
     }
     fmt.Println("Created booking:", bookingResp.Data)
 
-    // List open bookings (page 1)
+    // List upcoming bookings (page 1)
     pageNo := 1
     listResp, err := client.Bookings.GetBookings(ctx, cleanster.GetBookingsParams{
+        Status: "UPCOMING",
         PageNo: &pageNo,
-        Status: "OPEN",
     })
     if err != nil {
         log.Fatal(err)
     }
-    fmt.Printf("Open bookings: %d\n", len(listResp.Data.Bookings))
+    fmt.Printf("Upcoming bookings: %d\n", len(listResp.Data.Content))
 }
 ```
 
@@ -252,16 +254,16 @@ All methods return `(APIResponse[T], error)`.
 
 | Field | Type | Required | Description |
 |---|---|---|---|
+| `Status` | string | Yes | `COMPLETED` · `CANCELLED` · `UPCOMING` |
 | `PageNo` | `*int` | No | Page number (1-based; pass `&n` where `n` is an `int`). Omit for page 1. |
-| `Status` | string | No | `OPEN` · `CLEANER_ASSIGNED` · `COMPLETED` · `CANCELLED` · `REMOVED` |
 
 ```go
 pageNo := 1
 resp, err := client.Bookings.GetBookings(ctx, cleanster.GetBookingsParams{
+    Status: "UPCOMING",
     PageNo: &pageNo,
-    Status: "OPEN",
 })
-for _, b := range resp.Data.Bookings {
+for _, b := range resp.Data.Content {
     fmt.Println(b.ID, b.Status)
 }
 ```
@@ -461,11 +463,14 @@ _, err = client.Bookings.DeleteMessage(ctx, 16926, "-OLPrlE06uD8tQ8ebJZw")
 
 ```go
 resp, err := client.Users.CreateUser(ctx, cleanster.CreateUserRequest{
-    Email:     "jane@example.com",
-    FirstName: "Jane",
-    LastName:  "Doe",
-    Phone:     "+15551234567",
+    Email:      "jane@example.com",
+    FirstName:  "Jane",
+    LastName:   "Doe",
+    CustomerID: "your-internal-customer-id",
+    Phone:      "+15551234567",
 })
+userID := resp.Data.UserID
+accessToken := resp.Data.AccessToken
 ```
 
 ---

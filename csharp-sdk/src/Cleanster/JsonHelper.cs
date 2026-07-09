@@ -32,6 +32,15 @@ internal static class JsonHelper
         return new ApiResponse<List<T>>(status, message, data);
     }
 
+    /// <summary>Parse a list of models from the "content" field of a paginated "data" object.</summary>
+    internal static ApiResponse<List<T>> ParsePagedList<T>(JsonElement root)
+    {
+        var status  = root.GetProperty("status").GetInt32();
+        var message = root.GetProperty("message").GetString() ?? "OK";
+        var data    = root.GetProperty("data").GetProperty("content").Deserialize<List<T>>(Options) ?? [];
+        return new ApiResponse<List<T>>(status, message, data);
+    }
+
     /// <summary>Return the "data" field as a raw <see cref="JsonElement"/>.</summary>
     internal static ApiResponse<JsonElement> ParseRaw(JsonElement root)
     {

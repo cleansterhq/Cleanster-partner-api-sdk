@@ -21,6 +21,13 @@ public class CreateUserRequest {
     @JsonProperty("phone")
     private String phone;
 
+    /**
+     * Your own internal customer/user ID for this person. Confirmed required by the live
+     * sandbox API even though it isn't in the original spec.
+     */
+    @JsonProperty("customerId")
+    private String customerId;
+
     public CreateUserRequest() {}
 
     public String getEmail() { return email; }
@@ -34,4 +41,7 @@ public class CreateUserRequest {
 
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
+
+    public String getCustomerId() { return customerId; }
+    public void setCustomerId(String customerId) { this.customerId = customerId; }
 }

@@ -15,7 +15,7 @@ import retrofit2.converter.gson.GsonConverterFactory
  *   val client = CleansterClient.sandbox("your-access-key")
  *   val token  = client.users.fetchAccessToken(userId)
  *   client.setToken(token.data?.token ?: "")
- *   val bookings = client.bookings.getBookings()
+ *   val bookings = client.bookings.getBookings(status = "UPCOMING")
  */
 class CleansterClient private constructor(
     private val accessKey: String,

@@ -7,18 +7,18 @@ import com.cleanster.model.*
 class BookingsApi internal constructor(private val client: CleansterClient) {
 
     /**
-     * List all bookings. Optionally filter by status and paginate.
+     * List all bookings. Requires a status filter and supports pagination.
      *
+     * @param status Required. `COMPLETED`, `CANCELLED`, or `UPCOMING`.
      * @param pageNo 1-based page number.
-     * @param status `OPEN`, `CLEANER_ASSIGNED`, `COMPLETED`, `CANCELLED`, or `REMOVED`.
      */
     suspend fun getBookings(
-        pageNo: Int?    = null,
-        status: String? = null,
-    ): ApiResponse<List<Any>> {
+        status: String,
+        pageNo: Int? = null,
+    ): ApiResponse<PagedBookings> {
         val params = buildMap<String, String> {
+            put("status", status)
             pageNo?.let { put("pageNo", "$it") }
-            status?.let { put("status", it) }
         }
         return client.request(method = "GET", path = "/v1/bookings", queryParams = params)
     }

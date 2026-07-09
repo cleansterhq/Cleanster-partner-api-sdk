@@ -11,6 +11,15 @@ data class User(
     @SerializedName("token")     val token: String? = null,
 )
 
+data class CreateUserResponse(
+    @SerializedName("userId")      val userId: Int     = 0,
+    @SerializedName("accessToken") val accessToken: String = "",
+)
+
+data class PagedBookings(
+    @SerializedName("content") val content: List<Booking> = emptyList(),
+)
+
 data class Booking(
     @SerializedName("id")              val id: Int     = 0,
     @SerializedName("status")          val status: String = "",

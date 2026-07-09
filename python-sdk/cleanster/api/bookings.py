@@ -18,26 +18,28 @@ class BookingsApi:
 
     def get_bookings(
         self,
+        status: str,
         page_no: Optional[int] = None,
-        status: Optional[str] = None,
     ) -> ApiResponse:
         """
         List upcoming and past bookings.
 
+        Confirmed against the live sandbox API: ``status`` is required, not optional -
+        there is no "all statuses" call. The response ``data`` is a Spring-style page
+        object (``number, size, numberOfElements, totalPages, totalElements, content``),
+        not a flat list - ``content`` holds the booking dicts.
+
         Args:
+            status:  Filter by booking status. One of: COMPLETED, CANCELLED, UPCOMING.
             page_no: Page number (1-based). None defaults to page 1.
-            status:  Filter by booking status. One of: OPEN, CLEANER_ASSIGNED,
-                     COMPLETED, CANCELLED, REMOVED. None returns all statuses.
 
         Returns:
-            ApiResponse with data as a list of booking dicts.
+            ApiResponse with data as a page dict; see ``data["content"]`` for bookings.
         """
-        params: Dict[str, Any] = {}
+        params: Dict[str, Any] = {"status": status}
         if page_no is not None:
             params["pageNo"] = page_no
-        if status is not None:
-            params["status"] = status
-        raw = self._http.get("/v1/bookings", params=params or None)
+        raw = self._http.get("/v1/bookings", params=params)
         return ApiResponse.from_dict(raw)
 
     def create_booking(self, request: Dict[str, Any]) -> ApiResponse:

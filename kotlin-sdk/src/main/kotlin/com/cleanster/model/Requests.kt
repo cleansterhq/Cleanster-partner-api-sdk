@@ -3,10 +3,11 @@ package com.cleanster.model
 // ── Users ─────────────────────────────────────────────────────────────────────
 
 data class CreateUserRequest(
-    val email:     String,
-    val firstName: String,
-    val lastName:  String,
-    val phone:     String? = null,
+    val email:      String,
+    val firstName:  String,
+    val lastName:   String,
+    val customerId: String,
+    val phone:      String? = null,
 )
 
 data class VerifyJwtRequest(

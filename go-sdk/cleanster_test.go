@@ -183,7 +183,7 @@ func TestClient_AuthHeadersSent(t *testing.T) {
         client, cleanup := newTestClient(t, handler)
         defer cleanup()
         client.SetAccessToken("user-bearer-token")
-        _, _ = client.Bookings.GetBookings(context.Background(), cleanster.GetBookingsParams{})
+        _, _ = client.Bookings.GetBookings(context.Background(), cleanster.GetBookingsParams{Status: "UPCOMING"})
         if gotAccessKey != "test-access-key" {
                 t.Errorf("expected access-key=test-access-key, got %s", gotAccessKey)
         }
@@ -196,7 +196,7 @@ func TestClient_AuthHeadersSent(t *testing.T) {
 // BookingsService
 // ---------------------------------------------------------------------------
 
-func TestBookings_GetBookings_NoParams(t *testing.T) {
+func TestBookings_GetBookings_StatusOnly(t *testing.T) {
         handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
                 if r.URL.Path != "/v1/bookings" {
                         t.Errorf("expected path /v1/bookings, got %s", r.URL.Path)
@@ -204,11 +204,11 @@ func TestBookings_GetBookings_NoParams(t *testing.T) {
                 if r.Method != http.MethodGet {
                         t.Errorf("expected GET, got %s", r.Method)
                 }
-                writeJSON(w, okResponse([]interface{}{}))
+                writeJSON(w, okResponse(map[string]interface{}{"content": []interface{}{}}))
         })
         client, cleanup := newTestClient(t, handler)
         defer cleanup()
-        resp, err := client.Bookings.GetBookings(context.Background(), cleanster.GetBookingsParams{})
+        resp, err := client.Bookings.GetBookings(context.Background(), cleanster.GetBookingsParams{Status: "UPCOMING"})
         if err != nil {
                 t.Fatalf("unexpected error: %v", err)
         }
@@ -219,14 +219,14 @@ func TestBookings_GetBookings_NoParams(t *testing.T) {
 
 func TestBookings_GetBookings_WithStatus(t *testing.T) {
         handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-                if r.URL.Query().Get("status") != "OPEN" {
-                        t.Errorf("expected status=OPEN, got %s", r.URL.Query().Get("status"))
+                if r.URL.Query().Get("status") != "COMPLETED" {
+                        t.Errorf("expected status=COMPLETED, got %s", r.URL.Query().Get("status"))
                 }
-                writeJSON(w, okResponse([]interface{}{}))
+                writeJSON(w, okResponse(map[string]interface{}{"content": []interface{}{}}))
         })
         client, cleanup := newTestClient(t, handler)
         defer cleanup()
-        _, _ = client.Bookings.GetBookings(context.Background(), cleanster.GetBookingsParams{Status: "OPEN"})
+        _, _ = client.Bookings.GetBookings(context.Background(), cleanster.GetBookingsParams{Status: "COMPLETED"})
 }
 
 func TestBookings_GetBookings_WithPageNo(t *testing.T) {
@@ -234,11 +234,11 @@ func TestBookings_GetBookings_WithPageNo(t *testing.T) {
                 if r.URL.Query().Get("pageNo") != "2" {
                         t.Errorf("expected pageNo=2, got %s", r.URL.Query().Get("pageNo"))
                 }
-                writeJSON(w, okResponse([]interface{}{}))
+                writeJSON(w, okResponse(map[string]interface{}{"content": []interface{}{}}))
         })
         client, cleanup := newTestClient(t, handler)
         defer cleanup()
-        _, _ = client.Bookings.GetBookings(context.Background(), cleanster.GetBookingsParams{PageNo: mustPageNo(2)})
+        _, _ = client.Bookings.GetBookings(context.Background(), cleanster.GetBookingsParams{Status: "CANCELLED", PageNo: mustPageNo(2)})
 }
 
 func TestBookings_CreateBooking(t *testing.T) {
@@ -539,18 +539,21 @@ func TestUsers_CreateUser(t *testing.T) {
                 if body["email"] != "jane@example.com" {
                         t.Errorf("expected email=jane@example.com, got %v", body["email"])
                 }
-                writeJSON(w, okResponse(map[string]interface{}{"id": 42, "email": "jane@example.com", "firstName": "Jane", "lastName": "Smith"}))
+                writeJSON(w, okResponse(map[string]interface{}{"userId": 42, "accessToken": "Bearer abc.def.ghi"}))
         })
         client, cleanup := newTestClient(t, handler)
         defer cleanup()
         resp, err := client.Users.CreateUser(context.Background(), cleanster.CreateUserRequest{
-                Email: "jane@example.com", FirstName: "Jane", LastName: "Smith",
+                Email: "jane@example.com", FirstName: "Jane", LastName: "Smith", CustomerID: "cust-1",
         })
         if err != nil {
                 t.Fatalf("unexpected error: %v", err)
         }
-        if resp.Data.Email != "jane@example.com" {
-                t.Errorf("expected email=jane@example.com, got %s", resp.Data.Email)
+        if resp.Data.UserID != 42 {
+                t.Errorf("expected userId=42, got %d", resp.Data.UserID)
+        }
+        if resp.Data.AccessToken != "Bearer abc.def.ghi" {
+                t.Errorf("expected accessToken, got %s", resp.Data.AccessToken)
         }
 }
 
@@ -561,12 +564,12 @@ func TestUsers_CreateUser_WithPhone(t *testing.T) {
                 if body["phone"] != "+15551234567" {
                         t.Errorf("expected phone, got %v", body["phone"])
                 }
-                writeJSON(w, okResponse(map[string]interface{}{"id": 1, "email": "x@y.com", "firstName": "X", "lastName": "Y"}))
+                writeJSON(w, okResponse(map[string]interface{}{"userId": 1, "accessToken": "Bearer xyz"}))
         })
         client, cleanup := newTestClient(t, handler)
         defer cleanup()
         _, _ = client.Users.CreateUser(context.Background(), cleanster.CreateUserRequest{
-                Email: "x@y.com", FirstName: "X", LastName: "Y", Phone: "+15551234567",
+                Email: "x@y.com", FirstName: "X", LastName: "Y", CustomerID: "cust-2", Phone: "+15551234567",
         })
 }
 
@@ -577,11 +580,11 @@ func TestUsers_CreateUser_OmitsEmptyPhone(t *testing.T) {
                 if _, ok := body["phone"]; ok {
                         t.Error("phone should be omitted when empty")
                 }
-                writeJSON(w, okResponse(map[string]interface{}{"id": 1, "email": "x@y.com", "firstName": "X", "lastName": "Y"}))
+                writeJSON(w, okResponse(map[string]interface{}{"userId": 1, "accessToken": "Bearer xyz"}))
         })
         client, cleanup := newTestClient(t, handler)
         defer cleanup()
-        _, _ = client.Users.CreateUser(context.Background(), cleanster.CreateUserRequest{Email: "x@y.com", FirstName: "X", LastName: "Y"})
+        _, _ = client.Users.CreateUser(context.Background(), cleanster.CreateUserRequest{Email: "x@y.com", FirstName: "X", LastName: "Y", CustomerID: "cust-3"})
 }
 
 func TestUsers_FetchAccessToken(t *testing.T) {
@@ -1299,7 +1302,7 @@ func TestError_AuthError_On401(t *testing.T) {
         })
         client, cleanup := newTestClient(t, handler)
         defer cleanup()
-        _, err := client.Bookings.GetBookings(context.Background(), cleanster.GetBookingsParams{})
+        _, err := client.Bookings.GetBookings(context.Background(), cleanster.GetBookingsParams{Status: "UPCOMING"})
         if err == nil {
                 t.Fatal("expected error, got nil")
         }
@@ -1358,7 +1361,7 @@ func TestError_APIError_On500(t *testing.T) {
         })
         client, cleanup := newTestClient(t, handler)
         defer cleanup()
-        _, err := client.Bookings.GetBookings(context.Background(), cleanster.GetBookingsParams{})
+        _, err := client.Bookings.GetBookings(context.Background(), cleanster.GetBookingsParams{Status: "UPCOMING"})
         var apiErr *cleanster.APIError
         if !errors.As(err, &apiErr) {
                 t.Fatalf("expected *cleanster.APIError, got %T", err)
@@ -1396,7 +1399,7 @@ func TestError_APIError_ResponseBody(t *testing.T) {
         })
         client, cleanup := newTestClient(t, handler)
         defer cleanup()
-        _, err := client.Bookings.GetBookings(context.Background(), cleanster.GetBookingsParams{})
+        _, err := client.Bookings.GetBookings(context.Background(), cleanster.GetBookingsParams{Status: "UPCOMING"})
         var apiErr *cleanster.APIError
         errors.As(err, &apiErr)
         if apiErr == nil || apiErr.ResponseBody == "" {
@@ -1471,11 +1474,11 @@ func TestModel_Checklist_Items(t *testing.T) {
 
 func TestAPIResponse_MessageField(t *testing.T) {
         handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-                writeJSON(w, map[string]interface{}{"status": 200, "message": "OK", "data": []interface{}{}})
+                writeJSON(w, map[string]interface{}{"status": 200, "message": "OK", "data": map[string]interface{}{"content": []interface{}{}}})
         })
         client, cleanup := newTestClient(t, handler)
         defer cleanup()
-        resp, err := client.Bookings.GetBookings(context.Background(), cleanster.GetBookingsParams{})
+        resp, err := client.Bookings.GetBookings(context.Background(), cleanster.GetBookingsParams{Status: "UPCOMING"})
         if err != nil {
                 t.Fatalf("unexpected error: %v", err)
         }

@@ -130,14 +130,29 @@ type UpdateSqftRequest struct {
         TotalSqFt float64 `json:"totalSqFt"`
 }
 
-// GetBookingsParams holds optional filters for listing bookings.
+// GetBookingsParams holds filters for listing bookings.
+//
+// Confirmed against the live sandbox API: Status is required, not optional -
+// there is no "all statuses" call.
 type GetBookingsParams struct {
+        // Status filters results by booking status (required).
+        // Valid values: "COMPLETED", "CANCELLED", "UPCOMING"
+        Status string
+
         // PageNo is the page number (1-based). Pass nil for the first page.
         PageNo *int
+}
 
-        // Status filters results by booking status.
-        // Valid values: "OPEN", "CLEANER_ASSIGNED", "COMPLETED", "CANCELLED", "REMOVED"
-        Status string
+// BookingPage is the Spring-style page object returned by GET /v1/bookings.
+// Confirmed against the live sandbox API - the response data is this page
+// object, not a flat array; bookings live in Content.
+type BookingPage struct {
+        Content          []Booking `json:"content"`
+        Number           int       `json:"number"`
+        Size             int       `json:"size"`
+        NumberOfElements int       `json:"numberOfElements"`
+        TotalPages       int       `json:"totalPages"`
+        TotalElements    int       `json:"totalElements"`
 }
 
 // ---------------------------------------------------------------------------
@@ -156,10 +171,21 @@ type User struct {
 
 // CreateUserRequest holds fields needed to register a new user.
 type CreateUserRequest struct {
-        Email     string `json:"email"`
-        FirstName string `json:"firstName"`
-        LastName  string `json:"lastName"`
-        Phone     string `json:"phone,omitempty"`
+        Email      string `json:"email"`
+        FirstName  string `json:"firstName"`
+        LastName   string `json:"lastName"`
+        CustomerID string `json:"customerId"`
+        Phone      string `json:"phone,omitempty"`
+}
+
+// CreateUserResponse is the response from POST /v1/user/account.
+//
+// Confirmed against the live sandbox API: creating a user does NOT return a
+// full user profile - only the new Cleanster user ID and a per-user JWT
+// already prefixed with "Bearer ".
+type CreateUserResponse struct {
+        UserID      int    `json:"userId"`
+        AccessToken string `json:"accessToken"`
 }
 
 // VerifyJWTRequest holds the JWT token to verify.

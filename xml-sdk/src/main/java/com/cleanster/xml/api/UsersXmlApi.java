@@ -1,6 +1,7 @@
 package com.cleanster.xml.api;
 
 import com.cleanster.xml.client.XmlHttpClient;
+import com.cleanster.xml.model.CreateUserResponse;
 import com.cleanster.xml.model.User;
 import com.cleanster.xml.model.XmlApiResponse;
 import com.google.gson.reflect.TypeToken;
@@ -27,20 +28,21 @@ public class UsersXmlApi {
     /**
      * Create a new user account on behalf of your platform.
      *
-     * @param request  Map with keys: email, firstName, lastName, phone (optional).
-     * @return response containing a {@link User} with the new user's ID.
+     * @param request  Map with keys: email, firstName, lastName, customerId, phone (optional).
+     * @return response containing a {@link CreateUserResponse} with the new user's ID and access token.
      */
-    public XmlApiResponse<User> createUser(Map<String, Object> request) {
+    public XmlApiResponse<CreateUserResponse> createUser(Map<String, Object> request) {
         String json = http.post("/v1/user/account", request);
-        return http.fromJson(json, new TypeToken<XmlApiResponse<User>>(){}.getType());
+        return http.fromJson(json, new TypeToken<XmlApiResponse<CreateUserResponse>>(){}.getType());
     }
 
     /** Convenience overload for creating a user with the most common fields. */
-    public XmlApiResponse<User> createUser(String email, String firstName, String lastName) {
+    public XmlApiResponse<CreateUserResponse> createUser(String email, String firstName, String lastName, String customerId) {
         Map<String, Object> body = new HashMap<>();
-        body.put("email",     email);
-        body.put("firstName", firstName);
-        body.put("lastName",  lastName);
+        body.put("email",      email);
+        body.put("firstName",  firstName);
+        body.put("lastName",   lastName);
+        body.put("customerId", customerId);
         return createUser(body);
     }
 

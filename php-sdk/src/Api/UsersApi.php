@@ -6,6 +6,7 @@ namespace Cleanster\Api;
 
 use Cleanster\HttpClient;
 use Cleanster\Models\ApiResponse;
+use Cleanster\Models\CreateUserResponse;
 use Cleanster\Models\User;
 
 /**
@@ -18,29 +19,32 @@ final class UsersApi
     /**
      * Register a new user account under your partner.
      *
-     * @param string      $email     User email address.
-     * @param string      $firstName First name.
-     * @param string      $lastName  Last name.
-     * @param string|null $phone     Optional phone number.
+     * @param string      $email      User email address.
+     * @param string      $firstName  First name.
+     * @param string      $lastName   Last name.
+     * @param string      $customerId Your own unique customer identifier.
+     * @param string|null $phone      Optional phone number.
      *
-     * @return ApiResponse<User>
+     * @return ApiResponse<CreateUserResponse>
      */
     public function createUser(
         string  $email,
         string  $firstName,
         string  $lastName,
+        string  $customerId,
         ?string $phone = null
     ): ApiResponse {
         $body = [
-            'email'     => $email,
-            'firstName' => $firstName,
-            'lastName'  => $lastName,
+            'email'      => $email,
+            'firstName'  => $firstName,
+            'lastName'   => $lastName,
+            'customerId' => $customerId,
         ];
         if ($phone !== null && $phone !== '') {
             $body['phone'] = $phone;
         }
         $raw = $this->http->post('/v1/user/account', $body);
-        return new ApiResponse($raw['status'] ?? 200, $raw['message'] ?? 'OK', new User($raw['data'] ?? []));
+        return new ApiResponse($raw['status'] ?? 200, $raw['message'] ?? 'OK', new CreateUserResponse($raw['data'] ?? []));
     }
 
     /**

@@ -24,27 +24,27 @@ class BookingsTest {
     )
 
     @Test fun `getBookings sends GET`() = runTest {
-        mock.succeedList(); client.bookings.getBookings()
+        mock.succeed(mapOf("content" to emptyList<Any>())); client.bookings.getBookings(status = "UPCOMING")
         assertEquals("GET", mock.capturedMethod)
     }
 
     @Test fun `getBookings correct path`() = runTest {
-        mock.succeedList(); client.bookings.getBookings()
+        mock.succeed(mapOf("content" to emptyList<Any>())); client.bookings.getBookings(status = "UPCOMING")
         assertTrue(mock.capturedUrl?.contains("/v1/bookings") == true)
     }
 
     @Test fun `getBookings with status`() = runTest {
-        mock.succeedList(); client.bookings.getBookings(status = "OPEN")
-        assertTrue(mock.capturedUrl?.contains("status=OPEN") == true)
+        mock.succeed(mapOf("content" to emptyList<Any>())); client.bookings.getBookings(status = "COMPLETED")
+        assertTrue(mock.capturedUrl?.contains("status=COMPLETED") == true)
     }
 
     @Test fun `getBookings with pageNo`() = runTest {
-        mock.succeedList(); client.bookings.getBookings(pageNo = 2)
+        mock.succeed(mapOf("content" to emptyList<Any>())); client.bookings.getBookings(status = "CANCELLED", pageNo = 2)
         assertTrue(mock.capturedUrl?.contains("pageNo=2") == true)
     }
 
     @Test fun `getBookings with status and page`() = runTest {
-        mock.succeedList(); client.bookings.getBookings(pageNo = 3, status = "COMPLETED")
+        mock.succeed(mapOf("content" to emptyList<Any>())); client.bookings.getBookings(status = "COMPLETED", pageNo = 3)
         assertTrue(mock.capturedUrl?.contains("COMPLETED") == true)
         assertTrue(mock.capturedUrl?.contains("pageNo=3") == true)
     }

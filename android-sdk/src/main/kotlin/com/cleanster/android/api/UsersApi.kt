@@ -9,7 +9,7 @@ import java.io.IOException
 
 internal interface UsersService {
     @POST("v1/user/account")
-    suspend fun createUser(@Body body: CreateUserRequest): ApiResponse<User>
+    suspend fun createUser(@Body body: CreateUserRequest): ApiResponse<CreateUserResponse>
 
     @GET("v1/user/access-token/{userId}")
     suspend fun fetchAccessToken(@Path("userId") userId: Int): ApiResponse<User>
@@ -25,9 +25,10 @@ class UsersApi(retrofit: Retrofit) {
         email: String,
         firstName: String,
         lastName: String,
+        customerId: String,
         phone: String? = null,
-    ): ApiResponse<User> = wrap {
-        service.createUser(CreateUserRequest(email, firstName, lastName, phone))
+    ): ApiResponse<CreateUserResponse> = wrap {
+        service.createUser(CreateUserRequest(email, firstName, lastName, customerId, phone))
     }
 
     suspend fun fetchAccessToken(userId: Int): ApiResponse<User> = wrap {

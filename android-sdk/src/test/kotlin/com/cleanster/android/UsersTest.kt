@@ -27,19 +27,19 @@ class UsersTest {
 
     // ─── createUser ───────────────────────────────────────────────────────────
     @Test fun `createUser returns user with id`() = runTest {
-        enqueue("""{"status":200,"message":"OK","data":{"id":42,"email":"alice@example.com","firstName":"Alice","lastName":"Smith"}}""")
+        enqueue("""{"status":200,"message":"OK","data":{"userId":42,"accessToken":"Bearer abc.def.ghi"}}""")
         val resp = client.users.createUser(
             email = "alice@example.com",
             firstName = "Alice",
             lastName = "Smith",
+            customerId = "cust-1",
         )
-        assertEquals(42, resp.data?.id)
-        assertEquals("alice@example.com", resp.data?.email)
+        assertEquals(42, resp.data?.userId)
     }
 
     @Test fun `createUser sends POST`() = runTest {
         enqueue("""{"status":200,"message":"OK","data":{"id":1}}""")
-        client.users.createUser("a@b.com", "A", "B")
+        client.users.createUser("a@b.com", "A", "B", "cust-2")
         val req = server.takeRequest()
         assertEquals("POST", req.method)
         assert(req.path!!.contains("v1/user/account"))
@@ -47,7 +47,7 @@ class UsersTest {
 
     @Test fun `createUser includes all fields in body`() = runTest {
         enqueue("""{"status":200,"message":"OK","data":{"id":1}}""")
-        client.users.createUser("a@b.com", "Alice", "Smith", "+14155551234")
+        client.users.createUser("a@b.com", "Alice", "Smith", "cust-3", "+14155551234")
         val body = server.takeRequest().body.readUtf8()
         assert(body.contains("a@b.com"))
         assert(body.contains("Alice"))
@@ -57,21 +57,21 @@ class UsersTest {
 
     @Test fun `createUser without phone omits phone field`() = runTest {
         enqueue("""{"status":200,"message":"OK","data":{"id":1}}""")
-        client.users.createUser("a@b.com", "A", "B")
+        client.users.createUser("a@b.com", "A", "B", "cust-4")
         val body = server.takeRequest().body.readUtf8()
         assert(body.contains("a@b.com"))
     }
 
-    @Test fun `createUser returns correct firstName and lastName`() = runTest {
-        enqueue("""{"status":200,"message":"OK","data":{"id":7,"firstName":"Bob","lastName":"Jones"}}""")
-        val resp = client.users.createUser("bob@jones.com", "Bob", "Jones")
-        assertEquals("Bob", resp.data?.firstName)
-        assertEquals("Jones", resp.data?.lastName)
+    @Test fun `createUser returns access token`() = runTest {
+        enqueue("""{"status":200,"message":"OK","data":{"userId":7,"accessToken":"Bearer xyz"}}""")
+        val resp = client.users.createUser("bob@jones.com", "Bob", "Jones", "cust-5")
+        assertEquals(7, resp.data?.userId)
+        assertEquals("Bearer xyz", resp.data?.accessToken)
     }
 
     @Test fun `createUser sends access-key header`() = runTest {
         enqueue("""{"status":200,"message":"OK","data":{"id":1}}""")
-        client.users.createUser("a@b.com", "A", "B")
+        client.users.createUser("a@b.com", "A", "B", "cust-6")
         val req = server.takeRequest()
         assertEquals("test-key", req.getHeader("access-key"))
     }
@@ -104,8 +104,8 @@ class UsersTest {
         val tokenResp = client.users.fetchAccessToken(42)
         client.setToken(tokenResp.data?.token ?: "")
 
-        enqueue("""{"status":200,"message":"OK","data":[]}""")
-        client.bookings.getBookings()
+        enqueue("""{"status":200,"message":"OK","data":{"content":[]}}""")
+        client.bookings.getBookings(status = "UPCOMING")
         server.takeRequest() // discard first request
         val req = server.takeRequest()
         assertEquals("my-jwt", req.getHeader("token"))

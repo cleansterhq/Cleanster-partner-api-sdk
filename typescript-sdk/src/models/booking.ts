@@ -1,6 +1,23 @@
 /**
  * Booking model - represents a single cleaning appointment.
  */
+/** Status filter for GET /v1/bookings - confirmed against the live sandbox API (required). */
+export type BookingListStatus = "COMPLETED" | "CANCELLED" | "UPCOMING";
+
+/**
+ * Spring-style page object returned by GET /v1/bookings.
+ * Confirmed against the live sandbox API - the response `data` is this page object,
+ * not a flat array; bookings live in `content`.
+ */
+export interface BookingPage {
+  content: Booking[];
+  number: number;
+  size: number;
+  numberOfElements: number;
+  totalPages: number;
+  totalElements: number;
+}
+
 export interface Booking {
   id: number;
   status: "OPEN" | "CLEANER_ASSIGNED" | "COMPLETED" | "CANCELLED" | "REMOVED";

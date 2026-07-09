@@ -124,22 +124,17 @@ let user = try await client.users.createUser(
     email: "alice@example.com",
     firstName: "Alice",
     lastName: "Smith",
+    customerId: "your-internal-customer-id",
     phone: "+14155551234"   // optional
 )
-let userId = user.data?.id ?? 0
+let userId = user.data?.userId ?? 0
+let userToken = user.data?.accessToken ?? ""
 ```
 
-**Step 3 - Fetch the user's JWT** (long-lived; store it):
+**Step 3 - Set the access token on the client** (long-lived; store it):
 
 ```swift
-let tokenResp = try await client.users.fetchAccessToken(userId)
-let jwt = tokenResp.data?.token ?? ""
-```
-
-**Step 4 - Set the token on the client**:
-
-```swift
-client.setToken(jwt)
+client.setToken(userToken)
 // All subsequent calls now include this token
 ```
 
@@ -186,9 +181,9 @@ let booking = try await client.bookings.createBooking(
 )
 print("Created booking:", booking.data?.id ?? 0)
 
-// 6. List open bookings
-let open = try await client.bookings.getBookings(status: "OPEN")
-print("Open bookings:", open.data as Any)
+// 6. List upcoming bookings
+let upcoming = try await client.bookings.getBookings(status: "UPCOMING")
+print("Upcoming bookings:", upcoming.data as Any)
 ```
 
 ---
@@ -253,13 +248,12 @@ Retrieve a paginated list of bookings, optionally filtered by status.
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
+| `status` | String | Yes | `COMPLETED`, `CANCELLED`, `UPCOMING` |
 | `pageNo` | Int | No | Page number (1-based) |
-| `status` | String | No | `OPEN`, `CLEANER_ASSIGNED`, `COMPLETED`, `CANCELLED`, `REMOVED` |
 
 ```swift
-let all       = try await client.bookings.getBookings()
-let open      = try await client.bookings.getBookings(status: "OPEN")
-let page2     = try await client.bookings.getBookings(pageNo: 2, status: "COMPLETED")
+let upcoming  = try await client.bookings.getBookings(status: "UPCOMING")
+let page2     = try await client.bookings.getBookings(status: "COMPLETED", pageNo: 2)
 ```
 
 ---
@@ -525,6 +519,7 @@ Create a new user account. Each end-user in your system needs one account.
 | `email` | String | Yes | Email address |
 | `firstName` | String | Yes | First name |
 | `lastName` | String | Yes | Last name |
+| `customerId` | String | Yes | Your own unique customer identifier |
 | `phone` | String | No | Phone in E.164 format (e.g. `+14155551234`) |
 
 ```swift
@@ -532,9 +527,11 @@ let user = try await client.users.createUser(
     email: "alice@example.com",
     firstName: "Alice",
     lastName: "Smith",
+    customerId: "your-internal-customer-id",
     phone: "+14155551234"
 )
-let userId = user.data?.id ?? 0
+let userId = user.data?.userId ?? 0
+let accessToken = user.data?.accessToken ?? ""
 ```
 
 ---

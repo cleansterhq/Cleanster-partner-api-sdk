@@ -106,19 +106,20 @@ use Cleanster\CleansterClient;
 $client = new CleansterClient('your-access-key');
 
 $resp = $client->users()->createUser(
-    'jane@example.com',  // email
-    'Jane',              // first name
-    'Doe',               // last name
-    '+15551234567'       // phone
+    'jane@example.com',              // email
+    'Jane',                          // first name
+    'Doe',                           // last name
+    'your-internal-customer-id',     // customerId
+    '+15551234567'                   // phone (optional)
 );
 $userId = $resp->getData()['userId'];
+$userToken = $resp->getData()['accessToken'];
 ```
 
-**Step 3 - Fetch the user's access token** (store it; it is long-lived):
+**Step 3 - Use the access token from createUser** (store it; it is long-lived):
 
 ```php
-$tokenResp = $client->users()->fetchAccessToken($userId);
-$userToken = $tokenResp->getData()['token'];
+$client = new CleansterClient('your-access-key', $userToken);
 ```
 
 **Step 4 - Build the client with both credentials**:
@@ -157,9 +158,9 @@ $booking = $client->bookings()->createBooking([
 ]);
 echo "Created booking: " . $booking->getData()['id'] . "\n";
 
-// List open bookings
-$list = $client->bookings()->listBookings(1, 'OPEN');
-echo "Open bookings: " . count($list->getData()['bookings']) . "\n";
+// List upcoming bookings
+$list = $client->bookings()->getBookings('UPCOMING', 1);
+echo "Upcoming bookings: " . count($list->getData()['content']) . "\n";
 ```
 
 ---
@@ -218,12 +219,12 @@ All methods return a `Cleanster\ApiResponse` with:
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `$pageNo` | int | Yes | Page number (1-based) |
-| `$status` | string | No | `OPEN` · `CLEANER_ASSIGNED` · `COMPLETED` · `CANCELLED` · `REMOVED` |
+| `$status` | string | Yes | `COMPLETED` · `CANCELLED` · `UPCOMING` |
+| `$pageNo` | int | No | Page number (1-based) |
 
 ```php
-$resp = $client->bookings()->listBookings(1, 'OPEN');
-foreach ($resp->getData()['bookings'] as $booking) {
+$resp = $client->bookings()->getBookings('UPCOMING', 1);
+foreach ($resp->getData()['content'] as $booking) {
     echo $booking['id'] . ' - ' . $booking['status'] . "\n";
 }
 ```
@@ -429,9 +430,10 @@ $client->bookings()->deleteMessage(16926, '-OLPrlE06uD8tQ8ebJZw');
 
 ```php
 $resp = $client->users()->createUser(
-    'jane@example.com', 'Jane', 'Doe', '+15551234567'
+    'jane@example.com', 'Jane', 'Doe', 'your-internal-customer-id', '+15551234567'
 );
 $userId = $resp->getData()['userId'];
+$accessToken = $resp->getData()['accessToken'];
 ```
 
 ---

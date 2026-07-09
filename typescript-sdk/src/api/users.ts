@@ -3,7 +3,7 @@
  */
 
 import { HttpClient } from "../http-client";
-import { User, CreateUserRequest, VerifyJwtRequest } from "../models/user";
+import { User, CreateUserRequest, CreateUserResponse, VerifyJwtRequest } from "../models/user";
 import { ApiResponse } from "../models/response";
 
 export class UsersApi {
@@ -11,11 +11,14 @@ export class UsersApi {
 
   /**
    * Create a new user account under your partner.
-   * @param request  email, firstName, lastName, and optional phone.
-   * @returns ApiResponse containing the created User (with id).
+   *
+   * Confirmed against the live sandbox API: requires `customerId` (undocumented in
+   * the original spec) and returns only `{ userId, accessToken }`, not a full profile.
+   * @param request  email, firstName, lastName, customerId, and optional phone.
+   * @returns ApiResponse containing the new userId and accessToken.
    */
-  createUser(request: CreateUserRequest): Promise<ApiResponse<User>> {
-    return this.http.post<User>("/v1/user/account", request);
+  createUser(request: CreateUserRequest): Promise<ApiResponse<CreateUserResponse>> {
+    return this.http.post<CreateUserResponse>("/v1/user/account", request);
   }
 
   /**

@@ -88,15 +88,12 @@ The JAXB runtime must also be on the classpath for Java 11+:
 CleansterXmlClient client = CleansterXmlClient.sandbox("your-access-key");
 
 // 2. Create a user account
-XmlApiResponse<User> userResp = client.users()
-        .createUser("alice@example.com", "Alice", "Smith");
-int userId = userResp.getData().getId();
+XmlApiResponse<CreateUserResponse> userResp = client.users()
+        .createUser("alice@example.com", "Alice", "Smith", "your-internal-customer-id");
+int userId = userResp.getData().getUserId();
+client.setToken(userResp.getData().getAccessToken());
 
-// 3. Fetch a per-user JWT token
-XmlApiResponse<User> tokenResp = client.users().fetchAccessToken(userId);
-client.setToken(tokenResp.getData().getToken());
-
-// 4. Create a booking and serialize it to XML
+// 3. Create a booking and serialize it to XML
 XmlApiResponse<Booking> bookingResp = client.bookings()
         .createBooking("2025-09-15", "09:00", 1004, 2, 3.0, 2, 1, false, 55);
 
@@ -188,16 +185,17 @@ Create partner-managed user accounts and issue access tokens.
 
 | Method | Path | SDK method |
 |---|---|---|
-| POST | `/v1/user/account`                   | `createUser(email, firstName, lastName)` |
+| POST | `/v1/user/account`                   | `createUser(email, firstName, lastName, customerId)` |
 | GET  | `/v1/user/access-token/{userId}`     | `fetchAccessToken(int userId)` |
 | POST | `/v1/user/verify-jwt`                | `verifyJwt(String token)` |
 
 #### Create a user
 
 ```java
-XmlApiResponse<User> resp = client.users()
-        .createUser("alice@example.com", "Alice", "Smith");
-int userId = resp.getData().getId();
+XmlApiResponse<CreateUserResponse> resp = client.users()
+        .createUser("alice@example.com", "Alice", "Smith", "your-internal-customer-id");
+int userId = resp.getData().getUserId();
+String accessToken = resp.getData().getAccessToken();
 System.out.println(XmlConverter.toXml(resp.getData()));
 ```
 
@@ -226,7 +224,7 @@ Full lifecycle management for cleaning appointments.
 
 | Method | Path | SDK method |
 |---|---|---|
-| GET    | `/v1/bookings`                                   | `listBookings()` |
+| GET    | `/v1/bookings`                                   | `listBookings(String status, Integer pageNo)` |
 | POST   | `/v1/bookings/create`                            | `createBooking(...)` |
 | GET    | `/v1/bookings/{id}`                              | `getBooking(int id)` |
 | POST   | `/v1/bookings/{id}/cancel`                       | `cancelBooking(int id)` |
@@ -886,7 +884,7 @@ CleansterXmlClient client = CleansterXmlClient.custom(
 ### Writing XML bookings to disk
 
 ```java
-List<Booking> bookings = client.bookings().listBookings().getData();
+List<Booking> bookings = client.bookings().listBookings("UPCOMING", null).getData().getContent();
 for (Booking b : bookings) {
     String xml      = XmlConverter.toXml(b);
     String filename = "booking-" + b.getId() + ".xml";

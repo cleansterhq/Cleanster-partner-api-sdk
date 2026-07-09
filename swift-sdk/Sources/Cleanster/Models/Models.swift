@@ -11,6 +11,13 @@ public struct User: Decodable {
     public let token: String?
 }
 
+// MARK: - CreateUserResponse
+
+public struct CreateUserResponse: Decodable {
+    public let userId: Int?
+    public let accessToken: String?
+}
+
 // MARK: - Property
 
 public struct Property: Decodable {

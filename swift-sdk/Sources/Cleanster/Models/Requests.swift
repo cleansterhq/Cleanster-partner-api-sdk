@@ -6,13 +6,15 @@ public struct CreateUserRequest: Encodable {
     public let email: String
     public let firstName: String
     public let lastName: String
+    public let customerId: String
     public let phone: String?
 
-    public init(email: String, firstName: String, lastName: String, phone: String? = nil) {
-        self.email     = email
-        self.firstName = firstName
-        self.lastName  = lastName
-        self.phone     = phone
+    public init(email: String, firstName: String, lastName: String, customerId: String, phone: String? = nil) {
+        self.email      = email
+        self.firstName  = firstName
+        self.lastName   = lastName
+        self.customerId = customerId
+        self.phone      = phone
     }
 }
 

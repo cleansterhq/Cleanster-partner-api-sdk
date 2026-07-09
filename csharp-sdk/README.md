@@ -120,19 +120,20 @@ using Cleanster;
 var client = new CleansterClient("your-access-key");
 
 var resp = await client.Users.CreateUserAsync(
-    email:     "jane@example.com",
-    firstName: "Jane",
-    lastName:  "Doe",
-    phone:     "+15551234567"
+    email:      "jane@example.com",
+    firstName:  "Jane",
+    lastName:   "Doe",
+    customerId: "your-internal-customer-id",
+    phone:      "+15551234567"
 );
-int userId = ((JsonElement)resp.Data!).GetProperty("userId").GetInt32();
+int userId = resp.Data!.UserId;
+string userToken = resp.Data!.AccessToken;
 ```
 
-**Step 3 - Fetch the user's access token** (store it; it is long-lived):
+**Step 3 - Use the access token from CreateUserAsync** (store it; it is long-lived):
 
 ```csharp
-var tokenResp = await client.Users.FetchAccessTokenAsync(userId);
-string userToken = ((JsonElement)tokenResp.Data!).GetProperty("token").GetString()!;
+client.SetAccessToken(userToken);
 ```
 
 **Step 4 - Build the client with both credentials**:
@@ -177,9 +178,9 @@ var booking = await client.Bookings.CreateBookingAsync(new CreateBookingRequest
 });
 Console.WriteLine($"Created booking: {booking.Data}");
 
-// List open bookings
-var list = await client.Bookings.GetBookingsAsync(pageNo: 1, status: "OPEN");
-Console.WriteLine($"Open bookings: {list.Data}");
+// List upcoming bookings
+var list = await client.Bookings.GetBookingsAsync(status: "UPCOMING", pageNo: 1);
+Console.WriteLine($"Upcoming bookings: {list.Data}");
 ```
 
 ---
@@ -238,11 +239,11 @@ All methods return `Task<ApiResponse<T>>` with:
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `pageNo` | int | Yes | Page number (1-based) |
-| `status` | string? | No | `OPEN` · `CLEANER_ASSIGNED` · `COMPLETED` · `CANCELLED` · `REMOVED` |
+| `status` | string | Yes | `COMPLETED` · `CANCELLED` · `UPCOMING` |
+| `pageNo` | int? | No | Page number (1-based) |
 
 ```csharp
-var resp = await client.Bookings.GetBookingsAsync(pageNo: 1, status: "OPEN");
+var resp = await client.Bookings.GetBookingsAsync(status: "UPCOMING", pageNo: 1);
 ```
 
 ---
@@ -457,11 +458,14 @@ await client.Bookings.DeleteMessageAsync(
 
 ```csharp
 var resp = await client.Users.CreateUserAsync(
-    email:     "jane@example.com",
-    firstName: "Jane",
-    lastName:  "Doe",
-    phone:     "+15551234567"
+    email:      "jane@example.com",
+    firstName:  "Jane",
+    lastName:   "Doe",
+    customerId: "your-internal-customer-id",
+    phone:      "+15551234567"
 );
+int userId = resp.Data!.UserId;
+string accessToken = resp.Data!.AccessToken;
 ```
 
 ---

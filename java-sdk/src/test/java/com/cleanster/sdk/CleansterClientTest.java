@@ -389,11 +389,11 @@ class CleansterClientTest {
     void createUser() {
         HttpClient mockHttp = mock(HttpClient.class);
         UserApi api = new UserApi(mockHttp);
-        User user = new User();
-        user.setId(42);
-        user.setEmail("john@example.com");
-        ApiResponse<User> expected = new ApiResponse<>();
-        expected.setData(user);
+        CreateUserResponse created = new CreateUserResponse();
+        created.setUserId(42);
+        created.setAccessToken("Bearer abc.def.ghi");
+        ApiResponse<CreateUserResponse> expected = new ApiResponse<>();
+        expected.setData(created);
         expected.setStatus(200);
         when(mockHttp.post(eq("/v1/user/account"), any(), any(TypeReference.class))).thenReturn(expected);
 
@@ -401,12 +401,14 @@ class CleansterClientTest {
         req.setEmail("john@example.com");
         req.setFirstName("John");
         req.setLastName("Doe");
+        req.setCustomerId("cust_123");
 
-        ApiResponse<User> result = api.createUser(req);
+        ApiResponse<CreateUserResponse> result = api.createUser(req);
 
         verify(mockHttp).post(eq("/v1/user/account"), any(), any(TypeReference.class));
-        assertEquals(42, result.getData().getId());
-        assertEquals("john@example.com", result.getData().getEmail());
+        assertEquals(42, result.getData().getUserId());
+        assertEquals("Bearer abc.def.ghi", result.getData().getAccessToken());
+        assertEquals("abc.def.ghi", result.getData().getAccessTokenWithoutPrefix());
     }
 
     @Test

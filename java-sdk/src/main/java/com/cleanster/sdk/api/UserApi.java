@@ -18,12 +18,17 @@ public class UserApi {
     /**
      * Create a new user account.
      *
-     * @param request User account details (email, firstName, lastName, phone)
-     * @return API response with created user data
+     * <p>Confirmed against the live sandbox API: this call only needs the {@code access-key}
+     * header (no bearer token yet, since the user doesn't have one). It requires an
+     * undocumented {@code customerId} field on the request, and the response is
+     * {@code {userId, accessToken}}, not a full user profile.</p>
+     *
+     * @param request User account details (email, firstName, lastName, phone, customerId)
+     * @return API response with the new user's ID and access token
      */
-    public ApiResponse<User> createUser(CreateUserRequest request) {
+    public ApiResponse<CreateUserResponse> createUser(CreateUserRequest request) {
         return httpClient.post("/v1/user/account", request,
-                new TypeReference<ApiResponse<User>>() {});
+                new TypeReference<ApiResponse<CreateUserResponse>>() {});
     }
 
     /**

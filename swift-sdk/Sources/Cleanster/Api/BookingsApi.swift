@@ -8,16 +8,15 @@ public final class BookingsApi {
     /// List all bookings. Optionally filter by status and paginate.
     ///
     /// - Parameters:
+    ///   - status: Required booking status filter: `COMPLETED`, `CANCELLED`, `UPCOMING`.
     ///   - pageNo: 1-based page number. Defaults to 1.
-    ///   - status: Filter by booking status: `OPEN`, `CLEANER_ASSIGNED`, `COMPLETED`, `CANCELLED`, `REMOVED`.
-    public func getBookings(pageNo: Int? = nil, status: String? = nil) async throws -> ApiResponse<AnyCodable> {
-        var query: [URLQueryItem] = []
+    public func getBookings(status: String, pageNo: Int? = nil) async throws -> ApiResponse<AnyCodable> {
+        var query: [URLQueryItem] = [URLQueryItem(name: "status", value: status)]
         if let p = pageNo { query.append(URLQueryItem(name: "pageNo", value: "\(p)")) }
-        if let s = status  { query.append(URLQueryItem(name: "status", value: s)) }
         return try await client.requestRaw(
             method: "GET",
             path: "/v1/bookings",
-            queryItems: query.isEmpty ? nil : query
+            queryItems: query
         )
     }
 

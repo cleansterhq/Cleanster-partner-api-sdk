@@ -13,20 +13,22 @@ public sealed class UsersApi
     /// <param name="email">User email address.</param>
     /// <param name="firstName">First name.</param>
     /// <param name="lastName">Last name.</param>
+    /// <param name="customerId">Your own unique customer identifier.</param>
     /// <param name="phone">Optional phone number - omitted from request if <see langword="null"/>.</param>
-    public async Task<ApiResponse<User>> CreateUserAsync(
-        string email, string firstName, string lastName,
+    public async Task<ApiResponse<CreateUserResponse>> CreateUserAsync(
+        string email, string firstName, string lastName, string customerId,
         string? phone = null, CancellationToken ct = default)
     {
         var body = new Dictionary<string, object?>
         {
-            ["email"]     = email,
-            ["firstName"] = firstName,
-            ["lastName"]  = lastName,
+            ["email"]      = email,
+            ["firstName"]  = firstName,
+            ["lastName"]   = lastName,
+            ["customerId"] = customerId,
         };
         if (phone is not null) body["phone"] = phone;
         var root = await _http.PostAsync("/v1/user/account", body, ct);
-        return JsonHelper.ParseSingle<User>(root);
+        return JsonHelper.ParseSingle<CreateUserResponse>(root);
     }
 
     /// <summary>

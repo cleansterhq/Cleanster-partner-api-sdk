@@ -171,23 +171,23 @@ RSpec.describe Cleanster do
     let(:http) { instance_double(Cleanster::HttpClient) }
 
     describe "#get_bookings" do
-      it "calls GET /v1/bookings with no params" do
-        allow(http).to receive(:get).with("/v1/bookings", params: { pageNo: nil, status: nil })
-                                    .and_return(ok_response([]))
-        result = api.get_bookings
+      it "calls GET /v1/bookings with required status" do
+        allow(http).to receive(:get).with("/v1/bookings", params: { status: "UPCOMING", pageNo: nil })
+                                    .and_return(ok_response({ "content" => [] }))
+        result = api.get_bookings(status: "UPCOMING")
         expect(result).to be_a(Cleanster::Models::ApiResponse)
       end
 
       it "passes status filter" do
-        allow(http).to receive(:get).with("/v1/bookings", params: { pageNo: nil, status: "OPEN" })
-                                    .and_return(ok_response([]))
-        api.get_bookings(status: "OPEN")
+        allow(http).to receive(:get).with("/v1/bookings", params: { status: "COMPLETED", pageNo: nil })
+                                    .and_return(ok_response({ "content" => [] }))
+        api.get_bookings(status: "COMPLETED")
       end
 
       it "passes page_no" do
-        allow(http).to receive(:get).with("/v1/bookings", params: { pageNo: 2, status: nil })
-                                    .and_return(ok_response([]))
-        api.get_bookings(page_no: 2)
+        allow(http).to receive(:get).with("/v1/bookings", params: { status: "CANCELLED", pageNo: 2 })
+                                    .and_return(ok_response({ "content" => [] }))
+        api.get_bookings(status: "CANCELLED", page_no: 2)
       end
     end
 
@@ -357,29 +357,32 @@ RSpec.describe Cleanster do
     let(:http) { instance_double(Cleanster::HttpClient) }
 
     describe "#create_user" do
-      it "POSTs to /v1/user/account and returns a User" do
-        data = { "id" => 42, "email" => "jane@example.com" }
+      it "POSTs to /v1/user/account and returns a CreateUserResponse" do
+        data = { "userId" => 42, "accessToken" => "Bearer abc.def.ghi" }
         allow(http).to receive(:post).with("/v1/user/account", body: anything)
                                      .and_return(ok_response(data))
-        result = api.create_user(email: "jane@example.com", first_name: "Jane", last_name: "Smith")
-        expect(result.data).to be_a(Cleanster::Models::User)
-        expect(result.data.email).to eq("jane@example.com")
+        result = api.create_user(email: "jane@example.com", first_name: "Jane", last_name: "Smith",
+                                  customer_id: "cust-1")
+        expect(result.data).to be_a(Cleanster::Models::CreateUserResponse)
+        expect(result.data.user_id).to eq(42)
+        expect(result.data.access_token_without_prefix).to eq("abc.def.ghi")
       end
 
       it "includes phone when provided" do
         allow(http).to receive(:post) do |_path, body:|
           expect(body[:phone]).to eq("+15551234567")
-          ok_response("id" => 1, "email" => "j@x.com")
+          ok_response("userId" => 1, "accessToken" => "Bearer xyz")
         end
-        api.create_user(email: "j@x.com", first_name: "J", last_name: "X", phone: "+15551234567")
+        api.create_user(email: "j@x.com", first_name: "J", last_name: "X", customer_id: "cust-2",
+                         phone: "+15551234567")
       end
 
       it "omits phone when not provided" do
         allow(http).to receive(:post) do |_path, body:|
           expect(body).not_to have_key(:phone)
-          ok_response("id" => 1, "email" => "j@x.com")
+          ok_response("userId" => 1, "accessToken" => "Bearer xyz")
         end
-        api.create_user(email: "j@x.com", first_name: "J", last_name: "X")
+        api.create_user(email: "j@x.com", first_name: "J", last_name: "X", customer_id: "cust-3")
       end
     end
 
@@ -631,7 +634,7 @@ RSpec.describe Cleanster do
 
     describe "#get_plans" do
       it "GETs /v1/plans with propertyId" do
-        allow(http).to receive(:get).with("/v1/plans", params: { propertyId: 1004 })
+        allow(http).to receive(:get).with("/v1/plans", params: { propertyId: 1004, subcatId: nil })
                                     .and_return(ok_response([]))
         api.get_plans(1004)
       end
@@ -640,7 +643,7 @@ RSpec.describe Cleanster do
     describe "#get_recommended_hours" do
       it "GETs with all params" do
         allow(http).to receive(:get).with("/v1/recommended-hours",
-                                          params: { propertyId: 1004, bathroomCount: 2, roomCount: 3 })
+                                          params: { propertyId: 1004, bathroomCount: 2, roomCount: 3, subcatId: nil })
                                     .and_return(ok_response)
         api.get_recommended_hours(1004, bathroom_count: 2, room_count: 3)
       end

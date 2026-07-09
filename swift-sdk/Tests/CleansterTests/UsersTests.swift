@@ -15,50 +15,51 @@ final class UsersTests: XCTestCase {
 
     func testCreateUser_sendsCorrectMethod() async throws {
         mock.succeed(with: ["id": 1, "email": "a@b.com"])
-        _ = try await client.users.createUser(email: "a@b.com", firstName: "A", lastName: "B")
+        _ = try await client.users.createUser(email: "a@b.com", firstName: "A", lastName: "B", customerId: "cust-1")
         XCTAssertEqual(mock.capturedMethod, "POST")
     }
 
     func testCreateUser_sendsCorrectPath() async throws {
         mock.succeed(with: ["id": 1, "email": "a@b.com"])
-        _ = try await client.users.createUser(email: "a@b.com", firstName: "A", lastName: "B")
+        _ = try await client.users.createUser(email: "a@b.com", firstName: "A", lastName: "B", customerId: "cust-1")
         XCTAssertTrue(mock.capturedURL?.hasSuffix("/v1/user/account") == true)
     }
 
     func testCreateUser_sendsAccessKeyHeader() async throws {
         mock.succeed(with: ["id": 1, "email": "a@b.com"])
-        _ = try await client.users.createUser(email: "a@b.com", firstName: "A", lastName: "B")
+        _ = try await client.users.createUser(email: "a@b.com", firstName: "A", lastName: "B", customerId: "cust-1")
         XCTAssertEqual(mock.capturedHeaders?["access-key"], "test-key")
     }
 
     func testCreateUser_encodesEmail() async throws {
         mock.succeed(with: ["id": 1])
-        _ = try await client.users.createUser(email: "alice@example.com", firstName: "Alice", lastName: "Smith")
+        _ = try await client.users.createUser(email: "alice@example.com", firstName: "Alice", lastName: "Smith", customerId: "cust-2")
         XCTAssertEqual(mock.capturedBody?["email"] as? String, "alice@example.com")
     }
 
     func testCreateUser_encodesFirstName() async throws {
         mock.succeed(with: ["id": 1])
-        _ = try await client.users.createUser(email: "a@b.com", firstName: "Alice", lastName: "Smith")
+        _ = try await client.users.createUser(email: "a@b.com", firstName: "Alice", lastName: "Smith", customerId: "cust-3")
         XCTAssertEqual(mock.capturedBody?["firstName"] as? String, "Alice")
     }
 
     func testCreateUser_encodesLastName() async throws {
         mock.succeed(with: ["id": 1])
-        _ = try await client.users.createUser(email: "a@b.com", firstName: "Alice", lastName: "Smith")
+        _ = try await client.users.createUser(email: "a@b.com", firstName: "Alice", lastName: "Smith", customerId: "cust-3")
         XCTAssertEqual(mock.capturedBody?["lastName"] as? String, "Smith")
     }
 
     func testCreateUser_encodesOptionalPhone() async throws {
         mock.succeed(with: ["id": 1])
-        _ = try await client.users.createUser(email: "a@b.com", firstName: "A", lastName: "B", phone: "+14155551234")
+        _ = try await client.users.createUser(email: "a@b.com", firstName: "A", lastName: "B", customerId: "cust-4", phone: "+14155551234")
         XCTAssertEqual(mock.capturedBody?["phone"] as? String, "+14155551234")
     }
 
     func testCreateUser_decodesResponseId() async throws {
-        mock.succeed(with: ["id": 42, "email": "a@b.com"])
-        let resp = try await client.users.createUser(email: "a@b.com", firstName: "A", lastName: "B")
-        XCTAssertEqual(resp.data?.id, 42)
+        mock.succeed(with: ["userId": 42, "accessToken": "Bearer abc.def.ghi"])
+        let resp = try await client.users.createUser(email: "a@b.com", firstName: "A", lastName: "B", customerId: "cust-1")
+        XCTAssertEqual(resp.data?.userId, 42)
+        XCTAssertEqual(resp.data?.accessToken, "Bearer abc.def.ghi")
     }
 
     // MARK: - fetchAccessToken
@@ -117,7 +118,7 @@ final class UsersTests: XCTestCase {
     func testSetToken_sentAsHeader() async throws {
         client.setToken("user-jwt-123")
         mock.succeed(with: ["id": 1, "email": "a@b.com"])
-        _ = try await client.users.createUser(email: "a@b.com", firstName: "A", lastName: "B")
+        _ = try await client.users.createUser(email: "a@b.com", firstName: "A", lastName: "B", customerId: "cust-1")
         XCTAssertEqual(mock.capturedHeaders?["token"], "user-jwt-123")
     }
 }

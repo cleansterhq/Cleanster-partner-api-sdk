@@ -112,16 +112,20 @@ const resp = await client.users.createUser({
   email: 'jane@example.com',
   firstName: 'Jane',
   lastName: 'Doe',
+  customerId: 'your-internal-customer-id',
   phone: '+15551234567',
 });
 const userId = resp.data.userId;
+const userToken = resp.data.accessToken;
 ```
 
-**Step 3 - Fetch the user's access token** (store it; it is long-lived):
+**Step 3 - Use the access token from createUser** (store it; it is long-lived):
 
 ```typescript
-const tokenResp = await client.users.fetchAccessToken(userId);
-const userToken = tokenResp.data.token;
+const client = new CleansterClient({
+  accessKey: 'your-access-key',
+  token: userToken,
+});
 ```
 
 **Step 4 - Build the client with both credentials**:
@@ -170,9 +174,9 @@ const booking = await client.bookings.createBooking({
 });
 console.log('Created booking ID:', booking.data.id);
 
-// List open bookings
-const list = await client.bookings.getBookings({ pageNo: 1, status: 'OPEN' });
-console.log('Open bookings:', list.data.bookings.length);
+// List upcoming bookings
+const list = await client.bookings.getBookings({ status: 'UPCOMING', pageNo: 1 });
+console.log('Upcoming bookings:', list.data.content.length);
 ```
 
 ---
@@ -235,12 +239,12 @@ All methods return `Promise<ApiResponse<T>>` with:
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `pageNo` | number | Yes | Page number (1-based) |
-| `status` | string | No | `OPEN` · `CLEANER_ASSIGNED` · `COMPLETED` · `CANCELLED` · `REMOVED` |
+| `status` | string | Yes | `COMPLETED` · `CANCELLED` · `UPCOMING` |
+| `pageNo` | number | No | Page number (1-based) |
 
 ```typescript
-const resp = await client.bookings.getBookings({ pageNo: 1, status: 'OPEN' });
-resp.data.bookings.forEach(b => console.log(b.id, b.status));
+const resp = await client.bookings.getBookings({ status: 'UPCOMING', pageNo: 1 });
+resp.data.content.forEach(b => console.log(b.id, b.status));
 ```
 
 ---
@@ -455,16 +459,19 @@ await client.bookings.deleteMessage(16926, '-OLPrlE06uD8tQ8ebJZw');
 | `email` | string | Yes | Email address |
 | `firstName` | string | Yes | First name |
 | `lastName` | string | Yes | Last name |
-| `phone` | string | Yes | E.164 format |
+| `customerId` | string | Yes | Your internal customer/account ID |
+| `phone` | string | No | E.164 format |
 
 ```typescript
 const resp = await client.users.createUser({
   email: 'jane@example.com',
   firstName: 'Jane',
   lastName: 'Doe',
+  customerId: 'your-internal-customer-id',
   phone: '+15551234567',
 });
 const userId: number = resp.data.userId;
+const accessToken: string = resp.data.accessToken;
 ```
 
 ---

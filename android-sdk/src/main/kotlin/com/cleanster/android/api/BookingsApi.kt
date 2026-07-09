@@ -7,9 +7,9 @@ import retrofit2.http.*
 internal interface BookingsService {
     @GET("v1/bookings")
     suspend fun getBookings(
+        @Query("status") status: String,
         @Query("pageNo") pageNo: Int? = null,
-        @Query("status") status: String? = null,
-    ): ApiResponse<List<Booking>>
+    ): ApiResponse<PagedBookings>
 
     @GET("v1/bookings/{bookingId}")
     suspend fun getBookingDetails(@Path("bookingId") bookingId: Int): ApiResponse<Booking>
@@ -105,8 +105,8 @@ internal interface BookingsService {
 class BookingsApi(retrofit: Retrofit) {
     private val service = retrofit.create(BookingsService::class.java)
 
-    suspend fun getBookings(pageNo: Int? = null, status: String? = null) =
-        wrap { service.getBookings(pageNo, status) }
+    suspend fun getBookings(status: String, pageNo: Int? = null) =
+        wrap { service.getBookings(status, pageNo) }
 
     suspend fun getBookingDetails(bookingId: Int) =
         wrap { service.getBookingDetails(bookingId) }

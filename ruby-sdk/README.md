@@ -121,16 +121,20 @@ resp = client.users.create_user(
   email: 'jane@example.com',
   first_name: 'Jane',
   last_name: 'Doe',
+  customer_id: 'your-internal-customer-id',
   phone: '+15551234567'
 )
 user_id = resp.data['userId']
+user_token = resp.data['accessToken']
 ```
 
-**Step 3 - Fetch the user's access token** (store it; it is long-lived):
+**Step 3 - Use the access token from create_user** (store it; it is long-lived):
 
 ```ruby
-resp = client.users.fetch_access_token(user_id)
-user_token = resp.data['token']
+client = Cleanster::Client.new(
+  access_key: 'your-access-key',
+  token: user_token
+)
 ```
 
 **Step 4 - Build the client with both credentials**:
@@ -179,9 +183,9 @@ booking = client.bookings.create_booking(
 )
 puts "Created booking: #{booking.data['id']}"
 
-# List open bookings
-list = client.bookings.list_bookings(page_no: 1, status: 'OPEN')
-puts "Open bookings: #{list.data['bookings'].size}"
+# List upcoming bookings
+list = client.bookings.get_bookings(status: 'UPCOMING', page_no: 1)
+puts "Upcoming bookings: #{list.data['content'].size}"
 ```
 
 ---
@@ -244,12 +248,12 @@ All methods return a `Cleanster::ApiResponse` with:
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `page_no` | Integer | Yes | Page number (1-based) |
-| `status` | String | No | `OPEN` · `CLEANER_ASSIGNED` · `COMPLETED` · `CANCELLED` · `REMOVED` |
+| `status` | String | Yes | `COMPLETED` · `CANCELLED` · `UPCOMING` |
+| `page_no` | Integer | No | Page number (1-based) |
 
 ```ruby
-resp = client.bookings.list_bookings(page_no: 1, status: 'OPEN')
-resp.data['bookings'].each { |b| puts "#{b['id']} - #{b['status']}" }
+resp = client.bookings.get_bookings(status: 'UPCOMING', page_no: 1)
+resp.data['content'].each { |b| puts "#{b['id']} - #{b['status']}" }
 ```
 
 ---
@@ -466,9 +470,11 @@ resp = client.users.create_user(
   email: 'jane@example.com',
   first_name: 'Jane',
   last_name: 'Doe',
+  customer_id: 'your-internal-customer-id',
   phone: '+15551234567'
 )
 user_id = resp.data['userId']
+access_token = resp.data['accessToken']
 ```
 
 ---

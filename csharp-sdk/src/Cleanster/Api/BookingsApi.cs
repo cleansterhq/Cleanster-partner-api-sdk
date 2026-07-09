@@ -14,16 +14,15 @@ public sealed class BookingsApi
     // -------------------------------------------------------------------------
 
     /// <summary>Retrieve a paginated list of bookings.</summary>
+    /// <param name="status">Required status filter: COMPLETED | CANCELLED | UPCOMING</param>
     /// <param name="pageNo">Optional page number (1-based).</param>
-    /// <param name="status">Optional status filter: OPEN | CLEANER_ASSIGNED | COMPLETED | CANCELLED | REMOVED</param>
     public async Task<ApiResponse<List<Booking>>> GetBookingsAsync(
-        int?   pageNo = null, string? status = null, CancellationToken ct = default)
+        string status, int? pageNo = null, CancellationToken ct = default)
     {
-        var query = new Dictionary<string, string>();
-        if (pageNo.HasValue)  query["pageNo"] = pageNo.Value.ToString();
-        if (status is not null) query["status"] = status;
-        var root = await _http.GetAsync("/v1/bookings", query.Count > 0 ? query : null, ct);
-        return JsonHelper.ParseList<Booking>(root);
+        var query = new Dictionary<string, string> { ["status"] = status };
+        if (pageNo.HasValue) query["pageNo"] = pageNo.Value.ToString();
+        var root = await _http.GetAsync("/v1/bookings", query, ct);
+        return JsonHelper.ParsePagedList<Booking>(root);
     }
 
     /// <summary>Schedule a new cleaning appointment.</summary>

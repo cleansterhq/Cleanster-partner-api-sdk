@@ -8,11 +8,16 @@ module Cleanster
 
       # List upcoming and past bookings.
       #
-      # @param page_no [Integer, nil] Page number (1-based). Pass nil for page 1.
-      # @param status  [String, nil]  Filter: OPEN | CLEANER_ASSIGNED | COMPLETED | CANCELLED | REMOVED
+      # Confirmed against the live sandbox API: +status+ is required, not optional -
+      # there is no "all statuses" call. The response data is a Spring-style page
+      # object (number, size, numberOfElements, totalPages, totalElements, content),
+      # not a flat array - +content+ holds the booking hashes.
+      #
+      # @param status  [String]        Filter: COMPLETED | CANCELLED | UPCOMING (required)
+      # @param page_no [Integer, nil]  Page number (1-based). Pass nil for page 1.
       # @return [Models::ApiResponse]
-      def get_bookings(page_no: nil, status: nil)
-        raw = @http.get("/v1/bookings", params: { pageNo: page_no, status: status })
+      def get_bookings(status:, page_no: nil)
+        raw = @http.get("/v1/bookings", params: { status: status, pageNo: page_no })
         Models::ApiResponse.from_hash(raw)
       end
 

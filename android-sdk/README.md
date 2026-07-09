@@ -187,12 +187,13 @@ import com.cleanster.android.CleansterClient
 val client = CleansterClient.sandbox("your-access-key")
 
 val userResp = client.users.createUser(
-    email     = "alice@example.com",
-    firstName = "Alice",
-    lastName  = "Smith",
-    phone     = "+14155551234",   // optional
+    email      = "alice@example.com",
+    firstName  = "Alice",
+    lastName   = "Smith",
+    customerId = "your-internal-customer-id",
+    phone      = "+14155551234",   // optional
 )
-val userId = userResp.data?.id ?: error("User creation failed")
+val userId = userResp.data?.userId ?: error("User creation failed")
 // Save userId in your database
 ```
 
@@ -263,8 +264,8 @@ viewModelScope.launch {
     println("Booking ID: ${booking.data?.id}")
 
     // 5. List upcoming bookings
-    val openBookings = client.bookings.getBookings(status = "OPEN")
-    println("Open bookings: ${openBookings.data?.size}")
+    val openBookings = client.bookings.getBookings(status = "UPCOMING")
+    println("Open bookings: ${openBookings.data?.content?.size}")
 }
 ```
 
@@ -345,13 +346,13 @@ Retrieve a paginated list of bookings, optionally filtered by status.
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
+| `status` | String | Yes | Filter by booking status: `COMPLETED`, `CANCELLED`, or `UPCOMING` |
 | `pageNo` | Int? | No | Page number (1-based) |
-| `status` | String? | No | Filter by booking status |
 
 ```kotlin
-val all  = client.bookings.getBookings()
-val open = client.bookings.getBookings(status = "OPEN")
-val page2 = client.bookings.getBookings(pageNo = 2, status = "COMPLETED")
+val upcoming = client.bookings.getBookings(status = "UPCOMING")
+val page2 = client.bookings.getBookings(status = "COMPLETED", pageNo = 2)
+// Response is a page object; bookings are in `.data?.content`
 ```
 
 ---
@@ -588,16 +589,19 @@ client.bookings.deleteMessage(16926, messageId = "-OLPrlE06uD8tQ8ebJZw")
 | `email` | String | Yes | Email address |
 | `firstName` | String | Yes | First name |
 | `lastName` | String | Yes | Last name |
+| `customerId` | String | Yes | Your internal customer/account ID |
 | `phone` | String? | No | Phone in E.164 format |
 
 ```kotlin
 val resp = client.users.createUser(
-    email     = "alice@example.com",
-    firstName = "Alice",
-    lastName  = "Smith",
-    phone     = "+14155551234",
+    email      = "alice@example.com",
+    firstName  = "Alice",
+    lastName   = "Smith",
+    customerId = "your-internal-customer-id",
+    phone      = "+14155551234",
 )
-val userId = resp.data?.id ?: error("User creation failed")
+val userId = resp.data?.userId ?: error("User creation failed")
+val accessToken = resp.data?.accessToken
 ```
 
 ---
@@ -1368,8 +1372,8 @@ class BookingViewModel(
     fun loadBookings() {
         viewModelScope.launch {
             try {
-                val resp = client.bookings.getBookings(status = "OPEN")
-                _bookings.value = resp.data ?: emptyList()
+                val resp = client.bookings.getBookings(status = "UPCOMING")
+                _bookings.value = resp.data?.content ?: emptyList()
             } catch (e: CleansterError.Unauthorized) {
                 _error.value = "Session expired. Please log in again."
             } catch (e: CleansterError.NetworkError) {
@@ -1502,7 +1506,7 @@ class HomeViewModel @Inject constructor(
     private val cleansterClient: CleansterClient,
 ) : ViewModel() {
     fun loadBookings() = viewModelScope.launch {
-        val resp = cleansterClient.bookings.getBookings()
+        val resp = cleansterClient.bookings.getBookings(status = "UPCOMING")
         // ...
     }
 }
@@ -1528,7 +1532,7 @@ class HomeViewModel(
 ) : ViewModel() {
     init {
         viewModelScope.launch {
-            val bookings = client.bookings.getBookings()
+            val bookings = client.bookings.getBookings(status = "UPCOMING")
         }
     }
 }
