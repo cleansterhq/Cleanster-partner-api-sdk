@@ -1,5 +1,5 @@
 """
-CleansterClient — the main entry point for the Cleanster Python SDK.
+CleansterClient - the main entry point for the Cleanster Python SDK.
 """
 
 from typing import Optional
