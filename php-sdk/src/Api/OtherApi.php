@@ -88,8 +88,8 @@ final class OtherApi
      *
      * @param array $request {
      *   @type int    $propertyId Required
-     *   @type string $date       Required — YYYY-MM-DD
-     *   @type string $time       Required — HH:mm
+     *   @type string $date       Required - YYYY-MM-DD
+     *   @type string $time       Required - HH:mm
      * }
      */
     public function getAvailableCleaners(array $request): ApiResponse
