@@ -1,6 +1,6 @@
 module Cleanster
   module Api
-    # ChecklistsApi — create and manage cleaning task lists.
+    # ChecklistsApi - create and manage cleaning task lists.
     class ChecklistsApi
       def initialize(http)
         @http = http
