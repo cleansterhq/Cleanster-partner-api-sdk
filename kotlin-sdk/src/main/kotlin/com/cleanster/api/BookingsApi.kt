@@ -143,4 +143,18 @@ class BookingsApi internal constructor(private val client: CleansterClient) {
         method = "DELETE",
         path   = "/v1/bookings/$bookingId/chat/$messageId",
     )
+
+    /** Update task quantities for a booking. */
+    suspend fun updateTask(bookingId: Int, tasks: List<TaskQuantity>): ApiResponse<Map<String, Any>> = client.request(
+        method = "POST",
+        path   = "/v1/bookings/$bookingId/tasks",
+        body   = UpdateTaskRequest(tasks = tasks),
+    )
+
+    /** Update the total square footage for a booking. */
+    suspend fun updateSqft(bookingId: Int, totalSqFt: Double): ApiResponse<Map<String, Any>> = client.request(
+        method = "POST",
+        path   = "/v1/bookings/$bookingId/sqft",
+        body   = UpdateSqftRequest(totalSqFt = totalSqFt),
+    )
 }
