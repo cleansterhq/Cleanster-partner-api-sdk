@@ -1,4 +1,4 @@
-"""Blacklist API — prevent specific cleaners from being assigned to your bookings."""
+"""Blacklist API - prevent specific cleaners from being assigned to your bookings."""
 
 from typing import Optional
 
