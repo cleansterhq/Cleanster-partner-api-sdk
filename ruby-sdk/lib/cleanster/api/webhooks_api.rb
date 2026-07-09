@@ -1,6 +1,6 @@
 module Cleanster
   module Api
-    # WebhooksApi — manage real-time event notification endpoints.
+    # WebhooksApi - manage real-time event notification endpoints.
     class WebhooksApi
       def initialize(http)
         @http = http
