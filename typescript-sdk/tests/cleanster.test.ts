@@ -1,6 +1,6 @@
 /**
  * Comprehensive unit tests for the Cleanster TypeScript SDK.
- * Uses jest.fn() to mock fetch — no network access or API keys required.
+ * Uses jest.fn() to mock fetch - no network access or API keys required.
  */
 
 import { CleansterClient } from "../src/client";
