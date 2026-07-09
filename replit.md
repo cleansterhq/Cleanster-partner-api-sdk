@@ -52,11 +52,12 @@ Python3 script using `GITHUB_PERSONAL_ACCESS_TOKEN` env var. Owner: `cleansterhq
 
 **Root README totals:** 1,474 SDK tests + 67 MCP = **1,541 total** (badge correct)
 
-### API Endpoint Count: 60 (confirmed)
+### API Endpoint Count: 66 (confirmed)
 
-All SDKs cover the same 60 API endpoints across 8 resource types:
-- Bookings: 17, Properties: 14, Users: 3, Checklists: 6 (incl. image upload), Other: 7, Payment Methods: 6, Webhooks: 4, Blacklist: 3
-- Root README "All 60 Endpoints" section fully documents all 60 (was 59 — `POST /v1/checklist/{id}/upload` was missing)
+All SDKs cover the same 66 API endpoints across 8 resource types:
+- Bookings: 19 (+updateTask, +updateSqft), Properties: 14, Users: 3, Checklists: 6 (incl. image upload), Other: 9 (+getTasks, +getSubcategories), Payment Methods: 6, Webhooks: 4, Blacklist: 3
+- `GET /v1/plans` and `GET /v1/recommended-hours` gained an optional `subcatId` query param
+- Root README "All 66 Endpoints" section fully documents all 66 (was 60, then 62, now 66 after adding updateTask, updateSqft, getTasks, getSubcategories)
 - Two DELETE-with-body endpoints use `@HTTP` in Android/Kotlin Retrofit (correct pattern, not a bug)
 
 ### Java SDK (`java-sdk/`)
