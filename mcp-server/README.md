@@ -12,9 +12,9 @@ A production-ready [Model Context Protocol (MCP)](https://modelcontextprotocol.i
 | Language | TypeScript (ESM, Node 20+) |
 | Transport | HTTP/SSE (default) or stdio (Claude Desktop) |
 | Auth | `access-key` + `token` headers; OAuth 2.0 + PKCE seam included |
-| Tools | 11 (6 read-only, 5 write) |
+| Tools | 14 (8 read-only, 6 write) |
 | Rate Limit | 60 requests / minute / token |
-| Tests | 64 (Vitest - tools, auth, schema validation; no real API calls) |
+| Tests | 75 (Vitest - tools, auth, schema validation; no real API calls) |
 
 ---
 
@@ -30,16 +30,19 @@ A production-ready [Model Context Protocol (MCP)](https://modelcontextprotocol.i
 | `get_property` | Get full property details including cleaners and iCal |
 | `list_cleaners` | List cleaners filtered by status (active/inactive/pending) or name search |
 | `get_cleaner` | Get full profile details for a single cleaner |
+| `list_services` | List all cleaning service types available on the account (e.g. Residential, Airbnb, Office) - account-specific, not a fixed set |
 
 ### Write operations
 
 | Tool | Description |
 |---|---|
-| `create_booking` | Create a new cleaning booking |
+| `create_booking` | Create a new cleaning booking (date, time, propertyId, planId, hours, roomCount, bathroomCount, extraSupplies, paymentMethodId, optional couponCode/extras) |
 | `cancel_booking` | Cancel a booking with an optional reason |
 | `reschedule_booking` | Move a booking to a new date/time |
 | `assign_crew` | Assign a cleaner to a booking |
 | `assign_checklist` | Assign an existing saved checklist to a booking |
+| `update_task` | Update task quantities for a booking |
+| `update_sqft` | Update the total square footage recorded for a booking |
 
 ---
 
@@ -263,7 +266,7 @@ Claude / AI client
 │                                          │
 │  src/server.ts                           │
 │    buildMcpServer(token)                 │
-│    → McpServer + 11 tools registered     │
+│    → McpServer + 14 tools registered     │
 │    → New instance per SSE connection     │
 │                                          │
 │  src/auth/                               │
@@ -320,11 +323,14 @@ npm test
 | `tests/get_property.test.ts` | ID routing, response shape |
 | `tests/list_cleaners.test.ts` | Optional filters, API delegation |
 | `tests/get_payout_records.test.ts` | Required date range, optional cleaner filter |
-| `tests/create_booking.test.ts` | All required/optional fields, all service_type values |
+| `tests/create_booking.test.ts` | Required/optional fields mapped to the real booking-create request shape |
 | `tests/cancel_booking.test.ts` | Optional reason, required booking_id |
 | `tests/reschedule_booking.test.ts` | Required fields, API delegation |
 | `tests/assign_crew.test.ts` | Min-length array validation, API delegation |
 | `tests/update_checklist.test.ts` | Nested object schema, required sub-fields |
+| `tests/update_task.test.ts` | Task quantity array validation, API delegation |
+| `tests/update_sqft.test.ts` | Required booking_id and total_sq_ft |
+| `tests/list_services.test.ts` | No-arg schema, API delegation |
 
 All tests mock the `CleansterApiClient` - **no real HTTP calls are made during testing**.
 

@@ -22,11 +22,17 @@ export interface ListBookingsParams {
 }
 
 export interface CreateBookingParams {
-  property_id: string;
-  service_type: string;
-  scheduled_at: string;
-  notes?: string;
-  checklist_id?: string;
+  date: string;
+  time: string;
+  propertyId: number;
+  planId: number;
+  hours: number;
+  roomCount: number;
+  bathroomCount: number;
+  extraSupplies: boolean;
+  paymentMethodId: number;
+  couponCode?: string;
+  extras?: number[];
 }
 
 export interface RescheduleBookingParams {
@@ -102,6 +108,13 @@ export class CleansterApiClient {
 
   async updateSqft(bookingId: string, totalSqFt: number): Promise<unknown> {
     const res: AxiosResponse = await this.http.post(ENDPOINTS.BOOKING_SQFT(bookingId), { totalSqFt });
+    return res.data;
+  }
+
+  // ── Reference data ─────────────────────────────────────────────────────────
+
+  async getServices(): Promise<unknown> {
+    const res: AxiosResponse = await this.http.get(ENDPOINTS.SERVICES_LIST);
     return res.data;
   }
 

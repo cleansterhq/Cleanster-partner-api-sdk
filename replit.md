@@ -48,9 +48,9 @@ Python3 script using `GITHUB_PERSONAL_ACCESS_TOKEN` env var. Owner: `cleansterhq
 | XML | 164 | 164 ✅ | 164 ✅ |
 | SOAP | 118 | 118 ✅ | 118 ✅ |
 | Android | 164 | 164 ✅ | 164 ✅ |
-| MCP Server | 67 | - | 67 ✅ |
+| MCP Server | 75 | - | 75 ✅ |
 
-**Root README totals:** 1,474 SDK tests + 67 MCP = **1,541 total** (badge correct)
+**Root README totals:** 1,474 SDK tests + 75 MCP = **1,549 total** (badge correct)
 
 ### API Endpoint Count: 66 (confirmed)
 
@@ -150,11 +150,12 @@ All SDKs cover the same 66 API endpoints across 8 resource types:
 Standalone Node.js 20+ TypeScript server implementing the Model Context Protocol (MCP). Allows Claude and other AI assistants to interact with the Cleanster Partner API through natural language.
 
 - **Transports**: HTTP/SSE via Express (default, `MCP_TRANSPORT=http`, port 8000) or stdio for Claude Desktop (`MCP_TRANSPORT=stdio`)
-- **Tools**: 11 tools - list_bookings, get_booking, list_properties, get_property, list_cleaners, get_payout_records, create_booking, cancel_booking, reschedule_booking, assign_crew, update_checklist
+- **Tools**: 14 tools - list_bookings, get_booking, list_properties, get_property, list_cleaners, get_cleaner, list_services, create_booking, cancel_booking, reschedule_booking, assign_crew, update_checklist, update_task, update_sqft
+- **create_booking is now aligned to the real API contract**: takes `planId`, `date`, `time`, `hours`, `roomCount`, `bathroomCount`, `extraSupplies`, `paymentMethodId` (+ optional `couponCode`/`extras`) instead of a fictional `service_type` enum. Service types are account-specific and discovered dynamically via the new `list_services` tool (`GET /v1/services`), not a fixed set.
 - **Auth**: Per-connection bearer token (API key); OAuth 2.0 + PKCE seam in `src/auth/token.ts`
 - **Rate limiting**: 60 req/min per token via express-rate-limit (HTTP mode only)
 - **Logging**: Pino with bearer token redaction; pretty-print in dev, JSON in production
-- **Tests**: **67 Vitest unit tests** - all passing (12 test files, mocked API, no real HTTP calls)
+- **Tests**: **75 Vitest unit tests** - all passing (15 test files, mocked API, no real HTTP calls)
 - **Run**: `cd mcp-server && npm run dev`; Health endpoint at `GET /health`
 - **Workflow**: "MCP Server" workflow configured, runs on port 8000
 

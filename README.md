@@ -716,7 +716,7 @@ val hook = client.webhooks.createWebhook(
 
 ## MCP Server
 
-Connect Claude (or any MCP-compatible AI assistant) directly to the Cleanster Partner API. The MCP server exposes 11 tools covering bookings, properties, cleaners, payouts, and checklists - all controlled by natural language.
+Connect Claude (or any MCP-compatible AI assistant) directly to the Cleanster Partner API. The MCP server exposes 14 tools covering bookings, properties, cleaners, services, checklists, and task/sqft updates - all controlled by natural language.
 
 ### Quick Start
 

@@ -34,6 +34,10 @@ export const ENDPOINTS = {
   /** POST → update total square footage for a booking (body: { totalSqFt }) */
   BOOKING_SQFT: (id: string) => `/v1/bookings/${id}/sqft`,
 
+  // ── Reference data ────────────────────────────────────────────────────────
+  /** GET  → list all cleaning service types available on the account (no auth required) */
+  SERVICES_LIST: '/v1/services',
+
   // ── Properties ────────────────────────────────────────────────────────────
   /** GET  → list properties (query: account_id, property_type) */
   PROPERTIES_LIST: '/v1/properties',

@@ -1,7 +1,7 @@
 /**
  * MCP Server bootstrap.
  *
- * Builds a fully-configured McpServer instance with all 13 Cleanster tools
+ * Builds a fully-configured McpServer instance with all 14 Cleanster tools
  * registered. The server is transport-agnostic - the caller (index.ts) wires
  * it to either StdioServerTransport or SSEServerTransport.
  */
@@ -23,6 +23,7 @@ import * as assignCrew from './tools/assign_crew.js';
 import * as assignChecklist from './tools/update_checklist.js';
 import * as updateTask from './tools/update_task.js';
 import * as updateSqft from './tools/update_sqft.js';
+import * as listServices from './tools/list_services.js';
 
 /**
  * The contract every tool module must satisfy.
@@ -52,6 +53,7 @@ const TOOLS: ToolModule[] = [
   assignChecklist,
   updateTask,
   updateSqft,
+  listServices,
 ] as ToolModule[];
 
 /**

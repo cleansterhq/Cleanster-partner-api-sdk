@@ -3,13 +3,13 @@ import { handler, inputSchema } from '../src/tools/create_booking.js';
 import type { CleansterApiClient } from '../src/api/cleanster.js';
 
 const MOCK_CREATED_BOOKING = {
-  id: 'bk_new_001',
-  status: 'scheduled',
-  property_id: 'prop_42',
-  service_type: 'apartment',
-  scheduled_at: '2025-09-01T09:00:00Z',
-  notes: 'Focus on the kitchen and bathrooms.',
-  created_at: '2025-07-25T14:00:00Z',
+  id: 16459,
+  status: 'OPEN',
+  propertyId: 1004,
+  planId: 2,
+  date: '2025-09-15',
+  time: '09:00',
+  createdAt: '2025-07-25T14:00:00Z',
 };
 
 describe('create_booking tool', () => {
@@ -21,74 +21,139 @@ describe('create_booking tool', () => {
     };
   });
 
-  it('calls api.createBooking with all provided params', async () => {
+  it('calls api.createBooking with all provided params mapped to the real request shape', async () => {
     const params = inputSchema.parse({
-      property_id: 'prop_42',
-      service_type: 'apartment',
-      scheduled_at: '2025-09-01T09:00:00Z',
-      notes: 'Focus on the kitchen and bathrooms.',
-      checklist_id: 'cl_105',
+      date: '2025-09-15',
+      time: '09:00',
+      property_id: 1004,
+      plan_id: 2,
+      hours: 3,
+      room_count: 2,
+      bathroom_count: 1,
+      extra_supplies: false,
+      payment_method_id: 55,
+      coupon_code: '20POFF',
+      extras: [3, 7],
     });
     await handler(params, mockApi as CleansterApiClient);
     expect(mockApi.createBooking).toHaveBeenCalledWith({
-      property_id: 'prop_42',
-      service_type: 'apartment',
-      scheduled_at: '2025-09-01T09:00:00Z',
-      notes: 'Focus on the kitchen and bathrooms.',
-      checklist_id: 'cl_105',
+      date: '2025-09-15',
+      time: '09:00',
+      propertyId: 1004,
+      planId: 2,
+      hours: 3,
+      roomCount: 2,
+      bathroomCount: 1,
+      extraSupplies: false,
+      paymentMethodId: 55,
+      couponCode: '20POFF',
+      extras: [3, 7],
     });
   });
 
   it('works without optional fields', async () => {
     const params = inputSchema.parse({
-      property_id: 'prop_42',
-      service_type: 'house',
-      scheduled_at: '2025-09-01T09:00:00Z',
+      date: '2025-09-15',
+      time: '09:00',
+      property_id: 1004,
+      plan_id: 2,
+      hours: 3,
+      room_count: 2,
+      bathroom_count: 1,
+      extra_supplies: false,
+      payment_method_id: 55,
     });
     const result = await handler(params, mockApi as CleansterApiClient);
     expect(result.content[0].type).toBe('text');
+    expect(mockApi.createBooking).toHaveBeenCalledWith({
+      date: '2025-09-15',
+      time: '09:00',
+      propertyId: 1004,
+      planId: 2,
+      hours: 3,
+      roomCount: 2,
+      bathroomCount: 1,
+      extraSupplies: false,
+      paymentMethodId: 55,
+    });
   });
 
   it('returns created booking in content', async () => {
     const params = inputSchema.parse({
-      property_id: 'prop_42',
-      service_type: 'apartment',
-      scheduled_at: '2025-09-01T09:00:00Z',
+      date: '2025-09-15',
+      time: '09:00',
+      property_id: 1004,
+      plan_id: 2,
+      hours: 3,
+      room_count: 2,
+      bathroom_count: 1,
+      extra_supplies: false,
+      payment_method_id: 55,
     });
     const result = await handler(params, mockApi as CleansterApiClient);
     const parsed = JSON.parse(result.content[0].text);
-    expect(parsed.data.id).toBe('bk_new_001');
-    expect(parsed.data.status).toBe('scheduled');
+    expect(parsed.data.id).toBe(16459);
+    expect(parsed.data.status).toBe('OPEN');
   });
 
-  it('rejects invalid service_type', () => {
+  it('requires plan_id', () => {
     expect(() =>
       inputSchema.parse({
-        property_id: 'prop_42',
-        service_type: 'office',
-        scheduled_at: '2025-09-01T09:00:00Z',
+        date: '2025-09-15',
+        time: '09:00',
+        property_id: 1004,
+        hours: 3,
+        room_count: 2,
+        bathroom_count: 1,
+        extra_supplies: false,
+        payment_method_id: 55,
       }),
     ).toThrow();
   });
 
   it('requires property_id', () => {
     expect(() =>
-      inputSchema.parse({ service_type: 'apartment', scheduled_at: '2025-09-01T09:00:00Z' }),
+      inputSchema.parse({
+        date: '2025-09-15',
+        time: '09:00',
+        plan_id: 2,
+        hours: 3,
+        room_count: 2,
+        bathroom_count: 1,
+        extra_supplies: false,
+        payment_method_id: 55,
+      }),
     ).toThrow();
   });
 
-  it('requires scheduled_at', () => {
+  it('requires payment_method_id', () => {
     expect(() =>
-      inputSchema.parse({ property_id: 'prop_42', service_type: 'apartment' }),
+      inputSchema.parse({
+        date: '2025-09-15',
+        time: '09:00',
+        property_id: 1004,
+        plan_id: 2,
+        hours: 3,
+        room_count: 2,
+        bathroom_count: 1,
+        extra_supplies: false,
+      }),
     ).toThrow();
   });
 
-  it('accepts all valid service_type values', () => {
-    const valid = ['apartment', 'house', 'str', 'commercial', 'chores', 'handyman'];
-    valid.forEach((s) =>
-      expect(() =>
-        inputSchema.parse({ property_id: 'x', service_type: s, scheduled_at: '2025-09-01T09:00:00Z' }),
-      ).not.toThrow(),
-    );
+  it('rejects a non-numeric property_id', () => {
+    expect(() =>
+      inputSchema.parse({
+        date: '2025-09-15',
+        time: '09:00',
+        property_id: 'prop_42',
+        plan_id: 2,
+        hours: 3,
+        room_count: 2,
+        bathroom_count: 1,
+        extra_supplies: false,
+        payment_method_id: 55,
+      }),
+    ).toThrow();
   });
 });
