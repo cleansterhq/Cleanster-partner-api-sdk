@@ -10,11 +10,14 @@ public final class OtherApi {
         return try await client.requestRaw(method: "GET", path: "/v1/services")
     }
 
-    /// Get available booking plans for a property.
+    /// Get available booking plans for a property, optionally filtered by subcategory.
     ///
-    /// - Parameter propertyId: The property to fetch plans for.
-    public func getPlans(propertyId: Int) async throws -> ApiResponse<AnyCodable> {
-        let query = [URLQueryItem(name: "propertyId", value: "\(propertyId)")]
+    /// - Parameters:
+    ///   - propertyId: The property to fetch plans for.
+    ///   - subcatId: Optional service subcategory ID.
+    public func getPlans(propertyId: Int, subcatId: Int? = nil) async throws -> ApiResponse<AnyCodable> {
+        var query = [URLQueryItem(name: "propertyId", value: "\(propertyId)")]
+        if let s = subcatId { query.append(URLQueryItem(name: "subcatId", value: "\(s)")) }
         return try await client.requestRaw(method: "GET", path: "/v1/plans", queryItems: query)
     }
 
@@ -26,16 +29,19 @@ public final class OtherApi {
     ///   - propertyId: The property being cleaned.
     ///   - roomCount: Number of rooms.
     ///   - bathroomCount: Number of bathrooms.
+    ///   - subcatId: Optional service subcategory ID.
     public func getRecommendedHours(
         propertyId: Int,
         roomCount: Int,
-        bathroomCount: Int
+        bathroomCount: Int,
+        subcatId: Int? = nil
     ) async throws -> ApiResponse<RecommendedHours> {
-        let query = [
+        var query = [
             URLQueryItem(name: "propertyId",    value: "\(propertyId)"),
             URLQueryItem(name: "roomCount",      value: "\(roomCount)"),
             URLQueryItem(name: "bathroomCount",  value: "\(bathroomCount)"),
         ]
+        if let s = subcatId { query.append(URLQueryItem(name: "subcatId", value: "\(s)")) }
         return try await client.request(
             method: "GET",
             path: "/v1/recommended-hours",
@@ -85,5 +91,29 @@ public final class OtherApi {
     /// - Parameter cleanerId: The cleaner's unique ID.
     public func getCleaner(cleanerId: Int) async throws -> ApiResponse<AnyCodable> {
         return try await client.requestRaw(method: "GET", path: "/v1/cleaners/\(cleanerId)")
+    }
+
+    /// List service tasks, filterable by property and service type. Supports pagination.
+    ///
+    /// - Parameters:
+    ///   - propertyId: The property ID.
+    ///   - serviceId: The service type ID.
+    ///   - pageNo: Optional page number.
+    ///   - pageSize: Optional page size.
+    public func getTasks(propertyId: Int, serviceId: Int, pageNo: Int? = nil, pageSize: Int? = nil) async throws -> ApiResponse<AnyCodable> {
+        var query = [
+            URLQueryItem(name: "propertyId", value: "\(propertyId)"),
+            URLQueryItem(name: "serviceId", value: "\(serviceId)"),
+        ]
+        if let p = pageNo { query.append(URLQueryItem(name: "pageNo", value: "\(p)")) }
+        if let p = pageSize { query.append(URLQueryItem(name: "pageSize", value: "\(p)")) }
+        return try await client.requestRaw(method: "GET", path: "/v1/tasks", queryItems: query)
+    }
+
+    /// Get the subcategories available under a given service type.
+    ///
+    /// - Parameter serviceId: The service type ID.
+    public func getSubcategories(serviceId: Int) async throws -> ApiResponse<AnyCodable> {
+        return try await client.requestRaw(method: "GET", path: "/v1/services/\(serviceId)/subcategories")
     }
 }
