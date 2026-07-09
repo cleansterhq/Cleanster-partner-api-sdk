@@ -13,33 +13,41 @@ class OtherApi internal constructor(private val client: CleansterClient) {
     )
 
     /**
-     * Get available booking plans for a property.
+     * Get available booking plans for a property, optionally filtered by subcategory.
      *
      * @param propertyId The property to fetch plans for.
+     * @param subcatId Optional service subcategory ID.
      */
-    suspend fun getPlans(propertyId: Int): ApiResponse<List<Any>> = client.request(
+    suspend fun getPlans(propertyId: Int, subcatId: Int? = null): ApiResponse<List<Any>> = client.request(
         method      = "GET",
         path        = "/v1/plans",
-        queryParams = mapOf("propertyId" to "$propertyId"),
+        queryParams = buildMap {
+            put("propertyId", "$propertyId")
+            subcatId?.let { put("subcatId", "$it") }
+        },
     )
 
     /**
      * Get the system-recommended number of cleaning hours.
      *
      * Use the returned `hours` value as the `hours` field when creating a booking.
+     *
+     * @param subcatId Optional service subcategory ID.
      */
     suspend fun getRecommendedHours(
         propertyId:    Int,
         roomCount:     Int,
         bathroomCount: Int,
+        subcatId:      Int? = null,
     ): ApiResponse<RecommendedHours> = client.request(
         method      = "GET",
         path        = "/v1/recommended-hours",
-        queryParams = mapOf(
-            "propertyId"    to "$propertyId",
-            "roomCount"     to "$roomCount",
-            "bathroomCount" to "$bathroomCount",
-        ),
+        queryParams = buildMap {
+            put("propertyId", "$propertyId")
+            put("roomCount", "$roomCount")
+            put("bathroomCount", "$bathroomCount")
+            subcatId?.let { put("subcatId", "$it") }
+        },
     )
 
     /**
@@ -97,5 +105,34 @@ class OtherApi internal constructor(private val client: CleansterClient) {
     suspend fun getCleaner(cleanerId: Int): ApiResponse<Any> = client.request(
         method = "GET",
         path   = "/v1/cleaners/$cleanerId",
+    )
+
+    /**
+     * List service tasks, filterable by property and service type. Supports pagination.
+     */
+    suspend fun getTasks(
+        propertyId: Int,
+        serviceId:  Int,
+        pageNo:     Int? = null,
+        pageSize:   Int? = null,
+    ): ApiResponse<List<Any>> = client.request(
+        method      = "GET",
+        path        = "/v1/tasks",
+        queryParams = buildMap {
+            put("propertyId", "$propertyId")
+            put("serviceId", "$serviceId")
+            pageNo?.let { put("pageNo", "$it") }
+            pageSize?.let { put("pageSize", "$it") }
+        },
+    )
+
+    /**
+     * Get the subcategories available under a given service type.
+     *
+     * @param serviceId The service type ID.
+     */
+    suspend fun getSubcategories(serviceId: Int): ApiResponse<List<Any>> = client.request(
+        method = "GET",
+        path   = "/v1/services/$serviceId/subcategories",
     )
 }
