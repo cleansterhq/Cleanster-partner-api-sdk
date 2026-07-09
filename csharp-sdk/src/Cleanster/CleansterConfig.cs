@@ -7,18 +7,18 @@ namespace Cleanster;
 /// </summary>
 public sealed class CleansterConfig
 {
-    /// <summary>Base URL for the sandbox environment (development/testing — no real charges).</summary>
+    /// <summary>Base URL for the sandbox environment (development/testing - no real charges).</summary>
     public const string SandboxBaseUrl =
         "https://partner-sandbox-dot-official-tidyio-project.ue.r.appspot.com/public";
 
-    /// <summary>Base URL for the production environment (live traffic — real cleaners, real charges).</summary>
+    /// <summary>Base URL for the production environment (live traffic - real cleaners, real charges).</summary>
     public const string ProductionBaseUrl =
         "https://partner-dot-official-tidyio-project.ue.r.appspot.com/public";
 
     /// <summary>Default HTTP request timeout (30 seconds).</summary>
     public static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(30);
 
-    /// <summary>Your partner access key — sent as the "access-key" header on every request.</summary>
+    /// <summary>Your partner access key - sent as the "access-key" header on every request.</summary>
     public string AccessKey { get; }
 
     /// <summary>API base URL.</summary>
