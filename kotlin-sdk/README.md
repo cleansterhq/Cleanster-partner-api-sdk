@@ -2,7 +2,7 @@
 
 <p align="center">
   <strong>Official Kotlin client library for the Cleanster Partner API</strong><br>
-  Automate residential and commercial cleaning operations — bookings, properties, cleaners, checklists, payments, and more.
+  Automate residential and commercial cleaning operations - bookings, properties, cleaners, checklists, payments, and more.
 </p>
 
 <p align="center">
@@ -51,13 +51,13 @@
 The Cleanster Kotlin SDK provides a modern coroutines-based (`suspend` functions) interface for the [Cleanster Partner API](https://documenter.getpostman.com/view/26172658/2sAYdoF7ep). It is backed by OkHttp and Gson, and is compatible with both JVM server applications and Android.
 
 Use it to:
-- **Create and manage bookings** — schedule, reschedule, cancel, adjust hours
-- **Manage properties** — CRUD, iCal calendar sync, preferred cleaner lists
-- **Handle users** — create accounts and manage authorization tokens
-- **Configure checklists** — create reusable task lists and assign to bookings
-- **Process payments** — Stripe and PayPal support
-- **Receive webhooks** — subscribe to booking lifecycle events
-- **Blacklist cleaners** — block specific cleaners from your properties
+- **Create and manage bookings** - schedule, reschedule, cancel, adjust hours
+- **Manage properties** - CRUD, iCal calendar sync, preferred cleaner lists
+- **Handle users** - create accounts and manage authorization tokens
+- **Configure checklists** - create reusable task lists and assign to bookings
+- **Process payments** - Stripe and PayPal support
+- **Receive webhooks** - subscribe to booking lifecycle events
+- **Blacklist cleaners** - block specific cleaners from your properties
 
 ---
 
@@ -108,7 +108,7 @@ dependencies {
 </dependency>
 ```
 
-### Android — add internet permission
+### Android - add internet permission
 
 ```xml
 <!-- AndroidManifest.xml -->
@@ -123,14 +123,14 @@ Every request requires two credentials sent as HTTP headers:
 
 | Header | Description |
 |---|---|
-| `access-key` | Your static partner key — passed at client construction |
-| `token` | A per-user JWT — long-lived, obtained via `users.fetchAccessToken(userId)` |
+| `access-key` | Your static partner key - passed at client construction |
+| `token` | A per-user JWT - long-lived, obtained via `users.fetchAccessToken(userId)` |
 
 ### 4-Step Setup
 
-**Step 1 — Contact Cleanster** to receive your `access-key`.
+**Step 1 - Contact Cleanster** to receive your `access-key`.
 
-**Step 2 — Create a user account** (one-time per end-user):
+**Step 2 - Create a user account** (one-time per end-user):
 
 ```kotlin
 import com.cleanster.CleansterClient
@@ -146,14 +146,14 @@ val user = client.users.createUser(
 val userId = user.data?.id ?: error("User creation failed")
 ```
 
-**Step 3 — Fetch the user's JWT** (long-lived; store it):
+**Step 3 - Fetch the user's JWT** (long-lived; store it):
 
 ```kotlin
 val tokenResp = client.users.fetchAccessToken(userId)
 val jwt = tokenResp.data?.token ?: error("No token returned")
 ```
 
-**Step 4 — Set the token on the client**:
+**Step 4 - Set the token on the client**:
 
 ```kotlin
 client.setToken(jwt)
@@ -209,7 +209,7 @@ val open = client.bookings.getBookings(status = "OPEN")
 println("Open bookings: ${open.data}")
 ```
 
-All API calls are `suspend` functions — call them from a coroutine scope:
+All API calls are `suspend` functions - call them from a coroutine scope:
 
 ```kotlin
 // Android ViewModel
@@ -308,7 +308,7 @@ Retrieve full details for a single booking.
 
 ```kotlin
 val detail = client.bookings.getBookingDetails(16926)
-println("${detail.data?.id} — ${detail.data?.status}")
+println("${detail.data?.id} - ${detail.data?.status}")
 ```
 
 ---
@@ -1342,8 +1342,8 @@ try {
 |---|---|---|
 | `CleansterError.Unauthorized` | 401 | Missing or invalid `access-key` or `token` |
 | `CleansterError.ApiError` | 400, 403, 404, 500 | Business rule violation, not found, server error |
-| `CleansterError.NetworkError` | — | No internet, DNS failure, timeout |
-| `CleansterError.DecodingError` | — | Unexpected response format |
+| `CleansterError.NetworkError` | - | No internet, DNS failure, timeout |
+| `CleansterError.DecodingError` | - | Unexpected response format |
 
 ---
 
@@ -1357,7 +1357,7 @@ try {
 | `200OFF` | $200 off |
 | `100OFF` | $100 off |
 
-> `75POFF` is **expired** and will return an error — use it to test coupon validation.
+> `75POFF` is **expired** and will return an error - use it to test coupon validation.
 
 ---
 
@@ -1477,4 +1477,4 @@ kotlin-sdk/
 
 ## License
 
-MIT License — see [LICENSE](../LICENSE) for details.
+MIT License - see [LICENSE](../LICENSE) for details.
