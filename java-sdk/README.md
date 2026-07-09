@@ -2,7 +2,7 @@
 
 <p align="center">
   <strong>Official Java client library for the Cleanster Partner API</strong><br>
-  Automate residential and commercial cleaning operations — bookings, properties, cleaners, checklists, payments, and more.
+  Automate residential and commercial cleaning operations - bookings, properties, cleaners, checklists, payments, and more.
 </p>
 
 <p align="center">
@@ -48,13 +48,13 @@
 
 The Cleanster Java SDK provides a type-safe, fluent interface for the [Cleanster Partner API](https://documenter.getpostman.com/view/26172658/2sAYdoF7ep). Use it to:
 
-- **Create and manage bookings** — schedule cleanings, reschedule, cancel, adjust hours
-- **Manage properties** — create locations, manage iCal integrations, assign preferred cleaners
-- **Handle users** — create accounts and manage authorization tokens
-- **Configure checklists** — create, assign, and manage cleaning task lists
-- **Process payments** — attach Stripe or PayPal payment methods, set defaults
-- **Receive webhooks** — subscribe to real-time booking lifecycle events
-- **Blacklist cleaners** — block specific cleaners from your properties
+- **Create and manage bookings** - schedule cleanings, reschedule, cancel, adjust hours
+- **Manage properties** - create locations, manage iCal integrations, assign preferred cleaners
+- **Handle users** - create accounts and manage authorization tokens
+- **Configure checklists** - create, assign, and manage cleaning task lists
+- **Process payments** - attach Stripe or PayPal payment methods, set defaults
+- **Receive webhooks** - subscribe to real-time booking lifecycle events
+- **Blacklist cleaners** - block specific cleaners from your properties
 
 ---
 
@@ -62,7 +62,7 @@ The Cleanster Java SDK provides a type-safe, fluent interface for the [Cleanster
 
 - **Java 11** or later
 - **Maven 3.6+** or **Gradle 7+**
-- A Cleanster Partner account — contact [partner@cleanster.com](mailto:partner@cleanster.com) for access
+- A Cleanster Partner account - contact [partner@cleanster.com](mailto:partner@cleanster.com) for access
 
 ---
 
@@ -106,14 +106,14 @@ Every request to the Cleanster API requires two credentials sent as HTTP headers
 
 | Header | Description |
 |---|---|
-| `access-key` | Your static partner key. Issued by Cleanster — contact [partner@cleanster.com](mailto:partner@cleanster.com). |
+| `access-key` | Your static partner key. Issued by Cleanster - contact [partner@cleanster.com](mailto:partner@cleanster.com). |
 | `token` | A per-user JWT. Long-lived; obtained via the `/v1/user/access-token/{userId}` endpoint. |
 
 ### 4-Step Setup
 
-**Step 1 — Contact Cleanster** to receive your `access-key`.
+**Step 1 - Contact Cleanster** to receive your `access-key`.
 
-**Step 2 — Create a user account** (one-time per end-user):
+**Step 2 - Create a user account** (one-time per end-user):
 
 ```java
 CleansterClient client = new CleansterClient("your-access-key");
@@ -127,7 +127,7 @@ ApiResponse<Object> resp = client.users().createUser(
 // resp.getData() contains userId and account details
 ```
 
-**Step 3 — Fetch the user's access token** (store it; it is long-lived):
+**Step 3 - Fetch the user's access token** (store it; it is long-lived):
 
 ```java
 int userId = 42; // from the createUser response
@@ -136,7 +136,7 @@ Map<?, ?> data = (Map<?, ?>) tokenResp.getData();
 String userToken = (String) data.get("token");
 ```
 
-**Step 4 — Build the client with both credentials**:
+**Step 4 - Build the client with both credentials**:
 
 ```java
 CleansterClient client = new CleansterClient("your-access-key", userToken);
@@ -178,7 +178,7 @@ public class QuickStart {
         req.setHours(3.0);
         req.setExtraSupplies(false);
         req.setPaymentMethodId(10);
-        req.setCouponCode("20POFF"); // optional — 20% off in sandbox
+        req.setCouponCode("20POFF"); // optional - 20% off in sandbox
 
         ApiResponse<Booking> booking = client.bookings().createBooking(req);
         System.out.println("Created booking: " + booking.getData().getId());
@@ -241,9 +241,9 @@ Booking status values: `OPEN` · `CLEANER_ASSIGNED` · `IN_PROGRESS` · `COMPLET
 ## API Reference
 
 All SDK methods return `ApiResponse<T>` with:
-- `getStatus()` — HTTP status code (int)
-- `getMessage()` — Human-readable result string
-- `getData()` — Typed response payload
+- `getStatus()` - HTTP status code (int)
+- `getMessage()` - Human-readable result string
+- `getData()` - Typed response payload
 
 ---
 
@@ -496,7 +496,7 @@ List<?> messages = (List<?>) data.get("messages");
 | `data.messages[].message_id` | String | Unique message ID |
 | `data.messages[].sender_id` | String | Sender reference (e.g. `C6`, `P3`) |
 | `data.messages[].content` | String | Text content (empty for media messages) |
-| `data.messages[].timestamp` | String | Send time — format: `DD MMM YYYY, HH:MM AM/PM` (GMT) |
+| `data.messages[].timestamp` | String | Send time - format: `DD MMM YYYY, HH:MM AM/PM` (GMT) |
 | `data.messages[].message_type` | String | `text` or `media` |
 | `data.messages[].attachments[]` | Array | Media attachments (see below) |
 | `data.messages[].attachments[].type` | String | `image`, `video`, or `sound` |
@@ -571,7 +571,7 @@ Map<?, ?> data = (Map<?, ?>) resp.getData();
 String token = (String) data.get("token");
 ```
 
-> **Headers for this endpoint:** Only `access-key` is required — no user `token`.
+> **Headers for this endpoint:** Only `access-key` is required - no user `token`.
 
 ---
 
@@ -1265,7 +1265,7 @@ try {
             // Resource does not exist
             break;
         case 422:
-            // Validation failed — check the message for details
+            // Validation failed - check the message for details
             break;
     }
 }
@@ -1273,12 +1273,12 @@ try {
 
 | HTTP Status | Meaning |
 |---|---|
-| 400 | Bad request — malformed parameters |
-| 401 | Unauthorized — invalid or missing `access-key` / `token` |
-| 403 | Forbidden — your account lacks permission |
-| 404 | Not found — resource does not exist |
-| 422 | Unprocessable entity — validation error |
-| 429 | Too many requests — rate limit exceeded |
+| 400 | Bad request - malformed parameters |
+| 401 | Unauthorized - invalid or missing `access-key` / `token` |
+| 403 | Forbidden - your account lacks permission |
+| 404 | Not found - resource does not exist |
+| 422 | Unprocessable entity - validation error |
+| 429 | Too many requests - rate limit exceeded |
 | 500 | Internal server error |
 
 ---
@@ -1308,11 +1308,11 @@ The chat feature between clients and cleaners has the following availability rul
 
 | Booking State | Chat Available |
 |---|---|
-| `OPEN` — within 24 hours of scheduled start | Yes |
-| `COMPLETED` — within 24 hours of completion | Yes |
-| `IN_PROGRESS` (hanging state) | Yes — **no time restriction** |
+| `OPEN` - within 24 hours of scheduled start | Yes |
+| `COMPLETED` - within 24 hours of completion | Yes |
+| `IN_PROGRESS` (hanging state) | Yes - **no time restriction** |
 | `CANCELLED` | No |
-| `OPEN` or `COMPLETED` — older than 24 hours | No |
+| `OPEN` or `COMPLETED` - older than 24 hours | No |
 
 A **hanging state** means the cleaner has started the job but it has not been marked completed or cancelled.
 
