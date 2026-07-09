@@ -993,7 +993,7 @@ func TestOther_GetPlans(t *testing.T) {
         })
         client, cleanup := newTestClient(t, handler)
         defer cleanup()
-        _, _ = client.Other.GetPlans(context.Background(), 1004)
+        _, _ = client.Other.GetPlans(context.Background(), 1004, 0)
 }
 
 func TestOther_GetRecommendedHours(t *testing.T) {
@@ -1006,7 +1006,7 @@ func TestOther_GetRecommendedHours(t *testing.T) {
         })
         client, cleanup := newTestClient(t, handler)
         defer cleanup()
-        _, _ = client.Other.GetRecommendedHours(context.Background(), 1004, 2, 3)
+        _, _ = client.Other.GetRecommendedHours(context.Background(), 1004, 2, 3, 0)
 }
 
 func TestOther_GetCostEstimate(t *testing.T) {
