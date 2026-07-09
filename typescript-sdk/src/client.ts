@@ -1,5 +1,5 @@
 /**
- * CleansterClient — the main entry point for the Cleanster TypeScript SDK.
+ * CleansterClient - the main entry point for the Cleanster TypeScript SDK.
  *
  * @example
  * ```typescript
@@ -29,7 +29,7 @@
  *   extraSupplies: false,
  *   paymentMethodId: 10,
  * });
- * console.log(`Booking #${booking.id} — ${booking.status}`);
+ * console.log(`Booking #${booking.id} - ${booking.status}`);
  * ```
  */
 
@@ -70,7 +70,7 @@ export class CleansterClient {
 
   /**
    * Create a client connected to the **sandbox** environment.
-   * Use this for all development and testing — no real charges or cleaners.
+   * Use this for all development and testing - no real charges or cleaners.
    *
    * @param accessKey  Your Cleanster partner access key.
    */
