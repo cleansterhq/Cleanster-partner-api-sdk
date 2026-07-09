@@ -10,16 +10,21 @@ import okhttp3.OkHttpClient;
  * XML via {@link XmlConverter#toXml(Object)} and every XML string can be deserialised
  * back with {@link XmlConverter#fromXml(String, Class)}.
  *
- * <h2>Quick start — sandbox</h2>
+ * <h2>Quick start - sandbox</h2>
  * <pre>{@code
  * CleansterXmlClient client = CleansterXmlClient.sandbox("your-access-key");
  *
- * // Authenticate
- * User user = client.users().fetchAccessToken(userId).getData();
- * client.setToken(user.getToken());
+ * // 1. Create a user account
+ * int userId = client.users().createUser("alice@example.com", "Alice", "Smith").getData().getId();
  *
- * // Create a booking and get XML back
- * Booking booking = client.bookings().createBooking(req).getData();
+ * // 2. Fetch the per-user JWT and store it
+ * String token = client.users().fetchAccessToken(userId).getData().getToken();
+ * client.setToken(token);
+ *
+ * // 3. Create a booking and serialise to XML
+ * Booking booking = client.bookings()
+ *         .createBooking("2025-09-15", "09:00", propertyId, planId, 3.0, 2, 1, false, paymentMethodId)
+ *         .getData();
  * System.out.println(XmlConverter.toXml(booking));
  * }</pre>
  *
@@ -75,7 +80,7 @@ public class CleansterXmlClient {
                         .build());
     }
 
-    /** Client with a custom base URL — useful for testing with MockWebServer. */
+    /** Client with a custom base URL - useful for testing with MockWebServer. */
     public static CleansterXmlClient custom(String baseUrl, String accessKey, OkHttpClient httpClient) {
         return new CleansterXmlClient(
                 XmlHttpClient.builder()
