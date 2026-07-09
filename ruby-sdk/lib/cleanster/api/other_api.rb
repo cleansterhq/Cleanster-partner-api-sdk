@@ -1,6 +1,6 @@
 module Cleanster
   module Api
-    # OtherApi — utility endpoints for services, plans, cost estimates, extras, and coupons.
+    # OtherApi - utility endpoints for services, plans, cost estimates, extras, and coupons.
     class OtherApi
       def initialize(http)
         @http = http
