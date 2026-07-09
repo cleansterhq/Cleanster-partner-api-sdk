@@ -1,5 +1,5 @@
 /**
- * User model — represents a Cleanster end-user account.
+ * User model - represents a Cleanster end-user account.
  */
 export interface User {
   id: number;
@@ -7,7 +7,7 @@ export interface User {
   firstName: string;
   lastName: string;
   phone?: string;
-  /** Bearer token — only present after fetchAccessToken(). */
+  /** Bearer token - only present after fetchAccessToken(). */
   token?: string;
 }
 
