@@ -2,7 +2,7 @@
 
 <p align="center">
   <strong>Official Android client library for the Cleanster Partner API</strong><br>
-  Built on Retrofit 2 + OkHttp + Gson — the most widely used Android HTTP stack
+  Built on Retrofit 2 + OkHttp + Gson - the most widely used Android HTTP stack
 </p>
 
 <p align="center">
@@ -53,13 +53,13 @@
 The Cleanster Android SDK wraps the [Cleanster Partner API](https://documenter.getpostman.com/view/26172658/2sAYdoF7ep) in a type-safe, coroutines-ready Retrofit 2 client. All 64 API endpoints across 8 resource types are covered with full Kotlin data-class request/response models.
 
 Use it to:
-- **Create and manage bookings** — schedule, reschedule, cancel, adjust hours
-- **Manage properties** — CRUD, iCal calendar sync, preferred cleaner lists
-- **Handle users** — create accounts and manage authorization tokens
-- **Configure checklists** — create reusable task lists and assign to bookings
-- **Process payments** — Stripe Setup Intent + PayPal Braintree flows
-- **Receive webhooks** — subscribe to booking lifecycle events
-- **Blacklist cleaners** — block specific cleaners from your properties
+- **Create and manage bookings** - schedule, reschedule, cancel, adjust hours
+- **Manage properties** - CRUD, iCal calendar sync, preferred cleaner lists
+- **Handle users** - create accounts and manage authorization tokens
+- **Configure checklists** - create reusable task lists and assign to bookings
+- **Process payments** - Stripe Setup Intent + PayPal Braintree flows
+- **Receive webhooks** - subscribe to booking lifecycle events
+- **Blacklist cleaners** - block specific cleaners from your properties
 
 ---
 
@@ -70,7 +70,7 @@ Retrofit is the most widely adopted HTTP client library in the Android ecosystem
 | Library | Downloads / Month | Stars on GitHub |
 |---|---|---|
 | **Retrofit** (Square) | 20M+ | 42,000+ |
-| OkHttp only | bundled | — |
+| OkHttp only | bundled | - |
 | Ktor | 3M+ | 12,000+ |
 | Volley | legacy | 3,300+ |
 
@@ -132,7 +132,7 @@ dependencies {
 }
 ```
 
-### AndroidManifest.xml — Internet Permission
+### AndroidManifest.xml - Internet Permission
 
 ```xml
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
@@ -170,16 +170,16 @@ Every API call requires two HTTP headers:
 
 | Header | Description |
 |---|---|
-| `access-key` | Your static partner key — passed at client construction |
-| `token` | A per-user JWT — obtained via `users.fetchAccessToken(userId)` |
+| `access-key` | Your static partner key - passed at client construction |
+| `token` | A per-user JWT - obtained via `users.fetchAccessToken(userId)` |
 
-The SDK injects both headers automatically via an `OkHttp` `Interceptor` — you never set headers manually.
+The SDK injects both headers automatically via an `OkHttp` `Interceptor` - you never set headers manually.
 
 ### 4-Step Setup
 
-**Step 1 — Contact Cleanster** to receive your `access-key`.
+**Step 1 - Contact Cleanster** to receive your `access-key`.
 
-**Step 2 — Create a user account** (one-time per end-user):
+**Step 2 - Create a user account** (one-time per end-user):
 
 ```kotlin
 import com.cleanster.android.CleansterClient
@@ -196,7 +196,7 @@ val userId = userResp.data?.id ?: error("User creation failed")
 // Save userId in your database
 ```
 
-**Step 3 — Fetch the user's JWT** (long-lived; store it securely):
+**Step 3 - Fetch the user's JWT** (long-lived; store it securely):
 
 ```kotlin
 val tokenResp = client.users.fetchAccessToken(userId)
@@ -204,7 +204,7 @@ val jwt = tokenResp.data?.token ?: error("No token returned")
 // Save jwt securely (encrypted SharedPreferences, Keystore, etc.)
 ```
 
-**Step 4 — Set the token on the client**:
+**Step 4 - Set the token on the client**:
 
 ```kotlin
 client.setToken(jwt)
@@ -269,9 +269,9 @@ viewModelScope.launch {
 ```
 
 All API methods are `suspend` functions. Call them from:
-- `viewModelScope.launch { }` — recommended for Android ViewModels
-- `lifecycleScope.launch { }` — for Activities and Fragments
-- `runBlocking { }` — for unit tests or scripts
+- `viewModelScope.launch { }` - recommended for Android ViewModels
+- `lifecycleScope.launch { }` - for Activities and Fragments
+- `runBlocking { }` - for unit tests or scripts
 
 ---
 
@@ -283,13 +283,13 @@ All API methods are `suspend` functions. Call them from:
 | **Production** | `https://partner-dot-official-tidyio-project.ue.r.appspot.com/public` |
 
 ```kotlin
-// Sandbox — always start here
+// Sandbox - always start here
 val client = CleansterClient.sandbox("your-access-key")
 
-// Production — switch only after sandbox testing is complete
+// Production - switch only after sandbox testing is complete
 val client = CleansterClient.production("your-access-key")
 
-// Custom base URL — for tests
+// Custom base URL - for tests
 val client = CleansterClient.custom("your-access-key", mockWebServer.url("/").toString())
 ```
 
@@ -361,7 +361,7 @@ val page2 = client.bookings.getBookings(pageNo = 2, status = "COMPLETED")
 
 ```kotlin
 val booking = client.bookings.getBookingDetails(16926)
-println("${booking.data?.id} — ${booking.data?.status}")
+println("${booking.data?.id} - ${booking.data?.status}")
 ```
 
 ---
@@ -722,7 +722,7 @@ client.properties.updateAdditionalInformation(
     info = mapOf(
         "parkingInstructions" to "Use visitor lot on 2nd St",
         "accessCode"          to "1234#",
-        "petInfo"             to "One golden retriever — friendly",
+        "petInfo"             to "One golden retriever - friendly",
         "garbageDay"          to "Tuesday",
     )
 )
@@ -738,7 +738,7 @@ client.properties.updateAdditionalInformation(
 | `enabled` | Boolean | Yes | `true` to enable, `false` to disable |
 
 ```kotlin
-// Disable — no new bookings accepted
+// Disable - no new bookings accepted
 client.properties.enableOrDisableProperty(1004, enabled = false)
 
 // Re-enable
@@ -1332,7 +1332,7 @@ import com.cleanster.android.CleansterError
 try {
     val booking = client.bookings.getBookingDetails(99999)
 } catch (e: CleansterError.Unauthorized) {
-    // HTTP 401 — invalid access-key or token
+    // HTTP 401 - invalid access-key or token
     showError("Please log in again.")
 } catch (e: CleansterError.ApiError) {
     // HTTP 400, 403, 404, 500
@@ -1350,8 +1350,8 @@ try {
 |---|---|---|
 | `CleansterError.Unauthorized` | 401 | Missing or invalid `access-key` or `token` |
 | `CleansterError.ApiError` | 400, 403, 404, 500 | Business rule violation, not found, server error |
-| `CleansterError.NetworkError` | — | No internet, DNS failure, timeout |
-| `CleansterError.DecodingError` | — | Unexpected response format |
+| `CleansterError.NetworkError` | - | No internet, DNS failure, timeout |
+| `CleansterError.DecodingError` | - | Unexpected response format |
 
 **ViewModel pattern with error handling:**
 
@@ -1394,7 +1394,7 @@ class BookingViewModel(
 | `200OFF` | $200 off |
 | `100OFF` | $100 off |
 
-> `75POFF` is **expired** and will return an error — use it to test coupon validation flows.
+> `75POFF` is **expired** and will return an error - use it to test coupon validation flows.
 
 ---
 
@@ -1655,14 +1655,14 @@ android-sdk/
 │   │       ├── Models.kt                 Booking, Property, Checklist, PaymentMethod, ...
 │   │       └── Requests.kt               CreateBookingRequest, CreatePropertyRequest, ...
 │   └── test/kotlin/com/cleanster/android/
-│       ├── BookingsTest.kt               47 tests — MockWebServer
-│       ├── UsersTest.kt                  18 tests — MockWebServer
-│       ├── PropertiesTest.kt             26 tests — MockWebServer
-│       ├── ChecklistsTest.kt             18 tests — MockWebServer
-│       ├── OtherTest.kt                  21 tests — MockWebServer
-│       ├── BlacklistTest.kt              9  tests — MockWebServer
-│       ├── PaymentMethodsTest.kt         14 tests — MockWebServer
-│       └── WebhooksTest.kt               11 tests — MockWebServer
+│       ├── BookingsTest.kt               47 tests - MockWebServer
+│       ├── UsersTest.kt                  18 tests - MockWebServer
+│       ├── PropertiesTest.kt             26 tests - MockWebServer
+│       ├── ChecklistsTest.kt             18 tests - MockWebServer
+│       ├── OtherTest.kt                  21 tests - MockWebServer
+│       ├── BlacklistTest.kt              9  tests - MockWebServer
+│       ├── PaymentMethodsTest.kt         14 tests - MockWebServer
+│       └── WebhooksTest.kt               11 tests - MockWebServer
 └── README.md                             This file
 ```
 
@@ -1681,4 +1681,4 @@ android-sdk/
 
 ## License
 
-MIT License — see [LICENSE](../LICENSE) for details.
+MIT License - see [LICENSE](../LICENSE) for details.
