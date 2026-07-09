@@ -22,9 +22,13 @@ func (s *OtherService) GetServices(ctx context.Context) (APIResponse[[]map[strin
 }
 
 // GetPlans returns all available booking plans for a given property.
-func (s *OtherService) GetPlans(ctx context.Context, propertyID int) (APIResponse[[]map[string]interface{}], error) {
+// subcatID is optional; pass 0 to omit it.
+func (s *OtherService) GetPlans(ctx context.Context, propertyID int, subcatID int) (APIResponse[[]map[string]interface{}], error) {
         q := url.Values{}
         q.Set("propertyId", strconv.Itoa(propertyID))
+        if subcatID != 0 {
+                q.Set("subcatId", strconv.Itoa(subcatID))
+        }
         raw, err := s.http.get(ctx, "/v1/plans", q)
         if err != nil {
                 return APIResponse[[]map[string]interface{}]{}, err
@@ -34,11 +38,15 @@ func (s *OtherService) GetPlans(ctx context.Context, propertyID int) (APIRespons
 
 // GetRecommendedHours returns the system-recommended number of cleaning hours
 // based on the property size. Use the result to pre-fill the Hours field in CreateBookingRequest.
-func (s *OtherService) GetRecommendedHours(ctx context.Context, propertyID, bathroomCount, roomCount int) (APIResponse[map[string]interface{}], error) {
+// subcatID is optional; pass 0 to omit it.
+func (s *OtherService) GetRecommendedHours(ctx context.Context, propertyID, bathroomCount, roomCount, subcatID int) (APIResponse[map[string]interface{}], error) {
         q := url.Values{}
         q.Set("propertyId", strconv.Itoa(propertyID))
         q.Set("bathroomCount", strconv.Itoa(bathroomCount))
         q.Set("roomCount", strconv.Itoa(roomCount))
+        if subcatID != 0 {
+                q.Set("subcatId", strconv.Itoa(subcatID))
+        }
         raw, err := s.http.get(ctx, "/v1/recommended-hours", q)
         if err != nil {
                 return APIResponse[map[string]interface{}]{}, err
@@ -111,4 +119,32 @@ func (s *OtherService) GetCleaner(ctx context.Context, cleanerID int) (APIRespon
                 return APIResponse[map[string]interface{}]{}, err
         }
         return decode[map[string]interface{}](raw)
+}
+
+// GetTasks lists service tasks, filterable by property and service type.
+// pageNo and pageSize are optional; pass 0 to omit either.
+func (s *OtherService) GetTasks(ctx context.Context, propertyID, serviceID, pageNo, pageSize int) (APIResponse[[]map[string]interface{}], error) {
+        q := url.Values{}
+        q.Set("propertyId", strconv.Itoa(propertyID))
+        q.Set("serviceId", strconv.Itoa(serviceID))
+        if pageNo != 0 {
+                q.Set("pageNo", strconv.Itoa(pageNo))
+        }
+        if pageSize != 0 {
+                q.Set("pageSize", strconv.Itoa(pageSize))
+        }
+        raw, err := s.http.get(ctx, "/v1/tasks", q)
+        if err != nil {
+                return APIResponse[[]map[string]interface{}]{}, err
+        }
+        return decode[[]map[string]interface{}](raw)
+}
+
+// GetSubcategories returns the subcategories available under a given service type.
+func (s *OtherService) GetSubcategories(ctx context.Context, serviceID int) (APIResponse[[]map[string]interface{}], error) {
+        raw, err := s.http.get(ctx, fmt.Sprintf("/v1/services/%d/subcategories", serviceID), nil)
+        if err != nil {
+                return APIResponse[[]map[string]interface{}]{}, err
+        }
+        return decode[[]map[string]interface{}](raw)
 }
