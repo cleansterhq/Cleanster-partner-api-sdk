@@ -9,10 +9,10 @@ namespace Cleanster;
  */
 final class Config
 {
-    /** Base URL for the sandbox environment (development/testing — no real charges). */
+    /** Base URL for the sandbox environment (development/testing - no real charges). */
     public const SANDBOX_BASE_URL = 'https://partner-sandbox-dot-official-tidyio-project.ue.r.appspot.com/public';
 
-    /** Base URL for the production environment (live traffic — real cleaners and charges). */
+    /** Base URL for the production environment (live traffic - real cleaners and charges). */
     public const PRODUCTION_BASE_URL = 'https://partner-dot-official-tidyio-project.ue.r.appspot.com/public';
 
     /** Default cURL timeout in seconds. */
@@ -20,7 +20,7 @@ final class Config
 
     /**
      * @param string $accessKey  Your partner access key (sent as the "access-key" header).
-     * @param string $baseUrl    API base URL — use SANDBOX_BASE_URL or PRODUCTION_BASE_URL.
+     * @param string $baseUrl    API base URL - use SANDBOX_BASE_URL or PRODUCTION_BASE_URL.
      * @param int    $timeout    HTTP request timeout in seconds (default: 30).
      *
      * @throws \InvalidArgumentException if accessKey or baseUrl is blank.
