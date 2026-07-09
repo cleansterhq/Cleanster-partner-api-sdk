@@ -7,7 +7,7 @@ using Cleanster.Exceptions;
 namespace Cleanster;
 
 /// <summary>
-/// Default HTTP transport — uses <see cref="System.Net.Http.HttpClient"/> with
+/// Default HTTP transport - uses <see cref="System.Net.Http.HttpClient"/> with
 /// <c>System.Text.Json</c> for serialization. Zero external dependencies.
 /// </summary>
 internal sealed class CleansterHttpClient : ICleansterHttpClient
