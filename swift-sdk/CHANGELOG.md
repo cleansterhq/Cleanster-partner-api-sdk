@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- `OtherApi` — `listCleaners` (`GET /v1/cleaners`) and `getCleaner` (`GET /v1/cleaners/{id}`) to list all cleaners and retrieve a single cleaner by ID.
+- `OtherApi` - `listCleaners` (`GET /v1/cleaners`) and `getCleaner` (`GET /v1/cleaners/{id}`) to list all cleaners and retrieve a single cleaner by ID.
 
 ## [1.0.0] - 2025-04-22
 
@@ -16,14 +16,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial release of the Cleanster Swift SDK.
 - `CleansterClient` with `sandbox()` and `production()` static factory methods.
 - `CleansterConfig` supporting custom base URL and request timeout.
-- `NetworkSession` using Swift's native `URLSession` — zero third-party dependencies.
+- `NetworkSession` using Swift's native `URLSession` - zero third-party dependencies.
 - Full `Codable` model types: `Booking`, `User`, `Property`, `Checklist`, `ChecklistItem`, `PaymentMethod`.
-- `ApiResponse<T>` generic wrapper — statically typed `data` field on every response.
+- `ApiResponse<T>` generic wrapper - statically typed `data` field on every response.
 - 8 API namespaces: `BookingsApi`, `UsersApi`, `PropertiesApi`, `ChecklistsApi`,
   `OtherApi`, `BlacklistApi`, `PaymentMethodsApi`, `WebhooksApi`.
-- All API methods are `async throws` — fully compatible with Swift Structured Concurrency.
+- All API methods are `async throws` - fully compatible with Swift Structured Concurrency.
 - `CleansterError` hierarchy: `CleansterError.unauthorized` (401), `CleansterError.apiError(statusCode:body:)` (4xx/5xx).
-- Swift Package Manager support — single `Package.swift`, no Xcode project required.
+- Swift Package Manager support - single `Package.swift`, no Xcode project required.
 - Platforms: macOS 13+, iOS 16+, watchOS 9+, tvOS 16+.
-- 166 XCTest unit tests — all passing; no network access required (URLProtocol stub).
+- 166 XCTest unit tests - all passing; no network access required (URLProtocol stub).
 - Swift 5.9+ required.
