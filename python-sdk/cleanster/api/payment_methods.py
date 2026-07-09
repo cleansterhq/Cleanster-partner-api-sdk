@@ -1,4 +1,4 @@
-"""Payment Methods API — manage Stripe and PayPal payment methods."""
+"""Payment Methods API - manage Stripe and PayPal payment methods."""
 
 from typing import Any, Dict
 
