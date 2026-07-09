@@ -8,7 +8,7 @@ namespace Cleanster.Exceptions;
 /// </summary>
 public sealed class AuthException : CleansterException
 {
-    /// <summary>HTTP status code — always 401.</summary>
+    /// <summary>HTTP status code - always 401.</summary>
     public int StatusCode { get; }
 
     /// <summary>Raw response body returned by the API.</summary>
