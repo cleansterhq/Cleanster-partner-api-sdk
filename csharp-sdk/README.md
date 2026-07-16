@@ -8,7 +8,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/.NET-8.0%2B-blueviolet?logo=dotnet" alt=".NET 8+">
   <img src="https://img.shields.io/badge/NuGet-Cleanster-blue?logo=nuget" alt="NuGet">
-  <img src="https://img.shields.io/badge/tests-111%20passing-brightgreen" alt="111 passing">
+  <img src="https://img.shields.io/badge/tests-113%20passing-brightgreen" alt="113 passing">
   <img src="https://img.shields.io/badge/dependencies-zero-brightgreen" alt="Zero dependencies">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
   <img src="https://img.shields.io/badge/API-Cleanster%20Partner-brightgreen" alt="Cleanster Partner API">
@@ -1110,13 +1110,46 @@ Use in the **sandbox** environment only:
 
 ---
 
+
+## Webhook Signature Verification
+
+When you create a webhook the API returns a `secret`. Use it to verify every incoming delivery:
+
+```csharp
+using Cleanster;
+
+// In your ASP.NET Core endpoint — use raw body:
+app.MapPost("/webhooks/cleanster", async (HttpRequest req) =>
+{
+    using var reader = new StreamReader(req.Body);
+    var rawBody   = await reader.ReadToEndAsync();
+    var signature = req.Headers["X-Cleanster-Signature"].FirstOrDefault() ?? "";
+    var secret    = Environment.GetEnvironmentVariable("CLEANSTER_WEBHOOK_SECRET")!;
+
+    if (!WebhookUtils.VerifySignature(secret, rawBody, signature))
+        return Results.Unauthorized();
+
+    // safe to process the event
+    return Results.Ok();
+});
+```
+
+Or compute the signature yourself:
+
+```csharp
+string expected = WebhookUtils.ComputeSignature(secret, rawBody);
+// lowercase hex HMAC-SHA256, e.g. "50be2cc8..."
+```
+
+Uses `System.Security.Cryptography.HMACSHA256` with `CryptographicOperations.FixedTimeEquals` for constant-time comparison.
+
 ## Running Tests
 
 ```bash
 dotnet test
 ```
 
-Expected: **111 tests passing.**
+Expected: **113 tests passing.**
 
 To run with verbose output:
 

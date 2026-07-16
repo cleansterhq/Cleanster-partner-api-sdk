@@ -1,6 +1,6 @@
 # Cleanster SOAP SDK
 
-A Java SOAP SDK for the Cleanster Partner API. Provides a WSDL-defined, document/literal SOAP interface over all Cleanster Partner API endpoints — bookings, properties, cleaners, checklists, users, blacklist, payment methods, webhooks, and more.
+A Java SOAP SDK for the Cleanster Partner API. Provides a WSDL-defined, document/literal SOAP interface over all Cleanster Partner API endpoints - bookings, properties, cleaners, checklists, users, blacklist, payment methods, webhooks, and more.
 
 ---
 
@@ -336,6 +336,35 @@ soap-sdk/
 
 ---
 
+
+## Webhook Signature Verification
+
+When you create a webhook the API returns a `secret`. Use it to verify every incoming delivery:
+
+```java
+import com.cleanster.soap.WebhookUtils;
+
+// In your servlet / JAX-WS handler:
+String rawBody   = new String(request.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+String signature = request.getHeader("X-Cleanster-Signature");
+String secret    = System.getenv("CLEANSTER_WEBHOOK_SECRET");
+
+if (!WebhookUtils.verifySignature(secret, rawBody, signature)) {
+    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+    return;
+}
+// safe to process the event
+```
+
+Or compute the signature yourself:
+
+```java
+String expected = WebhookUtils.computeSignature(secret, rawBody);
+// lowercase hex HMAC-SHA256, e.g. "50be2cc8..."
+```
+
+Uses `javax.crypto.Mac` with `HmacSHA256` and `MessageDigest.isEqual` (constant-time).
+
 ## Running Tests
 
 ```bash
@@ -373,7 +402,7 @@ https://api.cleanster.com/soap
 
 ### Binding style
 
-**Document / Literal** — the standard style for modern SOAP services.
+**Document / Literal** - the standard style for modern SOAP services.
 Each operation uses a single wrapper element matching the WSDL message name.
 
 ### Authentication
@@ -431,12 +460,12 @@ try {
 HTTP status codes:
 | Code | Meaning |
 |---|---|
-| 400 | Bad Request — check required fields |
-| 401 | Unauthorized — invalid or missing API key |
-| 404 | Not Found — booking/property/cleaner ID does not exist |
-| 422 | Unprocessable Entity — validation error |
-| 429 | Too Many Requests — rate limit exceeded |
-| 500 | Server Error — contact Cleanster support |
+| 400 | Bad Request - check required fields |
+| 401 | Unauthorized - invalid or missing API key |
+| 404 | Not Found - booking/property/cleaner ID does not exist |
+| 422 | Unprocessable Entity - validation error |
+| 429 | Too Many Requests - rate limit exceeded |
+| 500 | Server Error - contact Cleanster support |
 
 ---
 

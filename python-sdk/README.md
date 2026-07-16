@@ -8,7 +8,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.8%2B-blue?logo=python" alt="Python 3.8+">
   <img src="https://img.shields.io/badge/PyPI-cleanster-orange?logo=pypi" alt="PyPI">
-  <img src="https://img.shields.io/badge/tests-103%20passing-brightgreen" alt="103 passing">
+  <img src="https://img.shields.io/badge/tests-105%20passing-brightgreen" alt="105 passing">
   <img src="https://img.shields.io/badge/dependencies-zero-brightgreen" alt="Zero dependencies">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
   <img src="https://img.shields.io/badge/API-Cleanster%20Partner-brightgreen" alt="Cleanster Partner API">
@@ -1141,6 +1141,36 @@ Use in the **sandbox** environment only:
 
 ---
 
+
+## Webhook Signature Verification
+
+When you create a webhook the API returns a `secret`. Use it to verify every incoming delivery:
+
+```python
+from cleanster import verify_webhook_signature
+
+# In your Flask/Django/FastAPI endpoint:
+raw_body  = request.get_data(as_text=True)   # raw JSON, unmodified
+signature = request.headers.get("X-Cleanster-Signature", "")
+secret    = os.environ["CLEANSTER_WEBHOOK_SECRET"]
+
+if not verify_webhook_signature(secret, raw_body, signature):
+    abort(401)
+
+# safe to process the event
+```
+
+Or compute it yourself:
+
+```python
+from cleanster import compute_webhook_signature
+
+expected = compute_webhook_signature(secret, raw_body)
+# lowercase hex HMAC-SHA256, e.g. "50be2cc8..."
+```
+
+Both helpers use `hmac.compare_digest` for constant-time comparison to prevent timing attacks.
+
 ## Running Tests
 
 ```bash
@@ -1148,7 +1178,7 @@ pip install pytest
 pytest tests/ -v
 ```
 
-Expected: **103 tests passing.**
+Expected: **105 tests passing.**
 
 ---
 

@@ -1374,6 +1374,37 @@ You can create one webhook per event type. Use different `url` values to route e
 
 ---
 
+
+## Webhook Signature Verification
+
+When you create a webhook the API returns a `secret`. Use it to verify every incoming delivery (e.g. in a Vapor route):
+
+```swift
+import Cleanster
+import Vapor
+
+func webhookHandler(_ req: Request) throws -> Response {
+    let rawBody  = req.body.string ?? ""
+    let signature = req.headers.first(name: "X-Cleanster-Signature") ?? ""
+    let secret   = Environment.get("CLEANSTER_WEBHOOK_SECRET") ?? ""
+
+    guard WebhookUtils.verifySignature(secret: secret, payload: rawBody, signature: signature) else {
+        throw Abort(.unauthorized)
+    }
+    // safe to process the event
+    return Response(status: .ok)
+}
+```
+
+Or compute the signature yourself:
+
+```swift
+let expected = WebhookUtils.computeSignature(secret: secret, payload: rawBody)
+// lowercase hex HMAC-SHA256, e.g. "50be2cc8..."
+```
+
+Uses `CryptoKit.HMAC<SHA256>` with `HMAC.isValidAuthenticationCode` for constant-time comparison.
+
 ## Running Tests
 
 ```bash

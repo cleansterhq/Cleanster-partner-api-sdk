@@ -10,7 +10,7 @@
   <img src="https://img.shields.io/badge/SDKs-12%20Languages-blue" alt="12 Languages">
   <img src="https://img.shields.io/badge/MCP%20Server-Claude%20%7C%20AI-blueviolet" alt="MCP Server">
   <img src="https://img.shields.io/badge/Endpoints-66-orange" alt="66 Endpoints">
-  <img src="https://img.shields.io/badge/Tests-1523%20passing-success" alt="1523 Tests Passing">
+  <img src="https://img.shields.io/badge/Tests-1597%20passing-success" alt="1597 Tests Passing">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
 </p>
 
@@ -61,26 +61,26 @@
 
 | Language | Folder | Tests Passing | Min Version | Package Manager |
 |---|---|---|---|---|
-| [Java](#java) | [`java-sdk/`](./java-sdk) | 78 | Java 11+ | Maven / Gradle |
-| [Python](#python) | [`python-sdk/`](./python-sdk) | 103 | Python 3.8+ | pip |
-| [TypeScript / Node.js](#typescript--nodejs) | [`typescript-sdk/`](./typescript-sdk) | 89 | Node.js 18+ | npm |
-| [Ruby](#ruby) | [`ruby-sdk/`](./ruby-sdk) | 123 | Ruby 2.7+ | gem |
-| [Go](#go) | [`go-sdk/`](./go-sdk) | 96 | Go 1.21+ | go get |
-| [PHP](#php) | [`php-sdk/`](./php-sdk) | 110 | PHP 8.1+ | Composer |
-| [C# / .NET](#c--net) | [`csharp-sdk/`](./csharp-sdk) | 111 | .NET 8.0+ | NuGet |
+| [Java](#java) | [`java-sdk/`](./java-sdk) | 80 | Java 11+ | Maven / Gradle |
+| [Python](#python) | [`python-sdk/`](./python-sdk) | 105 | Python 3.8+ | pip |
+| [TypeScript / Node.js](#typescript--nodejs) | [`typescript-sdk/`](./typescript-sdk) | 91 | Node.js 18+ | npm |
+| [Ruby](#ruby) | [`ruby-sdk/`](./ruby-sdk) | 125 | Ruby 2.7+ | gem |
+| [Go](#go) | [`go-sdk/`](./go-sdk) | 98 | Go 1.21+ | go get |
+| [PHP](#php) | [`php-sdk/`](./php-sdk) | 112 | PHP 8.1+ | Composer |
+| [C# / .NET](#c--net) | [`csharp-sdk/`](./csharp-sdk) | 113 | .NET 8.0+ | NuGet |
 | [Swift](#swift) | [`swift-sdk/`](./swift-sdk) | 170 | Swift 5.9+ / iOS 16+ | Swift Package Manager |
 | [Kotlin](#kotlin) | [`kotlin-sdk/`](./kotlin-sdk) | 170 | Kotlin 1.9+ / JVM 11+ | Gradle |
-| [XML (JAXB)](#xml) | [`xml-sdk/`](./xml-sdk) | 123 | Java 17+ / JAXB 4.0 | Maven |
+| [XML (JAXB)](#xml) | [`xml-sdk/`](./xml-sdk) | 168 | Java 17+ / JAXB 4.0 | Maven |
 | [SOAP](#soap) | [`soap-sdk/`](./soap-sdk) | 118 | Java 11+ | Maven |
 | [Android (Retrofit)](#android) | [`android-sdk/`](./android-sdk) | 168 | Android API 26+ / Kotlin 1.9+ | Gradle |
 
-**1,523 tests passing across all SDKs.**
+**1,597 tests passing across all 12 SDKs + MCP server.**
 
 ### AI / Agentic Integration
 
 | Integration | Folder | Tests | Runtime | Description |
 |---|---|---|---|---|
-| [MCP Server](#mcp-server) | [`mcp-server/`](./mcp-server) | 64 | Node.js 20+ | Model Context Protocol server for Claude and AI assistants |
+| [MCP Server](#mcp-server) | [`mcp-server/`](./mcp-server) | 75 | Node.js 20+ | Model Context Protocol server for Claude and AI assistants |
 
 ---
 
@@ -2647,6 +2647,78 @@ Register webhooks via `POST /v1/webhooks` to receive real-time notifications.
 
 Your endpoint should return HTTP `200` within 5 seconds to acknowledge receipt. Failed deliveries are retried with exponential backoff.
 
+### Webhook Signature Verification
+
+Every delivery includes an `X-Cleanster-Signature` header — an HMAC-SHA256 hex digest of the raw request body, signed with the `secret` returned when you created the webhook. **Always verify this before processing the event.**
+
+Each SDK ships a `WebhookUtils` helper with two functions:
+
+| Function | Description |
+|---|---|
+| `computeSignature(secret, rawBody)` | Returns the expected lowercase hex signature |
+| `verifySignature(secret, rawBody, signature)` | Constant-time comparison — returns `true` if authentic |
+
+**Quick-start examples:**
+
+```python
+# Python
+from cleanster import verify_webhook_signature
+if not verify_webhook_signature(secret, raw_body, request.headers["X-Cleanster-Signature"]):
+    abort(401)
+```
+
+```typescript
+// TypeScript / Node.js
+import { verifyWebhookSignature } from "cleanster";
+if (!verifyWebhookSignature(secret, rawBody, req.headers["x-cleanster-signature"])) {
+  return res.status(401).send("Unauthorized");
+}
+```
+
+```java
+// Java / XML / SOAP / Kotlin / Android (JVM family)
+import com.cleanster.sdk.util.WebhookUtils;
+if (!WebhookUtils.verifySignature(secret, rawBody, signature)) {
+    response.setStatus(401); return;
+}
+```
+
+```ruby
+# Ruby
+unless Cleanster::WebhookUtils.verify_signature(secret, raw_body, signature)
+  halt 401, "Unauthorized"
+end
+```
+
+```go
+// Go
+if !cleanster.WebhookUtils.VerifySignature(secret, rawBody, signature) {
+    http.Error(w, "Unauthorized", http.StatusUnauthorized); return
+}
+```
+
+```php
+// PHP
+if (!WebhookUtils::verifySignature($secret, $rawBody, $signature)) {
+    http_response_code(401); exit;
+}
+```
+
+```csharp
+// C#
+if (!WebhookUtils.VerifySignature(secret, rawBody, signature))
+    return Results.Unauthorized();
+```
+
+```swift
+// Swift
+guard WebhookUtils.verifySignature(secret: secret, payload: rawBody, signature: signature) else {
+    throw Abort(.unauthorized)
+}
+```
+
+> **Important:** Always read the raw body bytes _before_ parsing JSON. Many frameworks consume the body stream during parsing, leaving nothing for signature computation. Use raw-body middleware (Express), `request.get_data()` (Flask), or equivalent.
+
 ---
 
 ## Test Coupon Codes
@@ -2699,7 +2771,7 @@ Cleanster-partner-api-sdk/
 │   │   ├── api/          BookingApi, PropertyApi, UserApi, ChecklistApi, ...
 │   │   ├── client/       HttpClient, CleansterClient
 │   │   └── model/        Booking, Property, User, Checklist, ...
-│   ├── src/test/java/    78 unit tests
+│   ├── src/test/java/    80 unit tests
 │   ├── pom.xml
 │   └── README.md         Full Java SDK documentation
 │
@@ -2708,7 +2780,7 @@ Cleanster-partner-api-sdk/
 │   │   ├── api/          bookings.py, properties.py, users.py, ...
 │   │   ├── models/       booking.py, property.py, response.py, ...
 │   │   └── client.py
-│   ├── tests/            103 unit tests
+│   ├── tests/            105 unit tests
 │   ├── pyproject.toml
 │   └── README.md         Full Python SDK documentation
 │
@@ -2717,7 +2789,7 @@ Cleanster-partner-api-sdk/
 │   │   ├── api/          bookings.ts, properties.ts, users.ts, ...
 │   │   ├── models/       booking.ts, property.ts, response.ts, ...
 │   │   └── client.ts
-│   ├── tests/            89 unit tests
+│   ├── tests/            91 unit tests
 │   ├── package.json
 │   └── README.md         Full TypeScript SDK documentation
 │
@@ -2725,7 +2797,7 @@ Cleanster-partner-api-sdk/
 │   ├── lib/cleanster/
 │   │   ├── api/          bookings_api.rb, properties_api.rb, ...
 │   │   └── models/       booking.rb, property.rb, ...
-│   ├── spec/             123 unit tests
+│   ├── spec/             125 unit tests
 │   ├── cleanster.gemspec
 │   └── README.md         Full Ruby SDK documentation
 │
@@ -2734,7 +2806,7 @@ Cleanster-partner-api-sdk/
 │   ├── properties.go     Properties service
 │   ├── models.go         All request/response types
 │   ├── client.go         CleansterClient
-│   ├── cleanster_test.go 96 unit tests
+│   ├── cleanster_test.go 98 unit tests
 │   ├── go.mod
 │   └── README.md         Full Go SDK documentation
 │
@@ -2742,7 +2814,7 @@ Cleanster-partner-api-sdk/
 │   ├── src/
 │   │   ├── Api/          BookingsApi.php, PropertiesApi.php, ...
 │   │   └── Models/       Booking.php, Property.php, ...
-│   ├── tests/            110 unit tests
+│   ├── tests/            112 unit tests
 │   ├── composer.json
 │   └── README.md         Full PHP SDK documentation
 │
@@ -2750,7 +2822,7 @@ Cleanster-partner-api-sdk/
 │   ├── src/Cleanster/
 │   │   ├── Api/          BookingsApi.cs, PropertiesApi.cs, ...
 │   │   └── Models/       Booking.cs, Property.cs, ...
-│   ├── tests/            111 unit tests
+│   ├── tests/            113 unit tests
 │   ├── Cleanster.sln
 │   └── README.md         Full C# SDK documentation
 │
@@ -2770,7 +2842,7 @@ Cleanster-partner-api-sdk/
 │   │   ├── api/          BookingsXmlApi.java, PropertiesXmlApi.java, UsersXmlApi.java, ...
 │   │   ├── model/        Booking.java, Property.java, User.java, ...  (all JAXB-annotated)
 │   │   └── client/       CleansterXmlClient.java, XmlConverter.java, XmlHttpClient.java
-│   ├── src/test/java/    123 unit tests (JUnit 5 + Mockito)
+│   ├── src/test/java/    168 unit tests (JUnit 5 + Mockito)
 │   ├── pom.xml
 │   └── README.md         Full XML SDK documentation
 │
@@ -2792,7 +2864,7 @@ Cleanster-partner-api-sdk/
 │   │   ├── PaymentMethodService.java 6 payment method operations
 │   │   ├── WebhookService.java       4 webhook operations
 │   │   └── model/            Booking, Property, User, Webhook, PaymentMethod, ...
-│   ├── src/test/java/        118 unit tests (JUnit 5 + Mockito)
+│   ├── src/test/java/        122 unit tests (JUnit 5 + Mockito)
 │   ├── pom.xml
 │   └── README.md             Full SOAP SDK documentation
 │
@@ -2829,7 +2901,7 @@ Cleanster-partner-api-sdk/
 │   │   │   └── update_checklist.ts
 │   │   ├── server.ts         McpServer factory + tool registration loop
 │   │   └── index.ts          Entry point - stdio or HTTP/SSE transport
-│   ├── tests/                64 unit tests (Vitest, mocked API)
+│   ├── tests/                75 unit tests (Vitest, mocked API)
 │   ├── .env.example
 │   ├── package.json
 │   ├── tsconfig.json

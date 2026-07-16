@@ -8,7 +8,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Java-11%2B-blue?logo=openjdk" alt="Java 11+">
   <img src="https://img.shields.io/badge/Maven-3.6%2B-orange?logo=apache-maven" alt="Maven">
-  <img src="https://img.shields.io/badge/tests-78%20passing-brightgreen" alt="78 passing">
+  <img src="https://img.shields.io/badge/tests-80%20passing-brightgreen" alt="80 passing">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
   <img src="https://img.shields.io/badge/API-Cleanster%20Partner-brightgreen" alt="Cleanster Partner API">
 </p>
@@ -1340,13 +1340,43 @@ Payloads are sent as `POST` requests to your webhook URL with a JSON body contai
 
 ---
 
+
+## Webhook Signature Verification
+
+When you create a webhook the API returns a `secret`. Store it securely — you'll use it to verify every delivery from Cleanster.
+
+Use `WebhookUtils` from `com.cleanster.sdk.util` to verify the `X-Cleanster-Signature` header on incoming POST requests:
+
+```java
+import com.cleanster.sdk.util.WebhookUtils;
+
+// In your webhook endpoint handler:
+String rawBody   = request.body();          // raw JSON string, unmodified
+String signature = request.header("X-Cleanster-Signature");
+String secret    = System.getenv("CLEANSTER_WEBHOOK_SECRET");
+
+if (!WebhookUtils.verifySignature(secret, rawBody, signature)) {
+    response.status(401);
+    return "Unauthorized";
+}
+// safe to process the event
+```
+
+The helper uses `javax.crypto.Mac` with `HmacSHA256` and constant-time comparison (`MessageDigest.isEqual`) to prevent timing attacks.
+
+```java
+// Or compute the signature yourself and compare:
+String expected = WebhookUtils.computeSignature(secret, rawBody);
+// expected is a lowercase hex string, e.g. "50be2cc8..."
+```
+
 ## Running Tests
 
 ```bash
 mvn test
 ```
 
-Expected: **78 tests, 0 failures, 0 errors.**
+Expected: **80 tests, 0 failures, 0 errors.**
 
 To run a specific test class:
 

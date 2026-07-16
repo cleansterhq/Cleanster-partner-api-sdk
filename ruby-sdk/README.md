@@ -8,7 +8,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Ruby-2.7%2B-red?logo=ruby" alt="Ruby 2.7+">
   <img src="https://img.shields.io/badge/gem-cleanster-orange?logo=rubygems" alt="RubyGems">
-  <img src="https://img.shields.io/badge/tests-123%20passing-brightgreen" alt="123 passing">
+  <img src="https://img.shields.io/badge/tests-125%20passing-brightgreen" alt="125 passing">
   <img src="https://img.shields.io/badge/dependencies-zero-brightgreen" alt="Zero dependencies">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
   <img src="https://img.shields.io/badge/API-Cleanster%20Partner-brightgreen" alt="Cleanster Partner API">
@@ -1060,6 +1060,38 @@ Use in the **sandbox** environment only:
 | `booking.completed` | Booking completed |
 
 ---
+
+
+## Webhook Signature Verification
+
+When you create a webhook the API returns a `secret`. Use it to verify every incoming delivery:
+
+```ruby
+require "cleanster"
+
+# In your Sinatra/Rails endpoint:
+post "/webhooks/cleanster" do
+  raw_body  = request.body.read
+  signature = request.env["HTTP_X_CLEANSTER_SIGNATURE"] || ""
+  secret    = ENV["CLEANSTER_WEBHOOK_SECRET"]
+
+  unless Cleanster::WebhookUtils.verify_signature(secret, raw_body, signature)
+    halt 401, "Unauthorized"
+  end
+
+  # safe to process the event
+  event = JSON.parse(raw_body)
+end
+```
+
+Or compute the signature yourself:
+
+```ruby
+expected = Cleanster::WebhookUtils.compute_signature(secret, raw_body)
+# lowercase hex HMAC-SHA256, e.g. "50be2cc8..."
+```
+
+Uses `OpenSSL::HMAC` with `OpenSSL.fixed_length_secure_compare` for constant-time comparison.
 
 ## Running Tests
 

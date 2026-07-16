@@ -1601,6 +1601,31 @@ class MyBookingTest {
 
 ---
 
+
+## Webhook Signature Verification
+
+Webhook deliveries are typically verified server-side, but the Android SDK ships `WebhookUtils` in case you run a backend component with the same library:
+
+```kotlin
+import com.cleanster.android.WebhookUtils
+
+// Verify a delivery:
+val rawBody   = "..." // raw JSON string from request body
+val signature = "..." // X-Cleanster-Signature header value
+val secret    = BuildConfig.CLEANSTER_WEBHOOK_SECRET
+
+val isValid = WebhookUtils.verifySignature(secret, rawBody, signature)
+```
+
+Or compute it yourself:
+
+```kotlin
+val expected = WebhookUtils.computeSignature(secret, rawBody)
+// lowercase hex HMAC-SHA256, e.g. "50be2cc8..."
+```
+
+Uses `javax.crypto.Mac` with `HmacSHA256` and `MessageDigest.isEqual` (constant-time).
+
 ## Running Tests
 
 ```bash

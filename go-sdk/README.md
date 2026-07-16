@@ -7,7 +7,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Go-1.21%2B-00ADD8?logo=go" alt="Go 1.21+">
-  <img src="https://img.shields.io/badge/tests-96%20passing-brightgreen" alt="96 passing">
+  <img src="https://img.shields.io/badge/tests-98%20passing-brightgreen" alt="98 passing">
   <img src="https://img.shields.io/badge/dependencies-zero-brightgreen" alt="Zero dependencies">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
   <img src="https://img.shields.io/badge/API-Cleanster%20Partner-brightgreen" alt="Cleanster Partner API">
@@ -1048,13 +1048,48 @@ Use in the **sandbox** environment only:
 
 ---
 
+
+## Webhook Signature Verification
+
+When you create a webhook the API returns a `secret`. Use it to verify every incoming delivery:
+
+```go
+import (
+    "io"
+    "net/http"
+    cleanster "github.com/cleansterhq/go-sdk"
+)
+
+func webhookHandler(w http.ResponseWriter, r *http.Request) {
+    body, _ := io.ReadAll(r.Body)
+    rawBody  := string(body)
+    signature := r.Header.Get("X-Cleanster-Signature")
+    secret    := os.Getenv("CLEANSTER_WEBHOOK_SECRET")
+
+    if !cleanster.WebhookUtils.VerifySignature(secret, rawBody, signature) {
+        http.Error(w, "Unauthorized", http.StatusUnauthorized)
+        return
+    }
+    // safe to process the event
+}
+```
+
+Or compute the signature yourself:
+
+```go
+expected := cleanster.WebhookUtils.ComputeSignature(secret, rawBody)
+// lowercase hex HMAC-SHA256, e.g. "50be2cc8..."
+```
+
+Uses `crypto/hmac` with `hmac.Equal` (constant-time) for secure comparison.
+
 ## Running Tests
 
 ```bash
 go test ./... -v
 ```
 
-Expected: **96 tests passing.**
+Expected: **98 tests passing.**
 
 ---
 
@@ -1074,7 +1109,7 @@ go-sdk/
 ├── webhooks.go            # WebhooksService
 ├── models.go              # Booking, Checklist, PaymentMethod, etc.
 ├── http.go                # Internal HTTP client (net/http)
-└── cleanster_test.go      # All 96 tests
+└── cleanster_test.go      # All 98 tests
 ```
 
 ---

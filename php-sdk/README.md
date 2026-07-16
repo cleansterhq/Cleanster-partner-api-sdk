@@ -8,7 +8,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/PHP-8.1%2B-777BB4?logo=php" alt="PHP 8.1+">
   <img src="https://img.shields.io/badge/Composer-PSR--4-blue?logo=packagist" alt="PSR-4">
-  <img src="https://img.shields.io/badge/tests-110%20passing-brightgreen" alt="110 passing">
+  <img src="https://img.shields.io/badge/tests-112%20passing-brightgreen" alt="112 passing">
   <img src="https://img.shields.io/badge/dependencies-zero%20runtime-brightgreen" alt="Zero runtime dependencies">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
   <img src="https://img.shields.io/badge/API-Cleanster%20Partner-brightgreen" alt="Cleanster Partner API">
@@ -1017,6 +1017,37 @@ Use in the **sandbox** environment only:
 
 ---
 
+
+## Webhook Signature Verification
+
+When you create a webhook the API returns a `secret`. Use it to verify every incoming delivery:
+
+```php
+use Cleanster\WebhookUtils;
+
+// In your endpoint handler:
+$rawBody   = file_get_contents('php://input');
+$signature = $_SERVER['HTTP_X_CLEANSTER_SIGNATURE'] ?? '';
+$secret    = getenv('CLEANSTER_WEBHOOK_SECRET');
+
+if (!WebhookUtils::verifySignature($secret, $rawBody, $signature)) {
+    http_response_code(401);
+    exit('Unauthorized');
+}
+
+// safe to process the event
+$event = json_decode($rawBody, true);
+```
+
+Or compute the signature yourself:
+
+```php
+$expected = WebhookUtils::computeSignature($secret, $rawBody);
+// lowercase hex HMAC-SHA256, e.g. "50be2cc8..."
+```
+
+Uses `hash_hmac('sha256', ...)` and `hash_equals` (constant-time) for secure comparison.
+
 ## Running Tests
 
 ```bash
@@ -1024,7 +1055,7 @@ composer install
 ./vendor/bin/phpunit tests/
 ```
 
-Expected: **110 tests, 0 failures.**
+Expected: **112 tests, 0 failures.**
 
 ---
 

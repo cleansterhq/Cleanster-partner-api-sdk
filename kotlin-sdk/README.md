@@ -1408,6 +1408,35 @@ You can create one webhook per event type. Use different `url` values to route e
 
 ---
 
+
+## Webhook Signature Verification
+
+When you create a webhook the API returns a `secret`. Use it to verify every incoming delivery (e.g. in a Ktor route):
+
+```kotlin
+import com.cleanster.WebhookUtils
+
+// In your Ktor/Spring route handler:
+val rawBody   = call.receiveText()
+val signature = call.request.headers["X-Cleanster-Signature"] ?: ""
+val secret    = System.getenv("CLEANSTER_WEBHOOK_SECRET") ?: ""
+
+if (!WebhookUtils.verifySignature(secret, rawBody, signature)) {
+    call.respond(HttpStatusCode.Unauthorized)
+    return@post
+}
+// safe to process the event
+```
+
+Or compute the signature yourself:
+
+```kotlin
+val expected = WebhookUtils.computeSignature(secret, rawBody)
+// lowercase hex HMAC-SHA256, e.g. "50be2cc8..."
+```
+
+Uses `javax.crypto.Mac` with `HmacSHA256` and `MessageDigest.isEqual` (constant-time).
+
 ## Running Tests
 
 ```bash

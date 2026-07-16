@@ -4,7 +4,7 @@
   <img src="https://img.shields.io/badge/Language-Java%2017-orange" alt="Java 17">
   <img src="https://img.shields.io/badge/JAXB-4.0-blue" alt="JAXB 4.0">
   <img src="https://img.shields.io/badge/Endpoints-62-brightgreen" alt="62 Endpoints">
-  <img src="https://img.shields.io/badge/Tests-123%20passing-success" alt="123 Tests">
+  <img src="https://img.shields.io/badge/Tests-168%20passing-success" alt="168 Tests">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT">
 </p>
 
@@ -820,7 +820,7 @@ XmlApiResponse<?> resp = client.other().getAvailableCleaners(Map.of(
 mvn test
 ```
 
-123 tests across 8 test classes using **Mockito** (no real network calls). Each test asserts:
+168 tests across 9 test classes using **Mockito** (no real network calls). Each test asserts:
 - The correct HTTP method is used
 - The path contains `/v1/` prefix and the correct endpoint segment
 - Request bodies contain expected fields
@@ -969,9 +969,38 @@ public class CleansterBookingService {
 - `XmlConverter` utility (toXml / fromXml / isXml)
 - `CleansterXmlClient` with sandbox, production, and custom factories
 - OkHttp 4.12.0 transport with configurable timeouts
-- 123 tests with Mockito
+- 168 tests with Mockito
 
 ---
+
+
+## Webhook Signature Verification
+
+When you create a webhook the API returns a `secret`. Use it to verify every incoming delivery:
+
+```java
+import com.cleanster.xml.util.WebhookUtils;
+
+// In your servlet / Spring controller:
+String rawBody   = new String(request.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+String signature = request.getHeader("X-Cleanster-Signature");
+String secret    = System.getenv("CLEANSTER_WEBHOOK_SECRET");
+
+if (!WebhookUtils.verifySignature(secret, rawBody, signature)) {
+    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+    return;
+}
+// safe to process the event
+```
+
+Or compute the signature yourself:
+
+```java
+String expected = WebhookUtils.computeSignature(secret, rawBody);
+// lowercase hex HMAC-SHA256, e.g. "50be2cc8..."
+```
+
+Uses `javax.crypto.Mac` with `HmacSHA256` and `MessageDigest.isEqual` (constant-time).
 
 ## Support
 

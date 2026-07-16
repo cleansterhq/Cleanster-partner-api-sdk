@@ -8,7 +8,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/TypeScript-5.x-blue?logo=typescript" alt="TypeScript 5">
   <img src="https://img.shields.io/badge/Node.js-18%2B-green?logo=node.js" alt="Node.js 18+">
-  <img src="https://img.shields.io/badge/tests-89%20passing-brightgreen" alt="89 passing">
+  <img src="https://img.shields.io/badge/tests-91%20passing-brightgreen" alt="91 passing">
   <img src="https://img.shields.io/badge/dependencies-zero-brightgreen" alt="Zero dependencies">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
   <img src="https://img.shields.io/badge/API-Cleanster%20Partner-brightgreen" alt="Cleanster Partner API">
@@ -1075,13 +1075,47 @@ Use in the **sandbox** environment only:
 
 ---
 
+
+## Webhook Signature Verification
+
+When you create a webhook the API returns a `secret`. Use it to verify every incoming delivery:
+
+```typescript
+import { verifyWebhookSignature } from "cleanster";
+
+// In your Express/Fastify endpoint — use raw body middleware:
+app.post("/webhooks/cleanster", express.raw({ type: "application/json" }), (req, res) => {
+  const rawBody  = req.body.toString("utf8");
+  const signature = req.headers["x-cleanster-signature"] ?? "";
+  const secret   = process.env.CLEANSTER_WEBHOOK_SECRET!;
+
+  if (!verifyWebhookSignature(secret, rawBody, signature)) {
+    return res.status(401).send("Unauthorized");
+  }
+
+  // safe to process the event
+  const event = JSON.parse(rawBody);
+});
+```
+
+Or compute the signature yourself:
+
+```typescript
+import { computeWebhookSignature } from "cleanster";
+
+const expected = computeWebhookSignature(secret, rawBody);
+// lowercase hex HMAC-SHA256, e.g. "50be2cc8..."
+```
+
+The helper uses Node.js's native `crypto.timingSafeEqual` for constant-time comparison.
+
 ## Running Tests
 
 ```bash
 npm test
 ```
 
-Expected: **89 tests passing.**
+Expected: **91 tests passing.**
 
 ---
 
