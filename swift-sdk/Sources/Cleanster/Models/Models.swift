@@ -88,6 +88,7 @@ public struct Webhook: Decodable {
     public let id: Int?
     public let url: String?
     public let event: String?
+    public let secret: String?
 }
 
 // MARK: - ChatMessage

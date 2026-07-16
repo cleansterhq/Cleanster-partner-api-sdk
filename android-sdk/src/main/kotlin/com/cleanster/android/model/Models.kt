@@ -68,9 +68,10 @@ data class PaymentMethod(
 )
 
 data class Webhook(
-    @SerializedName("id")    val id: Int = 0,
-    @SerializedName("url")   val url: String = "",
-    @SerializedName("event") val event: String = "",
+    @SerializedName("id")     val id: Int = 0,
+    @SerializedName("url")    val url: String = "",
+    @SerializedName("event")  val event: String = "",
+    @SerializedName("secret") val secret: String? = null,
 )
 
 data class Cleaner(

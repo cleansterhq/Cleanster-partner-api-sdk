@@ -8,6 +8,7 @@ require_relative "cleanster/models/property"
 require_relative "cleanster/models/checklist"
 require_relative "cleanster/models/payment_method"
 require_relative "cleanster/client"
+require_relative "cleanster/webhook_utils"
 
 # Cleanster Partner API SDK for Ruby.
 #

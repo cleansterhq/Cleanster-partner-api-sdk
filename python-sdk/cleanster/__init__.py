@@ -37,6 +37,7 @@ from .client import CleansterClient
 from .config import CleansterConfig
 from .exceptions import CleansterApiException, CleansterAuthException, CleansterException
 from .models import ApiResponse, Booking, Checklist, PaymentMethod, Property, User
+from .webhook_utils import compute_webhook_signature, verify_webhook_signature
 
 __version__ = "1.0.0"
 __all__ = [
@@ -51,4 +52,6 @@ __all__ = [
     "PaymentMethod",
     "Property",
     "User",
+    "compute_webhook_signature",
+    "verify_webhook_signature",
 ]

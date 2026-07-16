@@ -75,9 +75,10 @@ data class PaymentMethod(
 )
 
 data class Webhook(
-    val id:    Int?    = null,
-    val url:   String? = null,
-    val event: String? = null,
+    val id:     Int?    = null,
+    val url:    String? = null,
+    val event:  String? = null,
+    val secret: String? = null,
 )
 
 data class ChatMessage(

@@ -40,6 +40,9 @@ export { BlacklistApi } from "./api/blacklist";
 export { PaymentMethodsApi } from "./api/payment-methods";
 export { WebhooksApi } from "./api/webhooks";
 
+// Webhook signing utilities
+export { computeWebhookSignature, verifyWebhookSignature } from "./webhook-utils";
+
 // Models & request types
 export * from "./models";
 export type { CostEstimateRequest, AvailableCleanersRequest } from "./api/other";
