@@ -13,7 +13,6 @@ public class Webhook {
     @XmlElementWrapper(name = "events")
     @XmlElement(name   = "event")
     private List<String> events;
-    @XmlElement private String      secret;
     @XmlElement private String      createdAt;
     @XmlElement private String      updatedAt;
 
@@ -23,7 +22,6 @@ public class Webhook {
     public String       getUrl()       { return url; }
     public Boolean      getActive()    { return active; }
     public List<String> getEvents()    { return events; }
-    public String       getSecret()    { return secret; }
     public String       getCreatedAt() { return createdAt; }
     public String       getUpdatedAt() { return updatedAt; }
 
@@ -31,7 +29,6 @@ public class Webhook {
     public void setUrl(String url)             { this.url = url; }
     public void setActive(Boolean active)      { this.active = active; }
     public void setEvents(List<String> events) { this.events = events; }
-    public void setSecret(String secret)       { this.secret = secret; }
     public void setCreatedAt(String c)         { this.createdAt = c; }
     public void setUpdatedAt(String u)         { this.updatedAt = u; }
 
