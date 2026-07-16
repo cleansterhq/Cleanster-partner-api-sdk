@@ -1335,6 +1335,7 @@ When creating a webhook, subscribe to one of these events:
 | `booking.cleaner_assigned` | A cleaner is assigned to a booking |
 | `booking.cancelled` | A booking is cancelled |
 | `booking.completed` | A booking is marked as completed |
+| `chat.message_added` | A new message is added to the booking's chat thread |
 
 Payloads are sent as `POST` requests to your webhook URL with a JSON body containing the event type and relevant booking data.
 
@@ -1342,6 +1343,8 @@ Payloads are sent as `POST` requests to your webhook URL with a JSON body contai
 
 
 ## Webhook Signature Verification
+
+> **Secret format:** The `secret` returned on webhook creation uses the `whsec_<value>` format (e.g. `whsec_abc123…`). Pass the full string — including the `whsec_` prefix — to `computeSignature`/`verifySignature`. It is used as-is as the HMAC key.
 
 When you create a webhook the API returns a `secret`. Store it securely — you'll use it to verify every delivery from Cleanster.
 

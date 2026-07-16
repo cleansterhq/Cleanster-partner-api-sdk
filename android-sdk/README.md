@@ -1443,7 +1443,9 @@ viewModelScope.launch {
 | `booking.started` | Cleaner checks in |
 | `booking.completed` | Job finished |
 | `booking.cancelled` | Booking is cancelled |
+| `booking.status_changed` | A booking transitions to any new status |
 | `booking.feedback_submitted` | Rating is submitted |
+| `chat.message_added` | New message in a booking's chat thread |
 
 **Register a webhook:**
 
@@ -1603,6 +1605,8 @@ class MyBookingTest {
 
 
 ## Webhook Signature Verification
+
+> **Secret format:** The `secret` returned on webhook creation uses the `whsec_<value>` format (e.g. `whsec_abc123…`). Pass the full string — including the `whsec_` prefix — to `computeSignature`/`verifySignature`. It is used as-is as the HMAC key.
 
 Webhook deliveries are typically verified server-side, but the Android SDK ships `WebhookUtils` in case you run a backend component with the same library:
 

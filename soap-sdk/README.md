@@ -337,7 +337,20 @@ soap-sdk/
 ---
 
 
+
+**Available webhook events:**
+
+| Event | Fires When |
+|---|---|
+| `booking.status_changed` | A booking transitions to any new status |
+| `booking.cleaner_assigned` | A cleaner is assigned |
+| `booking.cancelled` | A booking is cancelled |
+| `booking.completed` | A booking is completed |
+| `chat.message_added` | A new message is added to the booking's chat thread |
+
 ## Webhook Signature Verification
+
+> **Secret format:** The `secret` returned on webhook creation uses the `whsec_<value>` format (e.g. `whsec_abc123…`). Pass the full string — including the `whsec_` prefix — to `computeSignature`/`verifySignature`. It is used as-is as the HMAC key.
 
 When you create a webhook the API returns a `secret`. Use it to verify every incoming delivery:
 

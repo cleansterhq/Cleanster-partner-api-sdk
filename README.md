@@ -2631,6 +2631,8 @@ Register webhooks via `POST /v1/webhooks` to receive real-time notifications.
 | `booking.started` | The cleaner checks in and the service begins |
 | `booking.completed` | The service is marked as completed |
 | `booking.cancelled` | A booking is cancelled |
+| `booking.status_changed` | A booking transitions to any new status |
+| `chat.message_added` | A new message is added to a booking's chat thread |
 | `booking.feedback_submitted` | A rating is submitted for a completed booking |
 
 **Webhook payload structure:**
@@ -2648,6 +2650,8 @@ Register webhooks via `POST /v1/webhooks` to receive real-time notifications.
 Your endpoint should return HTTP `200` within 5 seconds to acknowledge receipt. Failed deliveries are retried with exponential backoff.
 
 ### Webhook Signature Verification
+
+> **Secret format:** The `secret` returned on webhook creation uses the `whsec_<value>` format (e.g. `whsec_abc123…`). Pass the full string — including the `whsec_` prefix — to `computeSignature`/`verifySignature`. It is used as-is as the HMAC key.
 
 Every delivery includes an `X-Cleanster-Signature` header — an HMAC-SHA256 hex digest of the raw request body, signed with the `secret` returned when you created the webhook. **Always verify this before processing the event.**
 

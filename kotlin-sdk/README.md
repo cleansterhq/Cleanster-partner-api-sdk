@@ -1390,7 +1390,9 @@ client.bookings.sendMessage(bookingId, message = "On my way!")
 | `booking.started` | The cleaner marks the job as started |
 | `booking.completed` | The cleaner marks the job as complete |
 | `booking.cancelled` | A booking is cancelled |
+| `booking.status_changed` | A booking transitions to any new status |
 | `booking.feedback_submitted` | A rating/comment is submitted |
+| `chat.message_added` | New message in a booking's chat thread |
 
 **Example webhook payload:**
 
@@ -1410,6 +1412,8 @@ You can create one webhook per event type. Use different `url` values to route e
 
 
 ## Webhook Signature Verification
+
+> **Secret format:** The `secret` returned on webhook creation uses the `whsec_<value>` format (e.g. `whsec_abc123…`). Pass the full string — including the `whsec_` prefix — to `computeSignature`/`verifySignature`. It is used as-is as the HMAC key.
 
 When you create a webhook the API returns a `secret`. Use it to verify every incoming delivery (e.g. in a Ktor route):
 
