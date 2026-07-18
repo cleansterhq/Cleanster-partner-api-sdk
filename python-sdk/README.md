@@ -8,7 +8,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.8%2B-blue?logo=python" alt="Python 3.8+">
   <img src="https://img.shields.io/badge/PyPI-cleanster-orange?logo=pypi" alt="PyPI">
-  <img src="https://img.shields.io/badge/tests-105%20passing-brightgreen" alt="105 passing">
+  <img src="https://img.shields.io/badge/tests-107%20passing-brightgreen" alt="107 passing">
   <img src="https://img.shields.io/badge/dependencies-zero-brightgreen" alt="Zero dependencies">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
   <img src="https://img.shields.io/badge/API-Cleanster%20Partner-brightgreen" alt="Cleanster Partner API">
@@ -1188,7 +1188,7 @@ pip install pytest
 pytest tests/ -v
 ```
 
-Expected: **105 tests passing.**
+Expected: **107 tests passing.**
 
 ---
 
