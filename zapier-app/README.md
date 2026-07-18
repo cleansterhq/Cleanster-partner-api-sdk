@@ -1,6 +1,6 @@
-# Cleanster Partner API — Zapier Integration
+# Cleanster Partner API - Zapier Integration
 
-A production-ready Zapier app for the [Cleanster Partner API](https://api.cleanster.com). This lets you connect Cleanster to 5,000+ apps through Zapier — automating bookings, properties, cleaners, and chat with tools like Airtable, Google Sheets, Slack, Notion, HubSpot, and more.
+A production-ready Zapier app for the [Cleanster Partner API](https://api.cleanster.com). This lets you connect Cleanster to 5,000+ apps through Zapier - automating bookings, properties, cleaners, and chat with tools like Airtable, Google Sheets, Slack, Notion, HubSpot, and more.
 
 ---
 
@@ -10,7 +10,7 @@ A production-ready Zapier app for the [Cleanster Partner API](https://api.cleans
 | Trigger | Description |
 |---|---|
 | **New Booking** | Fires when a new booking is created |
-| **Booking Status Changed** | Fires when a booking changes status (scheduled → in_progress → completed) |
+| **Booking Status Changed** | Fires when a booking transitions to any new status (started, paused, resumed, completed, cancelled, rescheduled, etc.) |
 | **New Property** | Fires when a new property is added |
 
 ### Actions (Do this…)
@@ -32,8 +32,8 @@ A production-ready Zapier app for the [Cleanster Partner API](https://api.cleans
 | **Get Available Services** | Lists all available cleaning service types |
 
 ### Search or Create (Find or make…)
-- **Find or Create Booking** — finds an existing booking or creates a new one
-- **Find or Create Property** — finds an existing property or creates a new one
+- **Find or Create Booking** - finds an existing booking or creates a new one
+- **Find or Create Property** - finds an existing property or creates a new one
 
 ---
 
@@ -153,52 +153,52 @@ zapier logs
 ## Common Zap Examples
 
 ### 1. New Booking → Slack Notification
-**Trigger:** Cleanster — New Booking  
-**Action:** Slack — Send Channel Message  
+**Trigger:** Cleanster - New Booking  
+**Action:** Slack - Send Channel Message  
 > "New cleaning booked for {{property__address}} on {{scheduled_at}}"
 
 ---
 
 ### 2. Booking Completed → Google Sheets Row
-**Trigger:** Cleanster — Booking Status Changed (filter: `completed`)  
-**Action:** Google Sheets — Create Spreadsheet Row  
+**Trigger:** Cleanster - Booking Status Changed (filter: `completed`)  
+**Action:** Google Sheets - Create Spreadsheet Row  
 > Logs booking ID, property address, cleaner name, and completion time
 
 ---
 
 ### 3. Airtable Record → Create Booking in Cleanster
-**Trigger:** Airtable — New Record  
-**Action:** Cleanster — Create Booking  
+**Trigger:** Airtable - New Record  
+**Action:** Cleanster - Create Booking  
 > Automatically books cleanings when a property row is added to Airtable
 
 ---
 
 ### 4. New Booking → Find Property → Send Slack DM with Access Instructions
-**Trigger:** Cleanster — New Booking  
-**Search:** Cleanster — Find Property (using `property__id`)  
-**Action:** Slack — Send Direct Message  
+**Trigger:** Cleanster - New Booking  
+**Search:** Cleanster - Find Property (using `property__id`)  
+**Action:** Slack - Send Direct Message  
 > Sends the property access instructions to the dispatch manager
 
 ---
 
 ### 5. HubSpot Contact Created → Create Property in Cleanster
-**Trigger:** HubSpot — New Contact  
-**Action:** Cleanster — Create Property  
+**Trigger:** HubSpot - New Contact  
+**Action:** Cleanster - Create Property  
 > Auto-populates Cleanster with new property owners from your CRM
 
 ---
 
 ### 6. Typeform Submission → Create Booking
-**Trigger:** Typeform — New Entry  
-**Search:** Cleanster — Find Property (by address from form)  
-**Action:** Cleanster — Create Booking  
+**Trigger:** Typeform - New Entry  
+**Search:** Cleanster - Find Property (by address from form)  
+**Action:** Cleanster - Create Booking  
 > Self-service booking form that creates bookings directly in Cleanster
 
 ---
 
 ### 7. Booking Completed → Send Thank-You Email via Gmail
-**Trigger:** Cleanster — Booking Status Changed (filter: `completed`)  
-**Action:** Gmail — Send Email  
+**Trigger:** Cleanster - Booking Status Changed (filter: `completed`)  
+**Action:** Gmail - Send Email  
 > Automatically sends a thank-you email to the property owner
 
 ---
@@ -225,7 +225,7 @@ operation: {
 }
 ```
 
-See the [Zapier Platform Docs — REST Hooks](https://github.com/zapier/zapier-platform/blob/main/packages/cli/README.md#rest-hooks) for details.
+See the [Zapier Platform Docs - REST Hooks](https://github.com/zapier/zapier-platform/blob/main/packages/cli/README.md#rest-hooks) for details.
 
 ---
 

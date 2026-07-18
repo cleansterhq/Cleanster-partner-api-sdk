@@ -1059,10 +1059,10 @@ class CleansterTest extends TestCase
         $http = $this->mockHttp();
         $http->expects($this->once())
              ->method('post')
-             ->with('/v1/webhooks', ['url' => 'https://app.example.com/hooks', 'event' => 'booking.status_changed'])
+             ->with('/v1/webhooks', ['url' => 'https://app.example.com/hooks', 'event' => 'booking.started'])
              ->willReturn($this->ok([]));
 
-        (new WebhooksApi($http))->createWebhook('https://app.example.com/hooks', 'booking.status_changed');
+        (new WebhooksApi($http))->createWebhook('https://app.example.com/hooks', 'booking.started');
     }
 
     public function testUpdateWebhook(): void
@@ -1070,10 +1070,10 @@ class CleansterTest extends TestCase
         $http = $this->mockHttp();
         $http->expects($this->once())
              ->method('put')
-             ->with('/v1/webhooks/50', ['url' => 'https://app.example.com/v2/hooks', 'event' => 'booking.status_changed'])
+             ->with('/v1/webhooks/50', ['url' => 'https://app.example.com/v2/hooks', 'event' => 'booking.started'])
              ->willReturn($this->ok([]));
 
-        (new WebhooksApi($http))->updateWebhook(50, 'https://app.example.com/v2/hooks', 'booking.status_changed');
+        (new WebhooksApi($http))->updateWebhook(50, 'https://app.example.com/v2/hooks', 'booking.started');
     }
 
     public function testDeleteWebhook(): void

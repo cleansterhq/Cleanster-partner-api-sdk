@@ -1352,11 +1352,13 @@ try await client.bookings.sendMessage(bookingId, message: "On my way!")
 | `booking.created` | A new booking is scheduled |
 | `booking.cleaner_assigned` | A cleaner is manually assigned |
 | `booking.cleaner_removed` | The assigned cleaner is removed |
+| `booking.cleaner_declined` | The assigned cleaner declines the booking |
 | `booking.rescheduled` | A booking date/time changes |
 | `booking.started` | The cleaner marks the job as started |
+| `booking.paused` | The cleaner pauses the service mid-job |
+| `booking.resumed` | The cleaner resumes a paused service |
 | `booking.completed` | The cleaner marks the job as complete |
 | `booking.cancelled` | A booking is cancelled |
-| `booking.status_changed` | A booking transitions to any new status |
 | `booking.feedback_submitted` | A rating/comment is submitted |
 | `chat.message_added` | New message in a booking's chat thread |
 

@@ -890,7 +890,7 @@ resp, err := client.Webhooks.ListWebhooks(ctx)
 ```go
 _, err = client.Webhooks.CreateWebhook(ctx, cleanster.WebhookRequest{
     URL:   "https://your-server.com/hooks/cleanster",
-    Event: "booking.status_changed",
+    Event: "booking.started",
 })
 ```
 
@@ -1041,10 +1041,17 @@ Use in the **sandbox** environment only:
 
 | Event | Description |
 |---|---|
-| `booking.status_changed` | Any status transition |
-| `booking.cleaner_assigned` | Cleaner assigned |
-| `booking.cancelled` | Booking cancelled |
+| `booking.created` | New booking scheduled |
+| `booking.started` | Cleaner checks in; service begins |
+| `booking.paused` | Cleaner pauses the service |
+| `booking.resumed` | Cleaner resumes a paused service |
 | `booking.completed` | Booking completed |
+| `booking.rescheduled` | Booking rescheduled |
+| `booking.cancelled` | Booking cancelled |
+| `booking.cleaner_assigned` | Cleaner assigned |
+| `booking.cleaner_removed` | Assigned cleaner removed |
+| `booking.cleaner_declined` | Assigned cleaner declined |
+| `booking.feedback_submitted` | Rating submitted |
 | `chat.message_added` | New message in a booking's chat thread |
 
 ---

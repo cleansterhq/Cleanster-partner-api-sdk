@@ -1001,7 +1001,7 @@ public class CleansterTests
         var http = MockHttp();
         http.Setup(h => h.PostAsync("/v1/webhooks", It.IsAny<object?>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(MakeResponse("{}"));
-        await new WebhooksApi(http.Object).CreateWebhookAsync("https://app.example.com/hooks", "booking.status_changed");
+        await new WebhooksApi(http.Object).CreateWebhookAsync("https://app.example.com/hooks", "booking.started");
         http.VerifyAll();
     }
 
@@ -1011,7 +1011,7 @@ public class CleansterTests
         var http = MockHttp();
         http.Setup(h => h.PutAsync("/v1/webhooks/50", It.IsAny<object?>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(MakeResponse("{}"));
-        await new WebhooksApi(http.Object).UpdateWebhookAsync(50, "https://app.example.com/v2", "booking.status_changed");
+        await new WebhooksApi(http.Object).UpdateWebhookAsync(50, "https://app.example.com/v2", "booking.started");
         http.VerifyAll();
     }
 

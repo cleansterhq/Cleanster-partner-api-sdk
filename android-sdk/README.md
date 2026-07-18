@@ -1439,11 +1439,13 @@ viewModelScope.launch {
 | `booking.created` | New booking is scheduled |
 | `booking.cleaner_assigned` | A cleaner is confirmed |
 | `booking.cleaner_removed` | Assigned cleaner is removed |
+| `booking.cleaner_declined` | Assigned cleaner declined |
 | `booking.rescheduled` | Date or time changes |
 | `booking.started` | Cleaner checks in |
+| `booking.paused` | Cleaner pauses the service |
+| `booking.resumed` | Cleaner resumes a paused service |
 | `booking.completed` | Job finished |
 | `booking.cancelled` | Booking is cancelled |
-| `booking.status_changed` | A booking transitions to any new status |
 | `booking.feedback_submitted` | Rating is submitted |
 | `chat.message_added` | New message in a booking's chat thread |
 

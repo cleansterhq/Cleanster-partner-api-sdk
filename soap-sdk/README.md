@@ -342,10 +342,17 @@ soap-sdk/
 
 | Event | Fires When |
 |---|---|
-| `booking.status_changed` | A booking transitions to any new status |
-| `booking.cleaner_assigned` | A cleaner is assigned |
-| `booking.cancelled` | A booking is cancelled |
+| `booking.created` | A new booking is scheduled |
+| `booking.started` | A booking is started |
+| `booking.paused` | A booking is paused |
+| `booking.resumed` | A booking is resumed |
 | `booking.completed` | A booking is completed |
+| `booking.rescheduled` | A booking is rescheduled |
+| `booking.cancelled` | A booking is cancelled |
+| `booking.cleaner_assigned` | A cleaner is assigned |
+| `booking.cleaner_removed` | Assigned cleaner is removed |
+| `booking.cleaner_declined` | Assigned cleaner declined |
+| `booking.feedback_submitted` | Rating is submitted |
 | `chat.message_added` | A new message is added to the booking's chat thread |
 
 ## Webhook Signature Verification

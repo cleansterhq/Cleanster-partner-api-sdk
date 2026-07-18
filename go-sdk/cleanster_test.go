@@ -1271,7 +1271,7 @@ func TestWebhooks_CreateWebhook(t *testing.T) {
         })
         client, cleanup := newTestClient(t, handler)
         defer cleanup()
-        _, _ = client.Webhooks.CreateWebhook(context.Background(), cleanster.WebhookRequest{URL: "https://example.com/hooks", Event: "booking.status_changed"})
+        _, _ = client.Webhooks.CreateWebhook(context.Background(), cleanster.WebhookRequest{URL: "https://example.com/hooks", Event: "booking.started"})
 }
 
 func TestWebhooks_UpdateWebhook(t *testing.T) {
@@ -1283,7 +1283,7 @@ func TestWebhooks_UpdateWebhook(t *testing.T) {
         })
         client, cleanup := newTestClient(t, handler)
         defer cleanup()
-        _, _ = client.Webhooks.UpdateWebhook(context.Background(), 50, cleanster.WebhookRequest{URL: "https://example.com/v2/hooks", Event: "booking.status_changed"})
+        _, _ = client.Webhooks.UpdateWebhook(context.Background(), 50, cleanster.WebhookRequest{URL: "https://example.com/v2/hooks", Event: "booking.started"})
 }
 
 func TestWebhooks_DeleteWebhook(t *testing.T) {

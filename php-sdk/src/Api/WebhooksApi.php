@@ -25,7 +25,7 @@ final class WebhooksApi
      * Register a new webhook endpoint for booking event notifications.
      *
      * @param string $url   Your HTTPS endpoint URL.
-     * @param string $event Event type (e.g., "booking.status_changed").
+     * @param string $event Event type (e.g., "booking.started").
      */
     public function createWebhook(string $url, string $event): ApiResponse
     {

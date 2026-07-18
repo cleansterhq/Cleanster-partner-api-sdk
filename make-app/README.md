@@ -1,4 +1,4 @@
-# Cleanster — Make.com Integration
+# Cleanster - Make.com Integration
 
 A production-ready custom app for [Make.com](https://make.com) (formerly Integromat) that connects the Cleanster Partner API to 1,000+ apps. Automate bookings, properties, cleaners, and notifications with powerful multi-step scenarios.
 
@@ -10,7 +10,7 @@ A production-ready custom app for [Make.com](https://make.com) (formerly Integro
 | Module | Description |
 |---|---|
 | **Watch New Bookings** | Fires when a new booking is created |
-| **Watch Booking Status Changed** | Fires when a booking changes status (with optional status filter) |
+| **Watch Booking Status Changed** | Fires when a booking transitions to any new status (started, paused, resumed, completed, cancelled, rescheduled, etc.) |
 | **Watch New Properties** | Fires when a new property is added |
 
 ### Actions (Bookings)
@@ -131,7 +131,7 @@ When a user connects to Cleanster in Make:
 
 ### Trigger Behavior (Polling)
 
-All three trigger modules use **polling** — Make checks for new items at regular intervals. The polling frequency depends on your Make plan:
+All three trigger modules use **polling** - Make checks for new items at regular intervals. The polling frequency depends on your Make plan:
 - Free/Core: every 15 minutes
 - Pro+: every 1 minute
 
@@ -147,7 +147,7 @@ The following fields automatically populate from your live Cleanster data:
 
 ### Make an API Call Module
 
-The **Make an API Call** module lets you reach any Cleanster endpoint not covered by the dedicated modules. It automatically handles Bearer token auth — just provide:
+The **Make an API Call** module lets you reach any Cleanster endpoint not covered by the dedicated modules. It automatically handles Bearer token auth - just provide:
 - **Method**: GET / POST / PUT / PATCH / DELETE
 - **Path**: The endpoint path (e.g. `v1/bookings/123/checklist`)
 - **Body**: Raw JSON for POST/PUT/PATCH requests

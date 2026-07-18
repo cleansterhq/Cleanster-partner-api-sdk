@@ -1137,7 +1137,7 @@ Register a URL to receive booking event notifications.
 ```java
 WebhookRequest req = new WebhookRequest();
 req.setUrl("https://your-server.com/hooks/cleanster");
-req.setEvent("booking.status_changed");
+req.setEvent("booking.started");
 
 ApiResponse<Object> resp = client.webhooks().createWebhook(req);
 ```
@@ -1331,11 +1331,18 @@ When creating a webhook, subscribe to one of these events:
 
 | Event | Fired when |
 |---|---|
-| `booking.status_changed` | A booking transitions to any new status |
-| `booking.cleaner_assigned` | A cleaner is assigned to a booking |
+| `booking.created` | A new booking is successfully scheduled |
+| `booking.started` | The cleaner checks in and the service begins |
+| `booking.paused` | The cleaner pauses the service mid-job |
+| `booking.resumed` | The cleaner resumes a paused service |
+| `booking.completed` | The service is marked as completed |
+| `booking.rescheduled` | A booking is moved to a new date/time |
 | `booking.cancelled` | A booking is cancelled |
-| `booking.completed` | A booking is marked as completed |
-| `chat.message_added` | A new message is added to the booking's chat thread |
+| `booking.cleaner_assigned` | A cleaner is assigned to a booking |
+| `booking.cleaner_removed` | The assigned cleaner is removed |
+| `booking.cleaner_declined` | The assigned cleaner declines the booking |
+| `booking.feedback_submitted` | A rating is submitted for a completed booking |
+| `chat.message_added` | A new message is added to a booking's chat thread |
 
 Payloads are sent as `POST` requests to your webhook URL with a JSON body containing the event type and relevant booking data.
 

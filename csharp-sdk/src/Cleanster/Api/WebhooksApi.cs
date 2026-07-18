@@ -18,7 +18,7 @@ public sealed class WebhooksApi
 
     /// <summary>Register a new webhook endpoint for booking event notifications.</summary>
     /// <param name="url">Your HTTPS endpoint URL.</param>
-    /// <param name="eventType">Event type (e.g., "booking.status_changed").</param>
+    /// <param name="eventType">Event type (e.g., "booking.started").</param>
     public async Task<ApiResponse<JsonElement>> CreateWebhookAsync(
         string url, string eventType, CancellationToken ct = default)
     {

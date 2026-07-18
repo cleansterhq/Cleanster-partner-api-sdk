@@ -2627,11 +2627,13 @@ Register webhooks via `POST /v1/webhooks` to receive real-time notifications.
 | `booking.created` | A new booking is successfully scheduled |
 | `booking.cleaner_assigned` | A cleaner is assigned to a booking |
 | `booking.cleaner_removed` | The assigned cleaner is removed |
+| `booking.cleaner_declined` | The assigned cleaner declines the booking |
 | `booking.rescheduled` | A booking is moved to a new date/time |
 | `booking.started` | The cleaner checks in and the service begins |
+| `booking.paused` | The cleaner pauses the service mid-job |
+| `booking.resumed` | The cleaner resumes a paused service |
 | `booking.completed` | The service is marked as completed |
 | `booking.cancelled` | A booking is cancelled |
-| `booking.status_changed` | A booking transitions to any new status |
 | `chat.message_added` | A new message is added to a booking's chat thread |
 | `booking.feedback_submitted` | A rating is submitted for a completed booking |
 

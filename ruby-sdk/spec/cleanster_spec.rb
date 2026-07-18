@@ -803,7 +803,7 @@ RSpec.describe Cleanster do
 
     describe "#create_webhook" do
       it "POSTs webhook request" do
-        body = { "url" => "https://example.com/hooks", "event" => "booking.status_changed" }
+        body = { "url" => "https://example.com/hooks", "event" => "booking.started" }
         allow(http).to receive(:post).with("/v1/webhooks", body: body).and_return(ok_response)
         api.create_webhook(body)
       end
@@ -811,7 +811,7 @@ RSpec.describe Cleanster do
 
     describe "#update_webhook" do
       it "PUTs to /v1/webhooks/50" do
-        body = { "url" => "https://example.com/v2/hooks", "event" => "booking.status_changed" }
+        body = { "url" => "https://example.com/v2/hooks", "event" => "booking.started" }
         allow(http).to receive(:put).with("/v1/webhooks/50", body: body).and_return(ok_response)
         api.update_webhook(50, body)
       end
