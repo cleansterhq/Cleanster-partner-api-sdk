@@ -40,8 +40,9 @@ module Cleanster
       return false if secret.empty? || signature.empty?
 
       expected = compute_signature(secret, payload)
+      return false unless expected.bytesize == signature.bytesize
       OpenSSL.fixed_length_secure_compare(expected, signature)
-    rescue OpenSSL::OpenSSLError
+    rescue OpenSSL::OpenSSLError, ArgumentError
       false
     end
   end
