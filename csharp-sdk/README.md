@@ -8,7 +8,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/.NET-8.0%2B-blueviolet?logo=dotnet" alt=".NET 8+">
   <img src="https://img.shields.io/badge/NuGet-Cleanster-blue?logo=nuget" alt="NuGet">
-  <img src="https://img.shields.io/badge/tests-113%20passing-brightgreen" alt="113 passing">
+  <img src="https://img.shields.io/badge/tests-115%20passing-brightgreen" alt="115 passing">
   <img src="https://img.shields.io/badge/dependencies-zero-brightgreen" alt="Zero dependencies">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
   <img src="https://img.shields.io/badge/API-Cleanster%20Partner-brightgreen" alt="Cleanster Partner API">
@@ -1159,7 +1159,7 @@ Uses `System.Security.Cryptography.HMACSHA256` with `CryptographicOperations.Fix
 dotnet test
 ```
 
-Expected: **113 tests passing.**
+Expected: **115 tests passing.**
 
 To run with verbose output:
 
