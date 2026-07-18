@@ -10,7 +10,7 @@
   <img src="https://img.shields.io/badge/SDKs-12%20Languages-blue" alt="12 Languages">
   <img src="https://img.shields.io/badge/MCP%20Server-Claude%20%7C%20AI-blueviolet" alt="MCP Server">
   <img src="https://img.shields.io/badge/Endpoints-66-orange" alt="66 Endpoints">
-  <img src="https://img.shields.io/badge/Tests-1597%20passing-success" alt="1597 Tests Passing">
+  <img src="https://img.shields.io/badge/Tests-1585%20passing-success" alt="1585 Tests Passing">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
 </p>
 
@@ -61,20 +61,20 @@
 
 | Language | Folder | Tests Passing | Min Version | Package Manager |
 |---|---|---|---|---|
-| [Java](#java) | [`java-sdk/`](./java-sdk) | 80 | Java 11+ | Maven / Gradle |
-| [Python](#python) | [`python-sdk/`](./python-sdk) | 105 | Python 3.8+ | pip |
-| [TypeScript / Node.js](#typescript--nodejs) | [`typescript-sdk/`](./typescript-sdk) | 91 | Node.js 18+ | npm |
-| [Ruby](#ruby) | [`ruby-sdk/`](./ruby-sdk) | 125 | Ruby 2.7+ | gem |
+| [Java](#java) | [`java-sdk/`](./java-sdk) | 85 | Java 11+ | Maven / Gradle |
+| [Python](#python) | [`python-sdk/`](./python-sdk) | 107 | Python 3.8+ | pip |
+| [TypeScript / Node.js](#typescript--nodejs) | [`typescript-sdk/`](./typescript-sdk) | 94 | Node.js 18+ | npm |
+| [Ruby](#ruby) | [`ruby-sdk/`](./ruby-sdk) | 127 | Ruby 2.7+ | gem |
 | [Go](#go) | [`go-sdk/`](./go-sdk) | 98 | Go 1.21+ | go get |
-| [PHP](#php) | [`php-sdk/`](./php-sdk) | 112 | PHP 8.1+ | Composer |
-| [C# / .NET](#c--net) | [`csharp-sdk/`](./csharp-sdk) | 113 | .NET 8.0+ | NuGet |
-| [Swift](#swift) | [`swift-sdk/`](./swift-sdk) | 170 | Swift 5.9+ / iOS 16+ | Swift Package Manager |
-| [Kotlin](#kotlin) | [`kotlin-sdk/`](./kotlin-sdk) | 170 | Kotlin 1.9+ / JVM 11+ | Gradle |
-| [XML (JAXB)](#xml) | [`xml-sdk/`](./xml-sdk) | 168 | Java 17+ / JAXB 4.0 | Maven |
+| [PHP](#php) | [`php-sdk/`](./php-sdk) | 115 | PHP 8.1+ | Composer |
+| [C# / .NET](#c--net) | [`csharp-sdk/`](./csharp-sdk) | 115 | .NET 8.0+ | NuGet |
+| [Swift](#swift) | [`swift-sdk/`](./swift-sdk) | 174 | Swift 5.9+ / iOS 16+ | Swift Package Manager |
+| [Kotlin](#kotlin) | [`kotlin-sdk/`](./kotlin-sdk) | 174 | Kotlin 1.9+ / JVM 11+ | Gradle |
+| [XML (JAXB)](#xml) | [`xml-sdk/`](./xml-sdk) | 127 | Java 17+ / JAXB 4.0 | Maven |
 | [SOAP](#soap) | [`soap-sdk/`](./soap-sdk) | 118 | Java 11+ | Maven |
-| [Android (Retrofit)](#android) | [`android-sdk/`](./android-sdk) | 168 | Android API 26+ / Kotlin 1.9+ | Gradle |
+| [Android (Retrofit)](#android) | [`android-sdk/`](./android-sdk) | 172 | Android API 26+ / Kotlin 1.9+ | Gradle |
 
-**1,597 tests passing across all 12 SDKs + MCP server.**
+**1,585 tests passing across all 12 SDKs + MCP server.**
 
 ### AI / Agentic Integration
 
@@ -708,7 +708,7 @@ val hook = client.webhooks.createWebhook(
 
 **Run tests:**
 ```bash
-./gradlew test        # 168 tests, all should pass
+./gradlew test        # 172 tests, all should pass
 ```
 
 [Full Android documentation →](./android-sdk/README.md)
@@ -2769,7 +2769,7 @@ Cleanster-partner-api-sdk/
 │   │   ├── CleansterClient.swift
 │   │   ├── CleansterError.swift
 │   │   └── NetworkSession.swift
-│   ├── Tests/CleansterTests/   170 unit tests
+│   ├── Tests/CleansterTests/   174 unit tests
 │   └── README.md               Full Swift SDK documentation
 │
 ├── java-sdk/
@@ -2777,7 +2777,7 @@ Cleanster-partner-api-sdk/
 │   │   ├── api/          BookingApi, PropertyApi, UserApi, ChecklistApi, ...
 │   │   ├── client/       HttpClient, CleansterClient
 │   │   └── model/        Booking, Property, User, Checklist, ...
-│   ├── src/test/java/    80 unit tests
+│   ├── src/test/java/    85 unit tests
 │   ├── pom.xml
 │   └── README.md         Full Java SDK documentation
 │
@@ -2786,7 +2786,7 @@ Cleanster-partner-api-sdk/
 │   │   ├── api/          bookings.py, properties.py, users.py, ...
 │   │   ├── models/       booking.py, property.py, response.py, ...
 │   │   └── client.py
-│   ├── tests/            105 unit tests
+│   ├── tests/            107 unit tests
 │   ├── pyproject.toml
 │   └── README.md         Full Python SDK documentation
 │
@@ -2795,7 +2795,7 @@ Cleanster-partner-api-sdk/
 │   │   ├── api/          bookings.ts, properties.ts, users.ts, ...
 │   │   ├── models/       booking.ts, property.ts, response.ts, ...
 │   │   └── client.ts
-│   ├── tests/            91 unit tests
+│   ├── tests/            94 unit tests
 │   ├── package.json
 │   └── README.md         Full TypeScript SDK documentation
 │
@@ -2803,7 +2803,7 @@ Cleanster-partner-api-sdk/
 │   ├── lib/cleanster/
 │   │   ├── api/          bookings_api.rb, properties_api.rb, ...
 │   │   └── models/       booking.rb, property.rb, ...
-│   ├── spec/             125 unit tests
+│   ├── spec/             127 unit tests
 │   ├── cleanster.gemspec
 │   └── README.md         Full Ruby SDK documentation
 │
@@ -2820,7 +2820,7 @@ Cleanster-partner-api-sdk/
 │   ├── src/
 │   │   ├── Api/          BookingsApi.php, PropertiesApi.php, ...
 │   │   └── Models/       Booking.php, Property.php, ...
-│   ├── tests/            112 unit tests
+│   ├── tests/            115 unit tests
 │   ├── composer.json
 │   └── README.md         Full PHP SDK documentation
 │
@@ -2828,7 +2828,7 @@ Cleanster-partner-api-sdk/
 │   ├── src/Cleanster/
 │   │   ├── Api/          BookingsApi.cs, PropertiesApi.cs, ...
 │   │   └── Models/       Booking.cs, Property.cs, ...
-│   ├── tests/            113 unit tests
+│   ├── tests/            115 unit tests
 │   ├── Cleanster.sln
 │   └── README.md         Full C# SDK documentation
 │
@@ -2839,7 +2839,7 @@ Cleanster-partner-api-sdk/
 │   │   ├── CleansterClient.kt
 │   │   ├── CleansterError.kt
 │   │   └── HttpEngine.kt
-│   ├── src/test/kotlin/  170 unit tests
+│   ├── src/test/kotlin/  174 unit tests
 │   ├── build.gradle.kts
 │   └── README.md         Full Kotlin SDK documentation
 │
@@ -2848,7 +2848,7 @@ Cleanster-partner-api-sdk/
 │   │   ├── api/          BookingsXmlApi.java, PropertiesXmlApi.java, UsersXmlApi.java, ...
 │   │   ├── model/        Booking.java, Property.java, User.java, ...  (all JAXB-annotated)
 │   │   └── client/       CleansterXmlClient.java, XmlConverter.java, XmlHttpClient.java
-│   ├── src/test/java/    168 unit tests (JUnit 5 + Mockito)
+│   ├── src/test/java/    127 unit tests (JUnit 5 + Mockito)
 │   ├── pom.xml
 │   └── README.md         Full XML SDK documentation
 │
