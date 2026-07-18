@@ -8,7 +8,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/TypeScript-5.x-blue?logo=typescript" alt="TypeScript 5">
   <img src="https://img.shields.io/badge/Node.js-18%2B-green?logo=node.js" alt="Node.js 18+">
-  <img src="https://img.shields.io/badge/tests-91%20passing-brightgreen" alt="91 passing">
+  <img src="https://img.shields.io/badge/tests-94%20passing-brightgreen" alt="94 passing">
   <img src="https://img.shields.io/badge/dependencies-zero-brightgreen" alt="Zero dependencies">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
   <img src="https://img.shields.io/badge/API-Cleanster%20Partner-brightgreen" alt="Cleanster Partner API">
@@ -1125,7 +1125,7 @@ The helper uses Node.js's native `crypto.timingSafeEqual` for constant-time comp
 npm test
 ```
 
-Expected: **91 tests passing.**
+Expected: **94 tests passing.**
 
 ---
 
