@@ -8,7 +8,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/PHP-8.1%2B-777BB4?logo=php" alt="PHP 8.1+">
   <img src="https://img.shields.io/badge/Composer-PSR--4-blue?logo=packagist" alt="PSR-4">
-  <img src="https://img.shields.io/badge/tests-112%20passing-brightgreen" alt="112 passing">
+  <img src="https://img.shields.io/badge/tests-115%20passing-brightgreen" alt="115 passing">
   <img src="https://img.shields.io/badge/dependencies-zero%20runtime-brightgreen" alt="Zero runtime dependencies">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
   <img src="https://img.shields.io/badge/API-Cleanster%20Partner-brightgreen" alt="Cleanster Partner API">
