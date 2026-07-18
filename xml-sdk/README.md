@@ -4,7 +4,7 @@
   <img src="https://img.shields.io/badge/Language-Java%2017-orange" alt="Java 17">
   <img src="https://img.shields.io/badge/JAXB-4.0-blue" alt="JAXB 4.0">
   <img src="https://img.shields.io/badge/Endpoints-62-brightgreen" alt="62 Endpoints">
-  <img src="https://img.shields.io/badge/Tests-168%20passing-success" alt="168 Tests">
+  <img src="https://img.shields.io/badge/Tests-127%20passing-success" alt="127 Tests">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT">
 </p>
 
@@ -838,7 +838,7 @@ XmlApiResponse<?> resp = client.other().getAvailableCleaners(Map.of(
 mvn test
 ```
 
-168 tests across 9 test classes using **Mockito** (no real network calls). Each test asserts:
+127 tests across 9 test classes using **Mockito** (no real network calls). Each test asserts:
 - The correct HTTP method is used
 - The path contains `/v1/` prefix and the correct endpoint segment
 - Request bodies contain expected fields
@@ -987,7 +987,7 @@ public class CleansterBookingService {
 - `XmlConverter` utility (toXml / fromXml / isXml)
 - `CleansterXmlClient` with sandbox, production, and custom factories
 - OkHttp 4.12.0 transport with configurable timeouts
-- 168 tests with Mockito
+- 127 tests with Mockito
 
 ---
 
