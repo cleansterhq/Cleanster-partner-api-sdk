@@ -7,7 +7,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Go-1.21%2B-00ADD8?logo=go" alt="Go 1.21+">
-  <img src="https://img.shields.io/badge/tests-98%20passing-brightgreen" alt="98 passing">
+  <img src="https://img.shields.io/badge/tests-100%20passing-brightgreen" alt="100 passing">
   <img src="https://img.shields.io/badge/dependencies-zero-brightgreen" alt="Zero dependencies">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
   <img src="https://img.shields.io/badge/API-Cleanster%20Partner-brightgreen" alt="Cleanster Partner API">
@@ -1098,7 +1098,7 @@ Uses `crypto/hmac` with `hmac.Equal` (constant-time) for secure comparison.
 go test ./... -v
 ```
 
-Expected: **98 tests passing.**
+Expected: **100 tests passing.**
 
 ---
 
@@ -1118,7 +1118,7 @@ go-sdk/
 ├── webhooks.go            # WebhooksService
 ├── models.go              # Booking, Checklist, PaymentMethod, etc.
 ├── http.go                # Internal HTTP client (net/http)
-└── cleanster_test.go      # All 98 tests
+└── cleanster_test.go      # All 100 tests
 ```
 
 ---

@@ -247,7 +247,7 @@ In any trigger module JSON, change `typeId: 4` to `typeId: 1` and add:
   "body": {
     "mode": "json",
     "content": [
-      { "name": "event", "value": "booking.created" },
+      { "name": "event", "value": "booking.status_changed" },
       { "name": "url", "value": "{{webhook.url}}" }
     ]
   }

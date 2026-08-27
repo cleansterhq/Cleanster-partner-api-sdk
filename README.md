@@ -10,7 +10,7 @@
   <img src="https://img.shields.io/badge/SDKs-12%20Languages-blue" alt="12 Languages">
   <img src="https://img.shields.io/badge/MCP%20Server-Claude%20%7C%20AI-blueviolet" alt="MCP Server">
   <img src="https://img.shields.io/badge/Endpoints-66-orange" alt="66 Endpoints">
-  <img src="https://img.shields.io/badge/Tests-1585%20passing-success" alt="1585 Tests Passing">
+  <img src="https://img.shields.io/badge/Tests-1587%20passing-success" alt="1587 Tests Passing">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
 </p>
 
@@ -65,16 +65,16 @@
 | [Python](#python) | [`python-sdk/`](./python-sdk) | 107 | Python 3.8+ | pip |
 | [TypeScript / Node.js](#typescript--nodejs) | [`typescript-sdk/`](./typescript-sdk) | 94 | Node.js 18+ | npm |
 | [Ruby](#ruby) | [`ruby-sdk/`](./ruby-sdk) | 127 | Ruby 2.7+ | gem |
-| [Go](#go) | [`go-sdk/`](./go-sdk) | 98 | Go 1.21+ | go get |
+| [Go](#go) | [`go-sdk/`](./go-sdk) | 100 | Go 1.21+ | go get |
 | [PHP](#php) | [`php-sdk/`](./php-sdk) | 115 | PHP 8.1+ | Composer |
 | [C# / .NET](#c--net) | [`csharp-sdk/`](./csharp-sdk) | 115 | .NET 8.0+ | NuGet |
 | [Swift](#swift) | [`swift-sdk/`](./swift-sdk) | 174 | Swift 5.9+ / iOS 16+ | Swift Package Manager |
 | [Kotlin](#kotlin) | [`kotlin-sdk/`](./kotlin-sdk) | 174 | Kotlin 1.9+ / JVM 11+ | Gradle |
 | [XML (JAXB)](#xml) | [`xml-sdk/`](./xml-sdk) | 127 | Java 17+ / JAXB 4.0 | Maven |
-| [SOAP](#soap) | [`soap-sdk/`](./soap-sdk) | 118 | Java 11+ | Maven |
+| [SOAP](#soap) | [`soap-sdk/`](./soap-sdk) | 122 | Java 11+ | Maven |
 | [Android (Retrofit)](#android) | [`android-sdk/`](./android-sdk) | 172 | Android API 26+ / Kotlin 1.9+ | Gradle |
 
-**1,585 tests passing across all 12 SDKs + MCP server.**
+**1,587 tests passing across all 12 SDKs + MCP server.**
 
 ### AI / Agentic Integration
 
@@ -2624,7 +2624,7 @@ Register webhooks via `POST /v1/webhooks` to receive real-time notifications.
 
 | Event | Fires When |
 |---|---|
-| `booking.created` | A new booking is successfully scheduled |
+| `booking.status_changed` | A booking's status changes |
 | `booking.cleaner_assigned` | A cleaner is assigned to a booking |
 | `booking.cleaner_removed` | The assigned cleaner is removed |
 | `booking.cleaner_declined` | The assigned cleaner declines the booking |
@@ -2635,7 +2635,6 @@ Register webhooks via `POST /v1/webhooks` to receive real-time notifications.
 | `booking.completed` | The service is marked as completed |
 | `booking.cancelled` | A booking is cancelled |
 | `chat.message_added` | A new message is added to a booking's chat thread |
-| `booking.feedback_submitted` | A rating is submitted for a completed booking |
 
 **Webhook payload structure:**
 
@@ -2655,7 +2654,7 @@ Your endpoint should return HTTP `200` within 5 seconds to acknowledge receipt. 
 
 > **Secret format:** The `secret` returned on webhook creation uses the `whsec_<value>` format (e.g. `whsec_abc123…`). Pass the full string — including the `whsec_` prefix — to `computeSignature`/`verifySignature`. It is used as-is as the HMAC key.
 
-Every delivery includes an `X-Cleanster-Signature` header — an HMAC-SHA256 hex digest of the raw request body, signed with the `secret` returned when you created the webhook. **Always verify this before processing the event.**
+Every delivery includes an `X-Webhook-Signature` header — an HMAC-SHA256 hex digest of the raw request body, signed with the `secret` returned when you created the webhook. **Always verify this before processing the event.**
 
 Each SDK ships a `WebhookUtils` helper with two functions:
 
@@ -2669,14 +2668,14 @@ Each SDK ships a `WebhookUtils` helper with two functions:
 ```python
 # Python
 from cleanster import verify_webhook_signature
-if not verify_webhook_signature(secret, raw_body, request.headers["X-Cleanster-Signature"]):
+if not verify_webhook_signature(secret, raw_body, request.headers["X-Webhook-Signature"]):
     abort(401)
 ```
 
 ```typescript
 // TypeScript / Node.js
 import { verifyWebhookSignature } from "cleanster";
-if (!verifyWebhookSignature(secret, rawBody, req.headers["x-cleanster-signature"])) {
+if (!verifyWebhookSignature(secret, rawBody, req.headers["x-webhook-signature"])) {
   return res.status(401).send("Unauthorized");
 }
 ```
@@ -2812,7 +2811,7 @@ Cleanster-partner-api-sdk/
 │   ├── properties.go     Properties service
 │   ├── models.go         All request/response types
 │   ├── client.go         CleansterClient
-│   ├── cleanster_test.go 98 unit tests
+│   ├── cleanster_test.go 100 unit tests
 │   ├── go.mod
 │   └── README.md         Full Go SDK documentation
 │

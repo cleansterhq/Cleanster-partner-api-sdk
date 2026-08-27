@@ -12,7 +12,7 @@ A Java SOAP SDK for the Cleanster Partner API. Provides a WSDL-defined, document
 | Build | Maven |
 | SOAP Style | Document / Literal (SOAP 1.1) |
 | Auth | Bearer Token (API Key) |
-| Tests | 118 (JUnit 5 + Mockito) |
+| Tests | 122 (JUnit 5 + Mockito) |
 | Total Operations | 62 |
 | WSDL | `wsdl/cleanster.wsdl` |
 | XSD Schema | `wsdl/cleanster-types.xsd` |
@@ -331,7 +331,8 @@ soap-sdk/
         ├── UserServiceTest.java            ← 6 tests
         ├── BlacklistServiceTest.java       ← 6 tests
         ├── PaymentMethodServiceTest.java   ← 12 tests
-        └── WebhookServiceTest.java         ← 8 tests
+        ├── WebhookServiceTest.java         ← 8 tests
+        └── WebhookUtilsTest.java           ← 4 tests
 ```
 
 ---
@@ -391,7 +392,7 @@ cd soap-sdk
 mvn test
 ```
 
-Expected: **118 tests, 0 failures, 0 errors.**
+Expected: **122 tests, 0 failures, 0 errors.**
 
 To run a single test class:
 

@@ -1108,7 +1108,7 @@ Uses `OpenSSL::HMAC` with `OpenSSL.fixed_length_secure_compare` for constant-tim
 bundle exec rspec
 ```
 
-Expected: **123 examples, 0 failures.**
+Expected: **127 examples, 0 failures.**
 
 ---
 

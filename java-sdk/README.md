@@ -1385,7 +1385,7 @@ String expected = WebhookUtils.computeSignature(secret, rawBody);
 mvn test
 ```
 
-Expected: **80 tests, 0 failures, 0 errors.**
+Expected: **85 tests, 0 failures, 0 errors.**
 
 To run a specific test class:
 
