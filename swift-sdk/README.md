@@ -1349,7 +1349,7 @@ try await client.bookings.sendMessage(bookingId, message: "On my way!")
 
 | Event | Trigger |
 |---|---|
-| `booking.created` | A new booking is scheduled |
+| `booking.status_changed` | A booking's status changes |
 | `booking.cleaner_assigned` | A cleaner is manually assigned |
 | `booking.cleaner_removed` | The assigned cleaner is removed |
 | `booking.cleaner_declined` | The assigned cleaner declines the booking |
@@ -1359,7 +1359,6 @@ try await client.bookings.sendMessage(bookingId, message: "On my way!")
 | `booking.resumed` | The cleaner resumes a paused service |
 | `booking.completed` | The cleaner marks the job as complete |
 | `booking.cancelled` | A booking is cancelled |
-| `booking.feedback_submitted` | A rating/comment is submitted |
 | `chat.message_added` | New message in a booking's chat thread |
 
 **Example webhook payload:**
@@ -1391,7 +1390,7 @@ import Vapor
 
 func webhookHandler(_ req: Request) throws -> Response {
     let rawBody  = req.body.string ?? ""
-    let signature = req.headers.first(name: "X-Cleanster-Signature") ?? ""
+    let signature = req.headers.first(name: "X-Webhook-Signature") ?? ""
     let secret   = Environment.get("CLEANSTER_WEBHOOK_SECRET") ?? ""
 
     guard WebhookUtils.verifySignature(secret: secret, payload: rawBody, signature: signature) else {

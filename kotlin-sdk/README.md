@@ -1383,7 +1383,7 @@ client.bookings.sendMessage(bookingId, message = "On my way!")
 
 | Event | Trigger |
 |---|---|
-| `booking.created` | A new booking is scheduled |
+| `booking.status_changed` | A booking's status changes |
 | `booking.cleaner_assigned` | A cleaner is manually assigned |
 | `booking.cleaner_removed` | The assigned cleaner is removed |
 | `booking.cleaner_declined` | The assigned cleaner declines the booking |
@@ -1393,7 +1393,6 @@ client.bookings.sendMessage(bookingId, message = "On my way!")
 | `booking.resumed` | The cleaner resumes a paused service |
 | `booking.completed` | The cleaner marks the job as complete |
 | `booking.cancelled` | A booking is cancelled |
-| `booking.feedback_submitted` | A rating/comment is submitted |
 | `chat.message_added` | New message in a booking's chat thread |
 
 **Example webhook payload:**
@@ -1424,7 +1423,7 @@ import com.cleanster.WebhookUtils
 
 // In your Ktor/Spring route handler:
 val rawBody   = call.receiveText()
-val signature = call.request.headers["X-Cleanster-Signature"] ?: ""
+val signature = call.request.headers["X-Webhook-Signature"] ?: ""
 val secret    = System.getenv("CLEANSTER_WEBHOOK_SECRET") ?: ""
 
 if (!WebhookUtils.verifySignature(secret, rawBody, signature)) {

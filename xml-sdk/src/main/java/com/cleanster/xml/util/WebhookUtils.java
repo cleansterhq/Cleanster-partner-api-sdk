@@ -10,12 +10,12 @@ import java.security.MessageDigest;
  *
  * <p>When Cleanster sends a webhook, it computes an HMAC-SHA256 of the raw request
  * body using the {@code secret} returned when the webhook was created, and includes
- * the hex-encoded digest in the {@code X-Cleanster-Signature} header.</p>
+ * the hex-encoded digest in the {@code X-Webhook-Signature} header.</p>
  *
  * <pre>{@code
  * String secret  = webhook.getSecret();           // from createWebhook response
  * String payload = readRawRequestBody(request);   // raw bytes as UTF-8 string
- * String header  = request.getHeader("X-Cleanster-Signature");
+ * String header  = request.getHeader("X-Webhook-Signature");
  *
  * if (!WebhookUtils.verifySignature(secret, payload, header)) {
  *     throw new SecurityException("Invalid webhook signature");
@@ -52,7 +52,7 @@ public final class WebhookUtils {
      *
      * @param secret    The webhook secret returned by the Cleanster API.
      * @param payload   The raw request body as a UTF-8 string.
-     * @param signature The value from the {@code X-Cleanster-Signature} header.
+     * @param signature The value from the {@code X-Webhook-Signature} header.
      * @return {@code true} if the signature is valid, {@code false} otherwise.
      */
     public static boolean verifySignature(String secret, String payload, String signature) {

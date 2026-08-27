@@ -1054,7 +1054,7 @@ Use in the **sandbox** environment only:
 
 | Event | Description |
 |---|---|
-| `booking.created` | New booking scheduled |
+| `booking.status_changed` | Booking status changes |
 | `booking.started` | Cleaner checks in; service begins |
 | `booking.paused` | Cleaner pauses the service |
 | `booking.resumed` | Cleaner resumes a paused service |
@@ -1064,7 +1064,6 @@ Use in the **sandbox** environment only:
 | `booking.cleaner_assigned` | Cleaner assigned |
 | `booking.cleaner_removed` | Assigned cleaner removed |
 | `booking.cleaner_declined` | Assigned cleaner declined |
-| `booking.feedback_submitted` | Rating submitted |
 | `chat.message_added` | New message in a booking's chat thread |
 
 ---
@@ -1082,7 +1081,7 @@ require "cleanster"
 # In your Sinatra/Rails endpoint:
 post "/webhooks/cleanster" do
   raw_body  = request.body.read
-  signature = request.env["HTTP_X_CLEANSTER_SIGNATURE"] || ""
+  signature = request.env["HTTP_X_WEBHOOK_SIGNATURE"] || ""
   secret    = ENV["CLEANSTER_WEBHOOK_SECRET"]
 
   unless Cleanster::WebhookUtils.verify_signature(secret, raw_body, signature)

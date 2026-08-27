@@ -2,7 +2,7 @@
 
 When Cleanster sends a webhook, it computes an HMAC-SHA256 of the raw request
 body using the ``secret`` returned when the webhook was created, and includes
-the hex-encoded digest in the ``X-Cleanster-Signature`` header.
+the hex-encoded digest in the ``X-Webhook-Signature`` header.
 
 Example::
 
@@ -12,7 +12,7 @@ Example::
     def handle_webhook():
         secret    = os.environ["CLEANSTER_WEBHOOK_SECRET"]
         payload   = request.get_data(as_text=True)
-        signature = request.headers.get("X-Cleanster-Signature", "")
+        signature = request.headers.get("X-Webhook-Signature", "")
 
         if not verify_webhook_signature(secret, payload, signature):
             abort(401)
@@ -50,7 +50,7 @@ def verify_webhook_signature(secret: str, payload: str, signature: str) -> bool:
     Args:
         secret:    Webhook secret returned by the Cleanster API.
         payload:   Raw request body as a UTF-8 string.
-        signature: Value from the ``X-Cleanster-Signature`` header.
+        signature: Value from the ``X-Webhook-Signature`` header.
 
     Returns:
         ``True`` if the signature is valid, ``False`` otherwise.

@@ -9,13 +9,13 @@ namespace Cleanster;
  *
  * When Cleanster sends a webhook it computes an HMAC-SHA256 of the raw request
  * body using the `secret` returned when the webhook was created, and includes
- * the hex-encoded digest in the `X-Cleanster-Signature` header.
+ * the hex-encoded digest in the `X-Webhook-Signature` header.
  *
  * @example
  * ```php
  * $secret    = getenv('CLEANSTER_WEBHOOK_SECRET');
  * $payload   = file_get_contents('php://input');
- * $signature = $_SERVER['HTTP_X_CLEANSTER_SIGNATURE'] ?? '';
+ * $signature = $_SERVER['HTTP_X_WEBHOOK_SIGNATURE'] ?? '';
  *
  * if (!WebhookUtils::verifySignature($secret, $payload, $signature)) {
  *     http_response_code(401);
@@ -46,7 +46,7 @@ final class WebhookUtils
      *
      * @param string $secret    Webhook secret returned by the Cleanster API.
      * @param string $payload   Raw request body as a UTF-8 string.
-     * @param string $signature Value from the X-Cleanster-Signature header.
+     * @param string $signature Value from the X-Webhook-Signature header.
      * @return bool true if the signature is valid.
      */
     public static function verifySignature(string $secret, string $payload, string $signature): bool

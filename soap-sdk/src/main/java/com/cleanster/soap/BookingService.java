@@ -154,4 +154,20 @@ public class BookingService {
         int status = root.has("status") ? root.get("status").asInt(200) : 200;
         return new ApiResponse(status, "OK");
     }
+
+    public ApiResponse updateTask(long bookingId, List<Map<String, Object>> tasks) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("tasks", tasks);
+        JsonNode root = transport.post("/v1/bookings/" + bookingId + "/tasks", body);
+        int status = root.has("status") ? root.get("status").asInt(200) : 200;
+        return new ApiResponse(status, "OK");
+    }
+
+    public ApiResponse updateSqft(long bookingId, double totalSqFt) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("totalSqFt", totalSqFt);
+        JsonNode root = transport.post("/v1/bookings/" + bookingId + "/sqft", body);
+        int status = root.has("status") ? root.get("status").asInt(200) : 200;
+        return new ApiResponse(status, "OK");
+    }
 }

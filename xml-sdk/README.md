@@ -3,7 +3,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Language-Java%2017-orange" alt="Java 17">
   <img src="https://img.shields.io/badge/JAXB-4.0-blue" alt="JAXB 4.0">
-  <img src="https://img.shields.io/badge/Endpoints-62-brightgreen" alt="62 Endpoints">
+  <img src="https://img.shields.io/badge/Endpoints-66-brightgreen" alt="66 Endpoints">
   <img src="https://img.shields.io/badge/Tests-127%20passing-success" alt="127 Tests">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT">
 </p>
@@ -34,7 +34,7 @@ All model classes carry full **JAXB 4.0** annotations, so every request and resp
    - [Other / Reference Data](#other-api)
 9. [Model Reference](#model-reference)
 10. [XML Schema Examples](#xml-schema-examples)
-11. [All 62 Endpoints](#all-62-endpoints)
+11. [All 66 Endpoints](#all-66-endpoints)
 12. [Testing](#testing)
 13. [Building](#building)
 14. [Configuration Reference](#configuration-reference)
@@ -516,7 +516,7 @@ System.out.println(XmlConverter.toXml(wh));
 
 | Event | Fires When |
 |---|---|
-| `booking.created` | A new booking is scheduled |
+| `booking.status_changed` | A booking's status changes |
 | `booking.started` | A booking is started |
 | `booking.paused` | A booking is paused |
 | `booking.resumed` | A booking is resumed |
@@ -526,7 +526,6 @@ System.out.println(XmlConverter.toXml(wh));
 | `booking.cleaner_assigned` | A cleaner is assigned |
 | `booking.cleaner_removed` | Assigned cleaner is removed |
 | `booking.cleaner_declined` | Assigned cleaner declined |
-| `booking.feedback_submitted` | Rating is submitted |
 | `chat.message_added` | A new message is added to the booking's chat thread |
 
 client.webhooks().updateWebhook(webhookId, "https://new-server.com/hook", "booking.started");
@@ -763,7 +762,7 @@ XmlApiResponse<?> resp = client.other().getAvailableCleaners(Map.of(
 
 ---
 
-## All 62 Endpoints
+## All 66 Endpoints
 
 | # | Method | Path | API group |
 |---|---|---|---|
@@ -801,34 +800,38 @@ XmlApiResponse<?> resp = client.other().getAvailableCleaners(Map.of(
 | 32 | GET    | `/v1/bookings/{id}/chat`                          | Bookings |
 | 33 | POST   | `/v1/bookings/{id}/chat`                          | Bookings |
 | 34 | DELETE | `/v1/bookings/{id}/chat/{messageId}`              | Bookings |
-| 35 | GET    | `/v1/checklist`                                   | Checklists |
-| 36 | POST   | `/v1/checklist`                                   | Checklists |
-| 37 | GET    | `/v1/checklist/{id}`                              | Checklists |
-| 38 | PUT    | `/v1/checklist/{id}`                              | Checklists |
-| 39 | DELETE | `/v1/checklist/{id}`                              | Checklists |
-| 40 | POST   | `/v1/checklist/upload-image`                      | Checklists |
-| 41 | GET    | `/v1/payment-methods/setup-intent-details`        | Payment Methods |
-| 42 | GET    | `/v1/payment-methods/paypal-client-token`         | Payment Methods |
-| 43 | POST   | `/v1/payment-methods`                             | Payment Methods |
-| 44 | GET    | `/v1/payment-methods`                             | Payment Methods |
-| 45 | DELETE | `/v1/payment-methods/{id}`                        | Payment Methods |
-| 46 | PUT    | `/v1/payment-methods/{id}/default`                | Payment Methods |
-| 47 | GET    | `/v1/webhooks`                                    | Webhooks |
-| 48 | POST   | `/v1/webhooks`                                    | Webhooks |
-| 49 | PUT    | `/v1/webhooks/{id}`                               | Webhooks |
-| 50 | DELETE | `/v1/webhooks/{id}`                               | Webhooks |
-| 51 | GET    | `/v1/blacklist/cleaner`                           | Blacklist |
-| 52 | POST   | `/v1/blacklist/cleaner`                           | Blacklist |
-| 53 | DELETE | `/v1/blacklist/cleaner`                           | Blacklist |
-| 54 | GET    | `/v1/services`                                    | Other |
-| 55 | GET    | `/v1/plans`                                       | Other |
-| 56 | GET    | `/v1/recommended-hours`                           | Other |
-| 57 | POST   | `/v1/cost-estimate`                               | Other |
-| 58 | GET    | `/v1/cleaning-extras/{serviceId}`                 | Other |
-| 59 | POST   | `/v1/available-cleaners`                          | Other |
-| 60 | GET    | `/v1/coupons`                                     | Other |
-| 61 | GET    | `/v1/cleaners`                                    | Other |
-| 62 | GET    | `/v1/cleaners/{id}`                               | Other |
+| 35 | POST   | `/v1/bookings/{id}/tasks`                         | Bookings |
+| 36 | POST   | `/v1/bookings/{id}/sqft`                          | Bookings |
+| 37 | GET    | `/v1/checklist`                                   | Checklists |
+| 38 | POST   | `/v1/checklist`                                   | Checklists |
+| 39 | GET    | `/v1/checklist/{id}`                              | Checklists |
+| 40 | PUT    | `/v1/checklist/{id}`                              | Checklists |
+| 41 | DELETE | `/v1/checklist/{id}`                              | Checklists |
+| 42 | POST   | `/v1/checklist/upload-image`                      | Checklists |
+| 43 | GET    | `/v1/payment-methods/setup-intent-details`        | Payment Methods |
+| 44 | GET    | `/v1/payment-methods/paypal-client-token`         | Payment Methods |
+| 45 | POST   | `/v1/payment-methods`                             | Payment Methods |
+| 46 | GET    | `/v1/payment-methods`                             | Payment Methods |
+| 47 | DELETE | `/v1/payment-methods/{id}`                        | Payment Methods |
+| 48 | PUT    | `/v1/payment-methods/{id}/default`                | Payment Methods |
+| 49 | GET    | `/v1/webhooks`                                    | Webhooks |
+| 50 | POST   | `/v1/webhooks`                                    | Webhooks |
+| 51 | PUT    | `/v1/webhooks/{id}`                               | Webhooks |
+| 52 | DELETE | `/v1/webhooks/{id}`                               | Webhooks |
+| 53 | GET    | `/v1/blacklist/cleaner`                           | Blacklist |
+| 54 | POST   | `/v1/blacklist/cleaner`                           | Blacklist |
+| 55 | DELETE | `/v1/blacklist/cleaner`                           | Blacklist |
+| 56 | GET    | `/v1/services`                                    | Other |
+| 57 | GET    | `/v1/plans`                                       | Other |
+| 58 | GET    | `/v1/recommended-hours`                           | Other |
+| 59 | POST   | `/v1/cost-estimate`                               | Other |
+| 60 | GET    | `/v1/cleaning-extras/{serviceId}`                 | Other |
+| 61 | POST   | `/v1/available-cleaners`                          | Other |
+| 62 | GET    | `/v1/coupons`                                     | Other |
+| 63 | GET    | `/v1/cleaners`                                    | Other |
+| 64 | GET    | `/v1/cleaners/{id}`                               | Other |
+| 65 | GET    | `/v1/tasks`                                       | Other |
+| 66 | GET    | `/v1/services/{serviceId}/subcategories`          | Other |
 
 ---
 
@@ -982,7 +985,7 @@ public class CleansterBookingService {
 ### v1.0.0
 
 - Initial release
-- 62 endpoints across 8 API groups, all with `/v1/` prefix
+- 66 endpoints across 8 API groups, all with `/v1/` prefix
 - Full JAXB 4.0 annotation on all model classes
 - `XmlConverter` utility (toXml / fromXml / isXml)
 - `CleansterXmlClient` with sandbox, production, and custom factories
@@ -1003,7 +1006,7 @@ import com.cleanster.xml.util.WebhookUtils;
 
 // In your servlet / Spring controller:
 String rawBody   = new String(request.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-String signature = request.getHeader("X-Cleanster-Signature");
+String signature = request.getHeader("X-Webhook-Signature");
 String secret    = System.getenv("CLEANSTER_WEBHOOK_SECRET");
 
 if (!WebhookUtils.verifySignature(secret, rawBody, signature)) {

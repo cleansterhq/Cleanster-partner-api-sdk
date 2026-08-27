@@ -10,12 +10,12 @@ import java.security.MessageDigest
  *
  * When Cleanster sends a webhook it computes an HMAC-SHA256 of the raw request
  * body using the `secret` returned when the webhook was created, and includes
- * the hex-encoded digest in the `X-Cleanster-Signature` header.
+ * the hex-encoded digest in the `X-Webhook-Signature` header.
  *
  * ```kotlin
  * val secret    = System.getenv("CLEANSTER_WEBHOOK_SECRET")
  * val payload   = request.body().string()
- * val signature = request.header("X-Cleanster-Signature") ?: ""
+ * val signature = request.header("X-Webhook-Signature") ?: ""
  *
  * if (!WebhookUtils.verifySignature(secret, payload, signature)) {
  *     respond(401, "Invalid signature")
@@ -45,7 +45,7 @@ object WebhookUtils {
      *
      * @param secret    Webhook secret returned by the Cleanster API.
      * @param payload   Raw request body as a UTF-8 string.
-     * @param signature Value from the `X-Cleanster-Signature` header.
+     * @param signature Value from the `X-Webhook-Signature` header.
      * @return `true` if the signature is valid.
      */
     fun verifySignature(secret: String, payload: String, signature: String): Boolean {

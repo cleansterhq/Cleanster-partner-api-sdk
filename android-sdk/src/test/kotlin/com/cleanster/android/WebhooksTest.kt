@@ -57,16 +57,16 @@ class WebhooksTest {
 
     @Test fun `createWebhook returns created webhook`() = runTest {
         enqueue("""{"status":200,"message":"OK","data":$hookJson}""")
-        val resp = client.webhooks.createWebhook("https://h.io", "booking.created")
+        val resp = client.webhooks.createWebhook("https://h.io", "booking.status_changed")
         assertEquals(1, resp.data?.id)
         assertEquals("booking.completed", resp.data?.event)
     }
 
     @Test fun `createWebhook for each event type`() = runTest {
         val events = listOf(
-            "booking.created", "booking.cleaner_assigned", "booking.cleaner_removed",
+            "booking.status_changed", "booking.cleaner_assigned", "booking.cleaner_removed",
             "booking.rescheduled", "booking.started", "booking.completed",
-            "booking.cancelled", "booking.feedback_submitted",
+            "booking.cancelled", "booking.paused",
         )
         for (event in events) {
             enqueue("""{"status":200,"message":"OK","data":{"id":1,"url":"https://h.io","event":"$event"}}""")

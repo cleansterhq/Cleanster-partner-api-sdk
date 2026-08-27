@@ -5,14 +5,14 @@ import Foundation
 ///
 /// When Cleanster sends a webhook it computes an HMAC-SHA256 of the raw request
 /// body using the `secret` returned when the webhook was created, and includes
-/// the hex-encoded digest in the `X-Cleanster-Signature` header.
+/// the hex-encoded digest in the `X-Webhook-Signature` header.
 ///
 /// ```swift
 /// func handleWebhook(_ request: URLRequest) throws {
 ///     guard
 ///         let body      = request.httpBody,
 ///         let payload   = String(data: body, encoding: .utf8),
-///         let signature = request.value(forHTTPHeaderField: "X-Cleanster-Signature")
+///         let signature = request.value(forHTTPHeaderField: "X-Webhook-Signature")
 ///     else { throw WebhookError.missingData }
 ///
 ///     let secret = ProcessInfo.processInfo.environment["CLEANSTER_WEBHOOK_SECRET"]!
@@ -42,7 +42,7 @@ public enum WebhookUtils {
     /// - Parameters:
     ///   - secret:    Webhook secret returned by the Cleanster API.
     ///   - payload:   Raw request body as a UTF-8 string.
-    ///   - signature: Value from the `X-Cleanster-Signature` header.
+    ///   - signature: Value from the `X-Webhook-Signature` header.
     /// - Returns: `true` if the signature is valid.
     public static func verifySignature(secret: String, payload: String, signature: String) -> Bool {
         guard !secret.isEmpty, !payload.isEmpty, !signature.isEmpty else { return false }

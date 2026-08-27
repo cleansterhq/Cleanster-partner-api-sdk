@@ -901,7 +901,7 @@ class TestWebhooksApi(unittest.TestCase):
         http.post.return_value = ok({"id": 50})
         api = WebhooksApi(http)
 
-        request = {"url": "https://example.com/webhook", "event": "booking.created"}
+        request = {"url": "https://example.com/webhook", "event": "booking.status_changed"}
         api.create_webhook(request)
 
         http.post.assert_called_once_with("/v1/webhooks", body=request)

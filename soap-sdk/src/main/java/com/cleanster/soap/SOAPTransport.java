@@ -18,10 +18,11 @@ import java.util.Base64;
  */
 public class SOAPTransport {
 
-    public static final String BASE_URL = "https://api.cleanster.com";
+    public static final String BASE_URL = "https://partner-sandbox-dot-official-tidyio-project.ue.r.appspot.com/public";
     private static final int TIMEOUT_MS = 30_000;
 
     private final String apiKey;
+    private volatile String token;
     protected final ObjectMapper objectMapper;
 
     public SOAPTransport(String apiKey) {
@@ -31,6 +32,15 @@ public class SOAPTransport {
         this.apiKey = apiKey;
         this.objectMapper = new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
+
+    /** Set the per-user JWT sent as the Authorization: Bearer header. */
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getToken() {
+        return token;
     }
 
     public ObjectMapper getObjectMapper() {
@@ -104,6 +114,7 @@ public class SOAPTransport {
             conn.setConnectTimeout(TIMEOUT_MS);
             conn.setReadTimeout(TIMEOUT_MS);
             conn.setRequestProperty("access-key", apiKey);
+            conn.setRequestProperty("Authorization", "Bearer " + (token != null ? token : ""));
             conn.setRequestProperty("Accept", "application/json");
             conn.setRequestProperty("Content-Type", contentType);
 

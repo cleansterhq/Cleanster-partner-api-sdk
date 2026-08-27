@@ -39,8 +39,8 @@ class WebhooksTest {
     }
 
     @Test fun `createWebhook encodes url`() = runTest {
-        mock.succeed(mapOf("id" to 1.0, "url" to "https://myapp.com/hook", "event" to "booking.created"))
-        client.webhooks.createWebhook("https://myapp.com/hook", "booking.created")
+        mock.succeed(mapOf("id" to 1.0, "url" to "https://myapp.com/hook", "event" to "booking.status_changed"))
+        client.webhooks.createWebhook("https://myapp.com/hook", "booking.status_changed")
         assertEquals("https://myapp.com/hook", mock.capturedBody?.get("url"))
     }
 

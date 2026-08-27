@@ -1103,7 +1103,7 @@ Use in the **sandbox** environment only:
 
 | Event | Description |
 |---|---|
-| `booking.created` | New booking scheduled |
+| `booking.status_changed` | Booking status changes |
 | `booking.started` | Cleaner checks in; service begins |
 | `booking.paused` | Cleaner pauses the service |
 | `booking.resumed` | Cleaner resumes a paused service |
@@ -1113,7 +1113,6 @@ Use in the **sandbox** environment only:
 | `booking.cleaner_assigned` | Cleaner assigned |
 | `booking.cleaner_removed` | Assigned cleaner removed |
 | `booking.cleaner_declined` | Assigned cleaner declined |
-| `booking.feedback_submitted` | Rating submitted |
 | `chat.message_added` | New message in a booking's chat thread |
 
 ---
@@ -1133,7 +1132,7 @@ app.MapPost("/webhooks/cleanster", async (HttpRequest req) =>
 {
     using var reader = new StreamReader(req.Body);
     var rawBody   = await reader.ReadToEndAsync();
-    var signature = req.Headers["X-Cleanster-Signature"].FirstOrDefault() ?? "";
+    var signature = req.Headers["X-Webhook-Signature"].FirstOrDefault() ?? "";
     var secret    = Environment.GetEnvironmentVariable("CLEANSTER_WEBHOOK_SECRET")!;
 
     if (!WebhookUtils.VerifySignature(secret, rawBody, signature))

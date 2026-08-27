@@ -1,0 +1,50 @@
+{
+  "name": "updateTask",
+  "label": "Update Task Quantity",
+  "description": "Updates the quantity of a task on an existing booking.",
+  "connection": "apikey",
+  "actionType": "create",
+  "url": "/v1/bookings/{{parameters.booking_id}}/tasks",
+  "method": "POST",
+  "headers": [],
+  "qs": [],
+  "body": {
+    "mode": "json",
+    "content": [
+      {
+        "name": "tasks",
+        "value": "[{\"id\": {{parameters.task_id}}, \"quantity\": {{parameters.quantity}}}]"
+      }
+    ]
+  },
+  "response": {
+    "output": "{{ifempty(body.data, body)}}"
+  },
+  "parameters": [
+    {
+      "name": "booking_id",
+      "type": "uinteger",
+      "label": "Booking ID",
+      "help": "The ID of the booking to update.",
+      "required": true
+    },
+    {
+      "name": "task_id",
+      "type": "uinteger",
+      "label": "Task ID",
+      "help": "The ID of the task to update.",
+      "required": true
+    },
+    {
+      "name": "quantity",
+      "type": "uinteger",
+      "label": "Quantity",
+      "help": "The new quantity for this task.",
+      "required": true
+    }
+  ],
+  "interface": [
+    { "name": "id", "type": "uinteger", "label": "Booking ID" },
+    { "name": "status", "type": "text", "label": "Status" }
+  ]
+}

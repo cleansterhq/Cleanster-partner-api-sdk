@@ -1010,7 +1010,7 @@ Use in the **sandbox** environment only:
 
 | Event | Description |
 |---|---|
-| `booking.created` | New booking scheduled |
+| `booking.status_changed` | Booking status changes |
 | `booking.started` | Cleaner checks in; service begins |
 | `booking.paused` | Cleaner pauses the service |
 | `booking.resumed` | Cleaner resumes a paused service |
@@ -1020,7 +1020,6 @@ Use in the **sandbox** environment only:
 | `booking.cleaner_assigned` | Cleaner assigned |
 | `booking.cleaner_removed` | Assigned cleaner removed |
 | `booking.cleaner_declined` | Assigned cleaner declined |
-| `booking.feedback_submitted` | Rating submitted |
 | `chat.message_added` | New message in a booking's chat thread |
 
 ---
@@ -1037,7 +1036,7 @@ use Cleanster\WebhookUtils;
 
 // In your endpoint handler:
 $rawBody   = file_get_contents('php://input');
-$signature = $_SERVER['HTTP_X_CLEANSTER_SIGNATURE'] ?? '';
+$signature = $_SERVER['HTTP_X_WEBHOOK_SIGNATURE'] ?? '';
 $secret    = getenv('CLEANSTER_WEBHOOK_SECRET');
 
 if (!WebhookUtils::verifySignature($secret, $rawBody, $signature)) {

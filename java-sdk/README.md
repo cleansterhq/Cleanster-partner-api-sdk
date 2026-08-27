@@ -1331,7 +1331,7 @@ When creating a webhook, subscribe to one of these events:
 
 | Event | Fired when |
 |---|---|
-| `booking.created` | A new booking is successfully scheduled |
+| `booking.status_changed` | A booking's status changes |
 | `booking.started` | The cleaner checks in and the service begins |
 | `booking.paused` | The cleaner pauses the service mid-job |
 | `booking.resumed` | The cleaner resumes a paused service |
@@ -1341,7 +1341,6 @@ When creating a webhook, subscribe to one of these events:
 | `booking.cleaner_assigned` | A cleaner is assigned to a booking |
 | `booking.cleaner_removed` | The assigned cleaner is removed |
 | `booking.cleaner_declined` | The assigned cleaner declines the booking |
-| `booking.feedback_submitted` | A rating is submitted for a completed booking |
 | `chat.message_added` | A new message is added to a booking's chat thread |
 
 Payloads are sent as `POST` requests to your webhook URL with a JSON body containing the event type and relevant booking data.
@@ -1355,14 +1354,14 @@ Payloads are sent as `POST` requests to your webhook URL with a JSON body contai
 
 When you create a webhook the API returns a `secret`. Store it securely — you'll use it to verify every delivery from Cleanster.
 
-Use `WebhookUtils` from `com.cleanster.sdk.util` to verify the `X-Cleanster-Signature` header on incoming POST requests:
+Use `WebhookUtils` from `com.cleanster.sdk.util` to verify the `X-Webhook-Signature` header on incoming POST requests:
 
 ```java
 import com.cleanster.sdk.util.WebhookUtils;
 
 // In your webhook endpoint handler:
 String rawBody   = request.body();          // raw JSON string, unmodified
-String signature = request.header("X-Cleanster-Signature");
+String signature = request.header("X-Webhook-Signature");
 String secret    = System.getenv("CLEANSTER_WEBHOOK_SECRET");
 
 if (!WebhookUtils.verifySignature(secret, rawBody, signature)) {

@@ -14,15 +14,15 @@ import java.util.Map;
  *
  * <h2>API Sections</h2>
  * <ul>
- *   <li>Bookings — 17 operations (list, create, cancel, reschedule, assign, inspect, chat, tip, feedback...)</li>
- *   <li>Properties — 14 operations (CRUD, iCal, cleaners, checklist assignment...)</li>
- *   <li>Cleaners — 2 operations (list, get)</li>
- *   <li>Checklists — 6 operations (CRUD + upload)</li>
- *   <li>Other — 7 operations (services, plans, cost estimate, recommended hours, extras, cleaners, coupons)</li>
- *   <li>Users — 3 operations (create, access token, verify JWT)</li>
- *   <li>Blacklist — 3 operations (list, add, remove)</li>
- *   <li>Payment Methods — 6 operations (setup, PayPal, add, list, delete, default)</li>
- *   <li>Webhooks — 4 operations (list, create, update, delete)</li>
+ *   <li>Bookings - 17 operations (list, create, cancel, reschedule, assign, inspect, chat, tip, feedback...)</li>
+ *   <li>Properties - 14 operations (CRUD, iCal, cleaners, checklist assignment...)</li>
+ *   <li>Cleaners - 2 operations (list, get)</li>
+ *   <li>Checklists - 6 operations (CRUD + upload)</li>
+ *   <li>Other - 7 operations (services, plans, cost estimate, recommended hours, extras, cleaners, coupons)</li>
+ *   <li>Users - 3 operations (create, access token, verify JWT)</li>
+ *   <li>Blacklist - 3 operations (list, add, remove)</li>
+ *   <li>Payment Methods - 6 operations (setup, PayPal, add, list, delete, default)</li>
+ *   <li>Webhooks - 4 operations (list, create, update, delete)</li>
  * </ul>
  *
  * <h2>Quick Start</h2>
@@ -54,8 +54,10 @@ public class CleansterSOAPClient {
     private final PaymentMethodService paymentMethodService;
     private final WebhookService       webhookService;
 
+    private final SOAPTransport transport;
+
     public CleansterSOAPClient(String apiKey) {
-        SOAPTransport transport = new SOAPTransport(apiKey);
+        this.transport = new SOAPTransport(apiKey);
         this.bookingService       = new BookingService(transport);
         this.propertyService      = new PropertyService(transport);
         this.cleanerService       = new CleanerService(transport);
@@ -68,6 +70,7 @@ public class CleansterSOAPClient {
     }
 
     CleansterSOAPClient(SOAPTransport transport) {
+        this.transport             = transport;
         this.bookingService       = new BookingService(transport);
         this.propertyService      = new PropertyService(transport);
         this.cleanerService       = new CleanerService(transport);
@@ -195,16 +198,16 @@ public class CleansterSOAPClient {
         return propertyService.unassignCleanerFromProperty(propertyId, cleanerId);
     }
 
-    public ApiResponse addICalLink(long propertyId, String icalUrl) {
-        return propertyService.addICalLink(propertyId, icalUrl);
+    public ApiResponse addICalLink(long propertyId, java.util.List<String> calendarLinks) {
+        return propertyService.addICalLink(propertyId, calendarLinks);
     }
 
     public JsonNode getICalLink(long propertyId) {
         return propertyService.getICalLink(propertyId);
     }
 
-    public ApiResponse removeICalLink(long propertyId, String icalUrl) {
-        return propertyService.removeICalLink(propertyId, icalUrl);
+    public ApiResponse removeICalLink(long propertyId, java.util.List<Long> ids) {
+        return propertyService.removeICalLink(propertyId, ids);
     }
 
     public ApiResponse setDefaultChecklist(long propertyId, long checklistId, boolean updateUpcoming) {
@@ -297,6 +300,11 @@ public class CleansterSOAPClient {
 
     public ApiResponse verifyJwt(String token) {
         return userService.verifyJwt(token);
+    }
+
+    /** Set the per-user JWT used as the Authorization: Bearer header on all subsequent calls. */
+    public void setToken(String token) {
+        transport.setToken(token);
     }
 
     // =========================================================================

@@ -1,0 +1,44 @@
+{
+  "name": "updateSqft",
+  "label": "Update Total Square Footage",
+  "description": "Updates the total square footage recorded for a booking.",
+  "connection": "apikey",
+  "actionType": "create",
+  "url": "/v1/bookings/{{parameters.booking_id}}/sqft",
+  "method": "POST",
+  "headers": [],
+  "qs": [],
+  "body": {
+    "mode": "json",
+    "content": [
+      {
+        "name": "totalSqFt",
+        "value": "{{parameters.total_sq_ft}}"
+      }
+    ]
+  },
+  "response": {
+    "output": "{{ifempty(body.data, body)}}"
+  },
+  "parameters": [
+    {
+      "name": "booking_id",
+      "type": "uinteger",
+      "label": "Booking ID",
+      "help": "The ID of the booking to update.",
+      "required": true
+    },
+    {
+      "name": "total_sq_ft",
+      "type": "number",
+      "label": "Total Square Footage",
+      "help": "The new total square footage for the property being cleaned.",
+      "required": true
+    }
+  ],
+  "interface": [
+    { "name": "id", "type": "uinteger", "label": "Booking ID" },
+    { "name": "status", "type": "text", "label": "Status" },
+    { "name": "totalSqFt", "type": "number", "label": "Total Square Footage" }
+  ]
+}

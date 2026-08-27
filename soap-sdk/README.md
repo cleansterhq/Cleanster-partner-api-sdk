@@ -342,7 +342,7 @@ soap-sdk/
 
 | Event | Fires When |
 |---|---|
-| `booking.created` | A new booking is scheduled |
+| `booking.status_changed` | A booking's status changes |
 | `booking.started` | A booking is started |
 | `booking.paused` | A booking is paused |
 | `booking.resumed` | A booking is resumed |
@@ -352,7 +352,6 @@ soap-sdk/
 | `booking.cleaner_assigned` | A cleaner is assigned |
 | `booking.cleaner_removed` | Assigned cleaner is removed |
 | `booking.cleaner_declined` | Assigned cleaner declined |
-| `booking.feedback_submitted` | Rating is submitted |
 | `chat.message_added` | A new message is added to the booking's chat thread |
 
 ## Webhook Signature Verification
@@ -366,7 +365,7 @@ import com.cleanster.soap.WebhookUtils;
 
 // In your servlet / JAX-WS handler:
 String rawBody   = new String(request.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-String signature = request.getHeader("X-Cleanster-Signature");
+String signature = request.getHeader("X-Webhook-Signature");
 String secret    = System.getenv("CLEANSTER_WEBHOOK_SECRET");
 
 if (!WebhookUtils.verifySignature(secret, rawBody, signature)) {

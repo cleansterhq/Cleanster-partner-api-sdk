@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Initial release of the Cleanster SOAP SDK.
-- `CleansterSOAPClient` — unified facade exposing all 62 API operations as SOAP 1.1 calls.
-- `SOAPTransport` — internal HTTP bridge that translates SOAP envelopes to Cleanster REST calls.
+- `CleansterSOAPClient` - unified facade exposing all 62 API operations as SOAP 1.1 calls.
+- `SOAPTransport` - internal HTTP bridge that translates SOAP envelopes to Cleanster REST calls.
 - WSDL and XSD schema (`cleanster.wsdl`, `cleanster-types.xsd`) covering all 62 operations.
 - 9 SOAP service classes: `BookingService` (17 ops), `PropertyService` (14 ops),
   `CleanerService` (2 ops), `ChecklistService` (6 ops), `OtherService` (7 ops),
@@ -18,5 +18,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `WebhookService` (4 ops).
 - Ready-to-use SOAP envelope XML examples in `examples/`.
 - Exception hierarchy: `SOAPClientException` with fault code and fault string.
-- 118 JUnit 5 + Mockito unit tests across 6 test classes — all passing.
+- 118 JUnit 5 + Mockito unit tests across 6 test classes - all passing.
 - Maven packaging: `cleanster-soap-sdk` artifact, Java 11+ required.

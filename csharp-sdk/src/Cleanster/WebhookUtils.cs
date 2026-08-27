@@ -9,13 +9,13 @@ namespace Cleanster;
 /// <remarks>
 /// When Cleanster sends a webhook it computes an HMAC-SHA256 of the raw request
 /// body using the <c>secret</c> returned when the webhook was created, and includes
-/// the hex-encoded digest in the <c>X-Cleanster-Signature</c> header.
+/// the hex-encoded digest in the <c>X-Webhook-Signature</c> header.
 /// </remarks>
 /// <example>
 /// <code>
 /// var secret    = Environment.GetEnvironmentVariable("CLEANSTER_WEBHOOK_SECRET")!;
 /// var payload   = await new StreamReader(Request.Body).ReadToEndAsync();
-/// var signature = Request.Headers["X-Cleanster-Signature"].ToString();
+/// var signature = Request.Headers["X-Webhook-Signature"].ToString();
 ///
 /// if (!WebhookUtils.VerifySignature(secret, payload, signature))
 ///     return Unauthorized();
@@ -44,7 +44,7 @@ public static class WebhookUtils
     /// </summary>
     /// <param name="secret">Webhook secret returned by the Cleanster API.</param>
     /// <param name="payload">Raw request body as a UTF-8 string.</param>
-    /// <param name="signature">Value from the <c>X-Cleanster-Signature</c> header.</param>
+    /// <param name="signature">Value from the <c>X-Webhook-Signature</c> header.</param>
     /// <returns><c>true</c> if the signature is valid.</returns>
     public static bool VerifySignature(string secret, string payload, string signature)
     {

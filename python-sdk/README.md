@@ -1134,7 +1134,7 @@ Use in the **sandbox** environment only:
 
 | Event | Description |
 |---|---|
-| `booking.created` | New booking scheduled |
+| `booking.status_changed` | Booking status changes |
 | `booking.started` | Cleaner checks in; service begins |
 | `booking.paused` | Cleaner pauses the service |
 | `booking.resumed` | Cleaner resumes a paused service |
@@ -1144,7 +1144,6 @@ Use in the **sandbox** environment only:
 | `booking.cleaner_assigned` | Cleaner assigned |
 | `booking.cleaner_removed` | Assigned cleaner removed |
 | `booking.cleaner_declined` | Assigned cleaner declined |
-| `booking.feedback_submitted` | Rating submitted |
 | `chat.message_added` | New message in a booking's chat thread |
 
 ---
@@ -1161,7 +1160,7 @@ from cleanster import verify_webhook_signature
 
 # In your Flask/Django/FastAPI endpoint:
 raw_body  = request.get_data(as_text=True)   # raw JSON, unmodified
-signature = request.headers.get("X-Cleanster-Signature", "")
+signature = request.headers.get("X-Webhook-Signature", "")
 secret    = os.environ["CLEANSTER_WEBHOOK_SECRET"]
 
 if not verify_webhook_signature(secret, raw_body, signature):

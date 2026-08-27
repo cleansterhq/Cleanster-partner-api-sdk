@@ -22,7 +22,7 @@
       <types:bedrooms>3</types:bedrooms>
       <types:bathrooms>2.0</types:bathrooms>
       <types:squareFeet>1400</types:squareFeet>
-      <types:notes>Hardwood floors throughout — use appropriate cleaner.</types:notes>
+      <types:notes>Hardwood floors throughout - use appropriate cleaner.</types:notes>
       <types:accessInstructions>Key is in the lockbox on the front door. Code: 5523.</types:accessInstructions>
     </types:CreatePropertyRequest>
   </soapenv:Body>

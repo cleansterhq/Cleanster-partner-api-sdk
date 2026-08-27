@@ -13,6 +13,8 @@ const rescheduleBooking = require("./creates/reschedule_booking");
 const createProperty = require("./creates/create_property");
 const assignCleaner = require("./creates/assign_cleaner");
 const sendMessage = require("./creates/send_message");
+const updateTask = require("./creates/update_task");
+const updateSqft = require("./creates/update_sqft");
 
 const findBooking = require("./searches/find_booking");
 const findProperty = require("./searches/find_property");
@@ -40,6 +42,8 @@ module.exports = {
     [createProperty.key]: createProperty,
     [assignCleaner.key]: assignCleaner,
     [sendMessage.key]: sendMessage,
+    [updateTask.key]: updateTask,
+    [updateSqft.key]: updateSqft,
   },
 
   searches: {

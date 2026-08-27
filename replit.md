@@ -36,21 +36,21 @@ Python3 script using `GITHUB_PERSONAL_ACCESS_TOKEN` env var. Owner: `cleansterhq
 
 | SDK | Actual Tests | Badge | Body Text |
 |---|---|---|---|
-| Java | 76 | 76 ✅ | 76 ✅ |
-| Python | 101 | 101 ✅ | 101 ✅ |
-| TypeScript | 87 | 87 ✅ | 87 ✅ |
-| Ruby | 121 | 121 ✅ | 121 ✅ |
-| Go | 94 | 94 ✅ | 94 ✅ |
-| PHP | 108 | 108 ✅ | 108 ✅ |
-| C# | 109 | 109 ✅ | 109 ✅ |
-| Swift | 166 | 166 ✅ | 166 ✅ |
-| Kotlin | 166 | 166 ✅ | 166 ✅ |
-| XML | 164 | 164 ✅ | 164 ✅ |
-| SOAP | 118 | 118 ✅ | 118 ✅ |
-| Android | 164 | 164 ✅ | 164 ✅ |
+| Java | 85 | 85 ✅ | 85 ✅ |
+| Python | 107 | 107 ✅ | 107 ✅ |
+| TypeScript | 94 | 94 ✅ | 94 ✅ |
+| Ruby | 127 | 127 ✅ | 127 ✅ |
+| Go | 98 | 98 ✅ | 98 ✅ |
+| PHP | 115 | 115 ✅ | 115 ✅ |
+| C# | 115 | 115 ✅ | 115 ✅ |
+| Swift | 174 | 174 ✅ | 174 ✅ |
+| Kotlin | 174 | 174 ✅ | 174 ✅ |
+| XML | 127 | 127 ✅ | 127 ✅ |
+| SOAP | 122 | 122 ✅ | 122 ✅ |
+| Android | 172 | 172 ✅ | 172 ✅ |
 | MCP Server | 75 | - | 75 ✅ |
 
-**Root README totals:** 1,474 SDK tests + 75 MCP = **1,549 total** (badge correct)
+**Root README totals:** 1,510 SDK tests + 75 MCP = **1,585 total** (badge correct)
 
 ### API Endpoint Count: 66 (confirmed)
 
@@ -65,7 +65,7 @@ All SDKs cover the same 66 API endpoints across 8 resource types:
 - Full Maven project targeting Java 11+
 - 8 API classes: Bookings, Users, Properties, Checklists, Other, Blacklist, PaymentMethods, Webhooks
 - OkHttp + Jackson transport; typed exception hierarchy
-- **76 unit tests** (JUnit 5 + Mockito) - all passing
+- **85 unit tests** (JUnit 5 + Mockito) - all passing
 - Build: `mvn package` → 3 JARs
 
 ### PHP SDK (`php-sdk/`)
@@ -74,7 +74,7 @@ All SDKs cover the same 66 API endpoints across 8 resource types:
 - Same 8 API namespaces as all other SDKs
 - PHP 8.1 `readonly` properties on all model classes
 - Injectable `HttpClient` - enables PHPUnit mocking without real HTTP
-- **108 PHPUnit 10 tests** - all passing
+- **115 PHPUnit 10 tests** - all passing
 
 ### Go SDK (`go-sdk/`)
 
@@ -82,57 +82,57 @@ All SDKs cover the same 66 API endpoints across 8 resource types:
 - Generic `APIResponse[T any]` - fully typed `.Data` field
 - All methods accept `context.Context` as first parameter
 - Thread-safe `SetAccessToken`/`GetAccessToken` via `sync.RWMutex`
-- **94 tests** using `net/http/httptest` - all passing
+- **98 tests** using `net/http/httptest` - all passing
 
 ### Ruby SDK (`ruby-sdk/`)
 
 - Ruby 2.7+, zero runtime gem dependencies - uses built-in `Net::HTTP` and `json`
 - Idiomatic Ruby: snake_case methods, keyword arguments, model objects
-- **121 RSpec unit tests** - all passing
+- **127 RSpec unit tests** - all passing
 - Published to RubyGems as `cleanster`
 
 ### TypeScript SDK (`typescript-sdk/`)
 
 - TypeScript 5.x, Node.js 18+ (uses native `fetch` - zero HTTP dependencies)
 - Fully typed: `ApiResponse<T>` generic, typed interfaces for every request/response
-- **87 Jest (ts-jest) unit tests** - all passing
+- **94 Jest (ts-jest) unit tests** - all passing
 - Tests located in `tests/cleanster.test.ts`
 
 ### Python SDK (`python-sdk/`)
 
 - Python 3.8+ package named `cleanster`
 - `requests`-based HTTP transport; typed exception hierarchy
-- **101 unit tests** (unittest + unittest.mock) - all passing
+- **107 unit tests** (unittest + unittest.mock) - all passing
 
 ### C# SDK (`csharp-sdk/`)
 
 - .NET 8.0 library targeting `net8.0`; zero external runtime dependencies
 - `sealed record` model types; generic `ApiResponse<T>` wrapper
 - All API methods async (`Task<ApiResponse<T>>`); optional `CancellationToken`
-- **109 xUnit 2.7 + Moq 4.20 tests** - all passing
+- **115 xUnit 2.7 + Moq 4.20 tests** - all passing
 
 ### Swift SDK (`swift-sdk/`)
 
 - Swift 5.9+ / iOS 16+, Swift Package Manager
 - Full async/await API using `URLSession`
-- **166 tests** - all passing
+- **174 tests** - all passing
 
 ### Kotlin SDK (`kotlin-sdk/`)
 
 - Kotlin 1.9+ / JVM 11+, Gradle
 - Coroutines-first with `suspend` functions
-- **166 tests** - all passing
+- **174 tests** - all passing
 
 ### XML SDK (`xml-sdk/`)
 
 - Java 17+ / JAXB 4.0 + OkHttp + Gson, Maven
-- **164 tests** (JUnit 5 + MockWebServer) - all passing
+- **127 tests** (JUnit 5 + MockWebServer) - all passing
 
 ### SOAP SDK (`soap-sdk/`)
 
 - Java 11+ SOAP 1.1 (document/literal) bridge over REST
-- 6 test classes: CleansterSOAPClientTest (43), ServiceExtensionsTest (43), UserServiceTest (6), BlacklistServiceTest (6), PaymentMethodServiceTest (12), WebhookServiceTest (8)
-- **118 tests** (JUnit 5 + Mockito) - all passing
+- 7 test classes: CleansterSOAPClientTest (43), ServiceExtensionsTest (43), UserServiceTest (6), BlacklistServiceTest (6), PaymentMethodServiceTest (12), WebhookServiceTest (8), WebhookUtilsTest (4)
+- **122 tests** (JUnit 5 + Mockito) - all passing
 - **Assign Cleaner endpoint fixed**: was `cleaner-assignment` → corrected to `cleaner` in BookingService.java, both test files, and README
 - NOT pushed to GitHub
 
@@ -142,7 +142,7 @@ All SDKs cover the same 66 API endpoints across 8 resource types:
 - Retrofit 2.9.0 annotation-based interface with `suspend` functions
 - **60 API endpoints** across 8 API classes (2 use `@HTTP` annotation for DELETE-with-body: `removeFromBlacklist` and `deleteICalLink` - correct Retrofit pattern)
 - 8 test files covering all API namespaces (MockWebServer, no real HTTP)
-- **164 tests** - all passing
+- **172 tests** - all passing
 - Pushed to GitHub at `android-sdk/`
 
 ## MCP Server (`mcp-server/`)

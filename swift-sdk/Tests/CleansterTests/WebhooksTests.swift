@@ -36,8 +36,8 @@ final class WebhooksTests: XCTestCase {
     }
 
     func testCreateWebhook_encodesUrl() async throws {
-        mock.succeed(with: ["id": 1, "url": "https://myapp.com/hook", "event": "booking.created"])
-        _ = try await client.webhooks.createWebhook(url: "https://myapp.com/hook", event: "booking.created")
+        mock.succeed(with: ["id": 1, "url": "https://myapp.com/hook", "event": "booking.status_changed"])
+        _ = try await client.webhooks.createWebhook(url: "https://myapp.com/hook", event: "booking.status_changed")
         XCTAssertEqual(mock.capturedBody?["url"] as? String, "https://myapp.com/hook")
     }
 

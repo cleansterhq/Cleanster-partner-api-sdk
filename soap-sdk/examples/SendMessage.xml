@@ -15,7 +15,7 @@
   <soapenv:Body>
     <types:SendMessageRequest>
       <types:bookingId>16459</types:bookingId>
-      <types:message>Please pay special attention to the master bathroom — guest arriving tomorrow.</types:message>
+      <types:message>Please pay special attention to the master bathroom - guest arriving tomorrow.</types:message>
     </types:SendMessageRequest>
   </soapenv:Body>
 

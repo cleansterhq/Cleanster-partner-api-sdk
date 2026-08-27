@@ -39,7 +39,7 @@
       "label": "Status",
       "required": false,
       "options": [
-        { "label": "— Any —", "value": "" },
+        { "label": "- Any -", "value": "" },
         { "label": "Active", "value": "active" },
         { "label": "Inactive", "value": "inactive" },
         { "label": "Pending", "value": "pending" }

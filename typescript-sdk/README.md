@@ -1068,7 +1068,7 @@ Use in the **sandbox** environment only:
 
 | Event | Description |
 |---|---|
-| `booking.created` | New booking scheduled |
+| `booking.status_changed` | Booking status changes |
 | `booking.started` | Cleaner checks in; service begins |
 | `booking.paused` | Cleaner pauses the service |
 | `booking.resumed` | Cleaner resumes a paused service |
@@ -1078,7 +1078,6 @@ Use in the **sandbox** environment only:
 | `booking.cleaner_assigned` | Cleaner assigned |
 | `booking.cleaner_removed` | Assigned cleaner removed |
 | `booking.cleaner_declined` | Assigned cleaner declined |
-| `booking.feedback_submitted` | Rating submitted |
 | `chat.message_added` | New message in a booking's chat thread |
 
 ---
@@ -1096,7 +1095,7 @@ import { verifyWebhookSignature } from "cleanster";
 // In your Express/Fastify endpoint — use raw body middleware:
 app.post("/webhooks/cleanster", express.raw({ type: "application/json" }), (req, res) => {
   const rawBody  = req.body.toString("utf8");
-  const signature = req.headers["x-cleanster-signature"] ?? "";
+  const signature = req.headers["x-webhook-signature"] ?? "";
   const secret   = process.env.CLEANSTER_WEBHOOK_SECRET!;
 
   if (!verifyWebhookSignature(secret, rawBody, signature)) {

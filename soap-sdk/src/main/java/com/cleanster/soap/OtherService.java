@@ -29,16 +29,26 @@ public class OtherService {
         return list;
     }
 
+    public JsonNode getPlans(long propertyId, Long subcatId) {
+        String path = "/v1/plans?propertyId=" + propertyId;
+        if (subcatId != null) path += "&subcatId=" + subcatId;
+        return transport.extractData(transport.get(path));
+    }
+
     public JsonNode getPlans(long propertyId) {
-        return transport.extractData(
-                transport.get("/v1/plans?propertyId=" + propertyId));
+        return getPlans(propertyId, null);
+    }
+
+    public JsonNode getRecommendedHours(long propertyId, int bathroomCount, int roomCount, Long subcatId) {
+        String path = "/v1/recommended-hours?propertyId=" + propertyId
+                + "&bathroomCount=" + bathroomCount
+                + "&roomCount=" + roomCount;
+        if (subcatId != null) path += "&subcatId=" + subcatId;
+        return transport.extractData(transport.get(path));
     }
 
     public JsonNode getRecommendedHours(long propertyId, int bathroomCount, int roomCount) {
-        return transport.extractData(transport.get(
-                "/v1/recommended-hours?propertyId=" + propertyId
-                + "&bathroomCount=" + bathroomCount
-                + "&roomCount=" + roomCount));
+        return getRecommendedHours(propertyId, bathroomCount, roomCount, null);
     }
 
     public JsonNode getCostEstimate(Map<String, Object> request) {
@@ -75,5 +85,20 @@ public class OtherService {
         body.put("message", message);
         JsonNode root = transport.post("/v1/bookings/" + bookingId + "/chat", body);
         return transport.getObjectMapper().convertValue(transport.extractData(root), ChatMessage.class);
+    }
+
+    public JsonNode getTasks(long propertyId, long serviceId, Integer pageNo, Integer pageSize) {
+        StringBuilder path = new StringBuilder("/v1/tasks?propertyId=" + propertyId + "&serviceId=" + serviceId);
+        if (pageNo != null) path.append("&pageNo=").append(pageNo);
+        if (pageSize != null) path.append("&pageSize=").append(pageSize);
+        return transport.extractData(transport.get(path.toString()));
+    }
+
+    public JsonNode getTasks(long propertyId, long serviceId) {
+        return getTasks(propertyId, serviceId, null, null);
+    }
+
+    public JsonNode getSubcategories(long serviceId) {
+        return transport.extractData(transport.get("/v1/services/" + serviceId + "/subcategories"));
     }
 }

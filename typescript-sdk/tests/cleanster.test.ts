@@ -838,7 +838,7 @@ describe("WebhooksApi", () => {
     http.post.mockResolvedValue(ok({ id: 50 }));
     const api = new WebhooksApi(http);
 
-    const req = { url: "https://example.com/webhook", event: "booking.created" };
+    const req = { url: "https://example.com/webhook", event: "booking.status_changed" };
     await api.createWebhook(req);
 
     expect(http.post).toHaveBeenCalledWith("/v1/webhooks", req);

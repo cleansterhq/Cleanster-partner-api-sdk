@@ -923,7 +923,7 @@ class CleansterClientTest {
 
         java.util.Map<String, String> payload = new java.util.HashMap<>();
         payload.put("url", "https://example.com/webhook");
-        payload.put("event", "booking.created");
+        payload.put("event", "booking.status_changed");
         ApiResponse<Object> result = api.createWebhook(payload);
 
         verify(mockHttp).post(eq("/v1/webhooks"), any(), any(TypeReference.class));

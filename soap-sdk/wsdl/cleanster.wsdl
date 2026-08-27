@@ -18,7 +18,7 @@
   </types>
 
   <!-- =========================================================
-       Messages — Bookings
+       Messages - Bookings
   ========================================================= -->
   <message name="GetBookingInput">
     <part name="parameters" element="types:GetBookingRequest"/>
@@ -63,7 +63,7 @@
   </message>
 
   <!-- =========================================================
-       Messages — Properties
+       Messages - Properties
   ========================================================= -->
   <message name="GetPropertyInput">
     <part name="parameters" element="types:GetPropertyRequest"/>
@@ -87,7 +87,7 @@
   </message>
 
   <!-- =========================================================
-       Messages — Cleaners
+       Messages - Cleaners
   ========================================================= -->
   <message name="ListCleanersInput">
     <part name="parameters" element="types:ListCleanersRequest"/>
@@ -104,7 +104,7 @@
   </message>
 
   <!-- =========================================================
-       Messages — Checklists
+       Messages - Checklists
   ========================================================= -->
   <message name="ListChecklistsInput">
     <part name="parameters" element="types:ListChecklistsRequest"/>
@@ -135,7 +135,7 @@
   </message>
 
   <!-- =========================================================
-       Messages — Other
+       Messages - Other
   ========================================================= -->
   <message name="GetServicesInput">
     <part name="parameters" element="types:GetServicesRequest"/>
@@ -370,7 +370,7 @@
   ========================================================= -->
   <service name="CleansterService">
     <documentation>
-      Cleanster Partner API — SOAP Gateway.
+      Cleanster Partner API - SOAP Gateway.
       All operations require Bearer token authentication via the SOAPAction header
       or via the X-Api-Key HTTP header.
     </documentation>

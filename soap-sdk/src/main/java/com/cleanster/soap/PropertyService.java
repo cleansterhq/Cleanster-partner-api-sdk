@@ -91,22 +91,29 @@ public class PropertyService {
         return new ApiResponse(status, "OK");
     }
 
-    public ApiResponse addICalLink(long propertyId, String icalUrl) {
+    /**
+     * Add one or more iCal calendar links to a property. Each URL must be a
+     * live, publicly fetchable .ics feed - the API validates the feed content,
+     * not just the URL shape.
+     */
+    public ApiResponse addICalLink(long propertyId, java.util.List<String> calendarLinks) {
         Map<String, Object> body = new HashMap<>();
-        body.put("ical_url", icalUrl);
-        JsonNode root = transport.post("/v1/properties/" + propertyId + "/ical", body);
+        body.put("calendarLinks", calendarLinks);
+        JsonNode root = transport.put("/v1/properties/" + propertyId + "/ical", body);
         int status = root.has("status") ? root.get("status").asInt(200) : 200;
         return new ApiResponse(status, "OK");
     }
 
+    /** Returns the calendar links attached to a property, each with a numeric id + calendarLink URL. */
     public JsonNode getICalLink(long propertyId) {
         return transport.extractData(transport.get("/v1/properties/" + propertyId + "/ical"));
     }
 
-    public ApiResponse removeICalLink(long propertyId, String icalUrl) {
+    /** Remove calendar links from a property, by numeric link ID (from getICalLink) - not by URL. */
+    public ApiResponse removeICalLink(long propertyId, java.util.List<Long> ids) {
         Map<String, Object> body = new HashMap<>();
-        body.put("ical_url", icalUrl);
-        JsonNode root = transport.delete("/v1/properties/" + propertyId + "/ical");
+        body.put("ids", ids);
+        JsonNode root = transport.delete("/v1/properties/" + propertyId + "/ical", body);
         int status = root.has("status") ? root.get("status").asInt(200) : 200;
         return new ApiResponse(status, "OK");
     }

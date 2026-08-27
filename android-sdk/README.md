@@ -50,7 +50,7 @@
 
 ## Overview
 
-The Cleanster Android SDK wraps the [Cleanster Partner API](https://documenter.getpostman.com/view/26172658/2sAYdoF7ep) in a type-safe, coroutines-ready Retrofit 2 client. All 64 API endpoints across 8 resource types are covered with full Kotlin data-class request/response models.
+The Cleanster Android SDK wraps the [Cleanster Partner API](https://documenter.getpostman.com/view/26172658/2sAYdoF7ep) in a type-safe, coroutines-ready Retrofit 2 client. All 66 API endpoints across 8 resource types are covered with full Kotlin data-class request/response models.
 
 Use it to:
 - **Create and manage bookings** - schedule, reschedule, cancel, adjust hours
@@ -1436,7 +1436,7 @@ viewModelScope.launch {
 
 | Event | Trigger |
 |---|---|
-| `booking.created` | New booking is scheduled |
+| `booking.status_changed` | Booking status changes |
 | `booking.cleaner_assigned` | A cleaner is confirmed |
 | `booking.cleaner_removed` | Assigned cleaner is removed |
 | `booking.cleaner_declined` | Assigned cleaner declined |
@@ -1446,7 +1446,6 @@ viewModelScope.launch {
 | `booking.resumed` | Cleaner resumes a paused service |
 | `booking.completed` | Job finished |
 | `booking.cancelled` | Booking is cancelled |
-| `booking.feedback_submitted` | Rating is submitted |
 | `chat.message_added` | New message in a booking's chat thread |
 
 **Register a webhook:**
@@ -1617,7 +1616,7 @@ import com.cleanster.android.WebhookUtils
 
 // Verify a delivery:
 val rawBody   = "..." // raw JSON string from request body
-val signature = "..." // X-Cleanster-Signature header value
+val signature = "..." // X-Webhook-Signature header value
 val secret    = BuildConfig.CLEANSTER_WEBHOOK_SECRET
 
 val isValid = WebhookUtils.verifySignature(secret, rawBody, signature)
@@ -1639,7 +1638,7 @@ cd android-sdk
 ./gradlew test
 ```
 
-All **168 tests** should pass.
+All **172 tests** should pass.
 
 To run a specific test class:
 
@@ -1657,15 +1656,16 @@ To run with verbose output:
 
 | File | Tests | Coverage |
 |---|---|---|
-| `BookingsTest.kt` | 47 | 17 endpoints + auth headers |
+| `BookingsTest.kt` | 47 | 19 endpoints + auth headers |
 | `UsersTest.kt` | 18 | 3 endpoints + token management |
 | `PropertiesTest.kt` | 26 | 14 endpoints |
-| `ChecklistsTest.kt` | 18 | 5 endpoints |
-| `OtherTest.kt` | 21 | 7 reference data endpoints |
+| `ChecklistsTest.kt` | 18 | 6 endpoints |
+| `OtherTest.kt` | 25 | 11 reference data endpoints |
 | `BlacklistTest.kt` | 9 | 3 endpoints |
 | `PaymentMethodsTest.kt` | 14 | 6 endpoints |
 | `WebhooksTest.kt` | 11 | 4 endpoints + 8 event types |
-| **Total** | **164** | **64 endpoints** |
+| `WebhookUtilsTest.kt` | 4 | Signature verification |
+| **Total** | **172** | **66 endpoints** |
 
 ---
 
@@ -1681,11 +1681,11 @@ android-sdk/
 │   │   ├── CleansterError.kt             Typed error hierarchy
 │   │   ├── AuthInterceptor.kt            OkHttp interceptor for access-key + token headers
 │   │   ├── api/
-│   │   │   ├── BookingsApi.kt            Retrofit service + wrapper (17 endpoints)
+│   │   │   ├── BookingsApi.kt            Retrofit service + wrapper (19 endpoints)
 │   │   │   ├── UsersApi.kt               Retrofit service + wrapper (3 endpoints) + wrap()
 │   │   │   ├── PropertiesApi.kt          Retrofit service + wrapper (14 endpoints)
-│   │   │   ├── ChecklistsApi.kt          Retrofit service + wrapper (5 endpoints)
-│   │   │   ├── OtherApi.kt               Retrofit service + wrapper (7 endpoints)
+│   │   │   ├── ChecklistsApi.kt          Retrofit service + wrapper (6 endpoints)
+│   │   │   ├── OtherApi.kt               Retrofit service + wrapper (11 endpoints)
 │   │   │   ├── BlacklistApi.kt           Retrofit service + wrapper (3 endpoints)
 │   │   │   ├── PaymentMethodsApi.kt      Retrofit service + wrapper (6 endpoints)
 │   │   │   └── WebhooksApi.kt            Retrofit service + wrapper (4 endpoints)

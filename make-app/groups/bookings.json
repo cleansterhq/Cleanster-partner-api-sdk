@@ -9,6 +9,8 @@
     "rescheduleBooking",
     "assignCleaner",
     "sendMessage",
+    "updateTask",
+    "updateSqft",
     "searchBooking",
     "getBooking"
   ]

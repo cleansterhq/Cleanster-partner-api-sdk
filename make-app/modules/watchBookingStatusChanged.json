@@ -55,7 +55,7 @@
       "help": "Only watch for bookings with this status. Leave blank to watch all status changes.",
       "required": false,
       "options": [
-        { "label": "— Any Status —", "value": "" },
+        { "label": "- Any Status -", "value": "" },
         { "label": "Pending", "value": "pending" },
         { "label": "Scheduled", "value": "scheduled" },
         { "label": "In Progress", "value": "in_progress" },

@@ -10,14 +10,14 @@ import (
 //
 // When Cleanster sends a webhook, it computes an HMAC-SHA256 of the raw request
 // body using the secret returned when the webhook was created, and includes the
-// hex-encoded digest in the X-Cleanster-Signature header.
+// hex-encoded digest in the X-Webhook-Signature header.
 //
 // Example:
 //
 //	http.HandleFunc("/webhook", func(w http.ResponseWriter, r *http.Request) {
 //	    body, _ := io.ReadAll(r.Body)
 //	    secret  := os.Getenv("CLEANSTER_WEBHOOK_SECRET")
-//	    sig     := r.Header.Get("X-Cleanster-Signature")
+//	    sig     := r.Header.Get("X-Webhook-Signature")
 //
 //	    if !cleanster.VerifyWebhookSignature(secret, string(body), sig) {
 //	        http.Error(w, "invalid signature", http.StatusUnauthorized)

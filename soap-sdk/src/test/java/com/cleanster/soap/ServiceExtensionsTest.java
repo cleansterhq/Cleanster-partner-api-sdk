@@ -256,11 +256,11 @@ class ServiceExtensionsTest {
     }
 
     @Test
-    @DisplayName("addICalLink calls POST /v1/properties/{id}/ical")
+    @DisplayName("addICalLink calls PUT /v1/properties/{id}/ical")
     void addICalLinkCallsCorrectPath() {
-        when(transport.post(eq("/v1/properties/42/ical"), any())).thenReturn(okNode());
-        client.addICalLink(42L, "https://example.com/cal.ics");
-        verify(transport).post(eq("/v1/properties/42/ical"), any());
+        when(transport.put(eq("/v1/properties/42/ical"), any())).thenReturn(okNode());
+        client.addICalLink(42L, java.util.List.of("https://example.com/cal.ics"));
+        verify(transport).put(eq("/v1/properties/42/ical"), any());
     }
 
     @Test
@@ -274,9 +274,9 @@ class ServiceExtensionsTest {
     @Test
     @DisplayName("removeICalLink calls DELETE /v1/properties/{id}/ical")
     void removeICalLinkCallsCorrectPath() {
-        when(transport.delete("/v1/properties/42/ical")).thenReturn(okNode());
-        client.removeICalLink(42L, "https://example.com/cal.ics");
-        verify(transport).delete("/v1/properties/42/ical");
+        when(transport.delete(eq("/v1/properties/42/ical"), any())).thenReturn(okNode());
+        client.removeICalLink(42L, java.util.List.of(7L));
+        verify(transport).delete(eq("/v1/properties/42/ical"), any());
     }
 
     @Test
