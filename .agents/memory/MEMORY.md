@@ -1,0 +1,1 @@
+- [Inspection report contract](inspection-report-contract.md) — inspection returns a signed report URL containing photos, checklist evidence, and property problems.
