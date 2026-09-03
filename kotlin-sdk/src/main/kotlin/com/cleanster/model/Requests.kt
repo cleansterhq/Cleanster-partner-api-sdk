@@ -31,6 +31,9 @@ data class CreatePropertyRequest(
     val latitude:      Double? = null,
     val longitude:     Double? = null,
     val nickName:      String? = null,
+    val street:        String? = null,
+    val apt:           String? = null,
+    val zipCode:       String? = null,
 )
 
 data class EnableDisablePropertyRequest(

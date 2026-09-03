@@ -36,12 +36,16 @@ public sealed class PropertiesApi
     /// <param name="latitude">Optional GPS latitude.</param>
     /// <param name="longitude">Optional GPS longitude.</param>
     /// <param name="nickName">Optional custom nickname for the property.</param>
+    /// <param name="street">Optional canonical street field.</param>
+    /// <param name="apt">Optional apartment or unit.</param>
+    /// <param name="zipCode">Optional canonical postal/ZIP field.</param>
     public async Task<ApiResponse<Property>> AddPropertyAsync(
         string name, string address, string city, string country,
         int roomCount, int bathroomCount, int serviceId,
         string? state = null, string? zip = null, string? timezone = null,
         string? note = null, double? latitude = null, double? longitude = null,
-        string? nickName = null,
+        string? nickName = null, string? street = null, string? apt = null,
+        string? zipCode = null,
         CancellationToken ct = default)
     {
         var body = new Dictionary<string, object?>
@@ -61,6 +65,9 @@ public sealed class PropertiesApi
         if (latitude  is not null) body["latitude"]  = latitude;
         if (longitude is not null) body["longitude"] = longitude;
         if (nickName  is not null) body["nickName"]  = nickName;
+        if (street    is not null) body["street"]    = street;
+        if (apt       is not null) body["apt"]       = apt;
+        if (zipCode   is not null) body["zipCode"]   = zipCode;
         var root = await _http.PostAsync("/v1/properties", body, ct);
         return JsonHelper.ParseSingle<Property>(root);
     }
@@ -80,12 +87,16 @@ public sealed class PropertiesApi
     /// <param name="latitude">Optional GPS latitude.</param>
     /// <param name="longitude">Optional GPS longitude.</param>
     /// <param name="nickName">Optional custom nickname for the property.</param>
+    /// <param name="street">Optional canonical street field.</param>
+    /// <param name="apt">Optional apartment or unit.</param>
+    /// <param name="zipCode">Optional canonical postal/ZIP field.</param>
     public async Task<ApiResponse<Property>> UpdatePropertyAsync(
         int propertyId, string name, string address, string city, string country,
         int roomCount, int bathroomCount, int serviceId,
         string? state = null, string? zip = null, string? timezone = null,
         string? note = null, double? latitude = null, double? longitude = null,
-        string? nickName = null,
+        string? nickName = null, string? street = null, string? apt = null,
+        string? zipCode = null,
         CancellationToken ct = default)
     {
         var body = new Dictionary<string, object?>
@@ -105,6 +116,9 @@ public sealed class PropertiesApi
         if (latitude  is not null) body["latitude"]  = latitude;
         if (longitude is not null) body["longitude"] = longitude;
         if (nickName  is not null) body["nickName"]  = nickName;
+        if (street    is not null) body["street"]    = street;
+        if (apt       is not null) body["apt"]       = apt;
+        if (zipCode   is not null) body["zipCode"]   = zipCode;
         var root = await _http.PutAsync($"/v1/properties/{propertyId}", body, ct);
         return JsonHelper.ParseSingle<Property>(root);
     }

@@ -28,6 +28,9 @@ public struct VerifyJwtRequest: Encodable {
 public struct CreatePropertyRequest: Encodable {
     public let name: String
     public let nickName: String?
+    public let street: String?
+    public let apt: String?
+    public let zipCode: String?
     public let address: String
     public let city: String
     public let country: String
@@ -46,10 +49,14 @@ public struct CreatePropertyRequest: Encodable {
         roomCount: Int, bathroomCount: Int, serviceId: Int,
         state: String? = nil, zip: String? = nil, timezone: String? = nil,
         note: String? = nil, latitude: Double? = nil, longitude: Double? = nil,
-        nickName: String? = nil
+        nickName: String? = nil, street: String? = nil, apt: String? = nil,
+        zipCode: String? = nil
     ) {
         self.name          = name
         self.nickName      = nickName
+        self.street        = street
+        self.apt           = apt
+        self.zipCode       = zipCode
         self.address       = address
         self.city          = city
         self.country       = country
@@ -74,6 +81,9 @@ public struct CreatePropertyRequest: Encodable {
         try c.encode(bathroomCount, forKey: .bathroomCount)
         try c.encode(serviceId, forKey: .serviceId)
         try c.encodeIfPresent(nickName, forKey: .nickName)
+        try c.encodeIfPresent(street, forKey: .street)
+        try c.encodeIfPresent(apt, forKey: .apt)
+        try c.encodeIfPresent(zipCode, forKey: .zipCode)
         try c.encodeIfPresent(state, forKey: .state)
         try c.encodeIfPresent(zip, forKey: .zip)
         try c.encodeIfPresent(timezone, forKey: .timezone)
@@ -84,7 +94,8 @@ public struct CreatePropertyRequest: Encodable {
 
     enum CodingKeys: String, CodingKey {
         case name, address, city, country, roomCount, bathroomCount,
-             serviceId, state, zip, timezone, note, latitude, longitude, nickName
+             serviceId, state, zip, timezone, note, latitude, longitude,
+             nickName, street, apt, zipCode
     }
 }
 

@@ -200,22 +200,45 @@ type VerifyJWTRequest struct {
 
 // Property represents a physical location where cleanings take place.
 type Property struct {
-	ID            int    `json:"id"`
-	Name          string `json:"name"`
-	NickName      string `json:"nickName,omitempty"`
-	Address       string `json:"address"`
-	City          string `json:"city"`
-	Country       string `json:"country"`
-	RoomCount     int    `json:"roomCount"`
-	BathroomCount int    `json:"bathroomCount"`
-	ServiceID     int    `json:"serviceId"`
-	IsEnabled     *bool  `json:"isEnabled"`
+	ID               int      `json:"id"`
+	UserID           int      `json:"userId,omitempty"`
+	Name             string   `json:"name"`
+	NickName         string   `json:"nickName,omitempty"`
+	Apt              string   `json:"apt,omitempty"`
+	Street           string   `json:"street,omitempty"`
+	Address          string   `json:"address"`
+	City             string   `json:"city"`
+	State            string   `json:"state,omitempty"`
+	Country          string   `json:"country"`
+	ZipCode          string   `json:"zipCode,omitempty"`
+	RoomCount        int      `json:"roomCount"`
+	BathroomCount    int      `json:"bathroomCount"`
+	ServiceID        int      `json:"serviceId"`
+	IsEnabled        *bool    `json:"isEnabled"`
+	IsActive         *bool    `json:"isActive,omitempty"`
+	IsEnable         *bool    `json:"isEnable,omitempty"`
+	Pets             string   `json:"pets,omitempty"`
+	PublicName       string   `json:"publicName,omitempty"`
+	WifiName         string   `json:"wifiName,omitempty"`
+	WifiPassword     string   `json:"wifiPassword,omitempty"`
+	Laundry          *bool    `json:"laundry,omitempty"`
+	Garbage          string   `json:"garbage,omitempty"`
+	ExtraSupplies    *bool    `json:"extraSupplies,omitempty"`
+	CreatedDate      string   `json:"createdDate,omitempty"`
+	Access           string   `json:"access,omitempty"`
+	SuppliesLocation string   `json:"suppliesLocation,omitempty"`
+	Parking          string   `json:"parking,omitempty"`
+	OtherNote        string   `json:"otherNote,omitempty"`
+	Latitude         *float64 `json:"latitude,omitempty"`
+	Longitude        *float64 `json:"longitude,omitempty"`
 }
 
 // CreatePropertyRequest holds required and optional fields for creating or updating a property.
 type CreatePropertyRequest struct {
 	Name          string   `json:"name"`
 	NickName      string   `json:"nickName,omitempty"`
+	Street        string   `json:"street,omitempty"`
+	Apt           string   `json:"apt,omitempty"`
 	Address       string   `json:"address"`
 	City          string   `json:"city"`
 	Country       string   `json:"country"`
@@ -224,6 +247,7 @@ type CreatePropertyRequest struct {
 	ServiceID     int      `json:"serviceId"`
 	State         string   `json:"state,omitempty"`
 	Zip           string   `json:"zip,omitempty"`
+	ZipCode       string   `json:"zipCode,omitempty"`
 	Timezone      string   `json:"timezone,omitempty"`
 	Note          string   `json:"note,omitempty"`
 	Latitude      *float64 `json:"latitude,omitempty"`

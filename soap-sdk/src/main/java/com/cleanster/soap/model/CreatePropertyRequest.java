@@ -8,9 +8,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class CreatePropertyRequest {
 
     private String  address;
+    private String  street;
+    private String  apt;
     private String  city;
     private String  state;
     private String  zip;
+    private String  zipCode;
     private String  name;
     private String  nickName;
     private Integer bedrooms;
@@ -20,9 +23,12 @@ public class CreatePropertyRequest {
     @JsonProperty("access_instructions") private String  accessInstructions;
 
     public String  getAddress()            { return address; }
+    public String  getStreet()             { return street; }
+    public String  getApt()                { return apt; }
     public String  getCity()               { return city; }
     public String  getState()              { return state; }
     public String  getZip()                { return zip; }
+    public String  getZipCode()            { return zipCode; }
     public String  getName()               { return name; }
     public String  getNickName()           { return nickName; }
     public Integer getBedrooms()           { return bedrooms; }
@@ -32,9 +38,12 @@ public class CreatePropertyRequest {
     public String  getAccessInstructions() { return accessInstructions; }
 
     public CreatePropertyRequest setAddress(String a)            { this.address = a; return this; }
+    public CreatePropertyRequest setStreet(String s)             { this.street = s; return this; }
+    public CreatePropertyRequest setApt(String a)                { this.apt = a; return this; }
     public CreatePropertyRequest setCity(String c)               { this.city = c; return this; }
     public CreatePropertyRequest setState(String s)              { this.state = s; return this; }
     public CreatePropertyRequest setZip(String z)                { this.zip = z; return this; }
+    public CreatePropertyRequest setZipCode(String z)            { this.zipCode = z; return this; }
     public CreatePropertyRequest setName(String n)               { this.name = n; return this; }
     public CreatePropertyRequest setNickName(String n)            { this.nickName = n; return this; }
     public CreatePropertyRequest setBedrooms(Integer b)          { this.bedrooms = b; return this; }

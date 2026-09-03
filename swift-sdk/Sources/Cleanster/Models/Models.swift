@@ -22,21 +22,39 @@ public struct CreateUserResponse: Decodable {
 
 public struct Property: Decodable {
     public let id: Int?
+    public let userId: Int?
     public let name: String?
     public let nickName: String?
+    public let apt: String?
+    public let street: String?
     public let address: String?
     public let city: String?
     public let state: String?
     public let zip: String?
+    public let zipCode: String?
     public let country: String?
     public let timezone: String?
     public let roomCount: Int?
     public let bathroomCount: Int?
     public let serviceId: Int?
     public let isEnabled: Bool?
+    public let isActive: Bool?
+    public let isEnable: Bool?
     public let note: String?
     public let latitude: Double?
     public let longitude: Double?
+    public let pets: String?
+    public let publicName: String?
+    public let wifiName: String?
+    public let wifiPassword: String?
+    public let laundry: Bool?
+    public let garbage: String?
+    public let extraSupplies: Bool?
+    public let createdDate: String?
+    public let access: String?
+    public let suppliesLocation: String?
+    public let parking: String?
+    public let otherNote: String?
 }
 
 // MARK: - Booking

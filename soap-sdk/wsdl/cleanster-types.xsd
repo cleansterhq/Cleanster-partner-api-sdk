@@ -22,12 +22,18 @@
   <xs:complexType name="Property">
     <xs:sequence>
       <xs:element name="id"          type="xs:long"/>
+      <xs:element name="userId"      type="xs:long" minOccurs="0"/>
+      <xs:element name="serviceId"   type="xs:long" minOccurs="0"/>
       <xs:element name="name"        type="xs:string" minOccurs="0"/>
       <xs:element name="nickName"    type="xs:string" minOccurs="0"/>
+      <xs:element name="apt"         type="xs:string" minOccurs="0"/>
+      <xs:element name="street"      type="xs:string" minOccurs="0"/>
       <xs:element name="address"     type="xs:string"/>
       <xs:element name="city"        type="xs:string"/>
       <xs:element name="state"       type="xs:string"/>
+      <xs:element name="country"     type="xs:string" minOccurs="0"/>
       <xs:element name="zip"         type="xs:string"/>
+      <xs:element name="zipCode"     type="xs:string" minOccurs="0"/>
       <xs:element name="bedrooms"    type="xs:int"    minOccurs="0"/>
       <xs:element name="bathrooms"   type="xs:double" minOccurs="0"/>
       <xs:element name="squareFeet"  type="xs:int"    minOccurs="0"/>
@@ -35,6 +41,22 @@
       <xs:element name="accessInstructions" type="xs:string" minOccurs="0"/>
       <xs:element name="createdAt"   type="xs:dateTime" minOccurs="0"/>
       <xs:element name="updatedAt"   type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="isActive"    type="xs:boolean" minOccurs="0"/>
+      <xs:element name="isEnable"    type="xs:boolean" minOccurs="0"/>
+      <xs:element name="pets"        type="xs:string" minOccurs="0"/>
+      <xs:element name="publicName"  type="xs:string" minOccurs="0"/>
+      <xs:element name="wifiName"    type="xs:string" minOccurs="0"/>
+      <xs:element name="wifiPassword" type="xs:string" minOccurs="0"/>
+      <xs:element name="laundry"     type="xs:boolean" minOccurs="0"/>
+      <xs:element name="garbage"     type="xs:string" minOccurs="0"/>
+      <xs:element name="extraSupplies" type="xs:boolean" minOccurs="0"/>
+      <xs:element name="createdDate" type="xs:string" minOccurs="0"/>
+      <xs:element name="access"      type="xs:string" minOccurs="0"/>
+      <xs:element name="suppliesLocation" type="xs:string" minOccurs="0"/>
+      <xs:element name="parking"     type="xs:string" minOccurs="0"/>
+      <xs:element name="otherNote"   type="xs:string" minOccurs="0"/>
+      <xs:element name="latitude"    type="xs:double" minOccurs="0"/>
+      <xs:element name="longitude"   type="xs:double" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
 
@@ -291,9 +313,12 @@
   <xs:element name="CreatePropertyRequest">
     <xs:complexType><xs:sequence>
       <xs:element name="address"            type="xs:string"/>
+      <xs:element name="street"             type="xs:string" minOccurs="0"/>
+      <xs:element name="apt"                type="xs:string" minOccurs="0"/>
       <xs:element name="city"               type="xs:string"/>
       <xs:element name="state"              type="xs:string"/>
       <xs:element name="zip"                type="xs:string"/>
+      <xs:element name="zipCode"            type="xs:string" minOccurs="0"/>
       <xs:element name="name"               type="xs:string" minOccurs="0"/>
       <xs:element name="nickName"           type="xs:string" minOccurs="0"/>
       <xs:element name="bedrooms"           type="xs:int"    minOccurs="0"/>

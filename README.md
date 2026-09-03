@@ -1167,20 +1167,23 @@ const filtered = await client.properties.listProperties(1);
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `name` | string | yes | Display name |
+| `name` | string | no | Legacy display-name field retained by SDKs |
 | `nickName` | string | no | Custom nickname for the property |
-| `address` | string | yes | Street address |
+| `street` | string | yes | Street address |
+| `apt` | string | no | Apartment or unit |
+| `address` | string | no | Legacy street-address alias retained by SDKs |
 | `city` | string | yes | City |
 | `country` | string | yes | Country code or name |
-| `roomCount` | integer | yes | Number of rooms |
-| `bathroomCount` | integer | yes | Number of bathrooms |
 | `serviceId` | integer | yes | Service type ID (from `GET /v1/services`) |
 | `state` | string | no | State / province |
-| `zip` | string | no | Postal / ZIP code |
+| `zipCode` | string | yes | Postal / ZIP code |
+| `zip` | string | no | Legacy postal/ZIP alias retained by SDKs |
+| `roomCount` | integer | no | Legacy room-count field retained by SDKs |
+| `bathroomCount` | integer | no | Legacy bathroom-count field retained by SDKs |
 | `timezone` | string | no | IANA timezone (e.g. `America/New_York`) |
 | `note` | string | no | Internal note visible to assigned cleaners |
-| `latitude` | number | no | GPS latitude |
-| `longitude` | number | no | GPS longitude |
+| `latitude` | number | yes | GPS latitude |
+| `longitude` | number | yes | GPS longitude |
 
 **Examples:**
 
@@ -1188,11 +1191,13 @@ const filtered = await client.properties.listProperties(1);
 CreatePropertyRequest req = new CreatePropertyRequest();
 req.setName("Downtown Loft");
 req.setNickName("Loft A");
+req.setStreet("123 Main St");
 req.setAddress("123 Main St");
 req.setCity("Atlanta");
 req.setCountry("US");
 req.setState("GA");
 req.setZip("30301");
+req.setZipCode("30301");
 req.setRoomCount(2);
 req.setBathroomCount(1);
 req.setServiceId(1);
@@ -1205,11 +1210,13 @@ int propId = resp.getData().getId();
 resp = client.properties.add_property({
     "name": "Downtown Loft",
     "nickName": "Loft A",
+    "street": "123 Main St",
     "address": "123 Main St",
     "city": "Atlanta",
     "country": "US",
     "state": "GA",
     "zip": "30301",
+    "zipCode": "30301",
     "roomCount": 2,
     "bathroomCount": 1,
     "serviceId": 1,
@@ -1222,6 +1229,7 @@ property_id = resp.data["id"]
 const resp = await client.properties.addProperty({
   name: 'Downtown Loft',
   nickName: 'Loft A',
+  street: '123 Main St',
   address: '123 Main St',
   city: 'Atlanta',
   country: 'US',
@@ -1237,11 +1245,13 @@ lon := -84.388
 resp, err := client.Properties.AddProperty(ctx, cleanster.CreatePropertyRequest{
     Name:          "Downtown Loft",
     NickName:      "Loft A",
+    Street:        "123 Main St",
     Address:       "123 Main St",
     City:          "Atlanta",
     Country:       "US",
     State:         "GA",
     Zip:           "30301",
+    ZipCode:       "30301",
     RoomCount:     2,
     BathroomCount: 1,
     ServiceID:     1,
@@ -1255,6 +1265,7 @@ resp, err := client.Properties.AddProperty(ctx, cleanster.CreatePropertyRequest{
 var resp = await client.Properties.AddPropertyAsync(
     name: "Downtown Loft",
     nickName: "Loft A",
+    street: "123 Main St",
     address: "123 Main St",
     city: "Atlanta",
     country: "US",
@@ -1263,6 +1274,7 @@ var resp = await client.Properties.AddPropertyAsync(
     serviceId: 1,
     state: "GA",
     zip: "30301",
+    zipCode: "30301",
     timezone: "America/New_York"
 );
 ```
@@ -1274,6 +1286,11 @@ var resp = await client.Properties.AddPropertyAsync(
 #### `DELETE /v1/properties/{propertyId}` - Delete Property
 
 Update and delete use the same fields as Add Property. Delete is permanent.
+
+Property responses may also include `userId`, `isActive`, `isEnable`, `pets`,
+`publicName`, `wifiName`, `wifiPassword`, `laundry`, `garbage`,
+`extraSupplies`, `createdDate`, `access`, `suppliesLocation`, `parking`, and
+`otherNote`. These fields are exposed by the typed SDK property models.
 
 ```python
 # Get

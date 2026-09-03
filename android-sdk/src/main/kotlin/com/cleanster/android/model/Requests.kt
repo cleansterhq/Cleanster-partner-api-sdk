@@ -91,6 +91,9 @@ data class CreatePropertyRequest(
     @SerializedName("latitude")      val latitude: Double? = null,
     @SerializedName("longitude")     val longitude: Double? = null,
     @SerializedName("nickName")      val nickName: String? = null,
+    @SerializedName("street")        val street: String? = null,
+    @SerializedName("apt")           val apt: String? = null,
+    @SerializedName("zipCode")       val zipCode: String? = null,
 )
 
 data class EnableDisableRequest(

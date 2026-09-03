@@ -18,6 +18,12 @@ public class CreatePropertyRequest {
     @JsonProperty("address")
     private String address;
 
+    @JsonProperty("street")
+    private String street;
+
+    @JsonProperty("apt")
+    private String apt;
+
     @JsonProperty("city")
     private String city;
 
@@ -26,6 +32,9 @@ public class CreatePropertyRequest {
 
     @JsonProperty("zip")
     private String zip;
+
+    @JsonProperty("zipCode")
+    private String zipCode;
 
     @JsonProperty("country")
     private String country;
@@ -62,6 +71,12 @@ public class CreatePropertyRequest {
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
 
+    public String getStreet() { return street; }
+    public void setStreet(String street) { this.street = street; }
+
+    public String getApt() { return apt; }
+    public void setApt(String apt) { this.apt = apt; }
+
     public String getCity() { return city; }
     public void setCity(String city) { this.city = city; }
 
@@ -70,6 +85,9 @@ public class CreatePropertyRequest {
 
     public String getZip() { return zip; }
     public void setZip(String zip) { this.zip = zip; }
+
+    public String getZipCode() { return zipCode; }
+    public void setZipCode(String zipCode) { this.zipCode = zipCode; }
 
     public String getCountry() { return country; }
     public void setCountry(String country) { this.country = country; }

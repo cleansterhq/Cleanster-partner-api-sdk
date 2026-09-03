@@ -12,6 +12,9 @@ public class Property {
     @JsonProperty("id")
     private Integer id;
 
+    @JsonProperty("userId")
+    private Integer userId;
+
     @JsonProperty("name")
     private String name;
 
@@ -21,6 +24,12 @@ public class Property {
     @JsonProperty("address")
     private String address;
 
+    @JsonProperty("street")
+    private String street;
+
+    @JsonProperty("apt")
+    private String apt;
+
     @JsonProperty("city")
     private String city;
 
@@ -29,6 +38,9 @@ public class Property {
 
     @JsonProperty("zip")
     private String zip;
+
+    @JsonProperty("zipCode")
+    private String zipCode;
 
     @JsonProperty("country")
     private String country;
@@ -57,10 +69,55 @@ public class Property {
     @JsonProperty("longitude")
     private Double longitude;
 
+    @JsonProperty("isActive")
+    private Boolean isActive;
+
+    @JsonProperty("isEnable")
+    private Boolean isEnable;
+
+    @JsonProperty("pets")
+    private String pets;
+
+    @JsonProperty("publicName")
+    private String publicName;
+
+    @JsonProperty("wifiName")
+    private String wifiName;
+
+    @JsonProperty("wifiPassword")
+    private String wifiPassword;
+
+    @JsonProperty("laundry")
+    private Boolean laundry;
+
+    @JsonProperty("garbage")
+    private String garbage;
+
+    @JsonProperty("extraSupplies")
+    private Boolean extraSupplies;
+
+    @JsonProperty("createdDate")
+    private String createdDate;
+
+    @JsonProperty("access")
+    private String access;
+
+    @JsonProperty("suppliesLocation")
+    private String suppliesLocation;
+
+    @JsonProperty("parking")
+    private String parking;
+
+    @JsonProperty("otherNote")
+    private String otherNote;
+
     public Property() {}
 
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
+
+    public Integer getUserId() { return userId; }
+    public void setUserId(Integer userId) { this.userId = userId; }
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
@@ -71,6 +128,12 @@ public class Property {
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
 
+    public String getStreet() { return street; }
+    public void setStreet(String street) { this.street = street; }
+
+    public String getApt() { return apt; }
+    public void setApt(String apt) { this.apt = apt; }
+
     public String getCity() { return city; }
     public void setCity(String city) { this.city = city; }
 
@@ -79,6 +142,9 @@ public class Property {
 
     public String getZip() { return zip; }
     public void setZip(String zip) { this.zip = zip; }
+
+    public String getZipCode() { return zipCode; }
+    public void setZipCode(String zipCode) { this.zipCode = zipCode; }
 
     public String getCountry() { return country; }
     public void setCountry(String country) { this.country = country; }
@@ -106,6 +172,48 @@ public class Property {
 
     public Double getLongitude() { return longitude; }
     public void setLongitude(Double longitude) { this.longitude = longitude; }
+
+    public Boolean getIsActive() { return isActive; }
+    public void setIsActive(Boolean isActive) { this.isActive = isActive; }
+
+    public Boolean getIsEnable() { return isEnable; }
+    public void setIsEnable(Boolean isEnable) { this.isEnable = isEnable; }
+
+    public String getPets() { return pets; }
+    public void setPets(String pets) { this.pets = pets; }
+
+    public String getPublicName() { return publicName; }
+    public void setPublicName(String publicName) { this.publicName = publicName; }
+
+    public String getWifiName() { return wifiName; }
+    public void setWifiName(String wifiName) { this.wifiName = wifiName; }
+
+    public String getWifiPassword() { return wifiPassword; }
+    public void setWifiPassword(String wifiPassword) { this.wifiPassword = wifiPassword; }
+
+    public Boolean getLaundry() { return laundry; }
+    public void setLaundry(Boolean laundry) { this.laundry = laundry; }
+
+    public String getGarbage() { return garbage; }
+    public void setGarbage(String garbage) { this.garbage = garbage; }
+
+    public Boolean getExtraSupplies() { return extraSupplies; }
+    public void setExtraSupplies(Boolean extraSupplies) { this.extraSupplies = extraSupplies; }
+
+    public String getCreatedDate() { return createdDate; }
+    public void setCreatedDate(String createdDate) { this.createdDate = createdDate; }
+
+    public String getAccess() { return access; }
+    public void setAccess(String access) { this.access = access; }
+
+    public String getSuppliesLocation() { return suppliesLocation; }
+    public void setSuppliesLocation(String suppliesLocation) { this.suppliesLocation = suppliesLocation; }
+
+    public String getParking() { return parking; }
+    public void setParking(String parking) { this.parking = parking; }
+
+    public String getOtherNote() { return otherNote; }
+    public void setOtherNote(String otherNote) { this.otherNote = otherNote; }
 
     @Override
     public String toString() {
