@@ -405,23 +405,36 @@ func TestBookings_GetBookingInspection(t *testing.T) {
 		if r.URL.Path != "/v1/bookings/16926/inspection" {
 			t.Errorf("wrong path: %s", r.URL.Path)
 		}
-		writeJSON(w, okResponse(map[string]interface{}{}))
+		writeJSON(w, okResponse("https://reports.example/inspection?signature=abc"))
 	})
 	client, cleanup := newTestClient(t, handler)
 	defer cleanup()
-	_, _ = client.Bookings.GetBookingInspection(context.Background(), 16926)
+	resp, err := client.Bookings.GetBookingInspection(context.Background(), 16926)
+	if err != nil || resp.Data != "https://reports.example/inspection?signature=abc" {
+		t.Errorf("unexpected inspection response: %+v, %v", resp, err)
+	}
 }
 
 func TestBookings_GetBookingInspectionDetails(t *testing.T) {
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/v1/bookings/16926/inspection/details" {
+		if r.URL.Path != "/v1/bookings/16926/inspection" {
 			t.Errorf("wrong path: %s", r.URL.Path)
 		}
-		writeJSON(w, okResponse(map[string]interface{}{}))
+		writeJSON(w, okResponse("https://reports.example/inspection?signature=abc"))
 	})
 	client, cleanup := newTestClient(t, handler)
 	defer cleanup()
 	_, _ = client.Bookings.GetBookingInspectionDetails(context.Background(), 16926)
+}
+
+func TestChecklistItem_UnmarshalsImageURL(t *testing.T) {
+	var checklist cleanster.Checklist
+	if err := json.Unmarshal([]byte(`{"items":[{"id":1,"description":"Photograph oven","isCompleted":true,"imageUrl":"https://cdn.example/oven.jpg"}]}`), &checklist); err != nil {
+		t.Fatal(err)
+	}
+	if checklist.Items[0].ImageURL == nil || *checklist.Items[0].ImageURL != "https://cdn.example/oven.jpg" {
+		t.Fatalf("expected checklist image URL, got %+v", checklist.Items[0].ImageURL)
+	}
 }
 
 func TestBookings_AssignChecklistToBooking(t *testing.T) {

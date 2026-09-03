@@ -11,7 +11,7 @@ import java.util.*;
 /**
  * Bookings API - full lifecycle management for cleaning appointments.
  *
- * <h3>Endpoints (19)</h3>
+ * <h3>Endpoints (18)</h3>
  * <ol>
  *   <li>GET    /v1/bookings                                - list bookings</li>
  *   <li>POST   /v1/bookings/create                         - create booking</li>
@@ -23,7 +23,6 @@ import java.util.*;
  *   <li>POST   /v1/bookings/{id}/hours                     - adjust hours</li>
  *   <li>POST   /v1/bookings/{id}/expenses                  - pay expenses</li>
  *   <li>GET    /v1/bookings/{id}/inspection                - get inspection</li>
- *   <li>GET    /v1/bookings/{id}/inspection/details        - get inspection details</li>
  *   <li>PUT    /v1/bookings/{id}/checklist/{checklistId}   - assign checklist</li>
  *   <li>POST   /v1/bookings/{id}/feedback                  - submit feedback</li>
  *   <li>POST   /v1/bookings/{id}/tip                       - add tip</li>
@@ -151,18 +150,24 @@ public class BookingsXmlApi {
         return http.fromJson(json, XmlApiResponse.class);
     }
 
-    /** Get the inspection report for a completed booking. */
-    @SuppressWarnings("rawtypes")
-    public XmlApiResponse getBookingInspection(int bookingId) {
+    /**
+     * Get the signed inspection-report URL for a completed booking. Opening it
+     * displays before/after photos, checklist photo evidence, and property
+     * problems.
+     */
+    public XmlApiResponse<String> getBookingInspection(int bookingId) {
         String json = http.get("/v1/bookings/" + bookingId + "/inspection");
-        return http.fromJson(json, XmlApiResponse.class);
+        return http.fromJson(json, new TypeToken<XmlApiResponse<String>>(){}.getType());
     }
 
-    /** Get detailed inspection information for a completed booking. */
-    @SuppressWarnings("rawtypes")
-    public XmlApiResponse getBookingInspectionDetails(int bookingId) {
-        String json = http.get("/v1/bookings/" + bookingId + "/inspection/details");
-        return http.fromJson(json, XmlApiResponse.class);
+    /**
+     * @deprecated Use {@link #getBookingInspection(int)}. This compatibility
+     * alias calls the only public inspection endpoint; /inspection/details does
+     * not exist.
+     */
+    @Deprecated
+    public XmlApiResponse<String> getBookingInspectionDetails(int bookingId) {
+        return getBookingInspection(bookingId);
     }
 
     /** Attach a checklist to a booking (overrides the property default). */

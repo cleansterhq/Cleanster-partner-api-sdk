@@ -246,13 +246,18 @@ class BookingsTest {
         assertTrue(mock.capturedUrl?.endsWith("/v1/bookings/16459/checklist/77") == true)
     }
 
-    @Test fun `getBookingInspection sends GET`() = runTest {
-        mock.succeed(emptyMap()); client.bookings.getBookingInspection(16459)
+    @Test fun `getBookingInspection deserializes signed report URL`() = runTest {
+        mock.succeed("https://reports.example.com/inspection?signature=abc")
+        val response = client.bookings.getBookingInspection(16459)
         assertEquals("GET", mock.capturedMethod)
+        assertEquals("https://reports.example.com/inspection?signature=abc", response.data)
     }
 
-    @Test fun `getBookingInspectionDetails correct path`() = runTest {
-        mock.succeed(emptyMap()); client.bookings.getBookingInspectionDetails(16459)
-        assertTrue(mock.capturedUrl?.endsWith("/v1/bookings/16459/inspection/details") == true)
+    @Test fun `getBookingInspectionDetails is an inspection alias`() = runTest {
+        mock.succeed("https://reports.example.com/inspection?signature=abc")
+        val response = client.bookings.getBookingInspectionDetails(16459)
+        assertEquals("https://reports.example.com/inspection?signature=abc", response.data)
+        assertTrue(mock.capturedUrl?.endsWith("/v1/bookings/16459/inspection") == true)
+        assertTrue(mock.capturedUrl?.contains("/inspection/details") == false)
     }
 }

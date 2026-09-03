@@ -348,18 +348,19 @@ await client.Bookings.PayExpensesAsync(bookingId: 16926, paymentMethodId: 10);
 #### Get Booking Inspection
 **`GET /v1/bookings/{bookingId}/inspection`**
 
+The response `Data` is a signed report URL. Open it to display **before_photos**, **after_photos**,
+**checklist photo evidence**, and **property_problems**.
+
 ```csharp
-var resp = await client.Bookings.GetInspectionAsync(16926);
+var resp = await client.Bookings.GetBookingInspectionAsync(16926);
+string reportUrl = resp.Data;
+// Open reportUrl in a browser or web view.
 ```
 
 ---
 
-#### Get Booking Inspection Details
-**`GET /v1/bookings/{bookingId}/inspection/details`**
-
-```csharp
-var resp = await client.Bookings.GetInspectionDetailsAsync(16926);
-```
+`GetBookingInspectionDetailsAsync()` is obsolete for compatibility and delegates to
+`GetBookingInspectionAsync()`. There is no public `/inspection/details` endpoint.
 
 ---
 

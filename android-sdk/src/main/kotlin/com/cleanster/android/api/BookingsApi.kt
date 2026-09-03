@@ -51,10 +51,7 @@ internal interface BookingsService {
     ): ApiResponse<Any>
 
     @GET("v1/bookings/{bookingId}/inspection")
-    suspend fun getBookingInspection(@Path("bookingId") bookingId: Int): ApiResponse<Any>
-
-    @GET("v1/bookings/{bookingId}/inspection/details")
-    suspend fun getBookingInspectionDetails(@Path("bookingId") bookingId: Int): ApiResponse<Any>
+    suspend fun getBookingInspection(@Path("bookingId") bookingId: Int): ApiResponse<String>
 
     @PUT("v1/bookings/{bookingId}/checklist/{checklistId}")
     suspend fun assignChecklistToBooking(
@@ -135,8 +132,12 @@ class BookingsApi(retrofit: Retrofit) {
     suspend fun getBookingInspection(bookingId: Int) =
         wrap { service.getBookingInspection(bookingId) }
 
+    /**
+     * @deprecated The details endpoint does not exist. Use [getBookingInspection] instead.
+     */
+    @Deprecated("The details endpoint does not exist. Use getBookingInspection instead.")
     suspend fun getBookingInspectionDetails(bookingId: Int) =
-        wrap { service.getBookingInspectionDetails(bookingId) }
+        getBookingInspection(bookingId)
 
     suspend fun assignChecklistToBooking(bookingId: Int, checklistId: Int) =
         wrap { service.assignChecklistToBooking(bookingId, checklistId) }

@@ -275,18 +275,23 @@ RSpec.describe Cleanster do
     end
 
     describe "#get_booking_inspection" do
-      it "GETs /v1/bookings/16926/inspection" do
+      it "returns the signed report URL from /v1/bookings/16926/inspection" do
+        signed_report_url = "https://reports.example.com/inspection/16926?signature=abc"
         allow(http).to receive(:get).with("/v1/bookings/16926/inspection")
-                                    .and_return(ok_response)
-        api.get_booking_inspection(16926)
+                                    .and_return(ok_response(signed_report_url))
+        response = api.get_booking_inspection(16926)
+        expect(response.data).to eq(signed_report_url)
       end
     end
 
     describe "#get_booking_inspection_details" do
-      it "GETs /v1/bookings/16926/inspection/details" do
-        allow(http).to receive(:get).with("/v1/bookings/16926/inspection/details")
-                                    .and_return(ok_response)
-        api.get_booking_inspection_details(16926)
+      it "uses the inspection endpoint compatibility alias" do
+        signed_report_url = "https://reports.example.com/inspection/16926?signature=abc"
+        expect(http).to receive(:get).with("/v1/bookings/16926/inspection")
+                                   .once
+                                   .and_return(ok_response(signed_report_url))
+        response = api.get_booking_inspection_details(16926)
+        expect(response.data).to eq(signed_report_url)
       end
     end
 
@@ -977,11 +982,16 @@ RSpec.describe Cleanster do
 
   describe Cleanster::Models::ChecklistItem do
     it "maps all fields" do
-      item = described_class.new("id" => 10, "description" => "Mop", "isCompleted" => false, "imageUrl" => "https://x.com/img.png")
+      item = described_class.new(
+        "id" => 10, "description" => "Mop", "isCompleted" => false,
+        "imageUrl" => "https://x.com/img.png",
+        "futureEvidenceField" => { "source" => "inspection" }
+      )
       expect(item.id).to eq(10)
       expect(item.description).to eq("Mop")
       expect(item.is_completed).to eq(false)
       expect(item.image_url).to eq("https://x.com/img.png")
+      expect(item.raw["futureEvidenceField"]).to eq({ "source" => "inspection" })
     end
   end
 

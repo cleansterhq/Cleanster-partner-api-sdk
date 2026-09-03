@@ -408,22 +408,19 @@ ApiResponse<Object> resp = client.bookings().payExpenses(16926, 10);
 #### Get Booking Inspection
 **`GET /v1/bookings/{bookingId}/inspection`**
 
-Retrieve the inspection summary for a completed booking.
+Returns a signed report URL in `data`, not a JSON inspection object. Open the URL to display the
+**before_photos**, **after_photos**, **checklist photo evidence**, and **property_problems** sections.
 
 ```java
-ApiResponse<Object> resp = client.bookings().getInspection(16926);
+ApiResponse<String> resp = client.bookings().getBookingInspection(16926);
+String reportUrl = resp.getData();
+// Open reportUrl in a browser or web view.
 ```
 
 ---
 
-#### Get Booking Inspection Details
-**`GET /v1/bookings/{bookingId}/inspection/details`**
-
-Retrieve detailed inspection results including photos and checklist completion status.
-
-```java
-ApiResponse<Object> resp = client.bookings().getInspectionDetails(16926);
-```
+`getBookingInspectionDetails()` is deprecated for compatibility and calls the same inspection URL.
+There is no public `/inspection/details` endpoint.
 
 ---
 

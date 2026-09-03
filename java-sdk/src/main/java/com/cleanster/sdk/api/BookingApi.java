@@ -137,22 +137,24 @@ public class BookingApi {
      * Get the inspection report for a booking.
      *
      * @param bookingId The booking ID
-     * @return API response with inspection data
+     * @return API response whose data is a signed report URL. Opening it displays before photos,
+     * after photos, checklist photo evidence, and property problems.
      */
-    public ApiResponse<Object> getBookingInspection(int bookingId) {
+    public ApiResponse<String> getBookingInspection(int bookingId) {
         return httpClient.get("/v1/bookings/" + bookingId + "/inspection",
-                new TypeReference<ApiResponse<Object>>() {});
+                new TypeReference<ApiResponse<String>>() {});
     }
 
     /**
-     * Get detailed inspection information for a booking.
+     * Get the inspection report URL for a booking.
      *
      * @param bookingId The booking ID
-     * @return API response with detailed inspection data
+     * @return API response whose data is the signed report URL
+     * @deprecated The details endpoint does not exist. Use {@link #getBookingInspection(int)}.
      */
-    public ApiResponse<Object> getBookingInspectionDetails(int bookingId) {
-        return httpClient.get("/v1/bookings/" + bookingId + "/inspection/details",
-                new TypeReference<ApiResponse<Object>>() {});
+    @Deprecated
+    public ApiResponse<String> getBookingInspectionDetails(int bookingId) {
+        return getBookingInspection(bookingId);
     }
 
     /**

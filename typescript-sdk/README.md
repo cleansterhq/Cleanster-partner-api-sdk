@@ -351,18 +351,17 @@ await client.bookings.payExpenses(16926, paymentMethodId);
 #### Get Booking Inspection
 **`GET /v1/bookings/{bookingId}/inspection`**
 
-```typescript
-const resp = await client.bookings.getInspection(16926);
-```
-
----
-
-#### Get Booking Inspection Details
-**`GET /v1/bookings/{bookingId}/inspection/details`**
+The normal API envelope's `data` is a signed report URL string. Open it in a
+browser or web view to display **before_photos**, **after_photos**, the
+**checklist** (including photo evidence), and **property_problems**.
 
 ```typescript
-const resp = await client.bookings.getInspectionDetails(16926);
+const resp = await client.bookings.getBookingInspection(16926);
+const reportUrl = resp.data;
 ```
+
+`getBookingInspectionDetails()` is deprecated and remains an alias for
+`getBookingInspection()`; there is no separate details endpoint.
 
 ---
 

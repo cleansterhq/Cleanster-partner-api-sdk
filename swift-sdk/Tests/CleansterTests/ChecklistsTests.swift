@@ -65,6 +65,21 @@ final class ChecklistsTests: XCTestCase {
         XCTAssertEqual(resp.data?.id, 42)
     }
 
+    func testChecklistItem_decodesImageURL() async throws {
+        mock.succeed(with: [
+            "id": 77,
+            "name": "Standard",
+            "items": [[
+                "id": 1,
+                "description": "Photograph oven",
+                "isCompleted": true,
+                "imageUrl": "https://cdn.example/checklist/oven.jpg"
+            ]]
+        ])
+        let response = try await client.checklists.getChecklist(77)
+        XCTAssertEqual(response.data?.items?.first?.imageUrl, "https://cdn.example/checklist/oven.jpg")
+    }
+
     func testUpdateChecklist_sendsPUT() async throws {
         mock.succeed(with: ["id": 77])
         _ = try await client.checklists.updateChecklist(77, name: "Updated", items: ["New task"])

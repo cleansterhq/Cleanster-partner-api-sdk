@@ -128,21 +128,20 @@ public sealed class BookingsApi
         return JsonHelper.ParseRaw(root);
     }
 
-    /// <summary>Return the inspection report for a completed booking.</summary>
-    public async Task<ApiResponse<JsonElement>> GetBookingInspectionAsync(
+    /// <summary>Return a signed inspection report URL. Opening it displays before photos, after photos, checklist photo evidence, and property problems.</summary>
+    public async Task<ApiResponse<string>> GetBookingInspectionAsync(
         int bookingId, CancellationToken ct = default)
     {
         var root = await _http.GetAsync($"/v1/bookings/{bookingId}/inspection", ct: ct);
-        return JsonHelper.ParseRaw(root);
+        return JsonHelper.ParseSingle<string>(root);
     }
 
-    /// <summary>Return detailed inspection information for a completed booking.</summary>
-    public async Task<ApiResponse<JsonElement>> GetBookingInspectionDetailsAsync(
+    /// <summary>Return the inspection report URL.</summary>
+    /// <remarks>Deprecated: the details endpoint does not exist. Use <see cref="GetBookingInspectionAsync"/>.</remarks>
+    [Obsolete("The details endpoint does not exist. Use GetBookingInspectionAsync instead.")]
+    public Task<ApiResponse<string>> GetBookingInspectionDetailsAsync(
         int bookingId, CancellationToken ct = default)
-    {
-        var root = await _http.GetAsync($"/v1/bookings/{bookingId}/inspection/details", ct: ct);
-        return JsonHelper.ParseRaw(root);
-    }
+        => GetBookingInspectionAsync(bookingId, ct);
 
     /// <summary>Override the property's default checklist for this specific booking.</summary>
     public async Task<ApiResponse<JsonElement>> AssignChecklistToBookingAsync(

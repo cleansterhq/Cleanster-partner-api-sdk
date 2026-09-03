@@ -14,7 +14,7 @@ public class Checklist {
     @XmlElement private Integer     propertyId;
     @XmlElementWrapper(name = "items")
     @XmlElement(name   = "item")
-    private List<String> items;
+    private List<ChecklistItem> items;
     @XmlElement private String      createdAt;
     @XmlElement private String      updatedAt;
 
@@ -25,7 +25,7 @@ public class Checklist {
     public String       getDescription() { return description; }
     public Boolean      getActive()      { return active; }
     public Integer      getPropertyId()  { return propertyId; }
-    public List<String> getItems()       { return items; }
+    public List<ChecklistItem> getItems() { return items; }
     public String       getCreatedAt()   { return createdAt; }
     public String       getUpdatedAt()   { return updatedAt; }
 
@@ -34,7 +34,7 @@ public class Checklist {
     public void setDescription(String desc)     { this.description = desc; }
     public void setActive(Boolean active)       { this.active = active; }
     public void setPropertyId(Integer pid)      { this.propertyId = pid; }
-    public void setItems(List<String> items)    { this.items = items; }
+    public void setItems(List<ChecklistItem> items) { this.items = items; }
     public void setCreatedAt(String createdAt)  { this.createdAt = createdAt; }
     public void setUpdatedAt(String updatedAt)  { this.updatedAt = updatedAt; }
 

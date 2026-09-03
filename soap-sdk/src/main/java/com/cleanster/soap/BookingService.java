@@ -102,8 +102,22 @@ public class BookingService {
         return transport.extractData(transport.get("/v1/bookings/" + bookingId + "/inspection"));
     }
 
+    /**
+     * Returns the signed inspection-report URL. Opening it displays before and
+     * after photos, checklist photo evidence, and property problems.
+     */
+    public String getBookingInspectionUrl(long bookingId) {
+        return getBookingInspection(bookingId).asText();
+    }
+
+    /**
+     * @deprecated Use {@link #getBookingInspection(long)} or
+     * {@link #getBookingInspectionUrl(long)}. There is no separate details
+     * endpoint; this compatibility alias calls {@code /inspection}.
+     */
+    @Deprecated
     public JsonNode getBookingInspectionDetails(long bookingId) {
-        return transport.extractData(transport.get("/v1/bookings/" + bookingId + "/inspection/details"));
+        return getBookingInspection(bookingId);
     }
 
     public ApiResponse assignChecklistToBooking(long bookingId, long checklistId) {

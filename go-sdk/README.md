@@ -370,17 +370,15 @@ _, err = client.Bookings.PayExpenses(ctx, 16926, paymentMethodID)
 **`GET /v1/bookings/{bookingId}/inspection`**
 
 ```go
-resp, err := client.Bookings.GetInspection(ctx, 16926)
+resp, err := client.Bookings.GetBookingInspection(ctx, 16926)
+reportURL := resp.Data // signed URL to photos, checklist evidence, and property problems
 ```
 
 ---
 
-#### Get Booking Inspection Details
-**`GET /v1/bookings/{bookingId}/inspection/details`**
-
-```go
-resp, err := client.Bookings.GetInspectionDetails(ctx, 16926)
-```
+`GetBookingInspectionDetails` is retained as a deprecated compatibility alias
+for `GetBookingInspection`; it calls `/inspection`, because
+`/inspection/details` is not a public endpoint.
 
 ---
 

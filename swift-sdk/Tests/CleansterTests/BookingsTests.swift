@@ -336,14 +336,16 @@ final class BookingsTests: XCTestCase {
     // MARK: - inspection
 
     func testGetInspection_sendsGET() async throws {
-        mock.succeed(with: [:])
-        _ = try await client.bookings.getBookingInspection(16459)
+        mock.succeed(with: "https://reports.example/inspection?signature=abc")
+        let response = try await client.bookings.getBookingInspection(16459)
         XCTAssertEqual(mock.capturedMethod, "GET")
+        XCTAssertEqual(response.data, "https://reports.example/inspection?signature=abc")
     }
 
-    func testGetInspectionDetails_correctPath() async throws {
-        mock.succeed(with: [:])
+    func testGetInspectionDetails_isAliasForInspectionPath() async throws {
+        mock.succeed(with: "https://reports.example/inspection?signature=abc")
         _ = try await client.bookings.getBookingInspectionDetails(16459)
-        XCTAssertTrue(mock.capturedURL?.hasSuffix("/v1/bookings/16459/inspection/details") == true)
+        XCTAssertTrue(mock.capturedURL?.hasSuffix("/v1/bookings/16459/inspection") == true)
+        XCTAssertFalse(mock.capturedURL?.contains("/inspection/details") == true)
     }
 }

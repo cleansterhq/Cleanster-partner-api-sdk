@@ -97,11 +97,41 @@ class ServiceExtensionsTest {
     }
 
     @Test
-    @DisplayName("getBookingInspectionDetails calls GET /v1/bookings/{id}/inspection/details")
-    void getBookingInspectionDetailsCallsCorrectPath() {
-        when(transport.get("/v1/bookings/16459/inspection/details")).thenReturn(MAPPER.createObjectNode());
+    @DisplayName("getBookingInspectionUrl extracts the signed data URL")
+    void getBookingInspectionUrlExtractsDataUrl() {
+        ObjectNode response = MAPPER.createObjectNode();
+        response.put("data", "https://reports.example/inspection?signature=abc");
+        when(transport.get("/v1/bookings/16459/inspection")).thenReturn(response);
+        when(transport.extractData(response)).thenReturn(response.get("data"));
+
+        assertEquals("https://reports.example/inspection?signature=abc",
+                client.getBookingInspectionUrl(16459L));
+    }
+
+    @Test
+    @DisplayName("getBookingInspectionDetails aliases GET /v1/bookings/{id}/inspection")
+    void getBookingInspectionDetailsCallsInspectionPath() {
+        when(transport.get("/v1/bookings/16459/inspection")).thenReturn(MAPPER.createObjectNode());
         client.getBookingInspectionDetails(16459L);
-        verify(transport).get("/v1/bookings/16459/inspection/details");
+        verify(transport).get("/v1/bookings/16459/inspection");
+    }
+
+    @Test
+    @DisplayName("getChecklist parses structured item photo evidence")
+    void getChecklistParsesStructuredItems() {
+        ObjectNode item = MAPPER.createObjectNode();
+        item.put("id", 4);
+        item.put("description", "Photograph oven");
+        item.put("isCompleted", true);
+        item.put("imageUrl", "https://cdn.example/oven.jpg");
+        ObjectNode checklist = MAPPER.createObjectNode();
+        checklist.put("id", 1);
+        checklist.put("name", "Deep Clean");
+        checklist.putArray("items").add(item);
+        when(transport.get("/v1/checklist/1")).thenReturn(checklist);
+
+        Checklist result = client.getChecklist(1L);
+        assertEquals("https://cdn.example/oven.jpg", result.getItems().get(0).getImageUrl());
     }
 
     @Test

@@ -87,14 +87,20 @@ public final class BookingsApi {
         )
     }
 
-    /// Retrieve the post-booking inspection report.
-    public func getBookingInspection(_ bookingId: Int) async throws -> ApiResponse<AnyCodable> {
-        return try await client.requestRaw(method: "GET", path: "/v1/bookings/\(bookingId)/inspection")
+    /// Retrieve the signed URL for the post-booking inspection report.
+    ///
+    /// Opening the returned URL displays before/after photos, checklist photo
+    /// evidence, and property problems.
+    public func getBookingInspection(_ bookingId: Int) async throws -> ApiResponse<String> {
+        return try await client.request(method: "GET", path: "/v1/bookings/\(bookingId)/inspection")
     }
 
-    /// Retrieve detailed inspection data including photos and notes.
-    public func getBookingInspectionDetails(_ bookingId: Int) async throws -> ApiResponse<AnyCodable> {
-        return try await client.requestRaw(method: "GET", path: "/v1/bookings/\(bookingId)/inspection/details")
+    /// Deprecated: Use ``getBookingInspection(_:)``. There is no separate
+    /// inspection details endpoint; this compatibility alias returns the same
+    /// signed report URL.
+    @available(*, deprecated, message: "Use getBookingInspection(_:) instead.")
+    public func getBookingInspectionDetails(_ bookingId: Int) async throws -> ApiResponse<String> {
+        return try await getBookingInspection(bookingId)
     }
 
     /// Override the property's default checklist for a specific booking only.

@@ -402,22 +402,18 @@ try await client.bookings.payExpenses(16926, paymentMethodId: 55)
 #### Get Booking Inspection
 **`GET /v1/bookings/{bookingId}/inspection`**
 
-Retrieve the post-booking inspection summary.
+Returns an API envelope whose `data` is a signed report URL. Open that URL to
+view before/after photos, checklist photo evidence, and property problems.
 
 ```swift
-let report = try await client.bookings.getBookingInspection(16926)
+let response = try await client.bookings.getBookingInspection(16926)
+let reportURL = response.data
 ```
 
 ---
 
-#### Get Booking Inspection Details
-**`GET /v1/bookings/{bookingId}/inspection/details`**
-
-Retrieve detailed inspection data including photos and notes.
-
-```swift
-let details = try await client.bookings.getBookingInspectionDetails(16926)
-```
+`getBookingInspectionDetails(_:)` remains as a deprecated compatibility alias
+and calls `/inspection`; `/inspection/details` is not a public endpoint.
 
 ---
 

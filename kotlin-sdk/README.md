@@ -439,22 +439,19 @@ client.bookings.payExpenses(16926, paymentMethodId = 55)
 #### Get Booking Inspection
 **`GET /v1/bookings/{bookingId}/inspection`**
 
-Retrieve the post-booking inspection summary.
+The response `data` is a signed report URL. Open it to display **before_photos**, **after_photos**,
+**checklist photo evidence**, and **property_problems**.
 
 ```kotlin
 val report = client.bookings.getBookingInspection(16926)
+val reportUrl: String? = report.data
+// Open reportUrl in a browser or web view.
 ```
 
 ---
 
-#### Get Booking Inspection Details
-**`GET /v1/bookings/{bookingId}/inspection/details`**
-
-Retrieve detailed inspection data including photos and notes.
-
-```kotlin
-val details = client.bookings.getBookingInspectionDetails(16926)
-```
+`getBookingInspectionDetails()` is deprecated for compatibility and delegates to
+`getBookingInspection()`. There is no public `/inspection/details` endpoint.
 
 ---
 

@@ -295,21 +295,25 @@ class TestBookingsApi(unittest.TestCase):
 
     def test_get_booking_inspection(self):
         http = make_http()
-        http.get.return_value = ok({})
+        signed_report_url = "https://reports.example.com/inspection/16926?signature=abc"
+        http.get.return_value = ok(signed_report_url)
         api = BookingsApi(http)
 
-        api.get_booking_inspection(16926)
+        result = api.get_booking_inspection(16926)
 
         http.get.assert_called_once_with("/v1/bookings/16926/inspection")
+        self.assertEqual(signed_report_url, result.data)
 
     def test_get_booking_inspection_details(self):
         http = make_http()
-        http.get.return_value = ok({})
+        signed_report_url = "https://reports.example.com/inspection/16926?signature=abc"
+        http.get.return_value = ok(signed_report_url)
         api = BookingsApi(http)
 
-        api.get_booking_inspection_details(16926)
+        result = api.get_booking_inspection_details(16926)
 
-        http.get.assert_called_once_with("/v1/bookings/16926/inspection/details")
+        http.get.assert_called_once_with("/v1/bookings/16926/inspection")
+        self.assertEqual(signed_report_url, result.data)
 
     def test_assign_checklist_to_booking(self):
         http = make_http()
@@ -1022,7 +1026,13 @@ class TestModels(unittest.TestCase):
             "name": "Standard Clean",
             "items": [
                 {"id": 1, "description": "Vacuum", "isCompleted": False},
-                {"id": 2, "description": "Mop", "isCompleted": True},
+                {
+                    "id": 2,
+                    "description": "Mop",
+                    "isCompleted": True,
+                    "imageUrl": "https://images.example.com/checklist/mop.jpg",
+                    "futureEvidenceField": {"source": "inspection"},
+                },
             ],
         })
         self.assertEqual(105, c.id)
@@ -1032,6 +1042,10 @@ class TestModels(unittest.TestCase):
         self.assertEqual("Vacuum", c.items[0].description)
         self.assertFalse(c.items[0].is_completed)
         self.assertTrue(c.items[1].is_completed)
+        self.assertEqual(
+            "https://images.example.com/checklist/mop.jpg", c.items[1].image_url
+        )
+        self.assertEqual({"source": "inspection"}, c.items[1]._raw["futureEvidenceField"])
 
     def test_checklist_empty_items(self):
         c = Checklist({"id": 1, "name": "Empty"})

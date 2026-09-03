@@ -32,6 +32,17 @@ final class MockNetworkSession: NetworkSession, @unchecked Sendable {
         statusCode   = status
     }
 
+    /// Configure the mock to return a successful JSON envelope wrapping a string.
+    func succeed(with payload: String, status: Int = 200) {
+        let envelope: [String: Any] = [
+            "status": status,
+            "message": "OK",
+            "data": payload,
+        ]
+        responseData = try! JSONSerialization.data(withJSONObject: envelope)
+        statusCode = status
+    }
+
     /// Configure the mock to return a successful JSON envelope wrapping an array.
     func succeedWithArray(_ payload: [[String: Any]], status: Int = 200) {
         let envelope: [String: Any] = [

@@ -8,6 +8,7 @@ import com.cleanster.sdk.exception.CleansterApiException;
 import com.cleanster.sdk.exception.CleansterAuthException;
 import com.cleanster.sdk.model.*;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -113,6 +114,58 @@ class CleansterClientTest {
     }
 
     // ---- BookingApi Tests ----
+
+    @Test
+    @DisplayName("getBookingInspection returns a signed report URL")
+    void getBookingInspectionReturnsSignedReportUrl() {
+        HttpClient mockHttp = mock(HttpClient.class);
+        BookingApi api = new BookingApi(mockHttp);
+        ApiResponse<String> expected;
+        try {
+            expected = new ObjectMapper().readValue(
+                    "{\"status\":200,\"message\":\"OK\","
+                            + "\"data\":\"https://reports.example.com/inspection?signature=abc\"}",
+                    new TypeReference<ApiResponse<String>>() {});
+        } catch (Exception e) {
+            throw new AssertionError("Inspection report URL fixture must deserialize", e);
+        }
+        when(mockHttp.get(eq("/v1/bookings/16926/inspection"), any(TypeReference.class)))
+                .thenReturn(expected);
+
+        ApiResponse<String> result = api.getBookingInspection(16926);
+
+        assertEquals("https://reports.example.com/inspection?signature=abc", result.getData());
+        verify(mockHttp).get(eq("/v1/bookings/16926/inspection"), any(TypeReference.class));
+    }
+
+    @Test
+    @DisplayName("getBookingInspectionDetails delegates to inspection endpoint")
+    @SuppressWarnings("deprecation")
+    void getBookingInspectionDetailsUsesInspectionEndpoint() {
+        HttpClient mockHttp = mock(HttpClient.class);
+        BookingApi api = new BookingApi(mockHttp);
+        when(mockHttp.get(eq("/v1/bookings/16926/inspection"), any(TypeReference.class)))
+                .thenReturn(new ApiResponse<String>());
+
+        api.getBookingInspectionDetails(16926);
+
+        verify(mockHttp).get(eq("/v1/bookings/16926/inspection"), any(TypeReference.class));
+        verify(mockHttp, never()).get(contains("/inspection/details"), any(TypeReference.class));
+    }
+
+    @Test
+    @DisplayName("checklist fixture parses image URL")
+    void checklistFixtureParsesImageUrl() throws Exception {
+        Checklist checklist = new ObjectMapper().readValue(
+                "{\"id\":77,\"name\":\"Deep Clean\",\"items\":["
+                        + "{\"id\":1,\"description\":\"Vacuum\",\"imageUrl\":null},"
+                        + "{\"id\":2,\"description\":\"Mop\",\"imageUrl\":\"https://images.example.com/evidence.jpg\"}]}",
+                Checklist.class);
+
+        assertNull(checklist.getItems().get(0).getImageUrl());
+        assertEquals("https://images.example.com/evidence.jpg",
+                checklist.getItems().get(1).getImageUrl());
+    }
 
     @Test
     @DisplayName("getBookings calls GET /v1/bookings with no params")

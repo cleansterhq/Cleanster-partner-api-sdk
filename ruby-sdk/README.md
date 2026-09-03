@@ -359,18 +359,17 @@ client.bookings.pay_expenses(booking_id: 16926, payment_method_id: 10)
 #### Get Booking Inspection
 **`GET /v1/bookings/{bookingId}/inspection`**
 
-```ruby
-resp = client.bookings.get_inspection(booking_id: 16926)
-```
-
----
-
-#### Get Booking Inspection Details
-**`GET /v1/bookings/{bookingId}/inspection/details`**
+The normal API envelope's `data` is a signed report URL string. Open it in a
+browser or web view to display **before_photos**, **after_photos**, the
+**checklist** (including photo evidence), and **property_problems**.
 
 ```ruby
-resp = client.bookings.get_inspection_details(booking_id: 16926)
+resp = client.bookings.get_booking_inspection(16926)
+report_url = resp.data
 ```
+
+`get_booking_inspection_details` is deprecated and remains an alias for
+`get_booking_inspection`; there is no separate details endpoint.
 
 ---
 

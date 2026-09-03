@@ -12,7 +12,7 @@ A Java SOAP SDK for the Cleanster Partner API. Provides a WSDL-defined, document
 | Build | Maven |
 | SOAP Style | Document / Literal (SOAP 1.1) |
 | Auth | Bearer Token (API Key) |
-| Tests | 122 (JUnit 5 + Mockito) |
+| Tests | 124 (JUnit 5 + Mockito) |
 | Total Operations | 62 |
 | WSDL | `wsdl/cleanster.wsdl` |
 | XSD Schema | `wsdl/cleanster-types.xsd` |
@@ -33,8 +33,7 @@ A Java SOAP SDK for the Cleanster Partner API. Provides a WSDL-defined, document
 | `RemoveAssignedCleaner` | DELETE | `/v1/bookings/{id}/cleaner` | Remove the assigned cleaner |
 | `AdjustHours` | POST | `/v1/bookings/{id}/hours` | Adjust booking duration |
 | `PayExpenses` | POST | `/v1/bookings/{id}/expenses` | Pay booking expenses |
-| `GetBookingInspection` | GET | `/v1/bookings/{id}/inspection` | Get inspection report |
-| `GetBookingInspectionDetails` | GET | `/v1/bookings/{id}/inspection/details` | Get detailed inspection |
+| `GetBookingInspection` | GET | `/v1/bookings/{id}/inspection` | Get signed inspection-report URL |
 | `AssignChecklistToBooking` | PUT | `/v1/bookings/{id}/checklist/{checklistId}` | Assign a checklist to a booking |
 | `SubmitFeedback` | POST | `/v1/bookings/{id}/feedback` | Submit a rating and comment |
 | `AddTip` | POST | `/v1/bookings/{id}/tip` | Add a tip to a booking |
@@ -50,6 +49,15 @@ separately describes the cleaner's operational progress. Live responses have
 confirmed `NOT_STARTED`, `ON_THE_WAY`, and `COMPLETED`; additional values such
 as `ARRIVED`, `CLEANING`, and `PAUSED` may appear. The SDK preserves both as raw
 strings so future server-side values remain available.
+
+### Inspection reports
+
+`GetBookingInspection` returns the API envelope's `data` as a signed URL, not
+an inline photo collection. Opening the URL shows before/after photos,
+checklist photo evidence, and property problems. The Java client's
+`getBookingInspectionUrl` helper extracts this value. The deprecated
+`GetBookingInspectionDetails` compatibility alias calls `/inspection`;
+`/inspection/details` is not a public endpoint.
 
 ### Properties (14 operations)
 | Operation | HTTP Method | Path | Description |

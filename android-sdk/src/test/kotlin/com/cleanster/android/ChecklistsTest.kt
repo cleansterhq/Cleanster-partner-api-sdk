@@ -26,7 +26,7 @@ class ChecklistsTest {
             .addHeader("Content-Type", "application/json"))
 
     private val checklistJson =
-        """{"id":77,"name":"Deep Clean","items":["Vacuum","Mop","Wipe surfaces"]}"""
+        """{"id":77,"name":"Deep Clean","items":[{"id":1,"description":"Vacuum"},{"id":2,"description":"Mop","imageUrl":"https://images.example.com/evidence.jpg"},{"id":3,"description":"Wipe surfaces"}]}"""
 
     @Test fun `listChecklists returns list`() = runTest {
         enqueue("""{"status":200,"message":"OK","data":[$checklistJson]}""")
@@ -61,7 +61,13 @@ class ChecklistsTest {
         enqueue("""{"status":200,"message":"OK","data":$checklistJson}""")
         val resp = client.checklists.getChecklist(77)
         assertEquals(3, resp.data?.items?.size)
-        assertEquals("Vacuum", resp.data?.items?.first())
+        assertEquals("Vacuum", resp.data?.items?.first()?.description)
+    }
+
+    @Test fun `getChecklist parses checklist item image URL`() = runTest {
+        enqueue("""{"status":200,"message":"OK","data":$checklistJson}""")
+        val resp = client.checklists.getChecklist(77)
+        assertEquals("https://images.example.com/evidence.jpg", resp.data?.items?.get(1)?.imageUrl)
     }
 
     @Test fun `createChecklist sends POST`() = runTest {
@@ -123,7 +129,7 @@ class ChecklistsTest {
     }
 
     @Test fun `createChecklist with many items`() = runTest {
-        enqueue("""{"status":200,"message":"OK","data":{"id":88,"name":"Full","items":["i1","i2","i3","i4","i5"]}}""")
+        enqueue("""{"status":200,"message":"OK","data":{"id":88,"name":"Full","items":[{"description":"i1"},{"description":"i2"},{"description":"i3"},{"description":"i4"},{"description":"i5"}]}}""")
         val resp = client.checklists.createChecklist("Full", listOf("i1","i2","i3","i4","i5"))
         assertEquals(5, resp.data?.items?.size)
     }

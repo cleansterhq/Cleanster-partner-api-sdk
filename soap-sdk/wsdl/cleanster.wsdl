@@ -61,6 +61,12 @@
   <message name="AssignCleanerOutput">
     <part name="parameters" element="types:AssignCleanerResponse"/>
   </message>
+  <message name="GetBookingInspectionInput">
+    <part name="parameters" element="types:GetBookingInspectionRequest"/>
+  </message>
+  <message name="GetBookingInspectionOutput">
+    <part name="parameters" element="types:GetBookingInspectionResponse"/>
+  </message>
 
   <!-- =========================================================
        Messages - Properties
@@ -194,6 +200,11 @@
       <input  message="tns:AssignCleanerInput"/>
       <output message="tns:AssignCleanerOutput"/>
     </operation>
+    <operation name="GetBookingInspection">
+      <documentation>Retrieve the signed URL for a booking inspection report.</documentation>
+      <input  message="tns:GetBookingInspectionInput"/>
+      <output message="tns:GetBookingInspectionOutput"/>
+    </operation>
 
     <!-- Properties -->
     <operation name="GetProperty">
@@ -299,6 +310,11 @@
     </operation>
     <operation name="AssignCleaner">
       <soap:operation soapAction="https://api.cleanster.com/soap/AssignCleaner"/>
+      <input><soap:body use="literal"/></input>
+      <output><soap:body use="literal"/></output>
+    </operation>
+    <operation name="GetBookingInspection">
+      <soap:operation soapAction="https://api.cleanster.com/soap/GetBookingInspection"/>
       <input><soap:body use="literal"/></input>
       <output><soap:body use="literal"/></output>
     </operation>

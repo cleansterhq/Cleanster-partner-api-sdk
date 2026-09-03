@@ -143,15 +143,17 @@ class BookingsTest {
     // ── inspection ─────────────────────────────────────────────────────────────
 
     @Test void getBookingInspection_callsGetWithInspectionPath() {
-        doReturn(OK_JSON).when(http).get("/v1/bookings/100/inspection");
-        api.getBookingInspection(100);
+        doReturn("{\"success\":true,\"message\":\"OK\",\"data\":\"https://reports.example/inspection?signature=abc\"}")
+                .when(http).get("/v1/bookings/100/inspection");
+        assertEquals("https://reports.example/inspection?signature=abc", api.getBookingInspection(100).getData());
         verify(http).get("/v1/bookings/100/inspection");
     }
 
-    @Test void getBookingInspectionDetails_callsGetWithDetailsPath() {
-        doReturn(OK_JSON).when(http).get("/v1/bookings/100/inspection/details");
+    @Test void getBookingInspectionDetails_aliasesInspectionPath() {
+        doReturn("{\"success\":true,\"message\":\"OK\",\"data\":\"https://reports.example/inspection?signature=abc\"}")
+                .when(http).get("/v1/bookings/100/inspection");
         api.getBookingInspectionDetails(100);
-        verify(http).get("/v1/bookings/100/inspection/details");
+        verify(http).get("/v1/bookings/100/inspection");
     }
 
     // ── assignChecklistToBooking ───────────────────────────────────────────────

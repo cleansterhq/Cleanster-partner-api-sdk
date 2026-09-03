@@ -167,15 +167,23 @@ class BookingsApi:
         )
         return ApiResponse.from_dict(raw)
 
-    def get_booking_inspection(self, booking_id: int) -> ApiResponse:
-        """Get the inspection report for a completed booking."""
+    def get_booking_inspection(self, booking_id: int) -> ApiResponse[str]:
+        """
+        Get a signed URL for the inspection report for a completed booking.
+
+        Open ``response.data`` to display before photos, after photos, the
+        checklist (including photo evidence), and property problems.
+        """
         raw = self._http.get(f"/v1/bookings/{booking_id}/inspection")
         return ApiResponse.from_dict(raw)
 
-    def get_booking_inspection_details(self, booking_id: int) -> ApiResponse:
-        """Get detailed inspection information for a completed booking."""
-        raw = self._http.get(f"/v1/bookings/{booking_id}/inspection/details")
-        return ApiResponse.from_dict(raw)
+    def get_booking_inspection_details(self, booking_id: int) -> ApiResponse[str]:
+        """
+        Deprecated: use :meth:`get_booking_inspection`.
+
+        This compatibility alias returns the same signed inspection-report URL.
+        """
+        return self.get_booking_inspection(booking_id)
 
     def assign_checklist_to_booking(self, booking_id: int, checklist_id: int) -> ApiResponse:
         """

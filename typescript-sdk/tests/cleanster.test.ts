@@ -271,22 +271,27 @@ describe("BookingsApi", () => {
 
   test("getBookingInspection() calls correct URL", async () => {
     const http = mockHttp();
-    http.get.mockResolvedValue(ok({}));
+    const signedReportUrl = "https://reports.example.com/inspection/16926?signature=abc";
+    http.get.mockResolvedValue(ok(signedReportUrl));
     const api = new BookingsApi(http);
 
-    await api.getBookingInspection(16926);
+    const result = await api.getBookingInspection(16926);
 
     expect(http.get).toHaveBeenCalledWith("/v1/bookings/16926/inspection");
+    expect(result.data).toBe(signedReportUrl);
   });
 
-  test("getBookingInspectionDetails() calls correct URL", async () => {
+  test("getBookingInspectionDetails() uses the inspection endpoint alias", async () => {
     const http = mockHttp();
-    http.get.mockResolvedValue(ok({}));
+    const signedReportUrl = "https://reports.example.com/inspection/16926?signature=abc";
+    http.get.mockResolvedValue(ok(signedReportUrl));
     const api = new BookingsApi(http);
 
-    await api.getBookingInspectionDetails(16926);
+    const result = await api.getBookingInspectionDetails(16926);
 
-    expect(http.get).toHaveBeenCalledWith("/v1/bookings/16926/inspection/details");
+    expect(http.get).toHaveBeenCalledTimes(1);
+    expect(http.get).toHaveBeenCalledWith("/v1/bookings/16926/inspection");
+    expect(result.data).toBe(signedReportUrl);
   });
 
   test("assignChecklistToBooking() posts to correct URL", async () => {
@@ -559,7 +564,17 @@ describe("ChecklistsApi", () => {
 
   test("getChecklist() returns typed data", async () => {
     const http = mockHttp();
-    http.get.mockResolvedValue(ok({ id: 105, name: "Standard Clean", items: [{ id: 1, description: "Vacuum", isCompleted: false }] }));
+    http.get.mockResolvedValue(ok({
+      id: 105,
+      name: "Standard Clean",
+      items: [{
+        id: 1,
+        description: "Vacuum",
+        isCompleted: false,
+        imageUrl: "https://images.example.com/checklist/vacuum.jpg",
+        futureEvidenceField: { source: "inspection" },
+      }],
+    }));
     const api = new ChecklistsApi(http);
 
     const result = await api.getChecklist(105);
@@ -567,6 +582,8 @@ describe("ChecklistsApi", () => {
     expect(http.get).toHaveBeenCalledWith("/v1/checklist/105");
     expect(result.data.name).toBe("Standard Clean");
     expect(result.data.items[0].description).toBe("Vacuum");
+    expect(result.data.items[0].imageUrl).toBe("https://images.example.com/checklist/vacuum.jpg");
+    expect(result.data.items[0].futureEvidenceField).toEqual({ source: "inspection" });
   });
 
   test("createChecklist() posts name and items", async () => {

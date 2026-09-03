@@ -10,6 +10,7 @@ import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 class BookingsTest {
     private lateinit var server: MockWebServer
@@ -177,19 +178,22 @@ class BookingsTest {
     }
 
     // ─── getBookingInspection ────────────────────────────────────────────────
-    @Test fun `getBookingInspection hits correct path`() = runTest {
-        enqueue("""{"status":200,"message":"OK","data":{}}""")
-        client.bookings.getBookingInspection(16926)
+    @Test fun `getBookingInspection deserializes signed report URL`() = runTest {
+        enqueue("""{"status":200,"message":"OK","data":"https://reports.example.com/inspection?signature=abc"}""")
+        val response = client.bookings.getBookingInspection(16926)
         val req = server.takeRequest()
-        assert(req.path!!.contains("v1/bookings/16926/inspection"))
+        assertEquals("https://reports.example.com/inspection?signature=abc", response.data)
+        assertEquals("/v1/bookings/16926/inspection", req.path)
     }
 
     // ─── getBookingInspectionDetails ─────────────────────────────────────────
-    @Test fun `getBookingInspectionDetails hits correct path`() = runTest {
-        enqueue("""{"status":200,"message":"OK","data":{}}""")
-        client.bookings.getBookingInspectionDetails(16926)
+    @Test fun `getBookingInspectionDetails is an inspection alias`() = runTest {
+        enqueue("""{"status":200,"message":"OK","data":"https://reports.example.com/inspection?signature=abc"}""")
+        val response = client.bookings.getBookingInspectionDetails(16926)
         val req = server.takeRequest()
-        assert(req.path!!.contains("inspection/details"))
+        assertEquals("https://reports.example.com/inspection?signature=abc", response.data)
+        assertEquals("/v1/bookings/16926/inspection", req.path)
+        assertTrue(!req.path!!.contains("/inspection/details"))
     }
 
     // ─── assignChecklistToBooking ────────────────────────────────────────────
@@ -379,7 +383,7 @@ class BookingsTest {
     }
 
     @Test fun `getBookingInspectionDetails sends GET`() = runTest {
-        enqueue("""{"status":200,"message":"OK","data":{}}""")
+        enqueue("""{"status":200,"message":"OK","data":"https://reports.example.com/inspection?signature=abc"}""")
         client.bookings.getBookingInspectionDetails(16926)
         assertEquals("GET", server.takeRequest().method)
     }

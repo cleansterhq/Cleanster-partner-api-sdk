@@ -80,17 +80,21 @@ class BookingsApi internal constructor(private val client: CleansterClient) {
         body   = PayExpensesRequest(paymentMethodId = paymentMethodId),
     )
 
-    /** Retrieve the post-booking inspection report. */
-    suspend fun getBookingInspection(bookingId: Int): ApiResponse<Map<String, Any>> = client.request(
+    /**
+     * Retrieve a signed inspection report URL. Opening it displays before photos, after photos,
+     * checklist photo evidence, and property problems.
+     */
+    suspend fun getBookingInspection(bookingId: Int): ApiResponse<String> = client.request(
         method = "GET",
         path   = "/v1/bookings/$bookingId/inspection",
     )
 
-    /** Retrieve detailed inspection data including photos and notes. */
-    suspend fun getBookingInspectionDetails(bookingId: Int): ApiResponse<Map<String, Any>> = client.request(
-        method = "GET",
-        path   = "/v1/bookings/$bookingId/inspection/details",
-    )
+    /**
+     * @deprecated The details endpoint does not exist. Use [getBookingInspection].
+     */
+    @Deprecated("The details endpoint does not exist. Use getBookingInspection instead.")
+    suspend fun getBookingInspectionDetails(bookingId: Int): ApiResponse<String> =
+        getBookingInspection(bookingId)
 
     /** Override the property's default checklist for a specific booking only. */
     suspend fun assignChecklistToBooking(bookingId: Int, checklistId: Int): ApiResponse<Map<String, Any>> = client.request(

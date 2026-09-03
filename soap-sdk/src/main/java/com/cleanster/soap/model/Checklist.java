@@ -11,16 +11,16 @@ public class Checklist {
 
     private Long         id;
     private String       name;
-    private List<String> items;
+    private List<ChecklistItem> items;
     @JsonProperty("created_at") private String createdAt;
 
     public Long         getId()        { return id; }
     public String       getName()      { return name; }
-    public List<String> getItems()     { return items; }
+    public List<ChecklistItem> getItems() { return items; }
     public String       getCreatedAt() { return createdAt; }
 
     public void setId(Long id)               { this.id = id; }
     public void setName(String name)         { this.name = name; }
-    public void setItems(List<String> items) { this.items = items; }
+    public void setItems(List<ChecklistItem> items) { this.items = items; }
     public void setCreatedAt(String s)       { this.createdAt = s; }
 }

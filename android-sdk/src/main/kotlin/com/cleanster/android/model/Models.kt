@@ -57,7 +57,14 @@ data class Property(
 data class Checklist(
     @SerializedName("id")    val id: Int = 0,
     @SerializedName("name")  val name: String = "",
-    @SerializedName("items") val items: List<String> = emptyList(),
+    @SerializedName("items") val items: List<ChecklistItem> = emptyList(),
+)
+
+data class ChecklistItem(
+    @SerializedName("id")          val id: Int? = null,
+    @SerializedName("description") val description: String? = null,
+    @SerializedName("isCompleted") val isCompleted: Boolean? = null,
+    @SerializedName("imageUrl")    val imageUrl: String? = null,
 )
 
 data class PaymentMethod(

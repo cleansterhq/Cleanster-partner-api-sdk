@@ -126,6 +126,16 @@ public class CleansterSOAPClient {
         return bookingService.getBookingInspection(bookingId);
     }
 
+    /** Returns the signed URL in the inspection response's data field. */
+    public String getBookingInspectionUrl(long bookingId) {
+        return bookingService.getBookingInspectionUrl(bookingId);
+    }
+
+    /**
+     * @deprecated Use {@link #getBookingInspection(long)} or
+     * {@link #getBookingInspectionUrl(long)}.
+     */
+    @Deprecated
     public JsonNode getBookingInspectionDetails(long bookingId) {
         return bookingService.getBookingInspectionDetails(bookingId);
     }

@@ -38,6 +38,21 @@ class ChecklistsTest {
         assertTrue(mock.capturedUrl?.endsWith("/v1/checklist/77") == true)
     }
 
+    @Test fun `getChecklist parses checklist item image URL`() = runTest {
+        mock.succeed(mapOf(
+            "id" to 77.0,
+            "name" to "Deep Clean",
+            "items" to listOf(mapOf(
+                "id" to 1.0,
+                "description" to "Vacuum",
+                "isCompleted" to true,
+                "imageUrl" to "https://images.example.com/evidence.jpg",
+            )),
+        ))
+        val response = client.checklists.getChecklist(77)
+        assertEquals("https://images.example.com/evidence.jpg", response.data?.items?.single()?.imageUrl)
+    }
+
     @Test fun `createChecklist sends POST`() = runTest {
         mock.succeed(mapOf("id" to 77.0))
         client.checklists.createChecklist("Standard", listOf("Vacuum"))

@@ -4,7 +4,7 @@
   <img src="https://img.shields.io/badge/Language-Java%2017-orange" alt="Java 17">
   <img src="https://img.shields.io/badge/JAXB-4.0-blue" alt="JAXB 4.0">
   <img src="https://img.shields.io/badge/Endpoints-66-brightgreen" alt="66 Endpoints">
-  <img src="https://img.shields.io/badge/Tests-127%20passing-success" alt="127 Tests">
+  <img src="https://img.shields.io/badge/Tests-128%20passing-success" alt="128 Tests">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT">
 </p>
 
@@ -234,13 +234,18 @@ Full lifecycle management for cleaning appointments.
 | POST   | `/v1/bookings/{id}/hours`                        | `adjustHours(int id, double hours)` |
 | POST   | `/v1/bookings/{id}/expenses`                     | `payExpenses(int id, int paymentMethodId)` |
 | GET    | `/v1/bookings/{id}/inspection`                   | `getBookingInspection(int id)` |
-| GET    | `/v1/bookings/{id}/inspection/details`           | `getBookingInspectionDetails(int id)` |
 | PUT    | `/v1/bookings/{id}/checklist/{checklistId}`      | `assignChecklistToBooking(int id, int checklistId)` |
 | POST   | `/v1/bookings/{id}/feedback`                     | `submitFeedback(int id, int rating, String comment)` |
 | POST   | `/v1/bookings/{id}/tip`                          | `addTip(int id, double amount, int paymentMethodId)` |
 | GET    | `/v1/bookings/{id}/chat`                         | `getChat(int id)` |
 | POST   | `/v1/bookings/{id}/chat`                         | `sendMessage(int id, String message)` |
 | DELETE | `/v1/bookings/{id}/chat/{messageId}`             | `deleteMessage(int id, String messageId)` |
+
+`getBookingInspection` returns `XmlApiResponse<String>`: its `data` is a
+signed report URL. Opening it displays before/after photos, checklist photo
+evidence, and property problems. `getBookingInspectionDetails` is deprecated
+and retained only as an alias to `/inspection`; `/inspection/details` is not a
+public endpoint.
 
 #### Create a booking
 
@@ -793,7 +798,6 @@ XmlApiResponse<?> resp = client.other().getAvailableCleaners(Map.of(
 | 25 | POST   | `/v1/bookings/{id}/hours`                         | Bookings |
 | 26 | POST   | `/v1/bookings/{id}/expenses`                      | Bookings |
 | 27 | GET    | `/v1/bookings/{id}/inspection`                    | Bookings |
-| 28 | GET    | `/v1/bookings/{id}/inspection/details`            | Bookings |
 | 29 | PUT    | `/v1/bookings/{id}/checklist/{checklistId}`       | Bookings |
 | 30 | POST   | `/v1/bookings/{id}/feedback`                      | Bookings |
 | 31 | POST   | `/v1/bookings/{id}/tip`                           | Bookings |
@@ -841,7 +845,7 @@ XmlApiResponse<?> resp = client.other().getAvailableCleaners(Map.of(
 mvn test
 ```
 
-127 tests across 9 test classes using **Mockito** (no real network calls). Each test asserts:
+128 tests across 9 test classes using **Mockito** (no real network calls). Each test asserts:
 - The correct HTTP method is used
 - The path contains `/v1/` prefix and the correct endpoint segment
 - Request bodies contain expected fields
@@ -996,7 +1000,7 @@ strings so future server-side values remain available.
 - `XmlConverter` utility (toXml / fromXml / isXml)
 - `CleansterXmlClient` with sandbox, production, and custom factories
 - OkHttp 4.12.0 transport with configurable timeouts
-- 127 tests with Mockito
+- 128 tests with Mockito
 
 ---
 

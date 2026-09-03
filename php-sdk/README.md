@@ -330,18 +330,17 @@ $client->bookings()->payExpenses(16926, $paymentMethodId);
 #### Get Booking Inspection
 **`GET /v1/bookings/{bookingId}/inspection`**
 
-```php
-$resp = $client->bookings()->getInspection(16926);
-```
-
----
-
-#### Get Booking Inspection Details
-**`GET /v1/bookings/{bookingId}/inspection/details`**
+The normal API envelope's `data` is a signed report URL string. Open it in a
+browser or web view to display **before_photos**, **after_photos**, the
+**checklist** (including photo evidence), and **property_problems**.
 
 ```php
-$resp = $client->bookings()->getInspectionDetails(16926);
+$resp = $client->bookings()->getBookingInspection(16926);
+$reportUrl = $resp->data;
 ```
+
+`getBookingInspectionDetails()` is deprecated and remains an alias for
+`getBookingInspection()`; there is no separate details endpoint.
 
 ---
 

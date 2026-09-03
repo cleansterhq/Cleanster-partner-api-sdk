@@ -110,19 +110,23 @@ export class BookingsApi {
   }
 
   /**
-   * Get the inspection report for a completed booking.
+   * Get a signed URL for the inspection report for a completed booking.
+   *
+   * Open `response.data` to display before_photos, after_photos, the checklist
+   * (including photo evidence), and property_problems.
    * @param bookingId  The booking ID.
    */
-  getBookingInspection(bookingId: number): Promise<ApiResponse<unknown>> {
-    return this.http.get(`/v1/bookings/${bookingId}/inspection`);
+  getBookingInspection(bookingId: number): Promise<ApiResponse<string>> {
+    return this.http.get<string>(`/v1/bookings/${bookingId}/inspection`);
   }
 
   /**
-   * Get detailed inspection information for a completed booking.
+   * @deprecated Use getBookingInspection. This compatibility alias returns the
+   * same signed inspection-report URL.
    * @param bookingId  The booking ID.
    */
-  getBookingInspectionDetails(bookingId: number): Promise<ApiResponse<unknown>> {
-    return this.http.get(`/v1/bookings/${bookingId}/inspection/details`);
+  getBookingInspectionDetails(bookingId: number): Promise<ApiResponse<string>> {
+    return this.getBookingInspection(bookingId);
   }
 
   /**

@@ -21,7 +21,9 @@ class ChecklistsTest {
     private static final String LIST_JSON     = "{\"success\":true,\"message\":\"OK\","
             + "\"data\":[{\"id\":1,\"name\":\"Deep Clean\"}]}";
     private static final String CHECKLIST_JSON = "{\"success\":true,\"message\":\"OK\","
-            + "\"data\":{\"id\":1,\"name\":\"Deep Clean\"}}";
+            + "\"data\":{\"id\":1,\"name\":\"Deep Clean\",\"items\":[{\"id\":4,"
+            + "\"description\":\"Photograph oven\",\"isCompleted\":true,"
+            + "\"imageUrl\":\"https://cdn.example/oven.jpg\"}]}}";
     private static final String OK_JSON        = "{\"success\":true,\"message\":\"OK\",\"data\":{}}";
 
     @BeforeEach void setUp() {
@@ -68,6 +70,12 @@ class ChecklistsTest {
     @Test void getChecklist_returnsParsed() {
         doReturn(CHECKLIST_JSON).when(http).get("/v1/checklist/1");
         assertEquals("Deep Clean", api.getChecklist(1).getData().getName());
+    }
+
+    @Test void getChecklist_parsesItemPhotoEvidence() {
+        doReturn(CHECKLIST_JSON).when(http).get("/v1/checklist/1");
+        assertEquals("https://cdn.example/oven.jpg",
+                api.getChecklist(1).getData().getItems().get(0).getImageUrl());
     }
 
     // ── createChecklist ────────────────────────────────────────────────────────

@@ -70,7 +70,7 @@
 | [C# / .NET](#c--net) | [`csharp-sdk/`](./csharp-sdk) | 115 | .NET 8.0+ | NuGet |
 | [Swift](#swift) | [`swift-sdk/`](./swift-sdk) | 174 | Swift 5.9+ / iOS 16+ | Swift Package Manager |
 | [Kotlin](#kotlin) | [`kotlin-sdk/`](./kotlin-sdk) | 174 | Kotlin 1.9+ / JVM 11+ | Gradle |
-| [XML (JAXB)](#xml) | [`xml-sdk/`](./xml-sdk) | 127 | Java 17+ / JAXB 4.0 | Maven |
+| [XML (JAXB)](#xml) | [`xml-sdk/`](./xml-sdk) | 128 | Java 17+ / JAXB 4.0 | Maven |
 | [SOAP](#soap) | [`soap-sdk/`](./soap-sdk) | 122 | Java 11+ | Maven |
 | [Android (Retrofit)](#android) | [`android-sdk/`](./android-sdk) | 172 | Android API 26+ / Kotlin 1.9+ | Gradle |
 
@@ -1780,13 +1780,28 @@ client.bookings().payExpenses(16459, req);
 ---
 
 #### `GET /v1/bookings/{bookingId}/inspection` - Get Inspection Report
-#### `GET /v1/bookings/{bookingId}/inspection/details` - Get Detailed Inspection
 
-Retrieve photos, notes, and scores from the post-booking inspection.
+Returns a signed inspection-report URL in the response's `data` field. Open or
+embed that URL to show the complete report:
+
+- before photos
+- after photos
+- completed checklist items and their photo evidence
+- property problems reported by the cleaner
+
+The Partner API does not expose a separate problem-submission endpoint.
+Problems reported by the cleaner are included in the signed inspection report.
+SDK methods previously named `get...InspectionDetails` remain as deprecated
+compatibility aliases and now request this same supported endpoint.
 
 ```python
-report  = client.bookings.get_booking_inspection(16459)
-details = client.bookings.get_booking_inspection_details(16459)
+report = client.bookings.get_booking_inspection(16459)
+report_url = report.data
+```
+
+```typescript
+const report = await client.bookings.getBookingInspection(16459);
+const reportUrl = report.data;
 ```
 
 ---
@@ -2860,7 +2875,7 @@ Cleanster-partner-api-sdk/
 │   │   ├── api/          BookingsXmlApi.java, PropertiesXmlApi.java, UsersXmlApi.java, ...
 │   │   ├── model/        Booking.java, Property.java, User.java, ...  (all JAXB-annotated)
 │   │   └── client/       CleansterXmlClient.java, XmlConverter.java, XmlHttpClient.java
-│   ├── src/test/java/    127 unit tests (JUnit 5 + Mockito)
+│   ├── src/test/java/    128 unit tests (JUnit 5 + Mockito)
 │   ├── pom.xml
 │   └── README.md         Full XML SDK documentation
 │
@@ -2882,7 +2897,7 @@ Cleanster-partner-api-sdk/
 │   │   ├── PaymentMethodService.java 6 payment method operations
 │   │   ├── WebhookService.java       4 webhook operations
 │   │   └── model/            Booking, Property, User, Webhook, PaymentMethod, ...
-│   ├── src/test/java/        122 unit tests (JUnit 5 + Mockito)
+│   ├── src/test/java/        124 unit tests (JUnit 5 + Mockito)
 │   ├── pom.xml
 │   └── README.md             Full SOAP SDK documentation
 │

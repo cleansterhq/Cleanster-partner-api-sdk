@@ -351,8 +351,9 @@ public class CleansterTests
     {
         var http = MockHttp();
         http.Setup(h => h.GetAsync("/v1/bookings/16926/inspection", null, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(MakeResponse("{}"));
-        await new BookingsApi(http.Object).GetBookingInspectionAsync(16926);
+            .ReturnsAsync(MakeResponse(@"""https://reports.example.com/inspection?signature=abc"""));
+        var response = await new BookingsApi(http.Object).GetBookingInspectionAsync(16926);
+        Assert.Equal("https://reports.example.com/inspection?signature=abc", response.Data);
         http.VerifyAll();
     }
 
@@ -360,9 +361,12 @@ public class CleansterTests
     public async Task Bookings_GetBookingInspectionDetails()
     {
         var http = MockHttp();
-        http.Setup(h => h.GetAsync("/v1/bookings/16926/inspection/details", null, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(MakeResponse("{}"));
-        await new BookingsApi(http.Object).GetBookingInspectionDetailsAsync(16926);
+        http.Setup(h => h.GetAsync("/v1/bookings/16926/inspection", null, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(MakeResponse(@"""https://reports.example.com/inspection?signature=abc"""));
+#pragma warning disable CS0618
+        var response = await new BookingsApi(http.Object).GetBookingInspectionDetailsAsync(16926);
+#pragma warning restore CS0618
+        Assert.Equal("https://reports.example.com/inspection?signature=abc", response.Data);
         http.VerifyAll();
     }
 

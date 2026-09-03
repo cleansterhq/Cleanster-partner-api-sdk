@@ -359,24 +359,28 @@ class CleansterTest extends TestCase
 
     public function testGetBookingInspection(): void
     {
+        $signedReportUrl = 'https://reports.example.com/inspection/16926?signature=abc';
         $http = $this->mockHttp();
         $http->expects($this->once())
              ->method('get')
              ->with('/v1/bookings/16926/inspection')
-             ->willReturn($this->ok([]));
+             ->willReturn($this->ok($signedReportUrl));
 
-        (new BookingsApi($http))->getBookingInspection(16926);
+        $response = (new BookingsApi($http))->getBookingInspection(16926);
+        $this->assertSame($signedReportUrl, $response->data);
     }
 
     public function testGetBookingInspectionDetails(): void
     {
+        $signedReportUrl = 'https://reports.example.com/inspection/16926?signature=abc';
         $http = $this->mockHttp();
         $http->expects($this->once())
              ->method('get')
-             ->with('/v1/bookings/16926/inspection/details')
-             ->willReturn($this->ok([]));
+             ->with('/v1/bookings/16926/inspection')
+             ->willReturn($this->ok($signedReportUrl));
 
-        (new BookingsApi($http))->getBookingInspectionDetails(16926);
+        $response = (new BookingsApi($http))->getBookingInspectionDetails(16926);
+        $this->assertSame($signedReportUrl, $response->data);
     }
 
     public function testAssignChecklistToBooking(): void
@@ -1237,7 +1241,11 @@ class CleansterTest extends TestCase
             'id' => 105, 'name' => 'Standard',
             'items' => [
                 ['id' => 1, 'description' => 'Vacuum', 'isCompleted' => false],
-                ['id' => 2, 'description' => 'Mop',    'isCompleted' => true, 'imageUrl' => 'https://img.example.com/1.jpg'],
+                [
+                    'id' => 2, 'description' => 'Mop', 'isCompleted' => true,
+                    'imageUrl' => 'https://img.example.com/1.jpg',
+                    'futureEvidenceField' => ['source' => 'inspection'],
+                ],
             ],
         ]);
 
@@ -1246,6 +1254,7 @@ class CleansterTest extends TestCase
         $this->assertFalse($cl->items[0]->isCompleted);
         $this->assertTrue($cl->items[1]->isCompleted);
         $this->assertSame('https://img.example.com/1.jpg', $cl->items[1]->imageUrl);
+        $this->assertSame(['source' => 'inspection'], $cl->items[1]->raw['futureEvidenceField']);
         $this->assertNull($cl->items[0]->imageUrl);
     }
 

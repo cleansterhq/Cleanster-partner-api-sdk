@@ -143,18 +143,28 @@ final class BookingsApi
         return $this->wrapRaw($raw);
     }
 
-    /** Return the inspection report for a completed booking. */
+    /**
+     * Return a signed URL for the inspection report for a completed booking.
+     *
+     * Open the response data URL to display before_photos, after_photos, the
+     * checklist (including photo evidence), and property_problems.
+     *
+     * @return ApiResponse<string>
+     */
     public function getBookingInspection(int $bookingId): ApiResponse
     {
         $raw = $this->http->get("/v1/bookings/{$bookingId}/inspection");
         return $this->wrapRaw($raw);
     }
 
-    /** Return detailed inspection information for a completed booking. */
+    /**
+     * @deprecated Use getBookingInspection(). This compatibility alias returns
+     *             the same signed inspection-report URL.
+     * @return ApiResponse<string>
+     */
     public function getBookingInspectionDetails(int $bookingId): ApiResponse
     {
-        $raw = $this->http->get("/v1/bookings/{$bookingId}/inspection/details");
-        return $this->wrapRaw($raw);
+        return $this->getBookingInspection($bookingId);
     }
 
     /**

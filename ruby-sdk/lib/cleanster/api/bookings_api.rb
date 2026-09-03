@@ -101,16 +101,21 @@ module Cleanster
         Models::ApiResponse.from_hash(raw)
       end
 
-      # Get the inspection report for a completed booking.
+      # Get a signed URL for the inspection report for a completed booking.
+      #
+      # Open response.data to display before_photos, after_photos, the checklist
+      # (including photo evidence), and property_problems.
+      # @return [Models::ApiResponse<String>]
       def get_booking_inspection(booking_id)
         raw = @http.get("/v1/bookings/#{booking_id}/inspection")
         Models::ApiResponse.from_hash(raw)
       end
 
-      # Get detailed inspection information for a completed booking.
+      # @deprecated Use #get_booking_inspection. This compatibility alias returns
+      #   the same signed inspection-report URL.
+      # @return [Models::ApiResponse<String>]
       def get_booking_inspection_details(booking_id)
-        raw = @http.get("/v1/bookings/#{booking_id}/inspection/details")
-        Models::ApiResponse.from_hash(raw)
+        get_booking_inspection(booking_id)
       end
 
       # Attach a cleaning checklist to a specific booking.
