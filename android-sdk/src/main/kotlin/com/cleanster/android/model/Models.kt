@@ -39,6 +39,8 @@ data class Booking(
 data class Property(
     @SerializedName("id")             val id: Int     = 0,
     @SerializedName("name")           val name: String = "",
+    @SerializedName(value = "nickName", alternate = ["nickname"])
+    val nickName: String? = null,
     @SerializedName("address")        val address: String = "",
     @SerializedName("city")           val city: String = "",
     @SerializedName("state")          val state: String? = null,

@@ -18,7 +18,8 @@ module Cleanster
 
       # Add a new property.
       #
-      # @param request [Hash] name, address, city, country, room_count, bathroom_count, service_id.
+      # @param request [Hash] name, optional nick_name, address, city, country,
+      #   room_count, bathroom_count, service_id.
       # @return [Models::ApiResponse<Models::Property>]
       def add_property(request)
         raw = @http.post("/v1/properties", body: camel_keys(request))

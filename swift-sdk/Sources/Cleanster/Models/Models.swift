@@ -23,6 +23,7 @@ public struct CreateUserResponse: Decodable {
 public struct Property: Decodable {
     public let id: Int?
     public let name: String?
+    public let nickName: String?
     public let address: String?
     public let city: String?
     public let state: String?

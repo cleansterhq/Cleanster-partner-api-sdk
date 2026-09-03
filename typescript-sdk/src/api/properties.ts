@@ -27,7 +27,8 @@ export class PropertiesApi {
 
   /**
    * Add a new property.
-   * @param request  name, address, city, country, roomCount, bathroomCount, serviceId.
+   * @param request  name, optional nickName, address, city, country, roomCount,
+   *                 bathroomCount, serviceId.
    * @returns ApiResponse with the created Property.
    */
   addProperty(request: CreatePropertyRequest): Promise<ApiResponse<Property>> {

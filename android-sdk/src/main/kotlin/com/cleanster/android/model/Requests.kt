@@ -90,6 +90,7 @@ data class CreatePropertyRequest(
     @SerializedName("note")          val note: String? = null,
     @SerializedName("latitude")      val latitude: Double? = null,
     @SerializedName("longitude")     val longitude: Double? = null,
+    @SerializedName("nickName")      val nickName: String? = null,
 )
 
 data class EnableDisableRequest(

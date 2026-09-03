@@ -27,6 +27,7 @@ public struct VerifyJwtRequest: Encodable {
 
 public struct CreatePropertyRequest: Encodable {
     public let name: String
+    public let nickName: String?
     public let address: String
     public let city: String
     public let country: String
@@ -44,9 +45,11 @@ public struct CreatePropertyRequest: Encodable {
         name: String, address: String, city: String, country: String,
         roomCount: Int, bathroomCount: Int, serviceId: Int,
         state: String? = nil, zip: String? = nil, timezone: String? = nil,
-        note: String? = nil, latitude: Double? = nil, longitude: Double? = nil
+        note: String? = nil, latitude: Double? = nil, longitude: Double? = nil,
+        nickName: String? = nil
     ) {
         self.name          = name
+        self.nickName      = nickName
         self.address       = address
         self.city          = city
         self.country       = country
@@ -70,6 +73,7 @@ public struct CreatePropertyRequest: Encodable {
         try c.encode(roomCount, forKey: .roomCount)
         try c.encode(bathroomCount, forKey: .bathroomCount)
         try c.encode(serviceId, forKey: .serviceId)
+        try c.encodeIfPresent(nickName, forKey: .nickName)
         try c.encodeIfPresent(state, forKey: .state)
         try c.encodeIfPresent(zip, forKey: .zip)
         try c.encodeIfPresent(timezone, forKey: .timezone)
@@ -80,7 +84,7 @@ public struct CreatePropertyRequest: Encodable {
 
     enum CodingKeys: String, CodingKey {
         case name, address, city, country, roomCount, bathroomCount,
-             serviceId, state, zip, timezone, note, latitude, longitude
+             serviceId, state, zip, timezone, note, latitude, longitude, nickName
     }
 }
 

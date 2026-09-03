@@ -9,6 +9,7 @@ class Property:
     def __init__(self, data: Dict[str, Any]):
         self.id: Optional[int] = data.get("id")
         self.name: Optional[str] = data.get("name")
+        self.nickname: Optional[str] = data.get("nickName")
         self.address: Optional[str] = data.get("address")
         self.city: Optional[str] = data.get("city")
         self.country: Optional[str] = data.get("country")

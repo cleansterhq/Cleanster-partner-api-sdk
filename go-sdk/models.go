@@ -202,6 +202,7 @@ type VerifyJWTRequest struct {
 type Property struct {
 	ID            int    `json:"id"`
 	Name          string `json:"name"`
+	NickName      string `json:"nickName,omitempty"`
 	Address       string `json:"address"`
 	City          string `json:"city"`
 	Country       string `json:"country"`
@@ -214,6 +215,7 @@ type Property struct {
 // CreatePropertyRequest holds required and optional fields for creating or updating a property.
 type CreatePropertyRequest struct {
 	Name          string   `json:"name"`
+	NickName      string   `json:"nickName,omitempty"`
 	Address       string   `json:"address"`
 	City          string   `json:"city"`
 	Country       string   `json:"country"`

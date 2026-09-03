@@ -2,13 +2,14 @@ module Cleanster
   module Models
     # Represents a physical property where cleanings take place.
     class Property
-      attr_reader :id, :name, :address, :city, :country,
+      attr_reader :id, :name, :nickname, :address, :city, :country,
                   :room_count, :bathroom_count, :service_id, :is_enabled, :raw
 
       def initialize(data)
         @raw            = data
         @id             = data["id"]
         @name           = data["name"]
+        @nickname       = data["nickName"]
         @address        = data["address"]
         @city           = data["city"]
         @country        = data["country"]

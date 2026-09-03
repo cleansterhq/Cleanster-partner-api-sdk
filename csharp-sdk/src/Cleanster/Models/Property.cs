@@ -7,6 +7,7 @@ public sealed record Property
 {
     [JsonPropertyName("id")]            public int    Id            { get; init; }
     [JsonPropertyName("name")]          public string Name          { get; init; } = "";
+    [JsonPropertyName("nickName")]      public string? NickName     { get; init; }
     [JsonPropertyName("address")]       public string Address       { get; init; } = "";
     [JsonPropertyName("city")]          public string City          { get; init; } = "";
     [JsonPropertyName("country")]       public string Country       { get; init; } = "";

@@ -9,6 +9,7 @@ final class Property
 {
     public readonly int     $id;
     public readonly string  $name;
+    public readonly ?string $nickname;
     public readonly string  $address;
     public readonly string  $city;
     public readonly string  $country;
@@ -23,6 +24,7 @@ final class Property
     {
         $this->id            = (int)($data['id'] ?? 0);
         $this->name          = (string)($data['name'] ?? '');
+        $this->nickname      = isset($data['nickName']) ? (string)$data['nickName'] : null;
         $this->address       = (string)($data['address'] ?? '');
         $this->city          = (string)($data['city'] ?? '');
         $this->country       = (string)($data['country'] ?? '');

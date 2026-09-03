@@ -4,6 +4,8 @@
 export interface Property {
   id: number;
   name: string;
+  /** Optional custom display nickname, serialized by the API as `nickName`. */
+  nickName?: string;
   address: string;
   city: string;
   country: string;
@@ -16,6 +18,8 @@ export interface Property {
 /** Request body for creating or updating a property. */
 export interface CreatePropertyRequest {
   name: string;
+  /** Optional custom display nickname. */
+  nickName?: string;
   address: string;
   city: string;
   country: string;

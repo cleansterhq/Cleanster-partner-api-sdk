@@ -12,6 +12,7 @@ public class CreatePropertyRequest {
     private String  state;
     private String  zip;
     private String  name;
+    private String  nickName;
     private Integer bedrooms;
     private Double  bathrooms;
     @JsonProperty("square_feet")         private Integer squareFeet;
@@ -23,6 +24,7 @@ public class CreatePropertyRequest {
     public String  getState()              { return state; }
     public String  getZip()                { return zip; }
     public String  getName()               { return name; }
+    public String  getNickName()           { return nickName; }
     public Integer getBedrooms()           { return bedrooms; }
     public Double  getBathrooms()          { return bathrooms; }
     public Integer getSquareFeet()         { return squareFeet; }
@@ -34,6 +36,7 @@ public class CreatePropertyRequest {
     public CreatePropertyRequest setState(String s)              { this.state = s; return this; }
     public CreatePropertyRequest setZip(String z)                { this.zip = z; return this; }
     public CreatePropertyRequest setName(String n)               { this.name = n; return this; }
+    public CreatePropertyRequest setNickName(String n)            { this.nickName = n; return this; }
     public CreatePropertyRequest setBedrooms(Integer b)          { this.bedrooms = b; return this; }
     public CreatePropertyRequest setBathrooms(Double b)          { this.bathrooms = b; return this; }
     public CreatePropertyRequest setSquareFeet(Integer sf)       { this.squareFeet = sf; return this; }

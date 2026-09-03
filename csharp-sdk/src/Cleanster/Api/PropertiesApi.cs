@@ -35,11 +35,13 @@ public sealed class PropertiesApi
     /// <param name="note">Optional internal note visible to cleaners.</param>
     /// <param name="latitude">Optional GPS latitude.</param>
     /// <param name="longitude">Optional GPS longitude.</param>
+    /// <param name="nickName">Optional custom nickname for the property.</param>
     public async Task<ApiResponse<Property>> AddPropertyAsync(
         string name, string address, string city, string country,
         int roomCount, int bathroomCount, int serviceId,
         string? state = null, string? zip = null, string? timezone = null,
         string? note = null, double? latitude = null, double? longitude = null,
+        string? nickName = null,
         CancellationToken ct = default)
     {
         var body = new Dictionary<string, object?>
@@ -58,6 +60,7 @@ public sealed class PropertiesApi
         if (note      is not null) body["note"]      = note;
         if (latitude  is not null) body["latitude"]  = latitude;
         if (longitude is not null) body["longitude"] = longitude;
+        if (nickName  is not null) body["nickName"]  = nickName;
         var root = await _http.PostAsync("/v1/properties", body, ct);
         return JsonHelper.ParseSingle<Property>(root);
     }
@@ -76,11 +79,13 @@ public sealed class PropertiesApi
     /// <param name="note">Optional internal note visible to cleaners.</param>
     /// <param name="latitude">Optional GPS latitude.</param>
     /// <param name="longitude">Optional GPS longitude.</param>
+    /// <param name="nickName">Optional custom nickname for the property.</param>
     public async Task<ApiResponse<Property>> UpdatePropertyAsync(
         int propertyId, string name, string address, string city, string country,
         int roomCount, int bathroomCount, int serviceId,
         string? state = null, string? zip = null, string? timezone = null,
         string? note = null, double? latitude = null, double? longitude = null,
+        string? nickName = null,
         CancellationToken ct = default)
     {
         var body = new Dictionary<string, object?>
@@ -99,6 +104,7 @@ public sealed class PropertiesApi
         if (note      is not null) body["note"]      = note;
         if (latitude  is not null) body["latitude"]  = latitude;
         if (longitude is not null) body["longitude"] = longitude;
+        if (nickName  is not null) body["nickName"]  = nickName;
         var root = await _http.PutAsync($"/v1/properties/{propertyId}", body, ct);
         return JsonHelper.ParseSingle<Property>(root);
     }

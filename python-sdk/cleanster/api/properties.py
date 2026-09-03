@@ -36,7 +36,7 @@ class PropertiesApi:
 
         Args:
             request: Dict with keys: name, address, city, country,
-                     roomCount, bathroomCount, serviceId.
+                     roomCount, bathroomCount, serviceId, and optional nickName.
 
         Returns:
             ApiResponse with data as a Property object.

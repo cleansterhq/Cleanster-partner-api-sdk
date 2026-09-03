@@ -23,6 +23,8 @@ data class PagedBookings(
 data class Property(
     val id:            Int?     = null,
     val name:          String?  = null,
+    @SerializedName(value = "nickName", alternate = ["nickname"])
+    val nickName:      String?  = null,
     val address:       String?  = null,
     val city:          String?  = null,
     val state:         String?  = null,

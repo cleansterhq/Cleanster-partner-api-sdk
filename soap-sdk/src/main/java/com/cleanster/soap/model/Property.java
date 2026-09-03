@@ -9,6 +9,7 @@ public class Property {
 
     private Long   id;
     private String name;
+    private String nickName;
     private String address;
     private String city;
     private String state;
@@ -23,6 +24,7 @@ public class Property {
 
     public Long    getId()                   { return id; }
     public String  getName()                 { return name; }
+    public String  getNickName()             { return nickName; }
     public String  getAddress()              { return address; }
     public String  getCity()                 { return city; }
     public String  getState()                { return state; }
@@ -37,6 +39,7 @@ public class Property {
 
     public void setId(Long id)                           { this.id = id; }
     public void setName(String name)                     { this.name = name; }
+    public void setNickName(String nickName)              { this.nickName = nickName; }
     public void setAddress(String address)               { this.address = address; }
     public void setCity(String city)                     { this.city = city; }
     public void setState(String state)                   { this.state = state; }

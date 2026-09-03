@@ -1168,6 +1168,7 @@ const filtered = await client.properties.listProperties(1);
 | Field | Type | Required | Description |
 |---|---|---|---|
 | `name` | string | yes | Display name |
+| `nickName` | string | no | Custom nickname for the property |
 | `address` | string | yes | Street address |
 | `city` | string | yes | City |
 | `country` | string | yes | Country code or name |
@@ -1186,6 +1187,7 @@ const filtered = await client.properties.listProperties(1);
 ```java
 CreatePropertyRequest req = new CreatePropertyRequest();
 req.setName("Downtown Loft");
+req.setNickName("Loft A");
 req.setAddress("123 Main St");
 req.setCity("Atlanta");
 req.setCountry("US");
@@ -1202,6 +1204,7 @@ int propId = resp.getData().getId();
 ```python
 resp = client.properties.add_property({
     "name": "Downtown Loft",
+    "nickName": "Loft A",
     "address": "123 Main St",
     "city": "Atlanta",
     "country": "US",
@@ -1218,6 +1221,7 @@ property_id = resp.data["id"]
 ```typescript
 const resp = await client.properties.addProperty({
   name: 'Downtown Loft',
+  nickName: 'Loft A',
   address: '123 Main St',
   city: 'Atlanta',
   country: 'US',
@@ -1232,6 +1236,7 @@ lat := 33.749
 lon := -84.388
 resp, err := client.Properties.AddProperty(ctx, cleanster.CreatePropertyRequest{
     Name:          "Downtown Loft",
+    NickName:      "Loft A",
     Address:       "123 Main St",
     City:          "Atlanta",
     Country:       "US",
@@ -1249,6 +1254,7 @@ resp, err := client.Properties.AddProperty(ctx, cleanster.CreatePropertyRequest{
 ```csharp
 var resp = await client.Properties.AddPropertyAsync(
     name: "Downtown Loft",
+    nickName: "Loft A",
     address: "123 Main St",
     city: "Atlanta",
     country: "US",
@@ -1276,6 +1282,7 @@ resp = client.properties.get_property(1004)
 # Update
 resp = client.properties.update_property(1004, {
     "name": "Uptown Suite",
+    "nickName": "Suite 1004",
     "address": "456 Peach St",
     "city": "Atlanta",
     "country": "US",
