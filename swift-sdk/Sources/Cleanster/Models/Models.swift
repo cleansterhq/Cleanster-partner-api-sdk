@@ -43,6 +43,7 @@ public struct Property: Decodable {
 public struct Booking: Decodable {
     public let id: Int?
     public let status: String?
+    public let cleanerStatus: String?
     public let date: String?
     public let time: String?
     public let hours: Double?

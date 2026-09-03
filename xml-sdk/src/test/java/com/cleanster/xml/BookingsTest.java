@@ -22,7 +22,7 @@ class BookingsTest {
     private static final String LIST_JSON = "{\"success\":true,\"message\":\"OK\","
             + "\"data\":{\"content\":[{\"id\":100,\"status\":\"UPCOMING\"}]}}";
     private static final String BK_JSON   = "{\"success\":true,\"message\":\"OK\","
-            + "\"data\":{\"id\":100,\"status\":\"scheduled\"}}";
+            + "\"data\":{\"id\":100,\"status\":\"scheduled\",\"cleanerStatus\":\"ON_THE_WAY\"}}";
     private static final String OK_JSON   = "{\"success\":true,\"message\":\"OK\",\"data\":{}}";
 
     @BeforeEach void setUp() {
@@ -85,6 +85,7 @@ class BookingsTest {
     @Test void getBooking_returnsParsed() {
         doReturn(BK_JSON).when(http).get("/v1/bookings/100");
         assertEquals("scheduled", api.getBooking(100).getData().getStatus());
+        assertEquals("ON_THE_WAY", api.getBooking(100).getData().getCleanerStatus());
     }
 
     // ── cancelBooking ──────────────────────────────────────────────────────────

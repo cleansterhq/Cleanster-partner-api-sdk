@@ -1129,8 +1129,11 @@ public class CleansterTests
     [Fact]
     public void Booking_WithCleaner()
     {
-        var b = new Booking { Id = 1, CleanerId = 7 };
+        var b = JsonSerializer.Deserialize<Booking>(
+            """{"id":1,"status":"CLEANER_ASSIGNED","cleanerStatus":"ON_THE_WAY","cleanerId":7}""")!;
         Assert.Equal(7, b.CleanerId);
+        Assert.Equal("CLEANER_ASSIGNED", b.Status);
+        Assert.Equal("ON_THE_WAY", b.CleanerStatus);
     }
 
     [Fact]

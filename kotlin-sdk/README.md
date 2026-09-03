@@ -267,6 +267,12 @@ createBooking()         →   OPEN
 
 Booking status values: `OPEN` · `CLEANER_ASSIGNED` · `IN_PROGRESS` · `COMPLETED` · `CANCELLED` · `REMOVED`
 
+`status` describes the booking lifecycle. `cleanerStatus` separately describes
+the cleaner's operational progress. Live responses have confirmed
+`NOT_STARTED`, `ON_THE_WAY`, and `COMPLETED`; additional values such as
+`ARRIVED`, `CLEANING`, and `PAUSED` may appear. The SDK preserves this as a raw
+string so future values remain available.
+
 ---
 
 ## API Reference
@@ -1229,6 +1235,7 @@ Every method returns `ApiResponse<T>`:
 |---|---|---|
 | `id` | Int | Booking ID |
 | `status` | String | `OPEN`, `CLEANER_ASSIGNED`, `IN_PROGRESS`, `COMPLETED`, `CANCELLED` |
+| `cleanerStatus` | String? | Cleaner operational progress, independent of `status` |
 | `date` | String | Booking date (`YYYY-MM-DD`) |
 | `time` | String | Start time (`HH:mm`) |
 | `hours` | Double | Duration in hours |

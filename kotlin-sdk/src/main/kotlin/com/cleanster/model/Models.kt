@@ -39,6 +39,7 @@ data class Property(
 data class Booking(
     val id:              Int?     = null,
     val status:          String?  = null,
+    val cleanerStatus:   String?  = null,
     val date:            String?  = null,
     val time:            String?  = null,
     val hours:           Double?  = null,

@@ -170,7 +170,9 @@ describe("BookingsApi", () => {
 
   test("createBooking() posts to correct endpoint", async () => {
     const http = mockHttp();
-    http.post.mockResolvedValue(ok({ id: 999, status: "OPEN" }));
+    http.post.mockResolvedValue(ok({
+      id: 999, status: "CLEANER_ASSIGNED", cleanerStatus: "ON_THE_WAY",
+    }));
     const api = new BookingsApi(http);
 
     const req = {
@@ -182,7 +184,8 @@ describe("BookingsApi", () => {
 
     expect(http.post).toHaveBeenCalledWith("/v1/bookings/create", req);
     expect(result.data.id).toBe(999);
-    expect(result.data.status).toBe("OPEN");
+    expect(result.data.status).toBe("CLEANER_ASSIGNED");
+    expect(result.data.cleanerStatus).toBe("ON_THE_WAY");
   });
 
   test("getBookingDetails() calls correct URL", async () => {

@@ -5,33 +5,33 @@ import "encoding/json"
 // APIResponse is the standard response wrapper returned by every SDK method.
 // T is the type of the Data field (e.g., Booking, []Booking, User, etc.).
 type APIResponse[T any] struct {
-        // Status is an HTTP-style status code (e.g., 200).
-        Status int `json:"status"`
+	// Status is an HTTP-style status code (e.g., 200).
+	Status int `json:"status"`
 
-        // Message is a human-readable status message (e.g., "OK").
-        Message string `json:"message"`
+	// Message is a human-readable status message (e.g., "OK").
+	Message string `json:"message"`
 
-        // Data is the typed response payload.
-        Data T `json:"data"`
+	// Data is the typed response payload.
+	Data T `json:"data"`
 }
 
 // rawAPIResponse is used internally to parse the outer envelope before
 // deserializing the Data field into the appropriate model type.
 type rawAPIResponse struct {
-        Status  int             `json:"status"`
-        Message string          `json:"message"`
-        Data    json.RawMessage `json:"data"`
+	Status  int             `json:"status"`
+	Message string          `json:"message"`
+	Data    json.RawMessage `json:"data"`
 }
 
 // decode unmarshals a rawAPIResponse.Data into a typed APIResponse[T].
 func decode[T any](raw rawAPIResponse) (APIResponse[T], error) {
-        var data T
-        if err := json.Unmarshal(raw.Data, &data); err != nil {
-                return APIResponse[T]{}, &CleansterError{
-                        Message: "failed to parse response data: " + err.Error(),
-                }
-        }
-        return APIResponse[T]{Status: raw.Status, Message: raw.Message, Data: data}, nil
+	var data T
+	if err := json.Unmarshal(raw.Data, &data); err != nil {
+		return APIResponse[T]{}, &CleansterError{
+			Message: "failed to parse response data: " + err.Error(),
+		}
+	}
+	return APIResponse[T]{Status: raw.Status, Message: raw.Message, Data: data}, nil
 }
 
 // ---------------------------------------------------------------------------
@@ -40,94 +40,95 @@ func decode[T any](raw rawAPIResponse) (APIResponse[T], error) {
 
 // Booking represents a single cleaning appointment.
 type Booking struct {
-        ID              int      `json:"id"`
-        Status          string   `json:"status"`
-        Date            string   `json:"date"`
-        Time            string   `json:"time"`
-        Hours           float64  `json:"hours"`
-        Cost            float64  `json:"cost"`
-        PropertyID      int      `json:"propertyId"`
-        CleanerID       *int     `json:"cleanerId"`
-        PlanID          int      `json:"planId"`
-        RoomCount       int      `json:"roomCount"`
-        BathroomCount   int      `json:"bathroomCount"`
-        ExtraSupplies   bool     `json:"extraSupplies"`
-        PaymentMethodID int      `json:"paymentMethodId"`
-        PostedBy        *string  `json:"postedBy"`
+	ID              int     `json:"id"`
+	Status          string  `json:"status"`
+	CleanerStatus   string  `json:"cleanerStatus"`
+	Date            string  `json:"date"`
+	Time            string  `json:"time"`
+	Hours           float64 `json:"hours"`
+	Cost            float64 `json:"cost"`
+	PropertyID      int     `json:"propertyId"`
+	CleanerID       *int    `json:"cleanerId"`
+	PlanID          int     `json:"planId"`
+	RoomCount       int     `json:"roomCount"`
+	BathroomCount   int     `json:"bathroomCount"`
+	ExtraSupplies   bool    `json:"extraSupplies"`
+	PaymentMethodID int     `json:"paymentMethodId"`
+	PostedBy        *string `json:"postedBy"`
 }
 
 // CreateBookingRequest contains all fields required to schedule a new booking.
 type CreateBookingRequest struct {
-        Date            string  `json:"date"`
-        Time            string  `json:"time"`
-        PropertyID      int     `json:"propertyId"`
-        RoomCount       int     `json:"roomCount"`
-        BathroomCount   int     `json:"bathroomCount"`
-        PlanID          int     `json:"planId"`
-        Hours           float64 `json:"hours"`
-        ExtraSupplies   bool    `json:"extraSupplies"`
-        PaymentMethodID int     `json:"paymentMethodId"`
-        CouponCode      string  `json:"couponCode,omitempty"`
-        Extras          []int   `json:"extras,omitempty"`
+	Date            string  `json:"date"`
+	Time            string  `json:"time"`
+	PropertyID      int     `json:"propertyId"`
+	RoomCount       int     `json:"roomCount"`
+	BathroomCount   int     `json:"bathroomCount"`
+	PlanID          int     `json:"planId"`
+	Hours           float64 `json:"hours"`
+	ExtraSupplies   bool    `json:"extraSupplies"`
+	PaymentMethodID int     `json:"paymentMethodId"`
+	CouponCode      string  `json:"couponCode,omitempty"`
+	Extras          []int   `json:"extras,omitempty"`
 }
 
 // CancelBookingRequest holds an optional cancellation reason.
 type CancelBookingRequest struct {
-        Reason string `json:"reason,omitempty"`
+	Reason string `json:"reason,omitempty"`
 }
 
 // RescheduleBookingRequest holds the new date and time for a rescheduled booking.
 type RescheduleBookingRequest struct {
-        Date string `json:"date"`
-        Time string `json:"time"`
+	Date string `json:"date"`
+	Time string `json:"time"`
 }
 
 // AssignCleanerRequest holds the cleaner ID to assign.
 type AssignCleanerRequest struct {
-        CleanerID int `json:"cleanerId"`
+	CleanerID int `json:"cleanerId"`
 }
 
 // AdjustHoursRequest holds the updated number of hours for a booking.
 type AdjustHoursRequest struct {
-        Hours float64 `json:"hours"`
+	Hours float64 `json:"hours"`
 }
 
 // PayExpensesRequest holds the payment method to use for outstanding expenses.
 type PayExpensesRequest struct {
-        PaymentMethodID int `json:"paymentMethodId"`
+	PaymentMethodID int `json:"paymentMethodId"`
 }
 
 // FeedbackRequest holds a star rating and optional comment for a completed booking.
 type FeedbackRequest struct {
-        Rating  int    `json:"rating"`
-        Comment string `json:"comment,omitempty"`
+	Rating  int    `json:"rating"`
+	Comment string `json:"comment,omitempty"`
 }
 
 // TipRequest holds the tip amount and payment method for a completed booking.
 type TipRequest struct {
-        Amount          float64 `json:"amount"`
-        PaymentMethodID int     `json:"paymentMethodId"`
+	Amount          float64 `json:"amount"`
+	PaymentMethodID int     `json:"paymentMethodId"`
 }
 
 // SendMessageRequest holds a chat message to post in a booking thread.
 type SendMessageRequest struct {
-        Message string `json:"message"`
+	Message string `json:"message"`
 }
 
 // TaskQuantity holds a task ID and its updated quantity.
 type TaskQuantity struct {
-        ID       int `json:"id"`
-        Quantity int `json:"quantity"`
+	ID       int `json:"id"`
+	Quantity int `json:"quantity"`
 }
 
 // UpdateTaskRequest holds the list of task quantity updates for a booking.
 type UpdateTaskRequest struct {
-        Tasks []TaskQuantity `json:"tasks"`
+	Tasks []TaskQuantity `json:"tasks"`
 }
 
 // UpdateSqftRequest holds the new total square footage for a booking.
 type UpdateSqftRequest struct {
-        TotalSqFt float64 `json:"totalSqFt"`
+	TotalSqFt float64 `json:"totalSqFt"`
 }
 
 // GetBookingsParams holds filters for listing bookings.
@@ -135,24 +136,24 @@ type UpdateSqftRequest struct {
 // Confirmed against the live sandbox API: Status is required, not optional -
 // there is no "all statuses" call.
 type GetBookingsParams struct {
-        // Status filters results by booking status (required).
-        // Valid values: "COMPLETED", "CANCELLED", "UPCOMING"
-        Status string
+	// Status filters results by booking status (required).
+	// Valid values: "COMPLETED", "CANCELLED", "UPCOMING"
+	Status string
 
-        // PageNo is the page number (1-based). Pass nil for the first page.
-        PageNo *int
+	// PageNo is the page number (1-based). Pass nil for the first page.
+	PageNo *int
 }
 
 // BookingPage is the Spring-style page object returned by GET /v1/bookings.
 // Confirmed against the live sandbox API - the response data is this page
 // object, not a flat array; bookings live in Content.
 type BookingPage struct {
-        Content          []Booking `json:"content"`
-        Number           int       `json:"number"`
-        Size             int       `json:"size"`
-        NumberOfElements int       `json:"numberOfElements"`
-        TotalPages       int       `json:"totalPages"`
-        TotalElements    int       `json:"totalElements"`
+	Content          []Booking `json:"content"`
+	Number           int       `json:"number"`
+	Size             int       `json:"size"`
+	NumberOfElements int       `json:"numberOfElements"`
+	TotalPages       int       `json:"totalPages"`
+	TotalElements    int       `json:"totalElements"`
 }
 
 // ---------------------------------------------------------------------------
@@ -161,21 +162,21 @@ type BookingPage struct {
 
 // User represents a Cleanster end-user account.
 type User struct {
-        ID        int     `json:"id"`
-        Email     string  `json:"email"`
-        FirstName string  `json:"firstName"`
-        LastName  string  `json:"lastName"`
-        Phone     *string `json:"phone"`
-        Token     *string `json:"token"`
+	ID        int     `json:"id"`
+	Email     string  `json:"email"`
+	FirstName string  `json:"firstName"`
+	LastName  string  `json:"lastName"`
+	Phone     *string `json:"phone"`
+	Token     *string `json:"token"`
 }
 
 // CreateUserRequest holds fields needed to register a new user.
 type CreateUserRequest struct {
-        Email      string `json:"email"`
-        FirstName  string `json:"firstName"`
-        LastName   string `json:"lastName"`
-        CustomerID string `json:"customerId"`
-        Phone      string `json:"phone,omitempty"`
+	Email      string `json:"email"`
+	FirstName  string `json:"firstName"`
+	LastName   string `json:"lastName"`
+	CustomerID string `json:"customerId"`
+	Phone      string `json:"phone,omitempty"`
 }
 
 // CreateUserResponse is the response from POST /v1/user/account.
@@ -184,13 +185,13 @@ type CreateUserRequest struct {
 // full user profile - only the new Cleanster user ID and a per-user JWT
 // already prefixed with "Bearer ".
 type CreateUserResponse struct {
-        UserID      int    `json:"userId"`
-        AccessToken string `json:"accessToken"`
+	UserID      int    `json:"userId"`
+	AccessToken string `json:"accessToken"`
 }
 
 // VerifyJWTRequest holds the JWT token to verify.
 type VerifyJWTRequest struct {
-        Token string `json:"token"`
+	Token string `json:"token"`
 }
 
 // ---------------------------------------------------------------------------
@@ -199,62 +200,62 @@ type VerifyJWTRequest struct {
 
 // Property represents a physical location where cleanings take place.
 type Property struct {
-        ID            int    `json:"id"`
-        Name          string `json:"name"`
-        Address       string `json:"address"`
-        City          string `json:"city"`
-        Country       string `json:"country"`
-        RoomCount     int    `json:"roomCount"`
-        BathroomCount int    `json:"bathroomCount"`
-        ServiceID     int    `json:"serviceId"`
-        IsEnabled     *bool  `json:"isEnabled"`
+	ID            int    `json:"id"`
+	Name          string `json:"name"`
+	Address       string `json:"address"`
+	City          string `json:"city"`
+	Country       string `json:"country"`
+	RoomCount     int    `json:"roomCount"`
+	BathroomCount int    `json:"bathroomCount"`
+	ServiceID     int    `json:"serviceId"`
+	IsEnabled     *bool  `json:"isEnabled"`
 }
 
 // CreatePropertyRequest holds required and optional fields for creating or updating a property.
 type CreatePropertyRequest struct {
-        Name          string   `json:"name"`
-        Address       string   `json:"address"`
-        City          string   `json:"city"`
-        Country       string   `json:"country"`
-        RoomCount     int      `json:"roomCount"`
-        BathroomCount int      `json:"bathroomCount"`
-        ServiceID     int      `json:"serviceId"`
-        State         string   `json:"state,omitempty"`
-        Zip           string   `json:"zip,omitempty"`
-        Timezone      string   `json:"timezone,omitempty"`
-        Note          string   `json:"note,omitempty"`
-        Latitude      *float64 `json:"latitude,omitempty"`
-        Longitude     *float64 `json:"longitude,omitempty"`
+	Name          string   `json:"name"`
+	Address       string   `json:"address"`
+	City          string   `json:"city"`
+	Country       string   `json:"country"`
+	RoomCount     int      `json:"roomCount"`
+	BathroomCount int      `json:"bathroomCount"`
+	ServiceID     int      `json:"serviceId"`
+	State         string   `json:"state,omitempty"`
+	Zip           string   `json:"zip,omitempty"`
+	Timezone      string   `json:"timezone,omitempty"`
+	Note          string   `json:"note,omitempty"`
+	Latitude      *float64 `json:"latitude,omitempty"`
+	Longitude     *float64 `json:"longitude,omitempty"`
 }
 
 // EnableDisablePropertyRequest holds the enabled flag for toggling a property.
 type EnableDisablePropertyRequest struct {
-        Enabled bool `json:"enabled"`
+	Enabled bool `json:"enabled"`
 }
 
 // AssignCleanerToPropertyRequest holds the cleaner to assign to a property.
 type AssignCleanerToPropertyRequest struct {
-        CleanerID int `json:"cleanerId"`
+	CleanerID int `json:"cleanerId"`
 }
 
 // ICalRequest holds one or more iCal feed URLs to add to a property. Each URL
 // must be a live, publicly fetchable .ics feed - the API validates the feed
 // content, not just the URL shape.
 type ICalRequest struct {
-        CalendarLinks []string `json:"calendarLinks"`
+	CalendarLinks []string `json:"calendarLinks"`
 }
 
 // CalendarLink is a single calendar link attached to a property, as returned
 // by GetICalLink.
 type CalendarLink struct {
-        ID           int    `json:"id"`
-        CalendarLink string `json:"calendarLink"`
+	ID           int    `json:"id"`
+	CalendarLink string `json:"calendarLink"`
 }
 
 // DeleteICalLinkRequest holds the numeric link IDs (from GetICalLink) to
 // remove from a property - not URLs.
 type DeleteICalLinkRequest struct {
-        IDs []int `json:"ids"`
+	IDs []int `json:"ids"`
 }
 
 // ---------------------------------------------------------------------------
@@ -263,23 +264,23 @@ type DeleteICalLinkRequest struct {
 
 // ChecklistItem is a single task within a checklist.
 type ChecklistItem struct {
-        ID          int     `json:"id"`
-        Description string  `json:"description"`
-        IsCompleted bool    `json:"isCompleted"`
-        ImageURL    *string `json:"imageUrl"`
+	ID          int     `json:"id"`
+	Description string  `json:"description"`
+	IsCompleted bool    `json:"isCompleted"`
+	ImageURL    *string `json:"imageUrl"`
 }
 
 // Checklist is a named collection of cleaning task items.
 type Checklist struct {
-        ID    int             `json:"id"`
-        Name  string          `json:"name"`
-        Items []ChecklistItem `json:"items"`
+	ID    int             `json:"id"`
+	Name  string          `json:"name"`
+	Items []ChecklistItem `json:"items"`
 }
 
 // CreateChecklistRequest holds the name and items for a new checklist.
 type CreateChecklistRequest struct {
-        Name  string   `json:"name"`
-        Items []string `json:"items"`
+	Name  string   `json:"name"`
+	Items []string `json:"items"`
 }
 
 // ---------------------------------------------------------------------------
@@ -288,16 +289,16 @@ type CreateChecklistRequest struct {
 
 // PaymentMethod represents a saved Stripe card or PayPal account.
 type PaymentMethod struct {
-        ID        int     `json:"id"`
-        Type      string  `json:"type"`
-        LastFour  *string `json:"lastFour"`
-        Brand     *string `json:"brand"`
-        IsDefault bool    `json:"isDefault"`
+	ID        int     `json:"id"`
+	Type      string  `json:"type"`
+	LastFour  *string `json:"lastFour"`
+	Brand     *string `json:"brand"`
+	IsDefault bool    `json:"isDefault"`
 }
 
 // AddPaymentMethodRequest holds the tokenized payment method identifier.
 type AddPaymentMethodRequest struct {
-        PaymentMethodID string `json:"paymentMethodId"`
+	PaymentMethodID string `json:"paymentMethodId"`
 }
 
 // ---------------------------------------------------------------------------
@@ -306,18 +307,18 @@ type AddPaymentMethodRequest struct {
 
 // CostEstimateRequest holds fields needed to calculate an estimated booking cost.
 type CostEstimateRequest struct {
-        PropertyID  int     `json:"propertyId"`
-        PlanID      int     `json:"planId"`
-        Hours       float64 `json:"hours"`
-        CouponCode  string  `json:"couponCode,omitempty"`
-        Extras      []int   `json:"extras,omitempty"`
+	PropertyID int     `json:"propertyId"`
+	PlanID     int     `json:"planId"`
+	Hours      float64 `json:"hours"`
+	CouponCode string  `json:"couponCode,omitempty"`
+	Extras     []int   `json:"extras,omitempty"`
 }
 
 // AvailableCleanersRequest holds search criteria for finding available cleaners.
 type AvailableCleanersRequest struct {
-        PropertyID int    `json:"propertyId"`
-        Date       string `json:"date"`
-        Time       string `json:"time"`
+	PropertyID int    `json:"propertyId"`
+	Date       string `json:"date"`
+	Time       string `json:"time"`
 }
 
 // ---------------------------------------------------------------------------
@@ -326,8 +327,8 @@ type AvailableCleanersRequest struct {
 
 // BlacklistRequest holds the cleaner to add to or remove from the blacklist.
 type BlacklistRequest struct {
-        CleanerID int    `json:"cleanerId"`
-        Reason    string `json:"reason,omitempty"`
+	CleanerID int    `json:"cleanerId"`
+	Reason    string `json:"reason,omitempty"`
 }
 
 // ---------------------------------------------------------------------------
@@ -336,6 +337,6 @@ type BlacklistRequest struct {
 
 // WebhookRequest holds the URL and event type for creating or updating a webhook.
 type WebhookRequest struct {
-        URL   string `json:"url"`
-        Event string `json:"event"`
+	URL   string `json:"url"`
+	Event string `json:"event"`
 }

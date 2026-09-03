@@ -7,6 +7,7 @@ public sealed record Booking
 {
     [JsonPropertyName("id")]              public int     Id              { get; init; }
     [JsonPropertyName("status")]          public string  Status          { get; init; } = "";
+    [JsonPropertyName("cleanerStatus")]   public string? CleanerStatus   { get; init; }
     [JsonPropertyName("date")]            public string  Date            { get; init; } = "";
     [JsonPropertyName("time")]            public string  Time            { get; init; } = "";
     [JsonPropertyName("hours")]           public double  Hours           { get; init; }

@@ -8,6 +8,7 @@ public class Booking {
 
     @XmlElement private Integer id;
     @XmlElement private String  status;
+    @XmlElement private String  cleanerStatus;
     @XmlElement private String  date;
     @XmlElement private String  time;
     @XmlElement private Double  hours;
@@ -31,6 +32,7 @@ public class Booking {
 
     public Integer getId()             { return id; }
     public String  getStatus()         { return status; }
+    public String  getCleanerStatus()  { return cleanerStatus; }
     public String  getDate()           { return date; }
     public String  getTime()           { return time; }
     public Double  getHours()          { return hours; }
@@ -52,6 +54,7 @@ public class Booking {
 
     public void setId(Integer id)                      { this.id = id; }
     public void setStatus(String status)               { this.status = status; }
+    public void setCleanerStatus(String status)        { this.cleanerStatus = status; }
     public void setDate(String date)                   { this.date = date; }
     public void setTime(String time)                   { this.time = time; }
     public void setHours(Double hours)                 { this.hours = hours; }

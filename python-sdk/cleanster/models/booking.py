@@ -9,6 +9,7 @@ class Booking:
     def __init__(self, data: Dict[str, Any]):
         self.id: Optional[int] = data.get("id")
         self.status: Optional[str] = data.get("status")
+        self.cleaner_status: Optional[str] = data.get("cleanerStatus")
         self.date: Optional[str] = data.get("date")
         self.time: Optional[str] = data.get("time")
         self.hours: Optional[float] = data.get("hours")

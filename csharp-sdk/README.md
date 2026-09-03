@@ -221,6 +221,12 @@ CreateBookingAsync()          →   OPEN
 
 Status values: `OPEN` · `CLEANER_ASSIGNED` · `IN_PROGRESS` · `COMPLETED` · `CANCELLED` · `REMOVED`
 
+`Status` describes the booking lifecycle. `CleanerStatus` separately maps the
+API's `cleanerStatus` field and describes the cleaner's operational progress.
+Live responses have confirmed `NOT_STARTED`, `ON_THE_WAY`, and `COMPLETED`;
+additional values such as `ARRIVED`, `CLEANING`, and `PAUSED` may appear. The
+SDK preserves this as a raw string so future values remain available.
+
 ---
 
 ## API Reference

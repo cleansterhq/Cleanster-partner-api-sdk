@@ -1179,14 +1179,16 @@ class CleansterTest extends TestCase
     public function testBookingModelFieldMapping(): void
     {
         $b = new Booking([
-            'id' => 1, 'status' => 'OPEN', 'date' => '2025-06-15', 'time' => '10:00',
+            'id' => 1, 'status' => 'CLEANER_ASSIGNED', 'cleanerStatus' => 'ON_THE_WAY',
+            'date' => '2025-06-15', 'time' => '10:00',
             'hours' => 3.0, 'cost' => 150.0, 'propertyId' => 1004, 'cleanerId' => null,
             'planId' => 2, 'roomCount' => 2, 'bathroomCount' => 1,
             'extraSupplies' => false, 'paymentMethodId' => 10,
         ]);
 
         $this->assertSame(1, $b->id);
-        $this->assertSame('OPEN', $b->status);
+        $this->assertSame('CLEANER_ASSIGNED', $b->status);
+        $this->assertSame('ON_THE_WAY', $b->cleanerStatus);
         $this->assertSame('2025-06-15', $b->date);
         $this->assertSame(150.0, $b->cost);
         $this->assertNull($b->cleanerId);

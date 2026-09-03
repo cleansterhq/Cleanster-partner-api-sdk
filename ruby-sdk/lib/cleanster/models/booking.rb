@@ -3,6 +3,7 @@ module Cleanster
     # Represents a single cleaning appointment.
     class Booking
       attr_reader :id, :status, :date, :time, :hours, :cost,
+                  :cleaner_status,
                   :property_id, :cleaner_id, :plan_id,
                   :room_count, :bathroom_count, :extra_supplies,
                   :payment_method_id, :posted_by, :raw
@@ -11,6 +12,7 @@ module Cleanster
         @raw               = data
         @id                = data["id"]
         @status            = data["status"]
+        @cleaner_status    = data["cleanerStatus"]
         @date              = data["date"]
         @time              = data["time"]
         @hours             = data["hours"]

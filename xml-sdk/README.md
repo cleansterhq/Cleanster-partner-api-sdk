@@ -948,6 +948,12 @@ public class CleansterBookingService {
 
 ## Booking Lifecycle
 
+`status` describes the booking lifecycle. `cleanerStatus` separately describes
+the cleaner's operational progress. Live responses have confirmed
+`NOT_STARTED`, `ON_THE_WAY`, and `COMPLETED`; additional values such as
+`ARRIVED`, `CLEANING`, and `PAUSED` may appear. The SDK preserves both as raw
+strings so future server-side values remain available.
+
 ```
               POST /v1/bookings/create
              ─────────────────────────►  PENDING / OPEN

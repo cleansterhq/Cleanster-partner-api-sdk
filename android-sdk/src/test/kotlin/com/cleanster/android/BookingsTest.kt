@@ -58,10 +58,11 @@ class BookingsTest {
 
     // ─── getBookingDetails ───────────────────────────────────────────────────
     @Test fun `getBookingDetails returns booking`() = runTest {
-        enqueue("""{"status":200,"message":"OK","data":{"id":16926,"status":"OPEN","date":"2025-09-15","time":"09:00","hours":3.0}}""")
+        enqueue("""{"status":200,"message":"OK","data":{"id":16926,"status":"CLEANER_ASSIGNED","cleanerStatus":"ON_THE_WAY","date":"2025-09-15","time":"09:00","hours":3.0}}""")
         val resp = client.bookings.getBookingDetails(16926)
         assertEquals(16926, resp.data?.id)
-        assertEquals("OPEN", resp.data?.status)
+        assertEquals("CLEANER_ASSIGNED", resp.data?.status)
+        assertEquals("ON_THE_WAY", resp.data?.cleanerStatus)
     }
 
     @Test fun `getBookingDetails hits correct path`() = runTest {

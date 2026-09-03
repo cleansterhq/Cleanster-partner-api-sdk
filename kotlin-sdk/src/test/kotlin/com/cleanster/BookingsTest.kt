@@ -80,9 +80,15 @@ class BookingsTest {
     }
 
     @Test fun `createBooking decodes id`() = runTest {
-        mock.succeed(mapOf("id" to 16459.0, "status" to "OPEN"))
+        mock.succeed(mapOf(
+            "id" to 16459.0,
+            "status" to "CLEANER_ASSIGNED",
+            "cleanerStatus" to "ON_THE_WAY",
+        ))
         val resp = client.bookings.createBooking(bookingReq())
         assertEquals(16459, resp.data?.id)
+        assertEquals("CLEANER_ASSIGNED", resp.data?.status)
+        assertEquals("ON_THE_WAY", resp.data?.cleanerStatus)
     }
 
     @Test fun `getBookingDetails sends GET`() = runTest {

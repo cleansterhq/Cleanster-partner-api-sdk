@@ -42,6 +42,15 @@ A Java SOAP SDK for the Cleanster Partner API. Provides a WSDL-defined, document
 | `SendMessage` | POST | `/v1/bookings/{id}/chat` | Send a chat message |
 | `DeleteMessage` | DELETE | `/v1/bookings/{id}/chat/{messageId}` | Delete a chat message |
 
+### Booking and cleaner status
+
+`status` describes the booking lifecycle (`OPEN`, `CLEANER_ASSIGNED`,
+`IN_PROGRESS`, `COMPLETED`, `CANCELLED`, or `REMOVED`). `cleanerStatus`
+separately describes the cleaner's operational progress. Live responses have
+confirmed `NOT_STARTED`, `ON_THE_WAY`, and `COMPLETED`; additional values such
+as `ARRIVED`, `CLEANING`, and `PAUSED` may appear. The SDK preserves both as raw
+strings so future server-side values remain available.
+
 ### Properties (14 operations)
 | Operation | HTTP Method | Path | Description |
 |---|---|---|---|

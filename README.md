@@ -1633,7 +1633,12 @@ Returns the full booking object. Same fields as listed in [List Bookings](#get-v
 ```python
 resp = client.bookings.get_booking_details(16459)
 print(resp.data["status"])  # "CLEANER_ASSIGNED"
+print(resp.data["cleanerStatus"])  # "ON_THE_WAY"
 ```
+
+`status` is the booking lifecycle state, while `cleanerStatus` is the cleaner's
+operational progress. For example, a booking can have `status:
+CLEANER_ASSIGNED` and `cleanerStatus: ON_THE_WAY` at the same time.
 
 ---
 
@@ -2547,6 +2552,14 @@ addTip()     payExpenses()   submitFeedback()
 | `COMPLETED` | Job finished successfully |
 | `CANCELLED` | Booking was cancelled |
 | `REMOVED` | Booking removed from active view |
+
+**Cleaner operational status:**
+
+The booking response's `cleanerStatus` field is separate from `status`. Live
+responses have confirmed `NOT_STARTED`, `ON_THE_WAY`, and `COMPLETED`.
+Additional values such as `ARRIVED`, `CLEANING`, and `PAUSED` may be returned
+as the cleaner progresses. All SDKs expose this field as a raw string so new
+server-side values remain available without requiring an SDK release.
 
 ---
 

@@ -23,6 +23,7 @@ data class PagedBookings(
 data class Booking(
     @SerializedName("id")              val id: Int     = 0,
     @SerializedName("status")          val status: String = "",
+    @SerializedName("cleanerStatus")   val cleanerStatus: String? = null,
     @SerializedName("date")            val date: String = "",
     @SerializedName("time")            val time: String = "",
     @SerializedName("hours")           val hours: Double = 0.0,

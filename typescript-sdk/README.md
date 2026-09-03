@@ -221,6 +221,12 @@ createBooking()        →   OPEN
 
 Status values: `OPEN` · `CLEANER_ASSIGNED` · `IN_PROGRESS` · `COMPLETED` · `CANCELLED` · `REMOVED`
 
+`status` describes the booking lifecycle. `cleanerStatus` separately describes
+the cleaner's operational progress. Live responses have confirmed
+`NOT_STARTED`, `ON_THE_WAY`, and `COMPLETED`; additional values such as
+`ARRIVED`, `CLEANING`, and `PAUSED` may appear. Both fields remain strings so
+future server-side values are preserved.
+
 ---
 
 ## API Reference
@@ -947,7 +953,8 @@ interface ApiResponse<T> {
 ```typescript
 interface Booking {
   id: number;
-  status: 'OPEN' | 'CLEANER_ASSIGNED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED' | 'REMOVED';
+  status: string;          // Booking lifecycle state
+  cleanerStatus?: string; // Cleaner operational progress
   date: string;           // YYYY-MM-DD
   time: string;           // HH:MM
   hours: number;

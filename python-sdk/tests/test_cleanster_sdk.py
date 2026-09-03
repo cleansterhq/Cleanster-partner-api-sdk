@@ -982,10 +982,12 @@ class TestExceptions(unittest.TestCase):
 class TestModels(unittest.TestCase):
 
     def test_booking_model(self):
-        b = Booking({"id": 100, "status": "OPEN", "hours": 3.0,
+        b = Booking({"id": 100, "status": "CLEANER_ASSIGNED",
+                     "cleanerStatus": "ON_THE_WAY", "hours": 3.0,
                      "propertyId": 1004, "cost": 99.99})
         self.assertEqual(100, b.id)
-        self.assertEqual("OPEN", b.status)
+        self.assertEqual("CLEANER_ASSIGNED", b.status)
+        self.assertEqual("ON_THE_WAY", b.cleaner_status)
         self.assertEqual(3.0, b.hours)
         self.assertEqual(1004, b.property_id)
         self.assertAlmostEqual(99.99, b.cost, places=2)
@@ -994,6 +996,7 @@ class TestModels(unittest.TestCase):
         b = Booking({})
         self.assertIsNone(b.id)
         self.assertIsNone(b.status)
+        self.assertIsNone(b.cleaner_status)
 
     def test_user_model(self):
         u = User({"id": 42, "email": "a@b.com", "firstName": "Alice",

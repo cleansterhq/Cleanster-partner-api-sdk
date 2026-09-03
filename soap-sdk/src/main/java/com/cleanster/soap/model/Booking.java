@@ -9,6 +9,7 @@ public class Booking {
 
     private Long   id;
     private String status;
+    @JsonProperty("cleanerStatus") private String cleanerStatus;
     @JsonProperty("scheduled_at")  private String scheduledAt;
     @JsonProperty("duration_hours") private Double durationHours;
     @JsonProperty("service_type")  private String serviceType;
@@ -21,6 +22,7 @@ public class Booking {
 
     public Long   getId()            { return id; }
     public String getStatus()        { return status; }
+    public String getCleanerStatus() { return cleanerStatus; }
     public String getScheduledAt()   { return scheduledAt; }
     public Double getDurationHours() { return durationHours; }
     public String getServiceType()   { return serviceType; }
@@ -33,6 +35,7 @@ public class Booking {
 
     public void setId(Long id)                     { this.id = id; }
     public void setStatus(String status)           { this.status = status; }
+    public void setCleanerStatus(String status)    { this.cleanerStatus = status; }
     public void setScheduledAt(String scheduledAt) { this.scheduledAt = scheduledAt; }
     public void setDurationHours(Double h)         { this.durationHours = h; }
     public void setServiceType(String s)           { this.serviceType = s; }

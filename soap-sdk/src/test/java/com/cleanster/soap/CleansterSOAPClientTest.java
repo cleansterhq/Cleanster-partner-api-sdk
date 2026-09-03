@@ -76,6 +76,7 @@ class CleansterSOAPClientTest {
         when(transport.get("/v1/bookings/16459")).thenReturn(bookingNode(16459L, "completed"));
         Booking result = client.getBooking(16459);
         assertEquals("completed", result.getStatus());
+        assertEquals("ON_THE_WAY", result.getCleanerStatus());
     }
 
     // =========================================================================
@@ -492,6 +493,7 @@ class CleansterSOAPClientTest {
         ObjectNode n = MAPPER.createObjectNode();
         n.put("id", id);
         n.put("status", status);
+        n.put("cleanerStatus", "ON_THE_WAY");
         n.put("scheduled_at", "2025-06-01T10:00:00Z");
         n.put("duration_hours", 3.0);
         return n;

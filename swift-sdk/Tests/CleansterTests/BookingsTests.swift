@@ -115,7 +115,11 @@ final class BookingsTests: XCTestCase {
     }
 
     func testCreateBooking_decodesId() async throws {
-        mock.succeed(with: ["id": 16459, "status": "OPEN"])
+        mock.succeed(with: [
+            "id": 16459,
+            "status": "CLEANER_ASSIGNED",
+            "cleanerStatus": "ON_THE_WAY",
+        ])
         let req = CreateBookingRequest(
             date: "2025-09-15", time: "10:00", propertyId: 1004,
             planId: 2, hours: 3.0, roomCount: 2, bathroomCount: 1,
@@ -123,6 +127,8 @@ final class BookingsTests: XCTestCase {
         )
         let resp = try await client.bookings.createBooking(req)
         XCTAssertEqual(resp.data?.id, 16459)
+        XCTAssertEqual(resp.data?.status, "CLEANER_ASSIGNED")
+        XCTAssertEqual(resp.data?.cleanerStatus, "ON_THE_WAY")
     }
 
     // MARK: - getBookingDetails

@@ -21,6 +21,8 @@ export interface BookingPage {
 export interface Booking {
   id: number;
   status: "OPEN" | "CLEANER_ASSIGNED" | "COMPLETED" | "CANCELLED" | "REMOVED";
+  /** Operational cleaner state returned by the live API. Unknown future values are preserved. */
+  cleanerStatus?: string | null;
   date: string;         // YYYY-MM-DD
   time: string;         // HH:mm
   hours: number;

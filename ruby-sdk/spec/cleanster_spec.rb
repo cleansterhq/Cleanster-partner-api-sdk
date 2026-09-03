@@ -894,7 +894,8 @@ RSpec.describe Cleanster do
   describe Cleanster::Models::Booking do
     let(:data) do
       {
-        "id" => 16926, "status" => "COMPLETED", "date" => "2025-06-15", "time" => "10:00",
+        "id" => 16926, "status" => "CLEANER_ASSIGNED", "cleanerStatus" => "ON_THE_WAY",
+        "date" => "2025-06-15", "time" => "10:00",
         "hours" => 3, "cost" => 150.0, "propertyId" => 1004, "cleanerId" => 5,
         "planId" => 2, "roomCount" => 2, "bathroomCount" => 1,
         "extraSupplies" => false, "paymentMethodId" => 10
@@ -904,7 +905,8 @@ RSpec.describe Cleanster do
     it "maps all fields correctly" do
       booking = described_class.new(data)
       expect(booking.id).to eq(16926)
-      expect(booking.status).to eq("COMPLETED")
+      expect(booking.status).to eq("CLEANER_ASSIGNED")
+      expect(booking.cleaner_status).to eq("ON_THE_WAY")
       expect(booking.date).to eq("2025-06-15")
       expect(booking.time).to eq("10:00")
       expect(booking.hours).to eq(3)

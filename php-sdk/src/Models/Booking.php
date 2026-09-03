@@ -9,6 +9,7 @@ final class Booking
 {
     public readonly int     $id;
     public readonly string  $status;
+    public readonly ?string $cleanerStatus;
     public readonly string  $date;
     public readonly string  $time;
     public readonly float   $hours;
@@ -27,6 +28,7 @@ final class Booking
     {
         $this->id              = (int)($data['id'] ?? 0);
         $this->status          = (string)($data['status'] ?? '');
+        $this->cleanerStatus   = isset($data['cleanerStatus']) ? (string)$data['cleanerStatus'] : null;
         $this->date            = (string)($data['date'] ?? '');
         $this->time            = (string)($data['time'] ?? '');
         $this->hours           = (float)($data['hours'] ?? 0);

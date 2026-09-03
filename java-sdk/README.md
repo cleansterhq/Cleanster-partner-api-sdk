@@ -237,6 +237,12 @@ POST /v1/bookings/create  ──►  OPEN
 
 Booking status values: `OPEN` · `CLEANER_ASSIGNED` · `IN_PROGRESS` · `COMPLETED` · `CANCELLED` · `REMOVED`
 
+`status` describes the booking lifecycle. `cleanerStatus` separately describes
+the cleaner's operational progress. Live responses have confirmed
+`NOT_STARTED`, `ON_THE_WAY`, and `COMPLETED`; additional values such as
+`ARRIVED`, `CLEANING`, and `PAUSED` may appear. The SDK preserves this as a raw
+string so future values remain available.
+
 ---
 
 ## API Reference
@@ -1178,6 +1184,7 @@ ApiResponse<Object> resp = client.webhooks().deleteWebhook(50);
 |---|---|---|
 | `id` | int | Unique booking ID |
 | `status` | String | `OPEN` · `CLEANER_ASSIGNED` · `IN_PROGRESS` · `COMPLETED` · `CANCELLED` · `REMOVED` |
+| `cleanerStatus` | String | Cleaner operational progress, independent of `status` |
 | `date` | String | Booking date (`YYYY-MM-DD`) |
 | `time` | String | Booking start time (`HH:MM`) |
 | `hours` | double | Scheduled duration in hours |

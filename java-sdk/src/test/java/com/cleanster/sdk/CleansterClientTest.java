@@ -215,7 +215,8 @@ class CleansterClientTest {
         BookingApi api = new BookingApi(mockHttp);
         Booking booking = new Booking();
         booking.setId(16926);
-        booking.setStatus("COMPLETED");
+        booking.setStatus("CLEANER_ASSIGNED");
+        booking.setCleanerStatus("ON_THE_WAY");
         ApiResponse<Booking> expected = new ApiResponse<>();
         expected.setData(booking);
         when(mockHttp.get(eq("/v1/bookings/16926"), any(TypeReference.class))).thenReturn(expected);
@@ -224,7 +225,8 @@ class CleansterClientTest {
 
         verify(mockHttp).get(eq("/v1/bookings/16926"), any(TypeReference.class));
         assertEquals(16926, result.getData().getId());
-        assertEquals("COMPLETED", result.getData().getStatus());
+        assertEquals("CLEANER_ASSIGNED", result.getData().getStatus());
+        assertEquals("ON_THE_WAY", result.getData().getCleanerStatus());
     }
 
     @Test
