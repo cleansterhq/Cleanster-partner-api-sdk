@@ -387,4 +387,14 @@ class BookingsTest {
         client.bookings.getBookingInspectionDetails(16926)
         assertEquals("GET", server.takeRequest().method)
     }
+
+    @Test fun `getChat parses image and video attachments`() = runTest {
+        enqueue("""{"status":200,"message":"OK","data":[{"message_id":"msg-1","sender_id":"C6","content":"","timestamp":"03 Sep 2026, 10:00 AM","message_type":"media","attachments":[{"type":"image","url":"https://cdn.example/photo.jpg","thumb_url":"https://cdn.example/photo-thumb.jpg"},{"type":"video","url":"https://cdn.example/video.mp4","thumb_url":"https://cdn.example/video-thumb.jpg"}],"is_read":false,"sender_type":"cleaner"}]}""")
+
+        val message = client.bookings.getChat(16926).data?.single()
+        assertEquals("media", message?.messageType)
+        assertEquals("https://cdn.example/photo.jpg", message?.attachments?.get(0)?.url)
+        assertEquals("video", message?.attachments?.get(1)?.type)
+        assertEquals("https://cdn.example/video-thumb.jpg", message?.attachments?.get(1)?.thumbUrl)
+    }
 }

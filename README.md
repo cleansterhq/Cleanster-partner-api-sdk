@@ -10,7 +10,7 @@
   <img src="https://img.shields.io/badge/SDKs-12%20Languages-blue" alt="12 Languages">
   <img src="https://img.shields.io/badge/MCP%20Server-Claude%20%7C%20AI-blueviolet" alt="MCP Server">
   <img src="https://img.shields.io/badge/Endpoints-66-orange" alt="66 Endpoints">
-  <img src="https://img.shields.io/badge/Tests-1587%20passing-success" alt="1587 Tests Passing">
+  <img src="https://img.shields.io/badge/Tests-1597%20passing-success" alt="1597 Tests Passing">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
 </p>
 
@@ -63,18 +63,18 @@
 |---|---|---|---|---|
 | [Java](#java) | [`java-sdk/`](./java-sdk) | 85 | Java 11+ | Maven / Gradle |
 | [Python](#python) | [`python-sdk/`](./python-sdk) | 107 | Python 3.8+ | pip |
-| [TypeScript / Node.js](#typescript--nodejs) | [`typescript-sdk/`](./typescript-sdk) | 94 | Node.js 18+ | npm |
+| [TypeScript / Node.js](#typescript--nodejs) | [`typescript-sdk/`](./typescript-sdk) | 95 | Node.js 18+ | npm |
 | [Ruby](#ruby) | [`ruby-sdk/`](./ruby-sdk) | 127 | Ruby 2.7+ | gem |
 | [Go](#go) | [`go-sdk/`](./go-sdk) | 100 | Go 1.21+ | go get |
 | [PHP](#php) | [`php-sdk/`](./php-sdk) | 115 | PHP 8.1+ | Composer |
 | [C# / .NET](#c--net) | [`csharp-sdk/`](./csharp-sdk) | 115 | .NET 8.0+ | NuGet |
-| [Swift](#swift) | [`swift-sdk/`](./swift-sdk) | 174 | Swift 5.9+ / iOS 16+ | Swift Package Manager |
-| [Kotlin](#kotlin) | [`kotlin-sdk/`](./kotlin-sdk) | 174 | Kotlin 1.9+ / JVM 11+ | Gradle |
+| [Swift](#swift) | [`swift-sdk/`](./swift-sdk) | 176 | Swift 5.9+ / iOS 16+ | Swift Package Manager |
+| [Kotlin](#kotlin) | [`kotlin-sdk/`](./kotlin-sdk) | 176 | Kotlin 1.9+ / JVM 11+ | Gradle |
 | [XML (JAXB)](#xml) | [`xml-sdk/`](./xml-sdk) | 128 | Java 17+ / JAXB 4.0 | Maven |
-| [SOAP](#soap) | [`soap-sdk/`](./soap-sdk) | 122 | Java 11+ | Maven |
-| [Android (Retrofit)](#android) | [`android-sdk/`](./android-sdk) | 172 | Android API 26+ / Kotlin 1.9+ | Gradle |
+| [SOAP](#soap) | [`soap-sdk/`](./soap-sdk) | 125 | Java 11+ | Maven |
+| [Android (Retrofit)](#android) | [`android-sdk/`](./android-sdk) | 174 | Android API 26+ / Kotlin 1.9+ | Gradle |
 
-**1,587 tests passing across all 12 SDKs + MCP server.**
+**1,597 tests passing across all 12 SDKs + MCP server.**
 
 ### AI / Agentic Integration
 
@@ -708,7 +708,7 @@ val hook = client.webhooks.createWebhook(
 
 **Run tests:**
 ```bash
-./gradlew test        # 172 tests, all should pass
+./gradlew test        # 174 tests, all should pass
 ```
 
 [Full Android documentation →](./android-sdk/README.md)
@@ -2796,7 +2796,7 @@ Cleanster-partner-api-sdk/
 │   │   ├── CleansterClient.swift
 │   │   ├── CleansterError.swift
 │   │   └── NetworkSession.swift
-│   ├── Tests/CleansterTests/   174 unit tests
+│   ├── Tests/CleansterTests/   176 unit tests
 │   └── README.md               Full Swift SDK documentation
 │
 ├── java-sdk/
@@ -2822,7 +2822,7 @@ Cleanster-partner-api-sdk/
 │   │   ├── api/          bookings.ts, properties.ts, users.ts, ...
 │   │   ├── models/       booking.ts, property.ts, response.ts, ...
 │   │   └── client.ts
-│   ├── tests/            94 unit tests
+│   ├── tests/            95 unit tests
 │   ├── package.json
 │   └── README.md         Full TypeScript SDK documentation
 │
@@ -2866,7 +2866,7 @@ Cleanster-partner-api-sdk/
 │   │   ├── CleansterClient.kt
 │   │   ├── CleansterError.kt
 │   │   └── HttpEngine.kt
-│   ├── src/test/kotlin/  174 unit tests
+│   ├── src/test/kotlin/  176 unit tests
 │   ├── build.gradle.kts
 │   └── README.md         Full Kotlin SDK documentation
 │

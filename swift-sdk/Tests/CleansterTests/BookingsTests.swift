@@ -295,6 +295,28 @@ final class BookingsTests: XCTestCase {
         XCTAssertTrue(mock.capturedURL?.hasSuffix("/v1/bookings/17142/chat") == true)
     }
 
+    func testGetChat_decodesImageAndVideoAttachments() async throws {
+        mock.succeedWithArray([[
+            "message_id": "msg-1",
+            "sender_id": "C6",
+            "content": "",
+            "timestamp": "03 Sep 2026, 10:00 AM",
+            "message_type": "media",
+            "attachments": [
+                ["type": "image", "url": "https://cdn.example/photo.jpg", "thumb_url": "https://cdn.example/photo-thumb.jpg"],
+                ["type": "video", "url": "https://cdn.example/video.mp4", "thumb_url": "https://cdn.example/video-thumb.jpg"],
+            ],
+            "is_read": false,
+            "sender_type": "cleaner",
+        ]])
+
+        let message = try await client.bookings.getChat(17142).data?.first
+        XCTAssertEqual(message?.messageType, "media")
+        XCTAssertEqual(message?.attachments?.first?.url, "https://cdn.example/photo.jpg")
+        XCTAssertEqual(message?.attachments?[1].type, "video")
+        XCTAssertEqual(message?.attachments?[1].thumbUrl, "https://cdn.example/video-thumb.jpg")
+    }
+
     func testSendMessage_sendsPOST() async throws {
         mock.succeedEmpty()
         _ = try await client.bookings.sendMessage(17142, message: "On the way!")

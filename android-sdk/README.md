@@ -10,7 +10,7 @@
   <img src="https://img.shields.io/badge/Kotlin-1.9%2B-purple?logo=kotlin" alt="Kotlin 1.9+">
   <img src="https://img.shields.io/badge/Retrofit-2.9-blue?logo=square" alt="Retrofit 2.9">
   <img src="https://img.shields.io/badge/OkHttp-4.12-orange" alt="OkHttp 4.12">
-  <img src="https://img.shields.io/badge/tests-172%20passing-brightgreen" alt="172 passing">
+  <img src="https://img.shields.io/badge/tests-174%20passing-brightgreen" alt="174 passing">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
   <img src="https://img.shields.io/badge/API-Cleanster%20Partner-brightgreen" alt="Cleanster Partner API">
 </p>
@@ -1646,7 +1646,7 @@ cd android-sdk
 ./gradlew test
 ```
 
-All **172 tests** should pass.
+All **174 tests** should pass.
 
 To run a specific test class:
 
@@ -1673,7 +1673,7 @@ To run with verbose output:
 | `PaymentMethodsTest.kt` | 14 | 6 endpoints |
 | `WebhooksTest.kt` | 11 | 4 endpoints + 8 event types |
 | `WebhookUtilsTest.kt` | 4 | Signature verification |
-| **Total** | **172** | **66 endpoints** |
+| **Total** | **174** | **66 endpoints** |
 
 ---
 
@@ -1702,11 +1702,11 @@ android-sdk/
 │   │       ├── Models.kt                 Booking, Property, Checklist, PaymentMethod, ...
 │   │       └── Requests.kt               CreateBookingRequest, CreatePropertyRequest, ...
 │   └── test/kotlin/com/cleanster/android/
-│       ├── BookingsTest.kt               47 tests - MockWebServer
+│       ├── BookingsTest.kt               48 tests - MockWebServer
 │       ├── UsersTest.kt                  18 tests - MockWebServer
 │       ├── PropertiesTest.kt             26 tests - MockWebServer
-│       ├── ChecklistsTest.kt             18 tests - MockWebServer
-│       ├── OtherTest.kt                  21 tests - MockWebServer
+│       ├── ChecklistsTest.kt             19 tests - MockWebServer
+│       ├── OtherTest.kt                  25 tests - MockWebServer
 │       ├── BlacklistTest.kt              9  tests - MockWebServer
 │       ├── PaymentMethodsTest.kt         14 tests - MockWebServer
 │       └── WebhooksTest.kt               11 tests - MockWebServer

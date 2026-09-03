@@ -344,7 +344,7 @@ soap-sdk/
     │       └── CreateUserRequest.java
     └── test/java/com/cleanster/soap/
         ├── CleansterSOAPClientTest.java    ← 43 tests (core operations)
-        ├── ServiceExtensionsTest.java      ← 43 tests (extended methods)
+        ├── ServiceExtensionsTest.java      ← 46 tests (extended methods)
         ├── UserServiceTest.java            ← 6 tests
         ├── BlacklistServiceTest.java       ← 6 tests
         ├── PaymentMethodServiceTest.java   ← 12 tests
@@ -409,7 +409,7 @@ cd soap-sdk
 mvn test
 ```
 
-Expected: **122 tests, 0 failures, 0 errors.**
+Expected: **125 tests, 0 failures, 0 errors.**
 
 To run a single test class:
 

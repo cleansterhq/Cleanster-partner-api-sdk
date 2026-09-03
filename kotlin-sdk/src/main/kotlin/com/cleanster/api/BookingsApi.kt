@@ -130,7 +130,7 @@ class BookingsApi internal constructor(private val client: CleansterClient) {
     )
 
     /** Retrieve the chat thread for a booking. Available ±24 hours of booking start time. */
-    suspend fun getChat(bookingId: Int): ApiResponse<List<Any>> = client.request(
+    suspend fun getChat(bookingId: Int): ApiResponse<List<ChatMessage>> = client.request(
         method = "GET",
         path   = "/v1/bookings/$bookingId/chat",
     )

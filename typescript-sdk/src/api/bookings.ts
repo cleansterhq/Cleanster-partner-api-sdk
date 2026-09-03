@@ -16,6 +16,7 @@ import {
   FeedbackRequest,
   TipRequest,
   SendMessageRequest,
+  ChatMessage,
   UpdateTaskRequest,
   UpdateSqftRequest,
 } from "../models/booking";
@@ -161,8 +162,8 @@ export class BookingsApi {
    * Retrieve all chat messages for a booking thread.
    * @param bookingId  The booking ID.
    */
-  getChat(bookingId: number): Promise<ApiResponse<unknown>> {
-    return this.http.get(`/v1/bookings/${bookingId}/chat`);
+  getChat(bookingId: number): Promise<ApiResponse<ChatMessage[]>> {
+    return this.http.get<ChatMessage[]>(`/v1/bookings/${bookingId}/chat`);
   }
 
   /**

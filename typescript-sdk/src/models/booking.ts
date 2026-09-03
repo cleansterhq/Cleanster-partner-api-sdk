@@ -95,6 +95,25 @@ export interface SendMessageRequest {
   message: string;
 }
 
+/** A photo, video, or audio file attached to a chat message. */
+export interface ChatAttachment {
+  type: "image" | "video" | "sound" | string;
+  url: string;
+  thumb_url?: string | null;
+}
+
+/** A message returned by GET /v1/bookings/{bookingId}/chat. */
+export interface ChatMessage {
+  message_id: string;
+  sender_id: string;
+  content: string;
+  timestamp: string;
+  message_type: "text" | "media" | string;
+  attachments: ChatAttachment[];
+  is_read: boolean;
+  sender_type: "client" | "cleaner" | "support" | "bot" | string;
+}
+
 /** A single task quantity update within UpdateTaskRequest. */
 export interface TaskQuantity {
   id: number;

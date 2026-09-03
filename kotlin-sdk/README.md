@@ -10,7 +10,7 @@
   <img src="https://img.shields.io/badge/JVM-11%2B-blue?logo=openjdk" alt="JVM 11+">
   <img src="https://img.shields.io/badge/Android-API%2026%2B-brightgreen?logo=android" alt="Android 26+">
   <img src="https://img.shields.io/badge/Coroutines-1.7%2B-orange" alt="Coroutines">
-  <img src="https://img.shields.io/badge/tests-174%20passing-brightgreen" alt="174 passing">
+  <img src="https://img.shields.io/badge/tests-176%20passing-brightgreen" alt="176 passing">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
   <img src="https://img.shields.io/badge/API-Cleanster%20Partner-brightgreen" alt="Cleanster Partner API">
 </p>
@@ -1453,7 +1453,7 @@ cd kotlin-sdk
 ./gradlew test
 ```
 
-All **174 tests** should pass.
+All **176 tests** should pass.
 
 To run a single test class:
 

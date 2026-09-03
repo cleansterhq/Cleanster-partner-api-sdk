@@ -260,4 +260,26 @@ class BookingsTest {
         assertTrue(mock.capturedUrl?.endsWith("/v1/bookings/16459/inspection") == true)
         assertTrue(mock.capturedUrl?.contains("/inspection/details") == false)
     }
+
+    @Test fun `getChat decodes image and video attachments`() = runTest {
+        mock.succeed(listOf(mapOf(
+            "message_id" to "msg-1",
+            "sender_id" to "C6",
+            "content" to "",
+            "timestamp" to "03 Sep 2026, 10:00 AM",
+            "message_type" to "media",
+            "attachments" to listOf(
+                mapOf("type" to "image", "url" to "https://cdn.example/photo.jpg", "thumb_url" to "https://cdn.example/photo-thumb.jpg"),
+                mapOf("type" to "video", "url" to "https://cdn.example/video.mp4", "thumb_url" to "https://cdn.example/video-thumb.jpg"),
+            ),
+            "is_read" to false,
+            "sender_type" to "cleaner",
+        )))
+
+        val message = client.bookings.getChat(16459).data?.single()
+        assertEquals("media", message?.messageType)
+        assertEquals("https://cdn.example/photo.jpg", message?.attachments?.get(0)?.url)
+        assertEquals("video", message?.attachments?.get(1)?.type)
+        assertEquals("https://cdn.example/video-thumb.jpg", message?.attachments?.get(1)?.thumbUrl)
+    }
 }

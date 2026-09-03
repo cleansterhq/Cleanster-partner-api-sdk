@@ -135,6 +135,38 @@ class ServiceExtensionsTest {
     }
 
     @Test
+    @DisplayName("getChat parses image and video attachment URLs")
+    void getChatParsesMediaAttachments() {
+        ObjectNode response = MAPPER.createObjectNode();
+        ObjectNode message = response.putArray("data").addObject();
+        message.put("message_id", "msg-1");
+        message.put("sender_id", "C6");
+        message.put("content", "");
+        message.put("timestamp", "03 Sep 2026, 10:00 AM");
+        message.put("message_type", "media");
+        message.put("is_read", false);
+        message.put("sender_type", "cleaner");
+        message.putArray("attachments")
+                .addObject()
+                .put("type", "image")
+                .put("url", "https://cdn.example/photo.jpg")
+                .put("thumb_url", "https://cdn.example/photo-thumb.jpg");
+        message.withArray("attachments")
+                .addObject()
+                .put("type", "video")
+                .put("url", "https://cdn.example/video.mp4")
+                .put("thumb_url", "https://cdn.example/video-thumb.jpg");
+        when(transport.get("/v1/bookings/16459/chat")).thenReturn(response);
+        when(transport.extractData(response)).thenReturn(response.get("data"));
+
+        ChatMessage result = client.getChat(16459L).get(0);
+        assertEquals("media", result.getMessageType());
+        assertEquals("https://cdn.example/photo.jpg", result.getAttachments().get(0).getUrl());
+        assertEquals("video", result.getAttachments().get(1).getType());
+        assertEquals("https://cdn.example/video-thumb.jpg", result.getAttachments().get(1).getThumbUrl());
+    }
+
+    @Test
     @DisplayName("assignChecklistToBooking calls PUT /v1/bookings/{id}/checklist/{checklistId}")
     void assignChecklistToBookingCallsCorrectPath() {
         when(transport.put(eq("/v1/bookings/16459/checklist/105"), any())).thenReturn(okNode());

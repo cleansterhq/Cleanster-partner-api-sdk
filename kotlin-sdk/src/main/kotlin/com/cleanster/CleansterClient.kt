@@ -94,7 +94,7 @@ class CleansterClient private constructor(
             throw CleansterError.NetworkError(e.message ?: "Network failure", e)
         }
 
-        val type: Type = TypeToken.getParameterized(ApiResponse::class.java, T::class.java).type
+        val type: Type = object : TypeToken<ApiResponse<T>>() {}.type
         val parsed: ApiResponse<T> = try {
             gson.fromJson(response.body, type)
         } catch (e: JsonSyntaxException) {

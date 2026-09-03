@@ -1,1 +1,2 @@
 - [Inspection report contract](inspection-report-contract.md) — inspection returns a signed report URL containing photos, checklist evidence, and property problems.
+- [Chat media contract](chat-media-contract.md) — chat.message_added and chat retrieval carry photo/video/audio attachment URLs; sending remains text-only.

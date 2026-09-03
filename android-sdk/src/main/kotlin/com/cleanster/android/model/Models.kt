@@ -89,14 +89,27 @@ data class Cleaner(
     @SerializedName("rating")    val rating: Double? = null,
 )
 
+data class ChatAttachment(
+    @SerializedName("type") val type: String = "",
+    @SerializedName("url") val url: String = "",
+    @SerializedName(value = "thumb_url", alternate = ["thumbUrl"])
+    val thumbUrl: String? = null,
+)
+
 data class ChatMessage(
-    @SerializedName("messageId")   val messageId: String = "",
-    @SerializedName("senderId")    val senderId: String = "",
+    @SerializedName(value = "message_id", alternate = ["messageId"])
+    val messageId: String = "",
+    @SerializedName(value = "sender_id", alternate = ["senderId"])
+    val senderId: String = "",
     @SerializedName("content")     val content: String = "",
     @SerializedName("timestamp")   val timestamp: String = "",
-    @SerializedName("messageType") val messageType: String = "text",
-    @SerializedName("isRead")      val isRead: Boolean = false,
-    @SerializedName("senderType")  val senderType: String = "",
+    @SerializedName(value = "message_type", alternate = ["messageType"])
+    val messageType: String = "text",
+    @SerializedName("attachments") val attachments: List<ChatAttachment> = emptyList(),
+    @SerializedName(value = "is_read", alternate = ["isRead"])
+    val isRead: Boolean = false,
+    @SerializedName(value = "sender_type", alternate = ["senderType"])
+    val senderType: String = "",
 )
 
 data class CostEstimate(

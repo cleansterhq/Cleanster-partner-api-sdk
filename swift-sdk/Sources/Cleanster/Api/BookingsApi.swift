@@ -146,8 +146,8 @@ public final class BookingsApi {
     /// Retrieve the chat thread for a booking.
     ///
     /// Chat is available ±24 hours around the booking start time.
-    public func getChat(_ bookingId: Int) async throws -> ApiResponse<AnyCodable> {
-        return try await client.requestRaw(method: "GET", path: "/v1/bookings/\(bookingId)/chat")
+    public func getChat(_ bookingId: Int) async throws -> ApiResponse<[ChatMessage]> {
+        return try await client.request(method: "GET", path: "/v1/bookings/\(bookingId)/chat")
     }
 
     /// Send a chat message for a booking.

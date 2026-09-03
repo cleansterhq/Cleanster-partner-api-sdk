@@ -71,7 +71,7 @@ public class BookingService {
 
     public Booking assignCleaner(long bookingId, long cleanerId) {
         Map<String, Object> body = new HashMap<>();
-        body.put("cleaner_id", cleanerId);
+        body.put("cleanerId", cleanerId);
         JsonNode root = transport.post("/v1/bookings/" + bookingId + "/cleaner", body);
         return transport.getObjectMapper().convertValue(transport.extractData(root), Booking.class);
     }

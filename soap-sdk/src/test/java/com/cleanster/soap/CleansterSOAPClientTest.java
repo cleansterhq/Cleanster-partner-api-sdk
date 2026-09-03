@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -189,7 +190,12 @@ class CleansterSOAPClientTest {
         when(transport.post(eq("/v1/bookings/16459/cleaner"), any()))
                 .thenReturn(bookingNode(16459L, "scheduled"));
         client.assignCleaner(16459, 789);
-        verify(transport).post(eq("/v1/bookings/16459/cleaner"), any());
+        @SuppressWarnings("unchecked")
+        org.mockito.ArgumentCaptor<Map<String, Object>> body =
+                org.mockito.ArgumentCaptor.forClass(Map.class);
+        verify(transport).post(eq("/v1/bookings/16459/cleaner"), body.capture());
+        assertEquals(789L, body.getValue().get("cleanerId"));
+        assertFalse(body.getValue().containsKey("cleaner_id"));
     }
 
     @Test

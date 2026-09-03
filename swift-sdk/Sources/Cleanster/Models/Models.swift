@@ -94,12 +94,43 @@ public struct Webhook: Decodable {
 
 // MARK: - ChatMessage
 
+public struct ChatAttachment: Decodable {
+    public let type: String?
+    public let url: String?
+    public let thumbUrl: String?
+
+    enum CodingKeys: String, CodingKey {
+        case type, url
+        case thumbUrl = "thumb_url"
+    }
+}
+
 public struct ChatMessage: Decodable {
+    public let messageId: String?
+    public let senderId: String?
+    public let content: String?
+    public let timestamp: String?
+    public let messageType: String?
+    public let attachments: [ChatAttachment]?
+    public let isRead: Bool?
+    public let senderType: String?
+
+    // Legacy response fields retained for source compatibility.
     public let id: String?
     public let message: String?
     public let sentBy: String?
     public let sentAt: String?
     public let isDeleted: Bool?
+
+    enum CodingKeys: String, CodingKey {
+        case messageId = "message_id"
+        case senderId = "sender_id"
+        case content, timestamp, attachments
+        case messageType = "message_type"
+        case isRead = "is_read"
+        case senderType = "sender_type"
+        case id, message, sentBy, sentAt, isDeleted
+    }
 }
 
 // MARK: - Cleaner

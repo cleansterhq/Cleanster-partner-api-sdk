@@ -1,5 +1,7 @@
 package com.cleanster.model
 
+import com.google.gson.annotations.SerializedName
+
 data class User(
     val id:        Int?    = null,
     val email:     String? = null,
@@ -82,11 +84,32 @@ data class Webhook(
     val secret: String? = null,
 )
 
+data class ChatAttachment(
+    val type: String? = null,
+    val url: String? = null,
+    @SerializedName(value = "thumb_url", alternate = ["thumbUrl"])
+    val thumbUrl: String? = null,
+)
+
 data class ChatMessage(
-    val id:        String?  = null,
-    val message:   String?  = null,
-    val sentBy:    String?  = null,
-    val sentAt:    String?  = null,
+    @SerializedName(value = "message_id", alternate = ["messageId"])
+    val messageId: String? = null,
+    @SerializedName(value = "sender_id", alternate = ["senderId"])
+    val senderId: String? = null,
+    val content: String? = null,
+    val timestamp: String? = null,
+    @SerializedName(value = "message_type", alternate = ["messageType"])
+    val messageType: String? = null,
+    val attachments: List<ChatAttachment>? = null,
+    @SerializedName(value = "is_read", alternate = ["isRead"])
+    val isRead: Boolean? = null,
+    @SerializedName(value = "sender_type", alternate = ["senderType"])
+    val senderType: String? = null,
+    // Legacy fields are retained for compatibility with older response shapes.
+    val id: String? = null,
+    val message: String? = null,
+    val sentBy: String? = null,
+    val sentAt: String? = null,
     val isDeleted: Boolean? = null,
 )
 

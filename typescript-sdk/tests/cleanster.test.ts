@@ -334,6 +334,30 @@ describe("BookingsApi", () => {
     expect(http.get).toHaveBeenCalledWith("/v1/bookings/17142/chat");
   });
 
+  test("getChat() preserves image and video attachment URLs", async () => {
+    const http = mockHttp();
+    http.get.mockResolvedValue(ok([{
+      message_id: "msg-1",
+      sender_id: "C6",
+      content: "",
+      timestamp: "03 Sep 2026, 10:00 AM",
+      message_type: "media",
+      attachments: [
+        { type: "image", url: "https://cdn.example/photo.jpg", thumb_url: "https://cdn.example/photo-thumb.jpg" },
+        { type: "video", url: "https://cdn.example/video.mp4", thumb_url: "https://cdn.example/video-thumb.jpg" },
+      ],
+      is_read: false,
+      sender_type: "cleaner",
+    }]));
+    const api = new BookingsApi(http);
+
+    const response = await api.getChat(17142);
+
+    expect(response.data?.[0].attachments[0].url).toBe("https://cdn.example/photo.jpg");
+    expect(response.data?.[0].attachments[1].type).toBe("video");
+    expect(response.data?.[0].attachments[1].thumb_url).toBe("https://cdn.example/video-thumb.jpg");
+  });
+
   test("sendMessage() posts message", async () => {
     const http = mockHttp();
     http.post.mockResolvedValue(ok());
