@@ -1,3 +1,4 @@
 - [Inspection report contract](inspection-report-contract.md) — inspection returns a signed report URL containing photos, checklist evidence, and property problems.
 - [Chat media contract](chat-media-contract.md) — chat.message_added and chat retrieval carry photo/video/audio attachment URLs; sending remains text-only.
 - [Property nickname contract](property-nickname-contract.md) — create/update property accepts optional `nickName`; preserve the API's exact camel-case spelling.
+- [Checklist wire contract](checklist-wire-contract.md) — reusable checklists use hierarchical `title`/`tasks`/`subtasks`, not legacy `name`/`items`.

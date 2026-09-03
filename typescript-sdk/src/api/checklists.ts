@@ -12,8 +12,8 @@ export class ChecklistsApi {
   /**
    * Return all checklists for your partner account.
    */
-  listChecklists(): Promise<ApiResponse<unknown>> {
-    return this.http.get("/v1/checklist");
+  listChecklists(): Promise<ApiResponse<Checklist[]>> {
+    return this.http.get<Checklist[]>("/v1/checklist");
   }
 
   /**
@@ -26,7 +26,7 @@ export class ChecklistsApi {
 
   /**
    * Create a new checklist.
-   * @param request  name (string) and items (string[]).
+   * @param request  title and structured task objects.
    * @returns ApiResponse with the created Checklist.
    */
   createChecklist(request: CreateChecklistRequest): Promise<ApiResponse<Checklist>> {
@@ -34,7 +34,7 @@ export class ChecklistsApi {
   }
 
   /**
-   * Replace the name and task items of an existing checklist.
+   * Replace the title and structured tasks of an existing checklist.
    * @param checklistId  The checklist ID.
    * @param request      New name and task item strings.
    */

@@ -10,7 +10,7 @@ module Cleanster
       # @return [Models::ApiResponse]
       def list_checklists
         raw = @http.get("/v1/checklist")
-        Models::ApiResponse.from_hash(raw)
+        Models::ApiResponse.from_hash(raw, model_class: Models::Checklist)
       end
 
       # Get a specific checklist and all its task items.
@@ -24,22 +24,22 @@ module Cleanster
 
       # Create a new checklist.
       #
-      # @param name  [String]
-      # @param items [Array<String>] Task description strings.
+      # @param title [String]
+      # @param tasks [Array<Hash>] Task objects using the live checklist wire keys.
       # @return [Models::ApiResponse<Models::Checklist>]
-      def create_checklist(name:, items:)
-        raw = @http.post("/v1/checklist", body: { name: name, items: items })
+      def create_checklist(title:, tasks:)
+        raw = @http.post("/v1/checklist", body: { title: title, tasks: tasks })
         Models::ApiResponse.from_hash(raw, model_class: Models::Checklist)
       end
 
       # Replace the name and task items of an existing checklist.
       #
       # @param checklist_id [Integer]
-      # @param name         [String]
-      # @param items        [Array<String>]
+      # @param title        [String]
+      # @param tasks        [Array<Hash>]
       # @return [Models::ApiResponse<Models::Checklist>]
-      def update_checklist(checklist_id, name:, items:)
-        raw = @http.put("/v1/checklist/#{checklist_id}", body: { name: name, items: items })
+      def update_checklist(checklist_id, title:, tasks:)
+        raw = @http.put("/v1/checklist/#{checklist_id}", body: { title: title, tasks: tasks })
         Models::ApiResponse.from_hash(raw, model_class: Models::Checklist)
       end
 

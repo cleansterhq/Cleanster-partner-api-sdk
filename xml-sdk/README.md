@@ -405,22 +405,19 @@ Define reusable cleaning task lists.
 |---|---|---|
 | GET    | `/v1/checklist`              | `listChecklists()` |
 | GET    | `/v1/checklist/{id}`         | `getChecklist(int id)` |
-| POST   | `/v1/checklist`              | `createChecklist(String name, List<String> items)` |
-| PUT    | `/v1/checklist/{id}`         | `updateChecklist(int id, String name, List<String> items)` |
+| POST   | `/v1/checklist`              | `createChecklist(String title, List<ChecklistTask> tasks)` |
+| PUT    | `/v1/checklist/{id}`         | `updateChecklist(int id, String title, List<ChecklistTask> tasks)` |
 | DELETE | `/v1/checklist/{id}`         | `deleteChecklist(int id)` |
 | POST   | `/v1/checklist/upload-image` | `uploadChecklistImage(byte[] data, String fileName)` |
 
 #### Create a checklist
 
 ```java
-List<String> items = List.of(
-    "Vacuum all floors",
-    "Wipe kitchen counters",
-    "Clean bathrooms",
-    "Empty trash bins"
-);
+ChecklistTask task = new ChecklistTask();
+task.setTitle("Vacuum all floors");
+task.setSubtasks(List.of());
 XmlApiResponse<Checklist> resp = client.checklists()
-        .createChecklist("Standard Clean", items);
+        .createChecklist("Standard Clean", List.of(task));
 
 System.out.println(XmlConverter.toXml(resp.getData()));
 ```

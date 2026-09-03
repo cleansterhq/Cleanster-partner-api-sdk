@@ -24,21 +24,21 @@ public sealed class ChecklistsApi
     }
 
     /// <summary>Create a new checklist.</summary>
-    /// <param name="name">Checklist name.</param>
-    /// <param name="items">Array of task description strings.</param>
+    /// <param name="request">Checklist title and structured tasks.</param>
     public async Task<ApiResponse<Checklist>> CreateChecklistAsync(
-        string name, IEnumerable<string> items, CancellationToken ct = default)
+        CreateChecklistRequest request, CancellationToken ct = default)
     {
-        var root = await _http.PostAsync("/v1/checklist", new { name, items = items.ToArray() }, ct);
+        ArgumentNullException.ThrowIfNull(request);
+        var root = await _http.PostAsync("/v1/checklist", request, ct);
         return JsonHelper.ParseSingle<Checklist>(root);
     }
 
-    /// <summary>Replace the name and task items of an existing checklist.</summary>
+    /// <summary>Replace the title and structured tasks of an existing checklist.</summary>
     public async Task<ApiResponse<Checklist>> UpdateChecklistAsync(
-        int checklistId, string name, IEnumerable<string> items, CancellationToken ct = default)
+        int checklistId, CreateChecklistRequest request, CancellationToken ct = default)
     {
-        var root = await _http.PutAsync($"/v1/checklist/{checklistId}",
-            new { name, items = items.ToArray() }, ct);
+        ArgumentNullException.ThrowIfNull(request);
+        var root = await _http.PutAsync($"/v1/checklist/{checklistId}", request, ct);
         return JsonHelper.ParseSingle<Checklist>(root);
     }
 

@@ -75,9 +75,30 @@ data class Property(
 )
 
 data class Checklist(
-    @SerializedName("id")    val id: Int = 0,
-    @SerializedName("name")  val name: String = "",
+    @SerializedName("id") val id: Int = 0,
+    @SerializedName("is_default") val isDefault: Boolean? = null,
+    @SerializedName("disabled") val disabled: Boolean? = null,
+    @SerializedName("title") val title: String? = null,
+    @SerializedName("type") val type: String? = null,
+    @SerializedName("totalTasks") val totalTasks: Int? = null,
+    @SerializedName("totalSubTasks") val totalSubTasks: Int? = null,
+    @SerializedName("tasks") val tasks: List<ChecklistTask> = emptyList(),
+    // Legacy fields are retained for older response shapes.
+    @SerializedName("name") val name: String = "",
     @SerializedName("items") val items: List<ChecklistItem> = emptyList(),
+)
+
+data class ChecklistTask(
+    @SerializedName("image_name") val imageName: String? = null,
+    @SerializedName("title") val title: String? = null,
+    @SerializedName("totalSubtasks") val totalSubtasks: Int? = null,
+    @SerializedName("subtasks") val subtasks: List<ChecklistSubtask> = emptyList(),
+)
+
+data class ChecklistSubtask(
+    @SerializedName("description") val description: String? = null,
+    @SerializedName("flag_request_photos") val flagRequestPhotos: Boolean? = null,
+    @SerializedName("photos") val photos: List<String> = emptyList(),
 )
 
 data class ChecklistItem(

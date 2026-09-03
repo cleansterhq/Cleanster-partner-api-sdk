@@ -806,20 +806,21 @@ let checklist = try await client.checklists.getChecklist(77)
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `name` | String | Yes | Checklist name |
-| `items` | [String] | Yes | Task items |
+| `title` | String | Yes | Checklist title |
+| `tasks` | `[ChecklistTask]` | Yes | Structured tasks and subtasks |
 
 ```swift
 let created = try await client.checklists.createChecklist(
-    name: "Deep Clean",
-    items: [
-        "Vacuum all carpets and rugs",
-        "Mop all hard floors",
-        "Wipe down all surfaces and appliances",
-        "Clean interior of oven",
-        "Scrub and disinfect all bathrooms",
-        "Empty and wipe out all bins",
-        "Dust all furniture, shelves, and ceiling fans",
+    title: "Deep Clean",
+    tasks: [
+        ChecklistTask(
+            imageName: "kitchen.jpg",
+            title: "Clean kitchen",
+            totalSubtasks: 1,
+            subtasks: [
+                ChecklistSubtask(description: "Clean the oven", flagRequestPhotos: true, photos: [])
+            ]
+        )
     ]
 )
 let checklistId = created.data?.id ?? 0
@@ -830,17 +831,19 @@ let checklistId = created.data?.id ?? 0
 #### Update Checklist
 **`PUT /v1/checklist/{checklistId}`**
 
-Replaces the checklist name and items entirely.
+Replaces the checklist title and tasks entirely.
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `name` | String | Yes | New checklist name |
-| `items` | [String] | Yes | Replacement task items |
+| `title` | String | Yes | New checklist title |
+| `tasks` | `[ChecklistTask]` | Yes | Replacement structured tasks |
 
 ```swift
 try await client.checklists.updateChecklist(77,
-    name: "Deep Clean v2",
-    items: ["New task 1", "New task 2"]
+    title: "Deep Clean v2",
+    tasks: [
+        ChecklistTask(imageName: "bathroom.jpg", title: "Clean bathroom", totalSubtasks: 0, subtasks: [])
+    ]
 )
 ```
 

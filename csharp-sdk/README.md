@@ -661,21 +661,31 @@ var resp = await client.Checklists.GetChecklistAsync(105);
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `Name` | string | Yes | Display name |
-| `Items` | string[] | Yes | Ordered task list |
+| `Title` | string | Yes | Display title |
+| `Tasks` | List&lt;ChecklistTask&gt; | Yes | Structured tasks and subtasks |
 
 ```csharp
 var resp = await client.Checklists.CreateChecklistAsync(new CreateChecklistRequest
 {
-    Name  = "Deep Clean",
-    Items = new[]
-    {
-        "Vacuum all rooms",
-        "Mop kitchen and bathroom floors",
-        "Scrub toilets, sinks, and tubs",
-        "Wipe all countertops",
-        "Clean inside microwave and oven",
-    }
+    Title = "Deep Clean",
+    Tasks =
+    [
+        new ChecklistTask
+        {
+            ImageName = "kitchen.jpg",
+            Title = "Clean kitchen",
+            TotalSubtasks = 1,
+            Subtasks =
+            [
+                new ChecklistSubtask
+                {
+                    Description = "Clean the oven",
+                    FlagRequestPhotos = true,
+                    Photos = []
+                }
+            ]
+        }
+    ]
 });
 ```
 
@@ -687,8 +697,8 @@ var resp = await client.Checklists.CreateChecklistAsync(new CreateChecklistReque
 ```csharp
 await client.Checklists.UpdateChecklistAsync(105, new CreateChecklistRequest
 {
-    Name  = "Standard Clean",
-    Items = new[] { "Vacuum", "Wipe surfaces", "Clean bathrooms" }
+    Title = "Standard Clean",
+    Tasks = []
 });
 ```
 

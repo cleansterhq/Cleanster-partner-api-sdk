@@ -609,9 +609,12 @@ class TestChecklistsApi(unittest.TestCase):
         http = make_http()
         http.get.return_value = ok({
             "id": 105,
-            "name": "Standard Clean",
-            "items": [
-                {"id": 1, "description": "Vacuum floors", "isCompleted": False}
+            "is_default": True, "disabled": False, "title": "Standard Clean",
+            "type": "PROPERTY", "totalTasks": 1, "totalSubTasks": 1,
+            "tasks": [
+                {"image_name": "vacuum.jpg", "title": "Vacuum floors", "totalSubtasks": 1,
+                 "subtasks": [{"description": "Vacuum bedroom", "flag_request_photos": True,
+                               "photos": ["https://example.com/photo.jpg"]}]}
             ],
         })
         api = ChecklistsApi(http)
@@ -621,35 +624,37 @@ class TestChecklistsApi(unittest.TestCase):
         http.get.assert_called_once_with("/v1/checklist/105")
         self.assertIsInstance(result.data, Checklist)
         self.assertEqual(105, result.data.id)
-        self.assertEqual("Standard Clean", result.data.name)
-        self.assertEqual(1, len(result.data.items))
-        self.assertIsInstance(result.data.items[0], ChecklistItem)
-        self.assertEqual("Vacuum floors", result.data.items[0].description)
+        self.assertEqual("Standard Clean", result.data.title)
+        self.assertTrue(result.data.is_default)
+        self.assertEqual("Vacuum floors", result.data.tasks[0].title)
+        self.assertTrue(result.data.tasks[0].subtasks[0].flag_request_photos)
+        self.assertEqual(["https://example.com/photo.jpg"], result.data.tasks[0].subtasks[0].photos)
 
     def test_create_checklist(self):
         http = make_http()
-        http.post.return_value = ok({"id": 200, "name": "My Checklist"})
+        http.post.return_value = ok({"id": 200, "title": "My Checklist", "tasks": []})
         api = ChecklistsApi(http)
 
-        items = ["Task 1", "Task 2", "Task 3"]
-        result = api.create_checklist("My Checklist", items)
+        tasks = [{"image_name": "task.jpg", "title": "Task 1", "totalSubtasks": 1,
+                  "subtasks": [{"description": "Do task", "flag_request_photos": False, "photos": []}]}]
+        result = api.create_checklist("My Checklist", tasks)
 
         http.post.assert_called_once_with(
             "/v1/checklist",
-            body={"name": "My Checklist", "items": items},
+            body={"title": "My Checklist", "tasks": tasks},
         )
         self.assertEqual(200, result.data.id)
 
     def test_update_checklist(self):
         http = make_http()
-        http.put.return_value = ok({"id": 200, "name": "Updated"})
+        http.put.return_value = ok({"id": 200, "title": "Updated", "tasks": []})
         api = ChecklistsApi(http)
 
-        api.update_checklist(200, "Updated", ["New task"])
+        api.update_checklist(200, "Updated", [])
 
         http.put.assert_called_once_with(
             "/v1/checklist/200",
-            body={"name": "Updated", "items": ["New task"]},
+            body={"title": "Updated", "tasks": []},
         )
 
     def test_delete_checklist(self):

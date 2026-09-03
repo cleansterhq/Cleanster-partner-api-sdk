@@ -634,7 +634,9 @@ Property property = client.createProperty(new CreatePropertyRequest()
 client.addICalLink(property.getId(), "https://airbnb.com/calendar.ics");
 
 // Checklists
-Checklist checklist = client.createChecklist("Deep Clean", List.of("Oven", "Bathrooms"));
+ChecklistTask task = new ChecklistTask();
+task.setTitle("Oven");
+Checklist checklist = client.createChecklist("Deep Clean", List.of(task));
 client.uploadChecklistImage(imageBytes, "guide.jpg");
 
 // Users & auth
@@ -1960,17 +1962,30 @@ Returns all checklists in the partner account.
 | Field | Type | Description |
 |---|---|---|
 | `id` | integer | Checklist ID |
-| `name` | string | Checklist name |
-| `items` | array | List of `ChecklistItem` objects |
+| `is_default` | boolean | Whether this is the default checklist |
+| `disabled` | boolean | Whether the checklist is disabled |
+| `title` | string | Checklist title |
+| `type` | string | Checklist type, such as `home` |
+| `totalTasks` | integer | Number of task sections |
+| `totalSubTasks` | integer | Total number of subtasks |
+| `tasks` | array | List of structured task sections |
 
-**`ChecklistItem` fields:**
+**Task fields:**
 
 | Field | Type | Description |
 |---|---|---|
-| `id` | integer | Item ID |
-| `description` | string | Task description shown to cleaner |
-| `isCompleted` | boolean | Whether the cleaner marked it done |
-| `imageUrl` | string or null | Photo proof URL (if uploaded by cleaner) |
+| `image_name` | string or null | Optional task-section image URL |
+| `title` | string | Task-section title |
+| `totalSubtasks` | integer | Number of subtasks; returned by list/get |
+| `subtasks` | array | Nested checklist instructions |
+
+**Subtask fields:**
+
+| Field | Type | Description |
+|---|---|---|
+| `description` | string | Instruction shown to the cleaner |
+| `flag_request_photos` | boolean | Whether photo evidence is required |
+| `photos` | string[] | Attached photo URLs |
 
 ---
 
@@ -1980,63 +1995,86 @@ Returns all checklists in the partner account.
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `name` | string | yes | Checklist name |
-| `items` | string[] | yes | Array of task description strings |
+| `title` | string | yes | Checklist title |
+| `tasks` | object[] | yes | Structured task sections |
+| `tasks[].image_name` | string | no | URL returned by the image-upload endpoint |
+| `tasks[].title` | string | yes | Task-section title |
+| `tasks[].subtasks` | object[] | yes | Nested instructions |
+| `tasks[].subtasks[].description` | string | yes | Instruction text |
+| `tasks[].subtasks[].flag_request_photos` | boolean | yes | Require photo evidence |
+| `tasks[].subtasks[].photos` | string[] | no | Existing photo URLs |
 
 **Examples:**
 
 ```java
 CreateChecklistRequest req = new CreateChecklistRequest();
-req.setName("Standard Deep Clean");
-req.setItems(List.of(
-    "Vacuum all carpets",
-    "Mop hard floors",
-    "Wipe down all surfaces",
-    "Clean oven interior",
-    "Scrub bathrooms"
-));
+req.setTitle("Standard Deep Clean");
+ChecklistSubtask subtask = new ChecklistSubtask();
+subtask.setDescription("Vacuum all carpets");
+subtask.setFlagRequestPhotos(true);
+subtask.setPhotos(List.of());
+ChecklistTask task = new ChecklistTask();
+task.setTitle("Floors");
+task.setSubtasks(List.of(subtask));
+req.setTasks(List.of(task));
 ApiResponse<Checklist> resp = client.checklists().createChecklist(req);
 int checklistId = resp.getData().getId();
 ```
 
 ```python
 resp = client.checklists.create_checklist(
-    name="Standard Deep Clean",
-    items=[
-        "Vacuum all carpets",
-        "Mop hard floors",
-        "Wipe down all surfaces",
-        "Clean oven interior",
-        "Scrub bathrooms",
-    ]
+    title="Standard Deep Clean",
+    tasks=[{
+        "title": "Floors",
+        "subtasks": [{
+            "description": "Vacuum all carpets",
+            "flag_request_photos": True,
+            "photos": [],
+        }],
+    }],
 )
-checklist_id = resp.data["id"]
+checklist_id = resp.data.id
 ```
 
 ```typescript
 const resp = await client.checklists.createChecklist({
-  name: 'Standard Deep Clean',
-  items: [
-    'Vacuum all carpets',
-    'Mop hard floors',
-    'Wipe down all surfaces',
-    'Clean oven interior',
-    'Scrub bathrooms',
-  ],
+  title: 'Standard Deep Clean',
+  tasks: [{
+    title: 'Floors',
+    subtasks: [{
+      description: 'Vacuum all carpets',
+      flag_request_photos: true,
+      photos: [],
+    }],
+  }],
 });
 ```
 
 ```go
 resp, err := client.Checklists.CreateChecklist(ctx, cleanster.CreateChecklistRequest{
-    Name:  "Standard Deep Clean",
-    Items: []string{"Vacuum all carpets", "Mop hard floors"},
+    Title: "Standard Deep Clean",
+    Tasks: []cleanster.ChecklistTask{{
+        Title: "Floors",
+        Subtasks: []cleanster.ChecklistSubtask{{
+            Description: "Vacuum all carpets",
+            FlagRequestPhotos: true,
+            Photos: []string{},
+        }},
+    }},
 })
 ```
 
 ```ruby
 resp = client.checklists.create_checklist(
-  name: 'Standard Deep Clean',
-  items: ['Vacuum all carpets', 'Mop hard floors', 'Scrub bathrooms']
+  title: 'Standard Deep Clean',
+  tasks: [{
+    title: 'Floors',
+    subtasks: [{
+      description: 'Vacuum all carpets',
+      flag_request_photos: true,
+      photos: []
+    }]
+  }]
 )
 ```
 

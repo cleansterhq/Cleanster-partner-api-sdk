@@ -364,7 +364,7 @@ class ServiceExtensionsTest {
     @DisplayName("updateChecklist calls PUT /v1/checklist/{id}")
     void updateChecklistCallsCorrectPath() {
         when(transport.put(eq("/v1/checklist/105"), any())).thenReturn(checklistNode(105L));
-        client.updateChecklist(105L, "Updated Name", Arrays.asList("Item 1", "Item 2"));
+        client.updateChecklist(105L, "Updated Name", List.of(new ChecklistTask()));
         verify(transport).put(eq("/v1/checklist/105"), any());
     }
 

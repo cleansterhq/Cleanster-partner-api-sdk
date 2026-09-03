@@ -41,14 +41,15 @@ final class ChecklistsApi
     /**
      * Create a new checklist.
      *
-     * @param string   $name  Checklist name.
-     * @param string[] $items Array of task description strings.
+     * @param string $title Checklist title.
+     * @param array  $tasks Task objects using image_name, title, totalSubtasks,
+     *                      subtasks, description, flag_request_photos, and photos.
      *
      * @return ApiResponse<Checklist>
      */
-    public function createChecklist(string $name, array $items): ApiResponse
+    public function createChecklist(string $title, array $tasks): ApiResponse
     {
-        $raw = $this->http->post('/v1/checklist', ['name' => $name, 'items' => $items]);
+        $raw = $this->http->post('/v1/checklist', ['title' => $title, 'tasks' => $tasks]);
         return new ApiResponse($raw['status'] ?? 200, $raw['message'] ?? 'OK', new Checklist($raw['data'] ?? []));
     }
 
@@ -56,14 +57,14 @@ final class ChecklistsApi
      * Replace the name and task items of an existing checklist.
      *
      * @param int      $checklistId Checklist to update.
-     * @param string   $name        New name.
-     * @param string[] $items       New task description strings.
+     * @param string $title New checklist title.
+     * @param array  $tasks New task objects using the live checklist wire keys.
      *
      * @return ApiResponse<Checklist>
      */
-    public function updateChecklist(int $checklistId, string $name, array $items): ApiResponse
+    public function updateChecklist(int $checklistId, string $title, array $tasks): ApiResponse
     {
-        $raw = $this->http->put("/v1/checklist/{$checklistId}", ['name' => $name, 'items' => $items]);
+        $raw = $this->http->put("/v1/checklist/{$checklistId}", ['title' => $title, 'tasks' => $tasks]);
         return new ApiResponse($raw['status'] ?? 200, $raw['message'] ?? 'OK', new Checklist($raw['data'] ?? []));
     }
 

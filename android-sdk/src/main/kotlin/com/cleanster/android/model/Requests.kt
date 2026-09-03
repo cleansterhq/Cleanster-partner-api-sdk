@@ -125,8 +125,8 @@ data class DeleteICalLinkRequest(
 )
 
 data class CreateChecklistRequest(
-    @SerializedName("name")  val name: String,
-    @SerializedName("items") val items: List<String>,
+    @SerializedName("title") val title: String,
+    @SerializedName("tasks") val tasks: List<ChecklistTask>,
 )
 
 data class AddPaymentMethodRequest(

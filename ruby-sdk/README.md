@@ -663,7 +663,7 @@ resp = client.checklists.list_checklists
 
 ```ruby
 resp = client.checklists.get_checklist(105)
-resp.data['items'].each { |item| puts item['task'] }
+resp.data.tasks.each { |task| puts task.title }
 ```
 
 ---
@@ -673,16 +673,13 @@ resp.data['items'].each { |item| puts item['task'] }
 
 ```ruby
 resp = client.checklists.create_checklist(
-  name: 'Deep Clean',
-  items: [
-    'Vacuum all rooms',
-    'Mop kitchen and bathroom floors',
-    'Scrub toilets, sinks, and tubs',
-    'Wipe all countertops',
-    'Clean inside microwave and oven'
-  ]
+  title: 'Deep Clean',
+  tasks: [{ image_name: 'vacuum.jpg', title: 'Vacuum all rooms',
+            totalSubtasks: 1,
+            subtasks: [{ description: 'Vacuum bedrooms',
+                         flag_request_photos: true, photos: [] }] }]
 )
-puts "Checklist ID: #{resp.data['id']}"
+puts "Checklist ID: #{resp.data.id}"
 ```
 
 ---
@@ -693,8 +690,8 @@ puts "Checklist ID: #{resp.data['id']}"
 ```ruby
 client.checklists.update_checklist(
   105,
-  name: 'Standard Clean',
-  items: ['Vacuum', 'Wipe surfaces', 'Clean bathrooms']
+  title: 'Standard Clean',
+  tasks: []
 )
 ```
 

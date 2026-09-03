@@ -676,7 +676,7 @@ class CleansterClientTest {
     }
 
     @Test
-    @DisplayName("createChecklist calls POST /v1/checklist with name and items")
+    @DisplayName("createChecklist calls POST /v1/checklist with title and tasks")
     void createChecklist() {
         HttpClient mockHttp = mock(HttpClient.class);
         ChecklistApi api = new ChecklistApi(mockHttp);
@@ -687,17 +687,40 @@ class CleansterClientTest {
         expected.setData(checklist);
         when(mockHttp.post(eq("/v1/checklist"), any(), any(TypeReference.class))).thenReturn(expected);
 
-        List<String> items = Arrays.asList("Vacuum floors", "Wipe countertops", "Clean bathrooms");
-        CreateChecklistRequest req = new CreateChecklistRequest("Standard Clean", items);
+        List<ChecklistTask> tasks = Arrays.asList(new ChecklistTask(
+                "vacuum.png", "Vacuum floors", 1,
+                Arrays.asList(new ChecklistSubtask("Under furniture", true, Arrays.asList("photo.jpg")))));
+        CreateChecklistRequest req = new CreateChecklistRequest("Standard Clean", tasks);
 
         ApiResponse<Checklist> result = api.createChecklist(req);
 
         ArgumentCaptor<Object> bodyCaptor = ArgumentCaptor.forClass(Object.class);
         verify(mockHttp).post(eq("/v1/checklist"), bodyCaptor.capture(), any(TypeReference.class));
         CreateChecklistRequest captured = (CreateChecklistRequest) bodyCaptor.getValue();
-        assertEquals("Standard Clean", captured.getName());
-        assertEquals(3, captured.getItems().size());
+        assertEquals("Standard Clean", captured.getTitle());
+        assertEquals("Vacuum floors", captured.getTasks().get(0).getTitle());
+        assertEquals("Under furniture", captured.getTasks().get(0).getSubtasks().get(0).getDescription());
         assertEquals(200, result.getData().getId());
+    }
+
+    @Test
+    void checklistUsesLiveWireKeysAndParsesNestedTasks() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        CreateChecklistRequest request = new CreateChecklistRequest("Deep Clean", Arrays.asList(
+                new ChecklistTask("vacuum.jpg", "Vacuum", 1, Arrays.asList(
+                        new ChecklistSubtask("Under furniture", true, Arrays.asList("proof.jpg"))))));
+        com.fasterxml.jackson.databind.JsonNode body = mapper.readTree(mapper.writeValueAsString(request));
+        assertEquals(2, body.size());
+        assertTrue(body.has("title"));
+        assertTrue(body.has("tasks"));
+        assertEquals("vacuum.jpg", body.at("/tasks/0/image_name").asText());
+        assertTrue(body.at("/tasks/0/subtasks/0/flag_request_photos").asBoolean());
+
+        Checklist parsed = mapper.readValue(
+                "{\"id\":1,\"is_default\":true,\"totalTasks\":1,\"tasks\":[{\"title\":\"Vacuum\",\"subtasks\":[{\"photos\":[\"proof.jpg\"]}]}]}",
+                Checklist.class);
+        assertTrue(parsed.getIsDefault());
+        assertEquals("proof.jpg", parsed.getTasks().get(0).getSubtasks().get(0).getPhotos().get(0));
     }
 
     @Test
@@ -708,8 +731,8 @@ class CleansterClientTest {
         when(mockHttp.put(eq("/v1/checklist/200"), any(), any(TypeReference.class)))
                 .thenReturn(new ApiResponse<>());
 
-        List<String> items = Arrays.asList("New task 1", "New task 2");
-        CreateChecklistRequest req = new CreateChecklistRequest("Updated List", items);
+        List<ChecklistTask> tasks = Arrays.asList(new ChecklistTask());
+        CreateChecklistRequest req = new CreateChecklistRequest("Updated List", tasks);
         api.updateChecklist(200, req);
 
         verify(mockHttp).put(eq("/v1/checklist/200"), any(), any(TypeReference.class));

@@ -725,8 +725,8 @@ resp = client.checklists.list_checklists()
 
 ```python
 resp = client.checklists.get_checklist(checklist_id=105)
-for item in resp.data["items"]:
-    print(item["task"])
+for task in resp.data.tasks:
+    print(task.title)
 ```
 
 ---
@@ -736,19 +736,16 @@ for item in resp.data["items"]:
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `name` | str | Yes | Checklist display name |
-| `items` | list[str] | Yes | Ordered task descriptions |
+| `title` | str | Yes | Checklist title |
+| `tasks` | list[dict] | Yes | Tasks with `image_name`, `title`, `totalSubtasks`, and `subtasks` |
 
 ```python
 resp = client.checklists.create_checklist(
-    name="Deep Clean",
-    items=[
-        "Vacuum all rooms",
-        "Mop kitchen and bathroom floors",
-        "Scrub toilets, sinks, and tubs",
-        "Wipe all countertops",
-        "Clean inside microwave and oven"
-    ]
+    title="Deep Clean",
+    tasks=[{"image_name": "vacuum.jpg", "title": "Vacuum all rooms",
+            "totalSubtasks": 1,
+            "subtasks": [{"description": "Vacuum bedrooms",
+                          "flag_request_photos": True, "photos": []}]}]
 )
 print("Checklist ID:", resp.data["id"])
 ```
@@ -761,8 +758,8 @@ print("Checklist ID:", resp.data["id"])
 ```python
 resp = client.checklists.update_checklist(
     checklist_id=105,
-    name="Standard Clean",
-    items=["Vacuum", "Wipe surfaces", "Clean bathrooms"]
+    title="Standard Clean",
+    tasks=[]
 )
 ```
 

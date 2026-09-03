@@ -39,11 +39,11 @@ class ChecklistsApi(retrofit: Retrofit) {
 
     suspend fun getChecklist(checklistId: Int) = wrap { service.getChecklist(checklistId) }
 
-    suspend fun createChecklist(name: String, items: List<String>) =
-        wrap { service.createChecklist(CreateChecklistRequest(name, items)) }
+    suspend fun createChecklist(title: String, tasks: List<*>) =
+        wrap { service.createChecklist(CreateChecklistRequest(title, tasks.toChecklistTasks())) }
 
-    suspend fun updateChecklist(checklistId: Int, name: String, items: List<String>) =
-        wrap { service.updateChecklist(checklistId, CreateChecklistRequest(name, items)) }
+    suspend fun updateChecklist(checklistId: Int, title: String, tasks: List<*>) =
+        wrap { service.updateChecklist(checklistId, CreateChecklistRequest(title, tasks.toChecklistTasks())) }
 
     suspend fun deleteChecklist(checklistId: Int) = wrap { service.deleteChecklist(checklistId) }
 
@@ -51,5 +51,13 @@ class ChecklistsApi(retrofit: Retrofit) {
         val requestBody = imageBytes.toRequestBody()
         val part = MultipartBody.Part.createFormData("file", fileName, requestBody)
         return wrap { service.uploadChecklistImage(part) }
+    }
+
+    private fun List<*>.toChecklistTasks(): List<ChecklistTask> = map {
+        when (it) {
+            is ChecklistTask -> it
+            is String -> ChecklistTask(title = it)
+            else -> throw IllegalArgumentException("Checklist tasks must be ChecklistTask instances")
+        }
     }
 }

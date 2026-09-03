@@ -11,6 +11,21 @@ final class ChecklistsTests: XCTestCase {
         client = CleansterClient(accessKey: "test-key", baseURL: CleansterClient.sandboxBaseURL, session: mock)
     }
 
+    private func task() -> ChecklistTask {
+        ChecklistTask(
+            imageName: "kitchen.png",
+            title: "Kitchen",
+            totalSubtasks: 1,
+            subtasks: [
+                ChecklistSubtask(
+                    description: "Photograph oven",
+                    flagRequestPhotos: true,
+                    photos: ["https://cdn.example/oven.jpg"]
+                )
+            ]
+        )
+    }
+
     func testListChecklists_sendsGET() async throws {
         mock.succeedWithArray([])
         _ = try await client.checklists.listChecklists()
@@ -21,6 +36,27 @@ final class ChecklistsTests: XCTestCase {
         mock.succeedWithArray([])
         _ = try await client.checklists.listChecklists()
         XCTAssertTrue(mock.capturedURL?.hasSuffix("/v1/checklist") == true)
+    }
+
+    func testListChecklists_decodesStructuredChecklists() async throws {
+        mock.succeedWithArray([[
+            "id": 77, "is_default": true, "disabled": false, "title": "Deep Clean",
+            "type": "CUSTOM", "totalTasks": 1, "totalSubTasks": 1,
+            "tasks": [[
+                "image_name": "kitchen.png", "title": "Kitchen", "totalSubtasks": 1,
+                "subtasks": [[
+                    "description": "Photograph oven", "flag_request_photos": true,
+                    "photos": ["https://cdn.example/oven.jpg"]
+                ]]
+            ]]
+        ]])
+        let response = try await client.checklists.listChecklists()
+        let checklist = try XCTUnwrap(response.data?.first)
+        XCTAssertEqual(checklist.title, "Deep Clean")
+        XCTAssertTrue(checklist.isDefault == true)
+        XCTAssertEqual(checklist.tasks?.first?.imageName, "kitchen.png")
+        XCTAssertTrue(checklist.tasks?.first?.subtasks.first?.flagRequestPhotos == true)
+        XCTAssertEqual(checklist.tasks?.first?.subtasks.first?.photos, ["https://cdn.example/oven.jpg"])
     }
 
     func testGetChecklist_sendsGET() async throws {
@@ -37,31 +73,31 @@ final class ChecklistsTests: XCTestCase {
 
     func testCreateChecklist_sendsPOST() async throws {
         mock.succeed(with: ["id": 77, "name": "Standard"])
-        _ = try await client.checklists.createChecklist(name: "Standard", items: ["Vacuum"])
+        _ = try await client.checklists.createChecklist(title: "Standard", tasks: [task()])
         XCTAssertEqual(mock.capturedMethod, "POST")
     }
 
     func testCreateChecklist_correctPath() async throws {
         mock.succeed(with: ["id": 77, "name": "Standard"])
-        _ = try await client.checklists.createChecklist(name: "Standard", items: ["Vacuum"])
+        _ = try await client.checklists.createChecklist(title: "Standard", tasks: [task()])
         XCTAssertTrue(mock.capturedURL?.hasSuffix("/v1/checklist") == true)
     }
 
-    func testCreateChecklist_encodesName() async throws {
+    func testCreateChecklist_encodesExactStructuredPayload() async throws {
         mock.succeed(with: ["id": 77])
-        _ = try await client.checklists.createChecklist(name: "Deep Clean", items: ["Mop"])
-        XCTAssertEqual(mock.capturedBody?["name"] as? String, "Deep Clean")
-    }
-
-    func testCreateChecklist_encodesItems() async throws {
-        mock.succeed(with: ["id": 77])
-        _ = try await client.checklists.createChecklist(name: "Test", items: ["Vacuum", "Mop", "Wipe"])
-        XCTAssertEqual(mock.capturedBody?["items"] as? [String], ["Vacuum", "Mop", "Wipe"])
+        _ = try await client.checklists.createChecklist(title: "Deep Clean", tasks: [task()])
+        let body = try XCTUnwrap(mock.capturedBody)
+        XCTAssertEqual(Set(body.keys), Set(["title", "tasks"]))
+        XCTAssertEqual(body["title"] as? String, "Deep Clean")
+        let taskBody = try XCTUnwrap((body["tasks"] as? [[String: Any]])?.first)
+        XCTAssertEqual(Set(taskBody.keys), Set(["image_name", "title", "totalSubtasks", "subtasks"]))
+        let subtaskBody = try XCTUnwrap((taskBody["subtasks"] as? [[String: Any]])?.first)
+        XCTAssertEqual(Set(subtaskBody.keys), Set(["description", "flag_request_photos", "photos"]))
     }
 
     func testCreateChecklist_decodesId() async throws {
         mock.succeed(with: ["id": 42, "name": "My List"])
-        let resp = try await client.checklists.createChecklist(name: "My List", items: ["Task 1"])
+        let resp = try await client.checklists.createChecklist(title: "My List", tasks: [task()])
         XCTAssertEqual(resp.data?.id, 42)
     }
 
@@ -82,20 +118,21 @@ final class ChecklistsTests: XCTestCase {
 
     func testUpdateChecklist_sendsPUT() async throws {
         mock.succeed(with: ["id": 77])
-        _ = try await client.checklists.updateChecklist(77, name: "Updated", items: ["New task"])
+        _ = try await client.checklists.updateChecklist(77, title: "Updated", tasks: [task()])
         XCTAssertEqual(mock.capturedMethod, "PUT")
     }
 
     func testUpdateChecklist_correctPath() async throws {
         mock.succeed(with: ["id": 77])
-        _ = try await client.checklists.updateChecklist(77, name: "Updated", items: ["New task"])
+        _ = try await client.checklists.updateChecklist(77, title: "Updated", tasks: [task()])
         XCTAssertTrue(mock.capturedURL?.hasSuffix("/v1/checklist/77") == true)
     }
 
-    func testUpdateChecklist_encodesNewName() async throws {
+    func testUpdateChecklist_encodesOnlyTitleAndTasks() async throws {
         mock.succeed(with: ["id": 77])
-        _ = try await client.checklists.updateChecklist(77, name: "Renamed", items: ["Task"])
-        XCTAssertEqual(mock.capturedBody?["name"] as? String, "Renamed")
+        _ = try await client.checklists.updateChecklist(77, title: "Renamed", tasks: [task()])
+        let body = try XCTUnwrap(mock.capturedBody)
+        XCTAssertEqual(Set(body.keys), Set(["title", "tasks"]))
     }
 
     func testDeleteChecklist_sendsDELETE() async throws {

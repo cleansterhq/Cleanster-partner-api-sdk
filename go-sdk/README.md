@@ -648,8 +648,8 @@ resp, err := client.Checklists.ListChecklists(ctx)
 
 ```go
 resp, err := client.Checklists.GetChecklist(ctx, 105)
-for _, item := range resp.Data.Items {
-    fmt.Println(item.Task)
+for _, task := range resp.Data.Tasks {
+    fmt.Println(task.Title)
 }
 ```
 
@@ -660,14 +660,13 @@ for _, item := range resp.Data.Items {
 
 ```go
 resp, err := client.Checklists.CreateChecklist(ctx, cleanster.CreateChecklistRequest{
-    Name: "Deep Clean",
-    Items: []string{
-        "Vacuum all rooms",
-        "Mop kitchen and bathroom floors",
-        "Scrub toilets, sinks, and tubs",
-        "Wipe all countertops",
-        "Clean inside microwave and oven",
-    },
+    Title: "Deep Clean",
+    Tasks: []cleanster.ChecklistTask{{
+        Title: "Vacuum all rooms", TotalSubtasks: 1,
+        Subtasks: []cleanster.ChecklistSubtask{{
+            Description: "Vacuum bedrooms", FlagRequestPhotos: true, Photos: []string{},
+        }},
+    }},
 })
 fmt.Println("Checklist ID:", resp.Data.ID)
 ```
@@ -679,8 +678,8 @@ fmt.Println("Checklist ID:", resp.Data.ID)
 
 ```go
 _, err = client.Checklists.UpdateChecklist(ctx, 105, cleanster.CreateChecklistRequest{
-    Name:  "Standard Clean",
-    Items: []string{"Vacuum", "Wipe surfaces", "Clean bathrooms"},
+    Title: "Standard Clean",
+    Tasks: []cleanster.ChecklistTask{},
 })
 ```
 

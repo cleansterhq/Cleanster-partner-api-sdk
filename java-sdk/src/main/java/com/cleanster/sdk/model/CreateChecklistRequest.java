@@ -11,22 +11,17 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CreateChecklistRequest {
 
-    @JsonProperty("name")
-    private String name;
-
-    @JsonProperty("items")
-    private List<String> items;
+    @JsonProperty("title") private String title;
+    @JsonProperty("tasks") private List<ChecklistTask> tasks;
 
     public CreateChecklistRequest() {}
 
-    public CreateChecklistRequest(String name, List<String> items) {
-        this.name = name;
-        this.items = items;
+    public CreateChecklistRequest(String title, List<ChecklistTask> tasks) {
+        this.title = title;
+        this.tasks = tasks;
     }
-
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-
-    public List<String> getItems() { return items; }
-    public void setItems(List<String> items) { this.items = items; }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+    public List<ChecklistTask> getTasks() { return tasks; }
+    public void setTasks(List<ChecklistTask> tasks) { this.tasks = tasks; }
 }

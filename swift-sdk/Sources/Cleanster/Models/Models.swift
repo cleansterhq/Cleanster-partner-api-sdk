@@ -81,8 +81,67 @@ public struct Booking: Decodable {
 
 public struct Checklist: Decodable {
     public let id: Int?
+    public let isDefault: Bool?
+    public let disabled: Bool?
+    public let title: String?
+    public let type: String?
+    public let totalTasks: Int?
+    public let totalSubTasks: Int?
+    public let tasks: [ChecklistTask]?
+
+    // Legacy response fields retained for source compatibility.
     public let name: String?
     public let items: [ChecklistItem]?
+
+    enum CodingKeys: String, CodingKey {
+        case id, disabled, title, type, totalTasks, totalSubTasks, tasks, name, items
+        case isDefault = "is_default"
+    }
+}
+
+/// A task in a reusable checklist.
+///
+/// This type is also used when creating or updating a checklist.
+public struct ChecklistTask: Codable {
+    public let imageName: String?
+    public let title: String
+    public let totalSubtasks: Int?
+    public let subtasks: [ChecklistSubtask]
+
+    public init(
+        imageName: String? = nil,
+        title: String,
+        totalSubtasks: Int? = nil,
+        subtasks: [ChecklistSubtask]
+    ) {
+        self.imageName = imageName
+        self.title = title
+        self.totalSubtasks = totalSubtasks
+        self.subtasks = subtasks
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case imageName = "image_name"
+        case title, totalSubtasks, subtasks
+    }
+}
+
+/// A subtask nested within a checklist task.
+public struct ChecklistSubtask: Codable {
+    public let description: String
+    public let flagRequestPhotos: Bool
+    public let photos: [String]
+
+    public init(description: String, flagRequestPhotos: Bool, photos: [String]) {
+        self.description = description
+        self.flagRequestPhotos = flagRequestPhotos
+        self.photos = photos
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case description, photos
+        case flagRequestPhotos = "flag_request_photos"
+    }
 }
 
 public struct ChecklistItem: Decodable {

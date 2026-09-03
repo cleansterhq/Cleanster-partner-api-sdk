@@ -265,9 +265,13 @@ public struct UpdateSqftRequest: Encodable {
 // MARK: - Checklist Requests
 
 public struct CreateChecklistRequest: Encodable {
-    public let name: String
-    public let items: [String]
-    public init(name: String, items: [String]) { self.name = name; self.items = items }
+    public let title: String
+    public let tasks: [ChecklistTask]
+
+    public init(title: String, tasks: [ChecklistTask]) {
+        self.title = title
+        self.tasks = tasks
+    }
 }
 
 // MARK: - Payment Method Requests

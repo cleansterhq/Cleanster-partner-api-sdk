@@ -586,17 +586,16 @@ describe("ChecklistsApi", () => {
     expect(http.get).toHaveBeenCalledWith("/v1/checklist");
   });
 
-  test("getChecklist() returns typed data", async () => {
+  test("getChecklist() parses nested live checklist data", async () => {
     const http = mockHttp();
     http.get.mockResolvedValue(ok({
       id: 105,
-      name: "Standard Clean",
-      items: [{
-        id: 1,
-        description: "Vacuum",
-        isCompleted: false,
-        imageUrl: "https://images.example.com/checklist/vacuum.jpg",
-        futureEvidenceField: { source: "inspection" },
+      is_default: true, disabled: false, title: "Standard Clean", type: "PROPERTY",
+      totalTasks: 1, totalSubTasks: 1,
+      tasks: [{
+        image_name: "vacuum.jpg", title: "Vacuum", totalSubtasks: 1,
+        subtasks: [{ description: "Vacuum bedroom", flag_request_photos: true,
+          photos: ["https://images.example.com/checklist/vacuum.jpg"] }],
       }],
     }));
     const api = new ChecklistsApi(http);
@@ -604,32 +603,32 @@ describe("ChecklistsApi", () => {
     const result = await api.getChecklist(105);
 
     expect(http.get).toHaveBeenCalledWith("/v1/checklist/105");
-    expect(result.data.name).toBe("Standard Clean");
-    expect(result.data.items[0].description).toBe("Vacuum");
-    expect(result.data.items[0].imageUrl).toBe("https://images.example.com/checklist/vacuum.jpg");
-    expect(result.data.items[0].futureEvidenceField).toEqual({ source: "inspection" });
+    expect(result.data.title).toBe("Standard Clean");
+    expect(result.data.tasks[0].title).toBe("Vacuum");
+    expect(result.data.tasks[0].subtasks[0].photos).toEqual(["https://images.example.com/checklist/vacuum.jpg"]);
   });
 
-  test("createChecklist() posts name and items", async () => {
+  test("createChecklist() posts exactly title and tasks", async () => {
     const http = mockHttp();
-    http.post.mockResolvedValue(ok({ id: 200, name: "My Checklist" }));
+    http.post.mockResolvedValue(ok({ id: 200, title: "My Checklist", tasks: [] }));
     const api = new ChecklistsApi(http);
 
-    const req = { name: "My Checklist", items: ["Task 1", "Task 2"] };
+    const req = { title: "My Checklist", tasks: [{ image_name: "task.jpg", title: "Task 1", totalSubtasks: 1, subtasks: [{ description: "Do task", flag_request_photos: false, photos: [] }] }] };
     const result = await api.createChecklist(req);
 
     expect(http.post).toHaveBeenCalledWith("/v1/checklist", req);
+    expect(Object.keys((http.post.mock.calls[0][1] as object))).toEqual(["title", "tasks"]);
     expect(result.data.id).toBe(200);
   });
 
   test("updateChecklist() puts to correct URL", async () => {
     const http = mockHttp();
-    http.put.mockResolvedValue(ok({ id: 200, name: "Updated" }));
+    http.put.mockResolvedValue(ok({ id: 200, title: "Updated", tasks: [] }));
     const api = new ChecklistsApi(http);
 
-    await api.updateChecklist(200, { name: "Updated", items: ["New task"] });
+    await api.updateChecklist(200, { title: "Updated", tasks: [] });
 
-    expect(http.put).toHaveBeenCalledWith("/v1/checklist/200", { name: "Updated", items: ["New task"] });
+    expect(http.put).toHaveBeenCalledWith("/v1/checklist/200", { title: "Updated", tasks: [] });
   });
 
   test("deleteChecklist() sends DELETE", async () => {

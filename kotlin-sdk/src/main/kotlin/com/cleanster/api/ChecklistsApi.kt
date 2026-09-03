@@ -7,7 +7,7 @@ import com.cleanster.model.*
 class ChecklistsApi internal constructor(private val client: CleansterClient) {
 
     /** List all checklists on the partner account. */
-    suspend fun listChecklists(): ApiResponse<List<Any>> = client.request(
+    suspend fun listChecklists(): ApiResponse<List<Checklist>> = client.request(
         method = "GET",
         path   = "/v1/checklist",
     )
@@ -21,20 +21,20 @@ class ChecklistsApi internal constructor(private val client: CleansterClient) {
     /**
      * Create a new checklist.
      *
-     * @param name  Display name.
-     * @param items Array of task description strings.
+     * @param title Display title.
+     * @param tasks Structured checklist tasks.
      */
-    suspend fun createChecklist(name: String, items: List<String>): ApiResponse<Checklist> = client.request(
+    suspend fun createChecklist(title: String, tasks: List<*>): ApiResponse<Checklist> = client.request(
         method = "POST",
         path   = "/v1/checklist",
-        body   = CreateChecklistRequest(name = name, items = items),
+        body   = CreateChecklistRequest(title = title, tasks = tasks.toChecklistTasks()),
     )
 
-    /** Replace an existing checklist's name and items entirely. */
-    suspend fun updateChecklist(checklistId: Int, name: String, items: List<String>): ApiResponse<Checklist> = client.request(
+    /** Replace an existing checklist's title and tasks entirely. */
+    suspend fun updateChecklist(checklistId: Int, title: String, tasks: List<*>): ApiResponse<Checklist> = client.request(
         method = "PUT",
         path   = "/v1/checklist/$checklistId",
-        body   = CreateChecklistRequest(name = name, items = items),
+        body   = CreateChecklistRequest(title = title, tasks = tasks.toChecklistTasks()),
     )
 
     /** Permanently delete a checklist. */
@@ -59,4 +59,12 @@ class ChecklistsApi internal constructor(private val client: CleansterClient) {
         imageData = imageData,
         fileName  = fileName,
     )
+
+    private fun List<*>.toChecklistTasks(): List<ChecklistTask> = map {
+        when (it) {
+            is ChecklistTask -> it
+            is String -> ChecklistTask(title = it)
+            else -> throw IllegalArgumentException("Checklist tasks must be ChecklistTask instances")
+        }
+    }
 }

@@ -838,15 +838,11 @@ Create a new checklist with a name and ordered task items.
 
 ```java
 CreateChecklistRequest req = new CreateChecklistRequest();
-req.setName("Deep Clean");
-req.setItems(Arrays.asList(
-    "Vacuum all rooms",
-    "Mop kitchen and bathroom floors",
-    "Scrub toilets, sinks, and tubs",
-    "Wipe all countertops and surfaces",
-    "Clean inside microwave and oven",
-    "Wipe exterior of all appliances"
-));
+req.setTitle("Deep Clean");
+req.setTasks(Arrays.asList(new ChecklistTask(
+    "rooms.jpg", "Vacuum all rooms", 1,
+    Arrays.asList(new ChecklistSubtask("Vacuum under furniture", true, Arrays.asList()))
+)));
 
 ApiResponse<Checklist> resp = client.checklists().createChecklist(req);
 System.out.println("Created checklist ID: " + resp.getData().getId());

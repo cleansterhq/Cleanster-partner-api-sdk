@@ -53,6 +53,33 @@ class ChecklistsTest {
         assertEquals("https://images.example.com/evidence.jpg", response.data?.items?.single()?.imageUrl)
     }
 
+    @Test fun `getChecklist parses live nested task fields`() = runTest {
+        mock.succeed(mapOf(
+            "id" to 77.0,
+            "is_default" to true,
+            "disabled" to false,
+            "title" to "Deep Clean",
+            "type" to "custom",
+            "totalTasks" to 1.0,
+            "totalSubTasks" to 1.0,
+            "tasks" to listOf(mapOf(
+                "image_name" to "vacuum.jpg",
+                "title" to "Vacuum",
+                "totalSubtasks" to 1.0,
+                "subtasks" to listOf(mapOf(
+                    "description" to "Under furniture",
+                    "flag_request_photos" to true,
+                    "photos" to listOf("proof.jpg"),
+                )),
+            )),
+        ))
+        val checklist = client.checklists.getChecklist(77).data!!
+        assertEquals("Deep Clean", checklist.title)
+        assertEquals("vacuum.jpg", checklist.tasks?.single()?.imageName)
+        assertEquals(true, checklist.tasks?.single()?.subtasks?.single()?.flagRequestPhotos)
+        assertEquals(listOf("proof.jpg"), checklist.tasks?.single()?.subtasks?.single()?.photos)
+    }
+
     @Test fun `createChecklist sends POST`() = runTest {
         mock.succeed(mapOf("id" to 77.0))
         client.checklists.createChecklist("Standard", listOf("Vacuum"))
@@ -65,18 +92,19 @@ class ChecklistsTest {
         assertTrue(mock.capturedUrl?.endsWith("/v1/checklist") == true)
     }
 
-    @Test fun `createChecklist encodes name`() = runTest {
+    @Test fun `createChecklist encodes only live payload keys`() = runTest {
         mock.succeed(mapOf("id" to 77.0))
         client.checklists.createChecklist("Deep Clean", listOf("Mop"))
-        assertEquals("Deep Clean", mock.capturedBody?.get("name"))
+        assertEquals(setOf("title", "tasks"), mock.capturedBody?.keys)
+        assertEquals("Deep Clean", mock.capturedBody?.get("title"))
     }
 
-    @Test fun `createChecklist encodes items`() = runTest {
+    @Test fun `createChecklist encodes structured tasks`() = runTest {
         mock.succeed(mapOf("id" to 77.0))
         client.checklists.createChecklist("Test", listOf("Vacuum", "Mop", "Wipe"))
         @Suppress("UNCHECKED_CAST")
-        val items = mock.capturedBody?.get("items") as? List<String>
-        assertEquals(listOf("Vacuum", "Mop", "Wipe"), items)
+        val tasks = mock.capturedBody?.get("tasks") as? List<*>
+        assertEquals(3, tasks?.size)
     }
 
     @Test fun `createChecklist decodes id`() = runTest {
@@ -97,10 +125,10 @@ class ChecklistsTest {
         assertTrue(mock.capturedUrl?.endsWith("/v1/checklist/77") == true)
     }
 
-    @Test fun `updateChecklist encodes name`() = runTest {
+    @Test fun `updateChecklist encodes title`() = runTest {
         mock.succeed(mapOf("id" to 77.0))
         client.checklists.updateChecklist(77, "Renamed", listOf("Task"))
-        assertEquals("Renamed", mock.capturedBody?.get("name"))
+        assertEquals("Renamed", mock.capturedBody?.get("title"))
     }
 
     @Test fun `deleteChecklist sends DELETE`() = runTest {

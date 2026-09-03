@@ -131,8 +131,8 @@ data class UpdateSqftRequest(
 // ── Checklists ────────────────────────────────────────────────────────────────
 
 data class CreateChecklistRequest(
-    val name:  String,
-    val items: List<String>,
+    val title: String,
+    val tasks: List<ChecklistTask>,
 )
 
 // ── Payment Methods ───────────────────────────────────────────────────────────

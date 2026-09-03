@@ -893,8 +893,9 @@ func TestChecklists_GetChecklist(t *testing.T) {
 			t.Errorf("wrong path: %s", r.URL.Path)
 		}
 		writeJSON(w, okResponse(map[string]interface{}{
-			"id": 105, "name": "Standard",
-			"items": []interface{}{map[string]interface{}{"id": 1, "description": "Vacuum floors", "isCompleted": false}},
+			"id": 105, "is_default": true, "disabled": false, "title": "Standard", "type": "PROPERTY",
+			"totalTasks": 1, "totalSubTasks": 1,
+			"tasks": []interface{}{map[string]interface{}{"image_name": "vacuum.jpg", "title": "Vacuum floors", "totalSubtasks": 1, "subtasks": []interface{}{map[string]interface{}{"description": "Vacuum bedroom", "flag_request_photos": true, "photos": []string{"https://example.com/photo.jpg"}}}}},
 		}))
 	})
 	client, cleanup := newTestClient(t, handler)
@@ -906,11 +907,11 @@ func TestChecklists_GetChecklist(t *testing.T) {
 	if resp.Data.ID != 105 {
 		t.Errorf("expected ID=105, got %d", resp.Data.ID)
 	}
-	if len(resp.Data.Items) != 1 {
-		t.Errorf("expected 1 item, got %d", len(resp.Data.Items))
+	if !resp.Data.IsDefault || resp.Data.Tasks[0].Subtasks[0].Photos[0] != "https://example.com/photo.jpg" {
+		t.Errorf("nested live checklist fields were not parsed: %+v", resp.Data)
 	}
-	if resp.Data.Items[0].Description != "Vacuum floors" {
-		t.Errorf("expected Vacuum floors, got %s", resp.Data.Items[0].Description)
+	if resp.Data.Tasks[0].Title != "Vacuum floors" {
+		t.Errorf("expected Vacuum floors, got %s", resp.Data.Tasks[0].Title)
 	}
 }
 
@@ -921,21 +922,21 @@ func TestChecklists_CreateChecklist(t *testing.T) {
 		}
 		var body map[string]interface{}
 		json.NewDecoder(r.Body).Decode(&body)
-		if body["name"] != "Deep Clean" {
-			t.Errorf("expected name=Deep Clean, got %v", body["name"])
+		if len(body) != 2 || body["title"] != "Deep Clean" || body["tasks"] == nil || body["name"] != nil || body["items"] != nil {
+			t.Errorf("expected exact live checklist payload, got %#v", body)
 		}
-		writeJSON(w, okResponse(map[string]interface{}{"id": 105, "name": "Deep Clean", "items": []interface{}{}}))
+		writeJSON(w, okResponse(map[string]interface{}{"id": 105, "title": "Deep Clean", "tasks": []interface{}{}}))
 	})
 	client, cleanup := newTestClient(t, handler)
 	defer cleanup()
 	resp, err := client.Checklists.CreateChecklist(context.Background(), cleanster.CreateChecklistRequest{
-		Name: "Deep Clean", Items: []string{"Mop floors", "Wipe counters"},
+		Title: "Deep Clean", Tasks: []cleanster.ChecklistTask{{Title: "Mop floors", TotalSubtasks: 1, Subtasks: []cleanster.ChecklistSubtask{{Description: "Mop", FlagRequestPhotos: true, Photos: []string{}}}}},
 	})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if resp.Data.Name != "Deep Clean" {
-		t.Errorf("expected name=Deep Clean, got %s", resp.Data.Name)
+	if resp.Data.Title != "Deep Clean" {
+		t.Errorf("expected title=Deep Clean, got %s", resp.Data.Title)
 	}
 }
 
@@ -944,11 +945,16 @@ func TestChecklists_UpdateChecklist(t *testing.T) {
 		if r.URL.Path != "/v1/checklist/105" || r.Method != http.MethodPut {
 			t.Errorf("wrong method/path: %s %s", r.Method, r.URL.Path)
 		}
-		writeJSON(w, okResponse(map[string]interface{}{"id": 105, "name": "Updated", "items": []interface{}{}}))
+		var body map[string]interface{}
+		json.NewDecoder(r.Body).Decode(&body)
+		if len(body) != 2 || body["title"] != "Updated" || body["tasks"] == nil {
+			t.Errorf("expected exact live checklist payload, got %#v", body)
+		}
+		writeJSON(w, okResponse(map[string]interface{}{"id": 105, "title": "Updated", "tasks": []interface{}{}}))
 	})
 	client, cleanup := newTestClient(t, handler)
 	defer cleanup()
-	_, _ = client.Checklists.UpdateChecklist(context.Background(), 105, cleanster.CreateChecklistRequest{Name: "Updated", Items: []string{"New task"}})
+	_, _ = client.Checklists.UpdateChecklist(context.Background(), 105, cleanster.CreateChecklistRequest{Title: "Updated", Tasks: []cleanster.ChecklistTask{}})
 }
 
 func TestChecklists_DeleteChecklist(t *testing.T) {

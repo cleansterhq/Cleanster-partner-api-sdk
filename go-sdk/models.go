@@ -288,7 +288,7 @@ type DeleteICalLinkRequest struct {
 // Checklist
 // ---------------------------------------------------------------------------
 
-// ChecklistItem is a single task within a checklist.
+// ChecklistItem is the legacy task-item response model.
 type ChecklistItem struct {
 	ID          int     `json:"id"`
 	Description string  `json:"description"`
@@ -296,17 +296,41 @@ type ChecklistItem struct {
 	ImageURL    *string `json:"imageUrl"`
 }
 
-// Checklist is a named collection of cleaning task items.
+// ChecklistSubtask is a subtask within a live checklist task.
+type ChecklistSubtask struct {
+	Description       string   `json:"description"`
+	FlagRequestPhotos bool     `json:"flag_request_photos"`
+	Photos            []string `json:"photos"`
+}
+
+// ChecklistTask is a task within a live checklist response.
+type ChecklistTask struct {
+	ImageName     *string            `json:"image_name"`
+	Title         string             `json:"title"`
+	TotalSubtasks int                `json:"totalSubtasks,omitempty"`
+	Subtasks      []ChecklistSubtask `json:"subtasks"`
+}
+
+// Checklist is the live checklist response model.
 type Checklist struct {
-	ID    int             `json:"id"`
+	ID            int             `json:"id"`
+	IsDefault     bool            `json:"is_default"`
+	Disabled      bool            `json:"disabled"`
+	Title         string          `json:"title"`
+	Type          string          `json:"type"`
+	TotalTasks    int             `json:"totalTasks"`
+	TotalSubTasks int             `json:"totalSubTasks"`
+	Tasks         []ChecklistTask `json:"tasks"`
+
+	// Deprecated legacy response fields.
 	Name  string          `json:"name"`
 	Items []ChecklistItem `json:"items"`
 }
 
-// CreateChecklistRequest holds the name and items for a new checklist.
+// CreateChecklistRequest holds exactly the fields accepted by create/update.
 type CreateChecklistRequest struct {
-	Name  string   `json:"name"`
-	Items []string `json:"items"`
+	Title string          `json:"title"`
+	Tasks []ChecklistTask `json:"tasks"`
 }
 
 // ---------------------------------------------------------------------------

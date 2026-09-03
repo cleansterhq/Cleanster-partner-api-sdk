@@ -234,7 +234,9 @@ client.deleteProperty(property.getId());
 
 // ── Checklists ──────────────────────────────────────────────────────────────
 
-Checklist checklist = client.createChecklist("Deep Clean", List.of("Oven", "Refrigerator", "Bathrooms"));
+ChecklistTask task = new ChecklistTask();
+task.setTitle("Oven");
+Checklist checklist = client.createChecklist("Deep Clean", List.of(task));
 client.updateChecklist(checklist.getId(), "Standard Clean", null);
 
 // Upload image

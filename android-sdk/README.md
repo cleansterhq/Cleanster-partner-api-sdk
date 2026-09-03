@@ -877,21 +877,16 @@ println("${checklist.data?.name}: ${checklist.data?.items}")
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `name` | String | Yes | Checklist name |
-| `items` | List\<String\> | Yes | Task items |
+| `title` | String | Yes | Checklist title |
+| `tasks` | List\<ChecklistTask\> | Yes | Structured tasks |
 
 ```kotlin
 val resp = client.checklists.createChecklist(
-    name  = "Deep Clean",
-    items = listOf(
-        "Vacuum all carpets and rugs",
-        "Mop all hard floors",
-        "Wipe down all surfaces and appliances",
-        "Clean interior of oven",
-        "Scrub and disinfect all bathrooms",
-        "Empty and wipe all bins",
-        "Dust furniture, shelves, and ceiling fans",
-    )
+    title = "Deep Clean",
+    tasks = listOf(ChecklistTask(
+        imageName = "carpets.jpg", title = "Vacuum carpets", totalSubtasks = 1,
+        subtasks = listOf(ChecklistSubtask("Vacuum under furniture", true, emptyList()))
+    ))
 )
 val checklistId = resp.data?.id ?: 0
 ```

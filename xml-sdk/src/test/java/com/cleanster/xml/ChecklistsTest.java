@@ -4,6 +4,7 @@ import com.cleanster.xml.api.ChecklistsXmlApi;
 import com.cleanster.xml.client.XmlConverter;
 import com.cleanster.xml.client.XmlHttpClient;
 import com.cleanster.xml.model.Checklist;
+import com.cleanster.xml.model.ChecklistTask;
 import com.cleanster.xml.model.XmlApiResponse;
 import org.junit.jupiter.api.*;
 
@@ -82,7 +83,7 @@ class ChecklistsTest {
 
     @Test void createChecklist_callsPost() {
         doReturn(CHECKLIST_JSON).when(http).post(eq("/v1/checklist"), any());
-        api.createChecklist("Deep Clean", List.of("Mop", "Vacuum"));
+        api.createChecklist("Deep Clean", List.of(new ChecklistTask()));
         verify(http).post(eq("/v1/checklist"), any());
     }
 
@@ -97,7 +98,7 @@ class ChecklistsTest {
 
     @Test void updateChecklist_callsPutWithId() {
         doReturn(CHECKLIST_JSON).when(http).put(eq("/v1/checklist/1"), any());
-        api.updateChecklist(1, "Updated", List.of("Task1"));
+        api.updateChecklist(1, "Updated", List.of(new ChecklistTask()));
         verify(http).put(eq("/v1/checklist/1"), any());
     }
 

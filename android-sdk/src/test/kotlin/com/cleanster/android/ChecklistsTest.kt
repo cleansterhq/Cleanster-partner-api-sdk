@@ -80,10 +80,34 @@ class ChecklistsTest {
 
     @Test fun `createChecklist includes name and items in body`() = runTest {
         enqueue("""{"status":200,"message":"OK","data":$checklistJson}""")
-        client.checklists.createChecklist("Deep Clean", listOf("Vacuum", "Mop"))
+        client.checklists.createChecklist("Deep Clean", listOf(
+            com.cleanster.android.model.ChecklistTask(
+                imageName = "vacuum.jpg",
+                title = "Vacuum",
+                totalSubtasks = 1,
+                subtasks = listOf(com.cleanster.android.model.ChecklistSubtask(
+                    description = "Under furniture",
+                    flagRequestPhotos = true,
+                    photos = listOf("before.jpg"),
+                )),
+            ),
+        ))
         val body = server.takeRequest().body.readUtf8()
-        assert(body.contains("Deep Clean"))
-        assert(body.contains("Vacuum"))
+        assert(body.contains("\"title\":\"Deep Clean\""))
+        assert(body.contains("\"tasks\""))
+        assert(body.contains("\"image_name\":\"vacuum.jpg\""))
+        assert(body.contains("\"flag_request_photos\":true"))
+        assert(!body.contains("\"name\""))
+        assert(!body.contains("\"items\""))
+    }
+
+    @Test fun `getChecklist parses live nested task fields`() = runTest {
+        enqueue("""{"status":200,"message":"OK","data":{"id":77,"is_default":true,"disabled":false,"title":"Deep Clean","type":"custom","totalTasks":1,"totalSubTasks":1,"tasks":[{"image_name":"vacuum.jpg","title":"Vacuum","totalSubtasks":1,"subtasks":[{"description":"Under furniture","flag_request_photos":true,"photos":["proof.jpg"]}]}]}}""")
+        val checklist = client.checklists.getChecklist(77).data!!
+        assertEquals("Deep Clean", checklist.title)
+        assertEquals("vacuum.jpg", checklist.tasks.single().imageName)
+        assertEquals(true, checklist.tasks.single().subtasks.single().flagRequestPhotos)
+        assertEquals(listOf("proof.jpg"), checklist.tasks.single().subtasks.single().photos)
     }
 
     @Test fun `createChecklist returns created checklist`() = runTest {

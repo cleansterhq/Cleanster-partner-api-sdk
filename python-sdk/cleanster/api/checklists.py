@@ -16,10 +16,10 @@ class ChecklistsApi:
     def __init__(self, http: HttpClient):
         self._http = http
 
-    def list_checklists(self) -> ApiResponse:
+    def list_checklists(self) -> ApiResponse[List[Checklist]]:
         """Return all checklists for your partner account."""
         raw = self._http.get("/v1/checklist")
-        return ApiResponse.from_dict(raw)
+        return ApiResponse.from_dict(raw, data_factory=Checklist)
 
     def get_checklist(self, checklist_id: int) -> ApiResponse:
         """
@@ -34,40 +34,41 @@ class ChecklistsApi:
         raw = self._http.get(f"/v1/checklist/{checklist_id}")
         return ApiResponse.from_dict(raw, data_factory=Checklist)
 
-    def create_checklist(self, name: str, items: List[str]) -> ApiResponse:
+    def create_checklist(self, title: str, tasks: List[Dict[str, Any]]) -> ApiResponse[Checklist]:
         """
         Create a new checklist.
 
         Args:
-            name:  Display name for the checklist.
-            items: List of task description strings.
+            title: Checklist title.
+            tasks: Checklist task objects using image_name, title, totalSubtasks,
+                and subtasks. Subtasks use description, flag_request_photos, and photos.
 
         Returns:
             ApiResponse with data as the created Checklist object.
         """
         raw = self._http.post(
             "/v1/checklist",
-            body={"name": name, "items": items},
+            body={"title": title, "tasks": tasks},
         )
         return ApiResponse.from_dict(raw, data_factory=Checklist)
 
     def update_checklist(
-        self, checklist_id: int, name: str, items: List[str]
-    ) -> ApiResponse:
+        self, checklist_id: int, title: str, tasks: List[Dict[str, Any]]
+    ) -> ApiResponse[Checklist]:
         """
         Replace the name and task items of an existing checklist.
 
         Args:
             checklist_id: The checklist ID.
-            name:         New display name.
-            items:        New list of task description strings.
+            title:        New checklist title.
+            tasks:        New checklist task objects.
 
         Returns:
             ApiResponse with data as the updated Checklist object.
         """
         raw = self._http.put(
             f"/v1/checklist/{checklist_id}",
-            body={"name": name, "items": items},
+            body={"title": title, "tasks": tasks},
         )
         return ApiResponse.from_dict(raw, data_factory=Checklist)
 

@@ -248,12 +248,12 @@ public class CleansterSOAPClient {
         return checklistService.getChecklist(checklistId);
     }
 
-    public Checklist createChecklist(String name, List<String> items) {
-        return checklistService.createChecklist(name, items);
+    public Checklist createChecklist(String title, List<ChecklistTask> tasks) {
+        return checklistService.createChecklist(title, tasks);
     }
 
-    public Checklist updateChecklist(long checklistId, String name, List<String> items) {
-        return checklistService.updateChecklist(checklistId, name, items);
+    public Checklist updateChecklist(long checklistId, String title, List<ChecklistTask> tasks) {
+        return checklistService.updateChecklist(checklistId, title, tasks);
     }
 
     public ApiResponse deleteChecklist(long checklistId) {

@@ -6,11 +6,11 @@ public final class ChecklistsApi {
     init(client: CleansterClient) { self.client = client }
 
     /// List all checklists on the partner account.
-    public func listChecklists() async throws -> ApiResponse<AnyCodable> {
-        return try await client.requestRaw(method: "GET", path: "/v1/checklist")
+    public func listChecklists() async throws -> ApiResponse<[Checklist]> {
+        return try await client.request(method: "GET", path: "/v1/checklist")
     }
 
-    /// Retrieve a single checklist and all its items.
+    /// Retrieve a single checklist and all its tasks.
     public func getChecklist(_ checklistId: Int) async throws -> ApiResponse<Checklist> {
         return try await client.request(method: "GET", path: "/v1/checklist/\(checklistId)")
     }
@@ -18,16 +18,16 @@ public final class ChecklistsApi {
     /// Create a new checklist.
     ///
     /// - Parameters:
-    ///   - name: Display name of the checklist.
-    ///   - items: Array of task description strings.
-    public func createChecklist(name: String, items: [String]) async throws -> ApiResponse<Checklist> {
-        let body = CreateChecklistRequest(name: name, items: items)
+    ///   - title: Display title of the checklist.
+    ///   - tasks: Structured checklist tasks and their subtasks.
+    public func createChecklist(title: String, tasks: [ChecklistTask]) async throws -> ApiResponse<Checklist> {
+        let body = CreateChecklistRequest(title: title, tasks: tasks)
         return try await client.request(method: "POST", path: "/v1/checklist", body: body)
     }
 
-    /// Replace an existing checklist's name and items entirely.
-    public func updateChecklist(_ checklistId: Int, name: String, items: [String]) async throws -> ApiResponse<Checklist> {
-        let body = CreateChecklistRequest(name: name, items: items)
+    /// Replace an existing checklist's title and tasks entirely.
+    public func updateChecklist(_ checklistId: Int, title: String, tasks: [ChecklistTask]) async throws -> ApiResponse<Checklist> {
+        let body = CreateChecklistRequest(title: title, tasks: tasks)
         return try await client.request(method: "PUT", path: "/v1/checklist/\(checklistId)", body: body)
     }
 

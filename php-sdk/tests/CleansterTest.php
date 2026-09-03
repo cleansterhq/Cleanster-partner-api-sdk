@@ -21,6 +21,7 @@ use Cleanster\HttpClient;
 use Cleanster\Models\Booking;
 use Cleanster\Models\Checklist;
 use Cleanster\Models\ChecklistItem;
+use Cleanster\Models\ChecklistTask;
 use Cleanster\Models\CreateUserResponse;
 use Cleanster\Models\PaymentMethod;
 use Cleanster\Models\Property;
@@ -738,22 +739,26 @@ class CleansterTest extends TestCase
         $http->expects($this->once())
              ->method('get')
              ->with('/v1/checklist/105')
-             ->willReturn($this->ok([
-                 'id' => 105, 'name' => 'Standard',
-                 'items' => [
-                     ['id' => 1, 'description' => 'Vacuum floors', 'isCompleted' => false],
-                     ['id' => 2, 'description' => 'Mop kitchen', 'isCompleted' => true],
-                 ],
-             ]));
+              ->willReturn($this->ok([
+                  'id' => 105, 'is_default' => true, 'disabled' => false,
+                  'title' => 'Standard', 'type' => 'PROPERTY', 'totalTasks' => 1, 'totalSubTasks' => 1,
+                  'tasks' => [[
+                      'image_name' => 'vacuum.jpg', 'title' => 'Vacuum floors', 'totalSubtasks' => 1,
+                      'subtasks' => [[
+                          'description' => 'Vacuum bedroom', 'flag_request_photos' => true,
+                          'photos' => ['https://example.com/photo.jpg'],
+                      ]],
+                  ]],
+              ]));
 
         $resp = (new ChecklistsApi($http))->getChecklist(105);
         $this->assertInstanceOf(Checklist::class, $resp->data);
         $this->assertSame(105, $resp->data->id);
-        $this->assertCount(2, $resp->data->items);
-        $this->assertInstanceOf(ChecklistItem::class, $resp->data->items[0]);
-        $this->assertSame('Vacuum floors', $resp->data->items[0]->description);
-        $this->assertFalse($resp->data->items[0]->isCompleted);
-        $this->assertTrue($resp->data->items[1]->isCompleted);
+        $this->assertTrue($resp->data->isDefault);
+        $this->assertInstanceOf(ChecklistTask::class, $resp->data->tasks[0]);
+        $this->assertSame('Vacuum floors', $resp->data->tasks[0]->title);
+        $this->assertTrue($resp->data->tasks[0]->subtasks[0]->flagRequestPhotos);
+        $this->assertSame(['https://example.com/photo.jpg'], $resp->data->tasks[0]->subtasks[0]->photos);
     }
 
     public function testCreateChecklist(): void
@@ -761,12 +766,12 @@ class CleansterTest extends TestCase
         $http = $this->mockHttp();
         $http->expects($this->once())
              ->method('post')
-             ->with('/v1/checklist', ['name' => 'Deep Clean', 'items' => ['Mop floors', 'Wipe counters']])
-             ->willReturn($this->ok(['id' => 200, 'name' => 'Deep Clean', 'items' => []]));
+              ->with('/v1/checklist', ['title' => 'Deep Clean', 'tasks' => []])
+              ->willReturn($this->ok(['id' => 200, 'title' => 'Deep Clean', 'tasks' => []]));
 
-        $resp = (new ChecklistsApi($http))->createChecklist('Deep Clean', ['Mop floors', 'Wipe counters']);
+        $resp = (new ChecklistsApi($http))->createChecklist('Deep Clean', []);
         $this->assertInstanceOf(Checklist::class, $resp->data);
-        $this->assertSame('Deep Clean', $resp->data->name);
+        $this->assertSame('Deep Clean', $resp->data->title);
     }
 
     public function testUpdateChecklist(): void
@@ -774,10 +779,10 @@ class CleansterTest extends TestCase
         $http = $this->mockHttp();
         $http->expects($this->once())
              ->method('put')
-             ->with('/v1/checklist/105', ['name' => 'Updated', 'items' => ['New task']])
-             ->willReturn($this->ok(['id' => 105, 'name' => 'Updated', 'items' => []]));
+              ->with('/v1/checklist/105', ['title' => 'Updated', 'tasks' => []])
+              ->willReturn($this->ok(['id' => 105, 'title' => 'Updated', 'tasks' => []]));
 
-        (new ChecklistsApi($http))->updateChecklist(105, 'Updated', ['New task']);
+        (new ChecklistsApi($http))->updateChecklist(105, 'Updated', []);
     }
 
     public function testDeleteChecklist(): void

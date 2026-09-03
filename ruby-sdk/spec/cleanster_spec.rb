@@ -566,37 +566,41 @@ RSpec.describe Cleanster do
     end
 
     describe "#get_checklist" do
-      it "GETs /v1/checklist/105 and returns a Checklist with items" do
+      it "GETs /v1/checklist/105 and parses nested live checklist fields" do
         data = {
-          "id" => 105, "name" => "Standard",
-          "items" => [{ "id" => 1, "description" => "Vacuum floors", "isCompleted" => false }]
+          "id" => 105, "is_default" => true, "disabled" => false, "title" => "Standard",
+          "type" => "PROPERTY", "totalTasks" => 1, "totalSubTasks" => 1,
+          "tasks" => [{ "image_name" => "vacuum.jpg", "title" => "Vacuum floors", "totalSubtasks" => 1,
+                        "subtasks" => [{ "description" => "Vacuum bedroom", "flag_request_photos" => true, "photos" => ["https://example.com/photo.jpg"] }] }]
         }
         allow(http).to receive(:get).with("/v1/checklist/105").and_return(ok_response(data))
         result = api.get_checklist(105)
         expect(result.data).to be_a(Cleanster::Models::Checklist)
-        expect(result.data.items.first).to be_a(Cleanster::Models::ChecklistItem)
-        expect(result.data.items.first.description).to eq("Vacuum floors")
+        expect(result.data.tasks.first).to be_a(Cleanster::Models::ChecklistTask)
+        expect(result.data.tasks.first.subtasks.first.photos).to eq(["https://example.com/photo.jpg"])
       end
     end
 
     describe "#create_checklist" do
-      it "POSTs name and items" do
-        data = { "id" => 105, "name" => "Deep Clean", "items" => [] }
+      it "POSTs exactly title and structured tasks" do
+        tasks = [{ image_name: "mop.jpg", title: "Mop floors", totalSubtasks: 1,
+                   subtasks: [{ description: "Mop kitchen", flag_request_photos: false, photos: [] }] }]
+        data = { "id" => 105, "title" => "Deep Clean", "tasks" => [] }
         allow(http).to receive(:post).with("/v1/checklist",
-                                           body: { name: "Deep Clean", items: ["Mop floors"] })
+                                            body: { title: "Deep Clean", tasks: tasks })
                                      .and_return(ok_response(data))
-        result = api.create_checklist(name: "Deep Clean", items: ["Mop floors"])
+        result = api.create_checklist(title: "Deep Clean", tasks: tasks)
         expect(result.data).to be_a(Cleanster::Models::Checklist)
       end
     end
 
     describe "#update_checklist" do
       it "PUTs to /v1/checklist/105" do
-        data = { "id" => 105, "name" => "Updated", "items" => [] }
+        data = { "id" => 105, "title" => "Updated", "tasks" => [] }
         allow(http).to receive(:put).with("/v1/checklist/105",
-                                          body: { name: "Updated", items: ["New task"] })
+                                           body: { title: "Updated", tasks: [] })
                                     .and_return(ok_response(data))
-        result = api.update_checklist(105, name: "Updated", items: ["New task"])
+        result = api.update_checklist(105, title: "Updated", tasks: [])
         expect(result.data).to be_a(Cleanster::Models::Checklist)
       end
     end

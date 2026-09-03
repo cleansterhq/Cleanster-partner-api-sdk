@@ -41,7 +41,7 @@ public class CleansterTests
         MakeResponse($$"""{"id":{{id}},"name":"Beach House","address":"123 St","city":"Miami","country":"USA","roomCount":3,"bathroomCount":2,"serviceId":1}""");
 
     private static JsonElement ChecklistJson(int id = 105) =>
-        MakeResponse($$"""{"id":{{id}},"name":"Standard","items":[{"id":1,"description":"Vacuum","isCompleted":false},{"id":2,"description":"Mop","isCompleted":true,"imageUrl":"https://img.example.com/1.jpg"}]}""");
+        MakeResponse($$"""{"id":{{id}},"is_default":true,"disabled":false,"title":"Standard","type":"CUSTOM","totalTasks":1,"totalSubTasks":1,"tasks":[{"image_name":"kitchen.png","title":"Kitchen","totalSubtasks":1,"subtasks":[{"description":"Photograph oven","flag_request_photos":true,"photos":["https://img.example.com/oven.jpg"]}]}]}""");
 
     private static JsonElement PaymentMethodListJson() =>
         MakeResponse(@"[{""id"":193,""type"":""card"",""lastFour"":""4242"",""brand"":""visa"",""isDefault"":true}]");
@@ -701,21 +701,27 @@ public class CleansterTests
     }
 
     [Fact]
-    public async Task Checklists_GetChecklist_ParsesTypedItems()
+    public async Task Checklists_GetChecklist_ParsesStructuredTasks()
     {
         var http = MockHttp();
         http.Setup(h => h.GetAsync("/v1/checklist/105", null, It.IsAny<CancellationToken>()))
             .ReturnsAsync(ChecklistJson(105));
         var resp = await new ChecklistsApi(http.Object).GetChecklistAsync(105);
         Assert.Equal(105, resp.Data.Id);
-        Assert.Equal("Standard", resp.Data.Name);
-        Assert.Equal(2, resp.Data.Items.Count);
-        Assert.IsType<ChecklistItem>(resp.Data.Items[0]);
-        Assert.Equal("Vacuum", resp.Data.Items[0].Description);
-        Assert.False(resp.Data.Items[0].IsCompleted);
-        Assert.True(resp.Data.Items[1].IsCompleted);
-        Assert.Equal("https://img.example.com/1.jpg", resp.Data.Items[1].ImageUrl);
-        Assert.Null(resp.Data.Items[0].ImageUrl);
+        Assert.True(resp.Data.IsDefault);
+        Assert.False(resp.Data.Disabled);
+        Assert.Equal("Standard", resp.Data.Title);
+        Assert.Equal("CUSTOM", resp.Data.Type);
+        Assert.Equal(1, resp.Data.TotalTasks);
+        Assert.Equal(1, resp.Data.TotalSubTasks);
+        var task = Assert.Single(resp.Data.Tasks);
+        Assert.Equal("kitchen.png", task.ImageName);
+        Assert.Equal("Kitchen", task.Title);
+        Assert.Equal(1, task.TotalSubtasks);
+        var subtask = Assert.Single(task.Subtasks);
+        Assert.Equal("Photograph oven", subtask.Description);
+        Assert.True(subtask.FlagRequestPhotos);
+        Assert.Equal(["https://img.example.com/oven.jpg"], subtask.Photos);
     }
 
     [Fact]
@@ -724,20 +730,57 @@ public class CleansterTests
         var http = MockHttp();
         http.Setup(h => h.PostAsync("/v1/checklist", It.IsAny<object?>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(ChecklistJson(200));
-        var resp = await new ChecklistsApi(http.Object)
-            .CreateChecklistAsync("Deep Clean", ["Vacuum", "Mop"]);
+        object? body = null;
+        http.Invocations.Clear();
+        http.Setup(h => h.PostAsync("/v1/checklist", It.IsAny<object?>(), It.IsAny<CancellationToken>()))
+            .Callback<string, object?, CancellationToken>((_, value, _) => body = value)
+            .ReturnsAsync(ChecklistJson(200));
+        var resp = await new ChecklistsApi(http.Object).CreateChecklistAsync(ChecklistRequest());
         Assert.IsType<Checklist>(resp.Data);
+        using var payload = JsonDocument.Parse(JsonSerializer.Serialize(body));
+        Assert.Equal(["tasks", "title"], payload.RootElement.EnumerateObject().Select(p => p.Name).Order());
+        var task = payload.RootElement.GetProperty("tasks")[0];
+        Assert.Equal(["image_name", "subtasks", "title", "totalSubtasks"], task.EnumerateObject().Select(p => p.Name).Order());
+        var subtask = task.GetProperty("subtasks")[0];
+        Assert.Equal(["description", "flag_request_photos", "photos"], subtask.EnumerateObject().Select(p => p.Name).Order());
     }
 
     [Fact]
     public async Task Checklists_UpdateChecklist()
     {
         var http = MockHttp();
+        object? body = null;
         http.Setup(h => h.PutAsync("/v1/checklist/105", It.IsAny<object?>(), It.IsAny<CancellationToken>()))
+            .Callback<string, object?, CancellationToken>((_, value, _) => body = value)
             .ReturnsAsync(ChecklistJson(105));
-        await new ChecklistsApi(http.Object).UpdateChecklistAsync(105, "Updated", ["Task 1"]);
+        await new ChecklistsApi(http.Object).UpdateChecklistAsync(105, ChecklistRequest());
+        using var payload = JsonDocument.Parse(JsonSerializer.Serialize(body));
+        Assert.Equal(["tasks", "title"], payload.RootElement.EnumerateObject().Select(p => p.Name).Order());
         http.VerifyAll();
     }
+
+    private static CreateChecklistRequest ChecklistRequest() => new()
+    {
+        Title = "Deep Clean",
+        Tasks =
+        [
+            new ChecklistTask
+            {
+                ImageName = "kitchen.png",
+                Title = "Kitchen",
+                TotalSubtasks = 1,
+                Subtasks =
+                [
+                    new ChecklistSubtask
+                    {
+                        Description = "Photograph oven",
+                        FlagRequestPhotos = true,
+                        Photos = ["https://img.example.com/oven.jpg"]
+                    }
+                ]
+            }
+        ]
+    };
 
     [Fact]
     public async Task Checklists_DeleteChecklist()

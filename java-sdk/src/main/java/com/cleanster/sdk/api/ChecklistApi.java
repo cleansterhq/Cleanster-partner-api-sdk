@@ -20,8 +20,8 @@ public class ChecklistApi {
      *
      * @return API response with list of checklists
      */
-    public ApiResponse<Object> listChecklists() {
-        return httpClient.get("/v1/checklist", new TypeReference<ApiResponse<Object>>() {});
+    public ApiResponse<java.util.List<Checklist>> listChecklists() {
+        return httpClient.get("/v1/checklist", new TypeReference<ApiResponse<java.util.List<Checklist>>>() {});
     }
 
     /**

@@ -2,6 +2,7 @@ package com.cleanster.xml.api;
 
 import com.cleanster.xml.client.XmlHttpClient;
 import com.cleanster.xml.model.Checklist;
+import com.cleanster.xml.model.ChecklistTask;
 import com.cleanster.xml.model.XmlApiResponse;
 import com.google.gson.reflect.TypeToken;
 
@@ -38,20 +39,20 @@ public class ChecklistsXmlApi {
         return http.fromJson(json, new TypeToken<XmlApiResponse<Checklist>>(){}.getType());
     }
 
-    /** Create a new checklist with the given name and task items. */
-    public XmlApiResponse<Checklist> createChecklist(String name, List<String> items) {
+    /** Create a checklist using the live title/tasks contract. */
+    public XmlApiResponse<Checklist> createChecklist(String title, List<ChecklistTask> tasks) {
         Map<String, Object> body = new LinkedHashMap<>();
-        body.put("name",  name);
-        body.put("items", items != null ? items : List.of());
+        body.put("title", title);
+        body.put("tasks", tasks != null ? tasks : List.of());
         String json = http.post("/v1/checklist", body);
         return http.fromJson(json, new TypeToken<XmlApiResponse<Checklist>>(){}.getType());
     }
 
-    /** Replace the name and task items of an existing checklist. */
-    public XmlApiResponse<Checklist> updateChecklist(int checklistId, String name, List<String> items) {
+    /** Replace a checklist's title and structured tasks. */
+    public XmlApiResponse<Checklist> updateChecklist(int checklistId, String title, List<ChecklistTask> tasks) {
         Map<String, Object> body = new LinkedHashMap<>();
-        body.put("name",  name);
-        body.put("items", items != null ? items : List.of());
+        body.put("title", title);
+        body.put("tasks", tasks != null ? tasks : List.of());
         String json = http.put("/v1/checklist/" + checklistId, body);
         return http.fromJson(json, new TypeToken<XmlApiResponse<Checklist>>(){}.getType());
     }

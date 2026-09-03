@@ -653,7 +653,7 @@ const resp = await client.checklists.listChecklists();
 
 ```typescript
 const resp = await client.checklists.getChecklist(105);
-resp.data.items.forEach(item => console.log(item.task));
+resp.data.tasks.forEach(task => console.log(task.title));
 ```
 
 ---
@@ -663,19 +663,16 @@ resp.data.items.forEach(item => console.log(item.task));
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `name` | string | Yes | Display name |
-| `items` | string[] | Yes | Ordered task descriptions |
+| `title` | string | Yes | Checklist title |
+| `tasks` | ChecklistTask[] | Yes | Structured checklist tasks |
 
 ```typescript
 const resp = await client.checklists.createChecklist({
-  name: 'Deep Clean',
-  items: [
-    'Vacuum all rooms',
-    'Mop kitchen and bathroom floors',
-    'Scrub toilets, sinks, and tubs',
-    'Wipe all countertops',
-    'Clean inside microwave and oven',
-  ],
+  title: 'Deep Clean',
+  tasks: [{
+    image_name: 'vacuum.jpg', title: 'Vacuum all rooms', totalSubtasks: 1,
+    subtasks: [{ description: 'Vacuum bedrooms', flag_request_photos: true, photos: [] }],
+  }],
 });
 console.log('Checklist ID:', resp.data.id);
 ```
@@ -687,8 +684,8 @@ console.log('Checklist ID:', resp.data.id);
 
 ```typescript
 await client.checklists.updateChecklist(105, {
-  name: 'Standard Clean',
-  items: ['Vacuum', 'Wipe surfaces', 'Clean bathrooms'],
+  title: 'Standard Clean',
+  tasks: [],
 });
 ```
 
@@ -986,15 +983,26 @@ interface Cleaner {
 ```typescript
 interface Checklist {
   id: number;
-  name: string;
-  items: ChecklistItem[];
+  is_default: boolean;
+  disabled: boolean;
+  title: string;
+  type: string;
+  totalTasks: number;
+  totalSubTasks: number;
+  tasks: ChecklistTask[];
 }
 
-interface ChecklistItem {
-  id: number;
-  task: string;
-  order: number;
-  isCompleted: boolean;
+interface ChecklistTask {
+  image_name?: string;
+  title: string;
+  totalSubtasks: number;
+  subtasks: ChecklistSubtask[];
+}
+
+interface ChecklistSubtask {
+  description: string;
+  flag_request_photos: boolean;
+  photos: string[];
 }
 ```
 

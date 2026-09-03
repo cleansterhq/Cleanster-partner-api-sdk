@@ -619,8 +619,8 @@ $resp = $client->checklists()->listChecklists();
 
 ```php
 $resp = $client->checklists()->getChecklist(105);
-foreach ($resp->getData()['items'] as $item) {
-    echo $item['task'] . "\n";
+foreach ($resp->data->tasks as $task) {
+    echo $task->title . "\n";
 }
 ```
 
@@ -630,14 +630,17 @@ foreach ($resp->getData()['items'] as $item) {
 **`POST /v1/checklist`**
 
 ```php
-$resp = $client->checklists()->createChecklist('Deep Clean', [
-    'Vacuum all rooms',
-    'Mop kitchen and bathroom floors',
-    'Scrub toilets, sinks, and tubs',
-    'Wipe all countertops',
-    'Clean inside microwave and oven',
+$resp = $client->checklists()->createChecklist('Deep Clean', [[
+    'image_name' => 'vacuum.jpg',
+    'title' => 'Vacuum all rooms',
+    'totalSubtasks' => 1,
+    'subtasks' => [[
+        'description' => 'Vacuum bedrooms',
+        'flag_request_photos' => true,
+        'photos' => [],
+    ]],
 ]);
-echo "Checklist ID: " . $resp->getData()['id'] . "\n";
+echo "Checklist ID: " . $resp->data->id . "\n";
 ```
 
 ---
@@ -649,7 +652,7 @@ echo "Checklist ID: " . $resp->getData()['id'] . "\n";
 $client->checklists()->updateChecklist(
     105,
     'Standard Clean',
-    ['Vacuum', 'Wipe surfaces', 'Clean bathrooms']
+    []
 );
 ```
 

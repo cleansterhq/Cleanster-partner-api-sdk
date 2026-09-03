@@ -77,9 +77,30 @@ data class Booking(
 )
 
 data class Checklist(
-    val id:    Int?               = null,
-    val name:  String?            = null,
+    val id: Int? = null,
+    @SerializedName("is_default") val isDefault: Boolean? = null,
+    val disabled: Boolean? = null,
+    val title: String? = null,
+    val type: String? = null,
+    val totalTasks: Int? = null,
+    val totalSubTasks: Int? = null,
+    val tasks: List<ChecklistTask>? = null,
+    // Legacy fields are retained for older response shapes.
+    val name: String? = null,
     val items: List<ChecklistItem>? = null,
+)
+
+data class ChecklistTask(
+    @SerializedName("image_name") val imageName: String? = null,
+    val title: String? = null,
+    val totalSubtasks: Int? = null,
+    val subtasks: List<ChecklistSubtask>? = null,
+)
+
+data class ChecklistSubtask(
+    val description: String? = null,
+    @SerializedName("flag_request_photos") val flagRequestPhotos: Boolean? = null,
+    val photos: List<String>? = null,
 )
 
 data class ChecklistItem(

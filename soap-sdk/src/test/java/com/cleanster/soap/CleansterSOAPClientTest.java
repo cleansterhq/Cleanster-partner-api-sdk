@@ -361,7 +361,7 @@ class CleansterSOAPClientTest {
     @DisplayName("createChecklist calls POST /v1/checklist")
     void createChecklistCallsCorrectPath() {
         when(transport.post(eq("/v1/checklist"), any())).thenReturn(checklistNode(106L));
-        client.createChecklist("Bathroom Deep Clean", Arrays.asList("Scrub tub", "Clean mirror"));
+        client.createChecklist("Bathroom Deep Clean", List.of(new ChecklistTask()));
         verify(transport).post(eq("/v1/checklist"), any());
     }
 
