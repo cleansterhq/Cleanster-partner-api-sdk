@@ -96,10 +96,10 @@ The Cleanster Partner API is a white-label backend for cleaning service platform
 | **Property management** | Register cleaning locations, sync iCal calendars, manage property-level cleaners |
 | **Booking lifecycle** | Schedule, reschedule, cancel, assign cleaners, adjust hours |
 | **Post-booking actions** | Pay expenses, add tips, submit feedback, view inspection reports |
-| **In-booking chat** | Send and delete messages during the service window |
+| **In-booking chat** | Read, send, and delete messages during the service window, including photo and video attachments |
 | **Checklists** | Create reusable task lists and attach them per-booking or per-property |
 | **Payment methods** | Attach Stripe cards and PayPal accounts to user profiles |
-| **Webhooks** | Receive real-time events for every stage of a booking |
+| **Webhooks** | Receive real-time booking lifecycle and chat-message events |
 | **Blacklist** | Prevent specific cleaners from being assigned to your properties |
 | **Reference data** | Fetch service types, plans, pricing, extras, available cleaners, and cleaner profiles |
 
@@ -1865,19 +1865,31 @@ await client.bookings.addTip(16459, {
 
 Retrieve the chat thread for a booking. Chat is available within ±24 hours of the booking start time. For bookings in an indefinitely-hanging state, there is no time restriction.
 
-**Response `data`:** Array of message objects.
+**Response `data`:** Array of message objects. Text messages contain `content`;
+media messages use `message_type: "media"` and expose their photo, video, or
+audio files through `attachments`.
 
 | Field | Type | Description |
 |---|---|---|
-| `id` | string | Message ID |
-| `message` | string | Message text |
-| `sentBy` | string | `PARTNER`, `CLEANER`, or `SYSTEM` |
-| `sentAt` | string | ISO 8601 timestamp |
-| `isDeleted` | boolean | Whether this message has been deleted |
+| `message_id` | string | Message ID |
+| `sender_id` | string | Sender reference |
+| `content` | string | Text content; empty for media messages |
+| `timestamp` | string | Message timestamp |
+| `message_type` | string | `text` or `media` |
+| `attachments` | array | Photo, video, or audio attachments |
+| `attachments[].type` | string | `image`, `video`, or `sound` |
+| `attachments[].url` | string | Direct media URL |
+| `attachments[].thumb_url` | string or null | Optional thumbnail URL |
+| `is_read` | boolean | Whether the message has been read |
+| `sender_type` | string | `client`, `cleaner`, `support`, or `bot` |
 
 #### `POST /v1/bookings/{bookingId}/chat` - Send Chat Message
 
 **Request body:** `{ "message": "Your cleaner is on the way!" }`
+
+This public endpoint sends text messages only. Photos and videos are received
+as attachment URLs on chat responses and `chat.message_added` webhook payloads;
+there is currently no public media-send endpoint.
 
 #### `DELETE /v1/bookings/{bookingId}/chat/{messageId}` - Delete Chat Message
 
@@ -2677,6 +2689,44 @@ Register webhooks via `POST /v1/webhooks` to receive real-time notifications.
 ```
 
 Your endpoint should return HTTP `200` within 5 seconds to acknowledge receipt. Failed deliveries are retried with exponential backoff.
+
+### Messaging Webhook Payloads
+
+Subscribe to `chat.message_added` to receive new messages in a booking's chat
+thread. The webhook uses the same signature verification described below and
+keeps media as direct URLs:
+
+```json
+{
+  "event": "chat.message_added",
+  "bookingId": 16459,
+  "propertyId": 1004,
+  "timestamp": "2026-09-03T16:00:00Z",
+  "data": {
+    "message_id": "msg-001",
+    "sender_id": "C6",
+    "content": "",
+    "message_type": "media",
+    "attachments": [
+      {
+        "type": "image",
+        "url": "https://cdn.example.com/photo.jpg",
+        "thumb_url": "https://cdn.example.com/photo-thumb.jpg"
+      },
+      {
+        "type": "video",
+        "url": "https://cdn.example.com/video.mp4",
+        "thumb_url": "https://cdn.example.com/video-thumb.jpg"
+      }
+    ],
+    "is_read": false,
+    "sender_type": "cleaner"
+  }
+}
+```
+
+The SDK webhook helpers validate the raw JSON body without removing or
+transforming the attachment URLs.
 
 ### Webhook Signature Verification
 
